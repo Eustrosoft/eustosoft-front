@@ -1,0 +1,16 @@
+<input
+  #fileInput
+  [multiple]="multiple"
+  (change)="change($event)"
+  hidden="true"
+  type="file"
+  name="file"
+/>
+
+<eustrosoft-front-button
+  [buttonType]="'button'"
+  [buttonStyleType]="'stroked'"
+  [buttonText]="buttonText"
+  (click)="fileInput.click()"
+>
+</eustrosoft-front-button>

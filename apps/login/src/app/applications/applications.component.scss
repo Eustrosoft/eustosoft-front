@@ -1,0 +1,18 @@
+@import "variables";
+
+:host {
+  .app-icon {
+    font-size: 10em;
+    font-weight: 300;
+    width: auto;
+    height: auto;
+  }
+
+  .database {
+    color: $gray;
+  }
+
+  .folder {
+    color: $gray;
+  }
+}

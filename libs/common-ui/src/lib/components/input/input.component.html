@@ -1,0 +1,11 @@
+<mat-form-field [appearance]="fieldAppearance" class="w-100">
+  <mat-label>{{ label }}</mat-label>
+  <input
+    [formControl]="control"
+    [placeholder]="placeholder"
+    [type]="inputType"
+    [attr.disabled]="disabled"
+    matInput
+  />
+  <mat-icon matSuffix>{{ suffixIcon }}</mat-icon>
+</mat-form-field>

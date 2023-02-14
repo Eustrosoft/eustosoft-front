@@ -1,0 +1,100 @@
+<form [formGroup]="form" (ngSubmit)="submit()" class="container-fluid">
+  <div class="row">
+    <eustrosoft-front-request
+      *ngFor="let form of form.controls.forms.controls; let i = index"
+      [form]="form"
+      [formNumber]="i + 1"
+      [queryTypeOptions]="queryTypeOptions"
+      class="col-lg-6 col-md-6 col-sm-12"
+    ></eustrosoft-front-request>
+  </div>
+  <div class="row justify-content-end">
+    <div class="col-lg-6 col-md-6 col-sm-12">
+      <eustrosoft-front-select
+        [label]="'Display as'"
+        [control]="displayType! | formControl"
+        [options]="displayTypeOptions"
+        [fieldAppearance]="'outline'"
+      ></eustrosoft-front-select>
+    </div>
+    <div class="d-flex justify-content-end align-items-center mb-3">
+      <eustrosoft-front-button
+        [buttonStyleType]="'icon'"
+        [iconName]="'add'"
+        [buttonType]="'button'"
+        title="Add request form"
+        (click)="addForm()"
+      ></eustrosoft-front-button>
+      <eustrosoft-front-button
+        [buttonStyleType]="'icon'"
+        [iconName]="'remove'"
+        [buttonType]="'button'"
+        title="Remove last request form"
+        (click)="removeLastForm()"
+      ></eustrosoft-front-button>
+      <eustrosoft-front-button
+        [buttonStyleType]="'stroked'"
+        [buttonText]="'Send'"
+        [buttonType]="'submit'"
+        [disabled]="form.get('submit')!.disabled"
+      ></eustrosoft-front-button>
+    </div>
+  </div>
+  <div class="row justify-content-center">
+    <ng-container *ngIf="isResultLoading | async as loading">
+      <eustrosoft-front-preloader *ngIf="loading"></eustrosoft-front-preloader>
+    </ng-container>
+  </div>
+  <div class="row">
+    <div>
+      <ng-container *ngIf="{ result: requestResult$ | async } as response">
+        <ng-container *ngIf="displayType.value === DisplayTypes.TEXT">
+          <pre *ngIf="response.result as result">{{ result | json }}</pre>
+        </ng-container>
+        <ng-container *ngIf="displayType.value === DisplayTypes.TABLE">
+          <div class="d-flex flex-column align-items-center">
+            <ng-container *ngFor="let group of tables; let i = index">
+              <div class="w-100 border border-3 border-info rounded mb-3">
+                <h1 class="ml-3 mb-3 mt-3"># {{ i + 1 }}</h1>
+                <ng-container *ngFor="let table of group">
+                  <div class="table-container">
+                    <table
+                      [dataSource]="table.dataSource"
+                      mat-table
+                      class="mb-3 mat-elevation-z8"
+                    >
+                      <ng-container
+                        [matColumnDef]="column"
+                        *ngFor="
+                          let column of table.displayedColumns;
+                          let i = index
+                        "
+                      >
+                        <th mat-header-cell *matHeaderCellDef>
+                          {{ column }} <br />
+                          ({{ table.data_types[i] }})
+                        </th>
+                        <td mat-cell *matCellDef="let element">
+                          {{ element[column] }}
+                        </td>
+                      </ng-container>
+
+                      <tr
+                        mat-header-row
+                        *matHeaderRowDef="table.columnsToDisplay"
+                      ></tr>
+                      <tr
+                        mat-row
+                        *matRowDef="let row; columns: table.columnsToDisplay"
+                      ></tr>
+                    </table>
+                  </div>
+                </ng-container>
+              </div>
+            </ng-container>
+          </div>
+        </ng-container>
+      </ng-container>
+    </div>
+  </div>
+</form>

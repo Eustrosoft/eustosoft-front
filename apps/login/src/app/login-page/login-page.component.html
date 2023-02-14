@@ -1,0 +1,32 @@
+<form
+  [formGroup]="form"
+  (ngSubmit)="submit()"
+  class="d-flex flex-column align-items-center"
+>
+  <h2>Login</h2>
+  <eustrosoft-front-input
+    [inputType]="InputTypes.TEXT"
+    [label]="'Login'"
+    [control]="form.get('login')! | formControl"
+    [fieldAppearance]="'outline'"
+    [suffixIcon]="'person'"
+    class="col-5"
+  >
+  </eustrosoft-front-input>
+
+  <eustrosoft-front-input
+    [inputType]="InputTypes.PASSWORD"
+    [label]="'Password'"
+    [control]="form.get('password')! | formControl"
+    [fieldAppearance]="'outline'"
+    [suffixIcon]="'lock'"
+    class="col-5"
+  >
+  </eustrosoft-front-input>
+  <eustrosoft-front-button
+    [buttonStyleType]="'stroked'"
+    [buttonText]="'Submit'"
+    [buttonType]="'submit'"
+    [disabled]="form.get('submit')!.disabled"
+  ></eustrosoft-front-button>
+</form>

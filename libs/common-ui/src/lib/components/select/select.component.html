@@ -1,0 +1,8 @@
+<mat-form-field [appearance]="fieldAppearance" class="w-100">
+  <mat-label>{{ label }}</mat-label>
+  <mat-select [formControl]="control" [placeholder]="placeholder">
+    <mat-option *ngFor="let option of options" [value]="option">{{
+      option
+    }}</mat-option>
+  </mat-select>
+</mat-form-field>

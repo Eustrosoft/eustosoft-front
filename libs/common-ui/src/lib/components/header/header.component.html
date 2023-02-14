@@ -1,0 +1,23 @@
+<header class="container-fluid my-3">
+  <div class="row">
+    <div class="col-8 d-flex align-items-center justify-content-start">
+      <h2 class="m-0">LOGO</h2>
+      <span class="px-3">|</span>
+      <h1 class="m-0">TIS Apps</h1>
+    </div>
+    <ng-container *ngIf="isAuthenticated | async as isAuth">
+      <div
+        *ngIf="isAuth"
+        class="col-4 d-flex align-items-center justify-content-end"
+      >
+        <eustrosoft-front-button
+          [buttonStyleType]="'icon'"
+          [iconName]="'logout'"
+          [buttonType]="'button'"
+          (click)="logout()"
+        >
+        </eustrosoft-front-button>
+      </div>
+    </ng-container>
+  </div>
+</header>

@@ -1,0 +1,27 @@
+<div class="d-flex flex-column">
+  <h1 class="ml-3 mb-3"># {{ formNumber }}</h1>
+  <eustrosoft-front-select
+    [label]="'Query type'"
+    [control]="form.get('queryType')! | formControl"
+    [options]="queryTypeOptions"
+    [fieldAppearance]="'outline'"
+    class="col-12"
+  ></eustrosoft-front-select>
+  <eustrosoft-front-textarea
+    *ngIf="(form.get('queryType')! | formControl).value === QueryTypes.SQL"
+    [label]="'SQL'"
+    [control]="form.get('request')! | formControl"
+    [fieldAppearance]="'outline'"
+    class="col-12"
+  ></eustrosoft-front-textarea>
+  <eustrosoft-front-input-file
+    *ngIf="(form.get('queryType')! | formControl).value === QueryTypes.FILE"
+    [control]="form.get('file')! | formControl"
+    class="col-12"
+  ></eustrosoft-front-input-file>
+  <eustrosoft-front-file-list
+    [files]="(form.get('file')! | formControl).value"
+    (deleteFile)="deleteFile($event)"
+    class="col-12"
+  ></eustrosoft-front-file-list>
+</div>
