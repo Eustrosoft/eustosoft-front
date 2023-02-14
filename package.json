@@ -6,6 +6,15 @@
     "start:login": "npx nx run login:serve",
     "start:dispatcher": "npx nx run dispatcher:serve",
     "start:explorer": "npx nx run explorer:serve",
+
+    "build:login:stage": "npx nx run login:build --configuration=stage",
+    "build:dispatcher:stage": "npx nx run dispatcher:build --configuration=stage",
+    "build:explorer:stage": "npx nx run explorer:build --configuration=stage",
+
+    "build:login:production": "npx nx run login:build --configuration=production",
+    "build:dispatcher:production": "npx nx run dispatcher:build --configuration=production",
+    "build:explorer:production": "npx nx run explorer:build --configuration=production",
+
     "nx:graph": "npx nx graph"
   },
   "private": true,
