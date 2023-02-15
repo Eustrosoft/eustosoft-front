@@ -2,8 +2,7 @@ import { Inject, Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { AuthenticationService } from './authentication.service';
-import { APP_ENVIRONMENT } from '@eustrosoft-front/app-config';
-import { Environment } from '@eustrosoft-front/app-config';
+import { APP_ENVIRONMENT, Environment } from '@eustrosoft-front/app-config';
 
 @Injectable()
 export class LoginService {

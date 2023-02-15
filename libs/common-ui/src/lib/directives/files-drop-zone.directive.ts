@@ -7,9 +7,9 @@ import {
 } from '@angular/core';
 
 @Directive({
-  selector: '[eustrosoftFrontFilesDragAndDrop]',
+  selector: '[eustrosoftFrontFilesDropZone]',
 })
-export class FilesDragAndDropDirective {
+export class FilesDropZoneDirective {
   @HostBinding('class.files-over') filesOver!: boolean;
   @Output() filesDropped = new EventEmitter<File[]>();
 
@@ -29,7 +29,7 @@ export class FilesDragAndDropDirective {
     event.preventDefault();
     event.stopPropagation();
     this.filesOver = false;
-    const filesArray = Array.from(event.dataTransfer!.files);
+    const filesArray = Array.from((event.dataTransfer as DataTransfer).files);
     if (filesArray.length > 0) {
       this.filesDropped.emit(filesArray);
     }

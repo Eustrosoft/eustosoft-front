@@ -2,14 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {
   ChunkedFileRequest,
+  FileSystemObject,
+  FileSystemObjectTypes,
   TisRequest,
   TisResponse,
   TisResponseBody,
 } from '@eustrosoft-front/core';
-import { mergeMap, Observable, of } from 'rxjs';
+import { delay, mergeMap, Observable, of } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { FileSystemObject } from '@eustrosoft-front/core';
-import { FileSystemObjectTypes } from '@eustrosoft-front/core';
 
 @Injectable()
 export class ExplorerService {
@@ -175,6 +175,7 @@ export class ExplorerService {
     body: FormData,
     headers: { [p: string]: string | string[] }
   ): Observable<any> {
+    return of(true).pipe(delay(500));
     return this.http.post<any>(`${environment.apiUrl}/api/dispatch`, body, {
       headers: new HttpHeaders(headers),
       observe: 'response',

@@ -16,8 +16,10 @@ export * from './lib/components/select/select.component';
 
 export * from './lib/components/textarea/textarea.component';
 
-export * from './lib/directives/files-drag-and-drop.directive';
+export * from './lib/directives/files-drop-zone.directive';
 
 export * from './lib/directives/hover-shadow.directive';
 
 export * from './lib/directives/ripple-hover.directive';
+
+export * from './lib/components/progress-bar/progress-bar.component';

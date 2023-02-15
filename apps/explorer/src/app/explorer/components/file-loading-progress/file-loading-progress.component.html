@@ -1,0 +1,12 @@
+<ng-container
+  *ngIf="{
+    progressBarValue: data.progressBarValue | async | toNumber,
+    currentFile: data.currentFile | async
+  } as state"
+>
+  <span>{{ state.currentFile }}</span>
+  <eustrosoft-front-progress-bar
+    [mode]="'determinate'"
+    [value]="state.progressBarValue"
+  ></eustrosoft-front-progress-bar>
+</ng-container>

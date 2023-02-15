@@ -96,7 +96,7 @@
   <div class="row gx-3 mb-3 justify-content-center">
     <div class="col-12">
       <div
-        eustrosoftFrontFilesDragAndDrop
+        eustrosoftFrontFilesDropZone
         (filesDropped)="filesDropped($event)"
         class="vh-25 border border-3 rounded-3 d-flex flex-column align-items-center justify-content-center"
       >
@@ -137,16 +137,7 @@
       (deleteFile)="deleteFile($event)"
       class="col-12"
     ></eustrosoft-front-file-list>
-    <ng-container *ngIf="uploadResult$ | async as result">
-      <ng-container *ngIf="showProgressBar | async">
-        <div>
-          <span>{{ currentFile }}</span>
-          <mat-progress-bar
-            [mode]="'determinate'"
-            [value]="progressBarValue"
-          ></mat-progress-bar>
-        </div>
-      </ng-container>
-    </ng-container>
+    <ng-container *ngIf="upload$ | async as upload"></ng-container>
+    <ng-container *ngIf="result$ | async as result"></ng-container>
   </div>
 </div>

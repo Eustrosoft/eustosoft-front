@@ -15,6 +15,7 @@ import {
 } from 'rxjs';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import {
+  DisplayTypes,
   QueryTypes,
   RequestsForm,
   Table,
@@ -23,7 +24,6 @@ import {
   TisResponseBody,
   TisTableResult,
 } from '@eustrosoft-front/core';
-import { DisplayTypes } from '@eustrosoft-front/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { RequestBuilderService } from './services/request-builder.service';
 import { RequestFormBuilderService } from './services/request-form-builder.service';

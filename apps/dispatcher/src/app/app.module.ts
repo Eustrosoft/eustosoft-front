@@ -5,7 +5,7 @@ import { AppComponent } from './app.component';
 import { RouterModule } from '@angular/router';
 import { appRoutes } from './app.routes';
 import { CommonUiModule } from '@eustrosoft-front/common-ui';
-import { CoreModule, FileReaderService } from '@eustrosoft-front/core';
+import { CoreModule } from '@eustrosoft-front/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SecurityModule } from '@eustrosoft-front/security';
 import { APP_ENVIRONMENT } from '@eustrosoft-front/app-config';

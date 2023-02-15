@@ -1,8 +1,8 @@
-import { FilesDragAndDropDirective } from './files-drag-and-drop.directive';
+import { FilesDropZoneDirective } from './files-drop-zone.directive';
 
 describe('FilesDragAndDropDirective', () => {
   it('should create an instance', () => {
-    const directive = new FilesDragAndDropDirective();
+    const directive = new FilesDropZoneDirective();
     expect(directive).toBeTruthy();
   });
 });

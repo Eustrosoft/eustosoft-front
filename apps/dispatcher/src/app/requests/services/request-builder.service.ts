@@ -2,13 +2,13 @@ import { Injectable } from '@angular/core';
 import {
   FileReaderService,
   FileRequest,
+  QueryTypes,
+  SingleRequestForm,
   SqlRequest,
   TisRequest,
 } from '@eustrosoft-front/core';
 import { combineLatest, mergeMap, Observable, of } from 'rxjs';
-import { QueryTypes } from '@eustrosoft-front/core';
 import { FormArray, FormGroup } from '@angular/forms';
-import { SingleRequestForm } from '@eustrosoft-front/core';
 
 @Injectable()
 export class RequestBuilderService {

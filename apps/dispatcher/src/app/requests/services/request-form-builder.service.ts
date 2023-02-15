@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { RequestsForm, SingleRequestForm } from '@eustrosoft-front/core';
-import { QueryTypes } from '@eustrosoft-front/core';
+import {
+  QueryTypes,
+  RequestsForm,
+  SingleRequestForm,
+} from '@eustrosoft-front/core';
 
 @Injectable()
 export class RequestFormBuilderService {
