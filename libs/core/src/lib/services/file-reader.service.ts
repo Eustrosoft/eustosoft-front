@@ -6,12 +6,11 @@ import {
   Observable,
   of,
   Subscriber,
+  toArray,
 } from 'rxjs';
 
 @Injectable()
 export class FileReaderService {
-  constructor() {}
-
   // 1048576 - 1 MB
   // 5242880 - 5 MB
   // 10485760 - 10 MB
@@ -28,10 +27,10 @@ export class FileReaderService {
         return combineLatest([of(file), buffer]).pipe(
           mergeMap(([file, buff]) => {
             let startPointer = 0;
-            let endPointer = buff.byteLength;
+            const endPointer = buff.byteLength;
             let chunks = [];
             while (startPointer < endPointer) {
-              let newStartPointer = startPointer + chunkSize;
+              const newStartPointer = startPointer + chunkSize;
               chunks.push(buff.slice(startPointer, newStartPointer));
               startPointer = newStartPointer;
             }
@@ -61,10 +60,10 @@ export class FileReaderService {
         return combineLatest([of(file), buffer]).pipe(
           mergeMap(([file, buff]) => {
             let startPointer = 0;
-            let endPointer = buff.byteLength;
-            let chunks = [];
+            const endPointer = buff.byteLength;
+            const chunks = [];
             while (startPointer < endPointer) {
-              let newStartPointer = startPointer + chunkSize;
+              const newStartPointer = startPointer + chunkSize;
               const chunk = buff.slice(startPointer, newStartPointer);
               chunks.push(new Blob([chunk]));
               startPointer = newStartPointer;
@@ -106,7 +105,7 @@ export class FileReaderService {
       reader.onerror = (err) => obs.error(err);
       reader.onabort = (err) => obs.error(err);
       reader.onload = () =>
-        obs.next(reader.result!.toString().replace(/^.*,/, ''));
+        obs.next(reader.result?.toString().replace(/^.*,/, ''));
       reader.onloadend = () => obs.complete();
 
       return reader.readAsDataURL(blob);

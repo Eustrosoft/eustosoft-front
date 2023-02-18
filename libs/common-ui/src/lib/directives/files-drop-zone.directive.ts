@@ -3,20 +3,25 @@ import {
   EventEmitter,
   HostBinding,
   HostListener,
+  Input,
   Output,
 } from '@angular/core';
+import { FileSystemObjectTypes } from '@eustrosoft-front/core';
 
 @Directive({
   selector: '[eustrosoftFrontFilesDropZone]',
 })
 export class FilesDropZoneDirective {
   @HostBinding('class.files-over') filesOver!: boolean;
+  @Input() fsObjType!: FileSystemObjectTypes;
   @Output() filesDropped = new EventEmitter<File[]>();
 
   @HostListener('dragover', ['$event']) onDragOver(event: DragEvent) {
     event.preventDefault();
     event.stopPropagation();
-    this.filesOver = true;
+    if (this.fsObjType === FileSystemObjectTypes.FOLDER) {
+      this.filesOver = true;
+    }
   }
 
   @HostListener('dragleave', ['$event']) onDragLeave(event: DragEvent) {

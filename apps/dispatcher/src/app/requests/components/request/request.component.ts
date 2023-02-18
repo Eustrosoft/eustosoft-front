@@ -26,6 +26,5 @@ export class RequestComponent {
     const control = this.form.get('file');
     control?.value?.splice(index, 1);
     control?.patchValue(control?.value);
-    this.inputFileComponent.patchInput();
   }
 }

@@ -1,9 +1,38 @@
 <div class="container-fluid">
-  <div class="row">
+  <div class="row gx-3 mb-3">
     <p *ngIf="params$ | async as params">{{ params | json }}</p>
+    <div class="col-2">
+      <eustrosoft-front-button
+        [buttonType]="'button'"
+        [buttonStyleType]="'stroked'"
+        [buttonText]="'New'"
+        [color]="'primary'"
+        [matMenuTriggerFor]="menu"
+      >
+      </eustrosoft-front-button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item>
+          <mat-icon>create_new_folder</mat-icon>
+          <span>New folder</span>
+        </button>
+        <button
+          (click)="inputFileComponent.fileInput.nativeElement.click()"
+          mat-menu-item
+        >
+          <mat-icon>upload</mat-icon>
+          <span>New upload</span>
+        </button>
+      </mat-menu>
+    </div>
+    <eustrosoft-front-input-file
+      [control]="control"
+      [multiple]="true"
+      (filesSelected)="patchQueue()"
+      hidden="true"
+    ></eustrosoft-front-input-file>
   </div>
   <div class="row gx-3 mb-3">
-    <ng-container *ngIf="folders | async as fls">
+    <ng-container *ngIf="folders$ | async as fls">
       <table mat-table [dataSource]="fls" class="mat-elevation-z8">
         <!-- Checkbox Column -->
         <ng-container matColumnDef="select">
@@ -61,11 +90,11 @@
                 [buttonStyleType]="'icon'"
                 [iconName]="'more_vert'"
                 [color]="'primary'"
-                [matMenuTriggerFor]="menu"
+                [matMenuTriggerFor]="actionsMenu"
                 (click)="$event.stopPropagation()"
               >
               </eustrosoft-front-button>
-              <mat-menu #menu="matMenu">
+              <mat-menu #actionsMenu="matMenu">
                 <button mat-menu-item>
                   <mat-icon>download</mat-icon>
                   <span>Download</span>
@@ -85,10 +114,13 @@
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr
-          mat-row
-          class="table-row"
           *matRowDef="let row; columns: displayedColumns"
+          mat-row
+          eustrosoftFrontFilesDropZone
+          [fsObjType]="row.type"
+          (filesDropped)="filesDroppedOnFolder($event, row)"
           (click)="openFolder(row)"
+          class="table-row"
         ></tr>
       </table>
     </ng-container>
@@ -97,15 +129,11 @@
     <div class="col-12">
       <div
         eustrosoftFrontFilesDropZone
+        [fsObjType]="fsObjTypes.FOLDER"
         (filesDropped)="filesDropped($event)"
         class="vh-25 border border-3 rounded-3 d-flex flex-column align-items-center justify-content-center"
       >
         <h1>Drop files here or</h1>
-        <eustrosoft-front-input-file
-          [control]="control"
-          [multiple]="true"
-          class="col-2"
-        ></eustrosoft-front-input-file>
       </div>
     </div>
   </div>
@@ -132,12 +160,8 @@
     </div>
   </div>
   <div class="row gx-3">
-    <eustrosoft-front-file-list
-      [files]="control.value"
-      (deleteFile)="deleteFile($event)"
-      class="col-12"
-    ></eustrosoft-front-file-list>
     <ng-container *ngIf="upload$ | async as upload"></ng-container>
     <ng-container *ngIf="result$ | async as result"></ng-container>
+    <ng-container *ngIf="test$ | async as test"></ng-container>
   </div>
 </div>

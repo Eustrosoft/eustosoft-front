@@ -1,9 +1,14 @@
 <ng-container
   *ngIf="{
-    progressBarValue: data.progressBarValue | async | toNumber,
-    currentFile: data.currentFile | async
+    progressBarValue: data.progressBarValue$ | async | toNumber,
+    currentFile: data.currentFile$ | async,
+    files: data.files$ | async
   } as state"
 >
+  <eustrosoft-front-file-list
+    [files]="state.files || []"
+    class="col-12"
+  ></eustrosoft-front-file-list>
   <span>{{ state.currentFile }}</span>
   <eustrosoft-front-progress-bar
     [mode]="'determinate'"

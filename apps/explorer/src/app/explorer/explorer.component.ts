@@ -2,26 +2,45 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  OnDestroy,
   OnInit,
   ViewChild,
 } from '@angular/core';
 import { InputFileComponent } from '@eustrosoft-front/common-ui';
-import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
+  asapScheduler,
+  asyncScheduler,
   BehaviorSubject,
+  buffer,
   catchError,
   combineLatest,
   concatMap,
+  concatMapTo,
+  concatWith,
   delay,
   EMPTY,
+  filter,
   finalize,
+  first,
   from,
+  last,
+  map,
+  mergeAll,
   mergeMap,
   Observable,
   of,
+  pairwise,
+  queueScheduler,
+  scheduled,
+  skipWhile,
+  Subject,
   switchMap,
+  take,
+  takeUntil,
+  takeWhile,
   tap,
-  zip,
+  toArray,
 } from 'rxjs';
 import {
   ChunkedFileRequest,
@@ -43,6 +62,7 @@ import {
   MatBottomSheetRef,
 } from '@angular/material/bottom-sheet';
 import { FileLoadingProgressComponent } from './components/file-loading-progress/file-loading-progress.component';
+import { QueueScheduler } from 'rxjs/internal/scheduler/QueueScheduler';
 
 @Component({
   selector: 'eustrosoft-front-explorer',
@@ -50,32 +70,45 @@ import { FileLoadingProgressComponent } from './components/file-loading-progress
   styleUrls: ['./explorer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ExplorerComponent implements OnInit {
+export class ExplorerComponent implements OnInit, OnDestroy {
   @ViewChild(InputFileComponent) inputFileComponent!: InputFileComponent;
   upload$!: Observable<any>;
   result$!: Observable<any>;
   params$!: Observable<any>;
-  folders!: Observable<FileSystemObject[]>;
+  test$!: Observable<any>;
+  filesObs$!: Observable<
+    { file: File; chunks: Blob[]; currentChunk: number }[]
+  >;
+  fileQueue$ = new Subject<File[]>();
+  uploadInProcess$ = new BehaviorSubject<boolean>(false);
+  bottomSheetRef!: MatBottomSheetRef<FileLoadingProgressComponent>;
+  folders$!: Observable<FileSystemObject[]>;
 
   displayedColumns: string[] = ['select', 'name', 'lastModified', 'actions'];
   dataSource = new MatTableDataSource<FileSystemObject>([]);
   selection = new SelectionModel<FileSystemObject>(true, []);
 
   control = new FormControl<File[]>([], { nonNullable: true });
-  progressBarValue = new BehaviorSubject<number>(0);
-  currentFile = new BehaviorSubject<string>('');
+  progressBarValue$ = new BehaviorSubject<number>(0);
+  currentFile$ = new BehaviorSubject<string>('');
+  files$ = new BehaviorSubject<File[]>([]);
 
   fsObjTypes = FileSystemObjectTypes;
 
+  private destroy$ = new Subject<void>();
+
   private bottomSheetConfig: MatBottomSheetConfig = {
     data: {
-      progressBarValue: this.progressBarValue,
-      currentFile: this.currentFile,
+      files$: this.files$,
+      progressBarValue$: this.progressBarValue$,
+      currentFile$: this.currentFile$,
     },
     hasBackdrop: false,
     disableClose: true,
     panelClass: 'bottom-sheet-position',
   };
+
+  filesInQueue: File[] = [];
 
   constructor(
     private fileReaderService: FileReaderService,
@@ -90,28 +123,17 @@ export class ExplorerComponent implements OnInit {
 
   ngOnInit(): void {
     this.params$ = this.route.params;
-    this.folders = this.params$.pipe(
+    this.folders$ = this.params$.pipe(
       switchMap((params: { path: string }) =>
         this.explorerService.getFsObjects(params.path)
       ),
       tap((result) => (this.dataSource.data = result))
     );
-    // this.router.events.forEach((event) => {
-    //   if (event instanceof NavigationStart) {
-    //     if (event.navigationTrigger === 'popstate') {
-    //       /* Do something here */
-    //     }
-    //   }
-    // });
-    this.router.events.pipe().subscribe({
-      next: (event) => {
-        if (event instanceof NavigationStart) {
-          if (event.navigationTrigger === 'popstate') {
-            this.router.navigate([event.url]);
-          }
-        }
-      },
-    });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   isAllSelected() {
@@ -141,17 +163,16 @@ export class ExplorerComponent implements OnInit {
       return;
     }
     let uploadError = false;
-    let bottomSheetRef: MatBottomSheetRef<FileLoadingProgressComponent>;
+    const bottomSheetRef = this.bottomSheet.open(
+      FileLoadingProgressComponent,
+      this.bottomSheetConfig
+    );
     this.upload$ = this.fileReaderService.splitBase64(this.control.value).pipe(
       mergeMap((fc: { file: File; chunks: string[] }) =>
         this.explorerRequestBuilderService.buildChunkRequest(fc).pipe()
       ),
       tap((request: TisRequest) => {
         console.log(request);
-        bottomSheetRef = this.bottomSheet.open(
-          FileLoadingProgressComponent,
-          this.bottomSheetConfig
-        );
       }),
       concatMap((query: TisRequest) => this.explorerService.upload(query)),
       tap(
@@ -162,8 +183,8 @@ export class ExplorerComponent implements OnInit {
           currentChunk: number;
         }) => {
           const req = response.request.requests[0] as ChunkedFileRequest;
-          this.currentFile.next(req.parameters.data.name);
-          this.progressBarValue.next(
+          this.currentFile$.next(req.parameters.data.name);
+          this.progressBarValue$.next(
             100 * ((response.currentChunk + 1) / response.totalChunks)
           );
         }
@@ -180,10 +201,13 @@ export class ExplorerComponent implements OnInit {
           this.snackBar.open('Upload completed', 'Close');
           bottomSheetRef.dismiss();
           this.control.patchValue([]);
-          this.inputFileComponent.patchInput();
-          this.cd.markForCheck();
         }
       })
+    );
+
+    this.result$ = bottomSheetRef.afterDismissed().pipe(
+      delay(200),
+      tap(() => this.snackBar.open('Upload completed', 'Close'))
     );
   }
 
@@ -193,12 +217,13 @@ export class ExplorerComponent implements OnInit {
       return;
     }
     let uploadError = false;
+    this.files$.next(this.control.value);
     const bottomSheetRef = this.bottomSheet.open(
       FileLoadingProgressComponent,
       this.bottomSheetConfig
     );
     this.upload$ = this.fileReaderService.splitBinary(this.control.value).pipe(
-      tap(() => this.currentFile.next('Upload starting ...')),
+      tap(() => this.currentFile$.next('Upload starting ...')),
       concatMap(({ file, chunks }) => {
         return from(chunks).pipe(
           concatMap((chunk: Blob, currentChunk: number) => {
@@ -221,12 +246,21 @@ export class ExplorerComponent implements OnInit {
               of(chunks),
               of(currentChunk),
             ]);
-          })
+          }),
+          tap(([response, file, chunks, currentChunk]) => {
+            this.currentFile$.next(file.name);
+            this.progressBarValue$.next(
+              100 * ((currentChunk + 1) / chunks.length)
+            );
+          }),
+          toArray()
         );
       }),
-      tap(([response, file, chunks, currentChunk]) => {
-        this.currentFile.next(file.name);
-        this.progressBarValue.next(100 * ((currentChunk + 1) / chunks.length));
+      tap((value) => {
+        const file = value[0][1];
+        this.files$.next(
+          this.files$.getValue().filter((f) => f.name !== file.name)
+        );
       }),
       catchError((err) => {
         uploadError = true;
@@ -239,13 +273,11 @@ export class ExplorerComponent implements OnInit {
         if (!uploadError) {
           bottomSheetRef.dismiss();
           this.control.patchValue([]);
-          this.inputFileComponent.patchInput();
-          this.cd.markForCheck();
         }
       })
     );
 
-    this.result$ = zip(this.upload$, bottomSheetRef.afterDismissed()).pipe(
+    this.result$ = bottomSheetRef.afterDismissed().pipe(
       delay(200),
       tap(() => this.snackBar.open('Upload completed', 'Close'))
     );
@@ -253,16 +285,33 @@ export class ExplorerComponent implements OnInit {
 
   filesDropped(files: File[]): void {
     this.control.patchValue(files);
-    this.inputFileComponent.patchInput();
+  }
+
+  filesDroppedOnFolder(files: File[], folder: FileSystemObject): void {
+    this.control.patchValue(files);
+    this.uploadFilesBinary();
   }
 
   deleteFile(index: number): void {
     this.control.value.splice(index, 1);
     this.control.patchValue(this.control.value);
-    this.inputFileComponent.patchInput();
   }
 
   back() {
     this.router.navigate(['..'], { relativeTo: this.route });
+  }
+
+  /**
+   * TODO
+   * Разобраться как сделать очередь и работать с ней
+   * Складывать файлы в очередь
+   * Следить за состоянием
+   * Управлять состоянием кокретного файла
+   */
+
+  patchQueue(): void {
+    this.fileQueue$.next(this.control.value);
+    this.uploadInProcess$.next(true);
+    this.uploadFilesBinary();
   }
 }
