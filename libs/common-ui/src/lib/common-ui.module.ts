@@ -20,6 +20,10 @@ import { FilesDropZoneDirective } from './directives/files-drop-zone.directive';
 import { RippleHoverDirective } from './directives/ripple-hover.directive';
 import { ProgressBarComponent } from './components/progress-bar/progress-bar.component';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import {
+  CdkFixedSizeVirtualScroll,
+  CdkVirtualScrollViewport,
+} from '@angular/cdk/scrolling';
 
 @NgModule({
   imports: [
@@ -32,6 +36,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     MatProgressSpinnerModule,
     MatSelectModule,
     MatProgressBarModule,
+    CdkVirtualScrollViewport,
+    CdkFixedSizeVirtualScroll,
   ],
   declarations: [
     HeaderComponent,

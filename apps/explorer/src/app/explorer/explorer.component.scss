@@ -1,4 +1,4 @@
-@import "variables";
+@import 'variables';
 
 .files-over {
   background: $light-gray;
@@ -7,4 +7,12 @@
 
 tr.table-row:hover {
   background: whitesmoke;
+}
+
+.progress-overlay {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 60%;
+  background: $light-gray;
 }

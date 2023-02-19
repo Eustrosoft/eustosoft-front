@@ -9,36 +9,19 @@ import {
 import { InputFileComponent } from '@eustrosoft-front/common-ui';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
-  asapScheduler,
-  asyncScheduler,
   BehaviorSubject,
-  buffer,
   catchError,
   combineLatest,
   concatMap,
-  concatMapTo,
-  concatWith,
   delay,
   EMPTY,
-  filter,
   finalize,
-  first,
   from,
-  last,
-  map,
-  mergeAll,
   mergeMap,
   Observable,
   of,
-  pairwise,
-  queueScheduler,
-  scheduled,
-  skipWhile,
   Subject,
   switchMap,
-  take,
-  takeUntil,
-  takeWhile,
   tap,
   toArray,
 } from 'rxjs';
@@ -56,13 +39,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { SelectionModel } from '@angular/cdk/collections';
 import { ExplorerRequestBuilderService } from './services/explorer-request-builder.service';
 import { ExplorerService } from './services/explorer.service';
-import {
-  MatBottomSheet,
-  MatBottomSheetConfig,
-  MatBottomSheetRef,
-} from '@angular/material/bottom-sheet';
-import { FileLoadingProgressComponent } from './components/file-loading-progress/file-loading-progress.component';
-import { QueueScheduler } from 'rxjs/internal/scheduler/QueueScheduler';
 
 @Component({
   selector: 'eustrosoft-front-explorer',
@@ -73,15 +49,8 @@ import { QueueScheduler } from 'rxjs/internal/scheduler/QueueScheduler';
 export class ExplorerComponent implements OnInit, OnDestroy {
   @ViewChild(InputFileComponent) inputFileComponent!: InputFileComponent;
   upload$!: Observable<any>;
-  result$!: Observable<any>;
   params$!: Observable<any>;
-  test$!: Observable<any>;
-  filesObs$!: Observable<
-    { file: File; chunks: Blob[]; currentChunk: number }[]
-  >;
-  fileQueue$ = new Subject<File[]>();
-  uploadInProcess$ = new BehaviorSubject<boolean>(false);
-  bottomSheetRef!: MatBottomSheetRef<FileLoadingProgressComponent>;
+
   folders$!: Observable<FileSystemObject[]>;
 
   displayedColumns: string[] = ['select', 'name', 'lastModified', 'actions'];
@@ -91,22 +60,10 @@ export class ExplorerComponent implements OnInit, OnDestroy {
   control = new FormControl<File[]>([], { nonNullable: true });
   progressBarValue$ = new BehaviorSubject<number>(0);
   currentFile$ = new BehaviorSubject<string>('');
-  files$ = new BehaviorSubject<File[]>([]);
 
   fsObjTypes = FileSystemObjectTypes;
 
   private destroy$ = new Subject<void>();
-
-  private bottomSheetConfig: MatBottomSheetConfig = {
-    data: {
-      files$: this.files$,
-      progressBarValue$: this.progressBarValue$,
-      currentFile$: this.currentFile$,
-    },
-    hasBackdrop: false,
-    disableClose: true,
-    panelClass: 'bottom-sheet-position',
-  };
 
   filesInQueue: File[] = [];
 
@@ -117,8 +74,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
     private snackBar: MatSnackBar,
     private cd: ChangeDetectorRef,
     private route: ActivatedRoute,
-    private router: Router,
-    private bottomSheet: MatBottomSheet
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -163,10 +119,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
       return;
     }
     let uploadError = false;
-    const bottomSheetRef = this.bottomSheet.open(
-      FileLoadingProgressComponent,
-      this.bottomSheetConfig
-    );
+
     this.upload$ = this.fileReaderService.splitBase64(this.control.value).pipe(
       mergeMap((fc: { file: File; chunks: string[] }) =>
         this.explorerRequestBuilderService.buildChunkRequest(fc).pipe()
@@ -193,21 +146,16 @@ export class ExplorerComponent implements OnInit, OnDestroy {
         uploadError = true;
         console.error(err);
         this.snackBar.open('Error making request', 'Close');
-        bottomSheetRef.dismiss();
+
         return EMPTY;
       }),
       finalize(() => {
         if (!uploadError) {
           this.snackBar.open('Upload completed', 'Close');
-          bottomSheetRef.dismiss();
+
           this.control.patchValue([]);
         }
       })
-    );
-
-    this.result$ = bottomSheetRef.afterDismissed().pipe(
-      delay(200),
-      tap(() => this.snackBar.open('Upload completed', 'Close'))
     );
   }
 
@@ -217,11 +165,6 @@ export class ExplorerComponent implements OnInit, OnDestroy {
       return;
     }
     let uploadError = false;
-    this.files$.next(this.control.value);
-    const bottomSheetRef = this.bottomSheet.open(
-      FileLoadingProgressComponent,
-      this.bottomSheetConfig
-    );
     this.upload$ = this.fileReaderService.splitBinary(this.control.value).pipe(
       tap(() => this.currentFile$.next('Upload starting ...')),
       concatMap(({ file, chunks }) => {
@@ -256,30 +199,25 @@ export class ExplorerComponent implements OnInit, OnDestroy {
           toArray()
         );
       }),
+      delay(500),
       tap((value) => {
         const file = value[0][1];
-        this.files$.next(
-          this.files$.getValue().filter((f) => f.name !== file.name)
+        this.control.patchValue(
+          this.control.value.filter((f: File) => f.name !== file.name)
         );
       }),
       catchError((err) => {
         uploadError = true;
         console.error(err);
         this.snackBar.open('Error making request', 'Close');
-        bottomSheetRef.dismiss();
         return EMPTY;
       }),
       finalize(() => {
         if (!uploadError) {
-          bottomSheetRef.dismiss();
+          this.snackBar.open('Upload completed', 'Close');
           this.control.patchValue([]);
         }
       })
-    );
-
-    this.result$ = bottomSheetRef.afterDismissed().pipe(
-      delay(200),
-      tap(() => this.snackBar.open('Upload completed', 'Close'))
     );
   }
 
@@ -303,15 +241,12 @@ export class ExplorerComponent implements OnInit, OnDestroy {
 
   /**
    * TODO
-   * Разобраться как сделать очередь и работать с ней
-   * Складывать файлы в очередь
-   * Следить за состоянием
-   * Управлять состоянием кокретного файла
+   * Отменять загрузку конкретного файла (удалять из очереди)
+   * Добавить прокрутку для списка если очень много файлов
+   *
    */
 
-  patchQueue(): void {
-    this.fileQueue$.next(this.control.value);
-    this.uploadInProcess$.next(true);
+  startUpload(): void {
     this.uploadFilesBinary();
   }
 }

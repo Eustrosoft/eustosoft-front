@@ -19,7 +19,7 @@ export class FilesDropZoneDirective {
   @HostListener('dragover', ['$event']) onDragOver(event: DragEvent) {
     event.preventDefault();
     event.stopPropagation();
-    if (this.fsObjType === FileSystemObjectTypes.FOLDER) {
+    if (this.fsObjType === FileSystemObjectTypes.DIRECTORY) {
       this.filesOver = true;
     }
   }

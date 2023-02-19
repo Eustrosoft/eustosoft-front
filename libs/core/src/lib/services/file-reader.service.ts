@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import {
   combineLatest,
+  concatMap,
   from,
   mergeMap,
   Observable,
@@ -55,7 +56,7 @@ export class FileReaderService {
     chunkSize: number = 1048576
   ): Observable<{ file: File; chunks: Blob[] }> {
     return from(files).pipe(
-      mergeMap((file: File) => {
+      concatMap((file: File) => {
         const buffer = this.blobToArrayBuffer(file);
         return combineLatest([of(file), buffer]).pipe(
           mergeMap(([file, buff]) => {

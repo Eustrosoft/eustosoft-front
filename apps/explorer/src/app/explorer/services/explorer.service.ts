@@ -17,12 +17,12 @@ export class ExplorerService {
     {
       id: '1',
       title: 'first-folder',
-      type: FileSystemObjectTypes.FOLDER,
+      type: FileSystemObjectTypes.DIRECTORY,
       children: [
         {
           id: '11',
           title: 'first-child-of-first',
-          type: FileSystemObjectTypes.FOLDER,
+          type: FileSystemObjectTypes.DIRECTORY,
           children: [
             {
               id: '1',
@@ -67,7 +67,7 @@ export class ExplorerService {
         {
           id: '22',
           title: 'second-child-child-of-first',
-          type: FileSystemObjectTypes.FOLDER,
+          type: FileSystemObjectTypes.DIRECTORY,
           children: [],
           info: {
             created: '',
@@ -85,12 +85,12 @@ export class ExplorerService {
     {
       id: '2',
       title: 'second-folder',
-      type: FileSystemObjectTypes.FOLDER,
+      type: FileSystemObjectTypes.DIRECTORY,
       children: [
         {
           id: '11',
           title: 'first-child-child-of-second',
-          type: FileSystemObjectTypes.FOLDER,
+          type: FileSystemObjectTypes.DIRECTORY,
           children: [],
           info: {
             created: '',
@@ -175,7 +175,7 @@ export class ExplorerService {
     body: FormData,
     headers: { [p: string]: string | string[] }
   ): Observable<any> {
-    return of(true).pipe(delay(500));
+    return of(true).pipe(delay(1000));
     return this.http.post<any>(`${environment.apiUrl}/api/dispatch`, body, {
       headers: new HttpHeaders(headers),
       observe: 'response',
