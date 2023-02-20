@@ -130,17 +130,18 @@
   </div>
 </div>
 
-<div class="border border-2 border-light rounded-2 p-2 progress-overlay">
-  <ng-container *ngIf="control.value.length > 0">
-    <eustrosoft-front-file-list
-      [files]="control.value"
-      (deleteFile)="deleteFile($event)"
-      class="col-12"
-    ></eustrosoft-front-file-list>
-    <span class="text-break">{{ currentFile$ | async }}</span>
-    <eustrosoft-front-progress-bar
-      [mode]="'determinate'"
-      [value]="progressBarValue$ | async | toNumber"
-    ></eustrosoft-front-progress-bar>
-  </ng-container>
+<div
+  class="border border-2 border-light rounded-2 p-2 progress-overlay"
+  *ngIf="control.value.length > 0"
+>
+  <eustrosoft-front-file-list
+    [files]="control.value"
+    (deleteFile)="deleteFile($event)"
+    class="col-12"
+  ></eustrosoft-front-file-list>
+  <span class="text-break">{{ currentFile$ | async }}</span>
+  <eustrosoft-front-progress-bar
+    [mode]="'determinate'"
+    [value]="progressBarValue$ | async | toNumber"
+  ></eustrosoft-front-progress-bar>
 </div>

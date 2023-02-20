@@ -175,7 +175,7 @@ export class ExplorerService {
     body: FormData,
     headers: { [p: string]: string | string[] }
   ): Observable<any> {
-    return of(true).pipe(delay(1000));
+    return of(true).pipe(delay(500));
     return this.http.post<any>(`${environment.apiUrl}/api/dispatch`, body, {
       headers: new HttpHeaders(headers),
       observe: 'response',
