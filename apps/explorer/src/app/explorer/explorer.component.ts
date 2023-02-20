@@ -94,7 +94,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
       mergeMap((files: File[][]) => from(files)),
       tap((files: File[]) => {
         console.log('BUFFER EMITTED: ', files);
-        if (files.length === 0) {
+        if (files.length === 0 && !uploadError) {
           this.cd.markForCheck();
           this.snackBar.open('Upload completed', 'Close');
           this.currentFile$.next('');
@@ -150,6 +150,8 @@ export class ExplorerComponent implements OnInit, OnDestroy {
             uploadError = true;
             console.error(err);
             this.snackBar.open('Error making request', 'Close');
+            this.control.patchValue([]);
+            this.cd.markForCheck();
             return EMPTY;
           }),
           finalize(() => {
@@ -159,6 +161,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
         )
       ),
       finalize(() => {
+        console.log('call outer');
         // Not called at all
         // Why?
       })
