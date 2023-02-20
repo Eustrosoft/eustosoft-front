@@ -1,13 +1,13 @@
 import { FileSystemObjectTypes } from '../constants/enums/file-system-object-types.enum';
 
 export interface FileSystemObject {
-  id: string;
-  title: string;
+  fileName: string;
+  extension?: string;
+  hash?: string;
+  fullPath: string;
+  links: Array<unknown>;
+  space: number;
+  modified: string;
+  created: string;
   type: FileSystemObjectTypes;
-  children: FileSystemObject[];
-  info: {
-    created: string;
-    modified: string;
-    owner: string;
-  };
 }

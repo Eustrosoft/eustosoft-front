@@ -1,2 +1,9 @@
 <eustrosoft-front-header></eustrosoft-front-header>
+
+<eustrosoft-front-progress-bar
+  *ngIf="loading"
+  [mode]="'indeterminate'"
+  class="route-loader"
+></eustrosoft-front-progress-bar>
+
 <router-outlet></router-outlet>

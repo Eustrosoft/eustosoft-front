@@ -6,7 +6,10 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { InputFileComponent } from '@eustrosoft-front/common-ui';
+import {
+  InputFileComponent,
+  PreloaderComponent,
+} from '@eustrosoft-front/common-ui';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   BehaviorSubject,
@@ -188,12 +191,8 @@ export class ExplorerComponent implements OnInit, OnDestroy {
     this.selection.select(...this.dataSource.data);
   }
 
-  openFolder(folder: FileSystemObject): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-    if (folder.children.length !== 0) {
-      this.router.navigate([folder.title], { relativeTo: this.route });
-    }
+  openFolder(fsElem: FileSystemObject): void {
+    this.router.navigate([fsElem.fullPath], { relativeTo: this.route }).then();
   }
 
   uploadFilesBase64(): void {

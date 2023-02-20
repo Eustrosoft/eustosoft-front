@@ -1,5 +1,5 @@
-import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
-import {ProgressBarMode} from "@angular/material/progress-bar";
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ProgressBarMode } from '@angular/material/progress-bar';
 
 @Component({
   selector: 'eustrosoft-front-progress-bar',
