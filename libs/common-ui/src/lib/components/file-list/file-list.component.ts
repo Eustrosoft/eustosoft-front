@@ -14,6 +14,7 @@ import {
 })
 export class FileListComponent {
   @Input() files!: File[];
+  @Input() classesForList: string[] = [];
   @Output() deleteFile = new EventEmitter<number>();
 
   delete(index: number): void {

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import {
   ChunkedFileRequest,
   FileSystemObject,
@@ -183,7 +183,7 @@ export class ExplorerService {
   constructor(private http: HttpClient) {}
 
   getFsObjects(path: string): Observable<FileSystemObject[]> {
-    return of(this.fs);
+    // return of(this.fs);
     return this.http.get<FileSystemObject[]>(
       `${environment.apiUrl}/folders?path=/${path}`
     );
@@ -191,6 +191,19 @@ export class ExplorerService {
 
   createFsObject(obj: any): Observable<any> {
     return this.http.post(`${environment.apiUrl}/api/folders`, obj);
+  }
+
+  getDownloadTicket(path: string): Observable<{ ticket: string }> {
+    return this.http.get<{ ticket: string }>(
+      `${environment.apiUrl}/files/ticket?path=${path}`
+    );
+  }
+
+  download(ticket: string): Observable<HttpResponse<Blob>> {
+    return this.http.get(
+      `${environment.apiUrl}/files/download?ticket=${ticket}`,
+      { observe: 'response', responseType: 'blob' }
+    );
   }
 
   upload(query: TisRequest): Observable<{
@@ -221,7 +234,7 @@ export class ExplorerService {
     body: FormData,
     headers: { [p: string]: string | string[] }
   ): Observable<any> {
-    return of(true).pipe(delay(500));
+    return of(true).pipe(delay(50000));
     return this.http.post<any>(`${environment.apiUrl}/api/dispatch`, body, {
       headers: new HttpHeaders(headers),
       observe: 'response',

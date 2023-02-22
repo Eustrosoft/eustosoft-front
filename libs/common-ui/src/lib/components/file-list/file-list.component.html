@@ -1,6 +1,7 @@
 <cdk-virtual-scroll-viewport itemSize="5" class="vh-25">
   <div
     *ngFor="let file of files; let i = index"
+    [ngClass]="classesForList"
     class="d-flex align-items-center"
   >
     <ng-container *ngIf="file">

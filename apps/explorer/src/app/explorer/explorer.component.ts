@@ -6,10 +6,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import {
-  InputFileComponent,
-  PreloaderComponent,
-} from '@eustrosoft-front/common-ui';
+import { InputFileComponent } from '@eustrosoft-front/common-ui';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   BehaviorSubject,
@@ -26,6 +23,7 @@ import {
   of,
   Subject,
   switchMap,
+  take,
   takeUntil,
   tap,
   toArray,
@@ -44,6 +42,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { SelectionModel } from '@angular/cdk/collections';
 import { ExplorerRequestBuilderService } from './services/explorer-request-builder.service';
 import { ExplorerService } from './services/explorer.service';
+import { HttpResponse } from '@angular/common/http';
 
 @Component({
   selector: 'eustrosoft-front-explorer',
@@ -141,7 +140,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
               toArray()
             );
           }),
-          delay(500),
+          delay(100),
           tap((value) => {
             const file = value[0][1];
             this.control.patchValue(
@@ -249,10 +248,6 @@ export class ExplorerComponent implements OnInit, OnDestroy {
     this.emitBuffer$.next();
   }
 
-  filesDropped(files: File[]): void {
-    this.control.patchValue(files);
-  }
-
   filesDroppedOnFolder(files: File[], folder: FileSystemObject): void {
     this.control.patchValue(files);
     this.uploadFilesBinary();
@@ -273,5 +268,33 @@ export class ExplorerComponent implements OnInit, OnDestroy {
 
   startUpload(): void {
     this.uploadFilesBinary();
+  }
+
+  download(index: number): void {
+    const row = this.dataSource.data.find(
+      (s, i) => index === i
+    ) as FileSystemObject;
+    this.explorerService
+      .getDownloadTicket(row.fullPath)
+      .pipe(
+        switchMap(({ ticket }) => this.explorerService.download(ticket)),
+        tap((response: HttpResponse<Blob>) => {
+          const downloadLink = document.createElement('a');
+          downloadLink.href = URL.createObjectURL(
+            new Blob([response.body as Blob], { type: response.body?.type })
+          );
+          const contentDisposition = response.headers.get(
+            'content-disposition'
+          ) as string;
+          downloadLink.download = contentDisposition
+            .split(';')[1]
+            .split('filename')[1]
+            .split('=')[1]
+            .trim();
+          downloadLink.click();
+        }),
+        take(1)
+      )
+      .subscribe();
   }
 }

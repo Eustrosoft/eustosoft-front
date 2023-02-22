@@ -83,7 +83,7 @@
         <!-- Actions Column -->
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef>Actions</th>
-          <td mat-cell *matCellDef="let element">
+          <td mat-cell *matCellDef="let element; let i = index">
             <div class="d-flex">
               <eustrosoft-front-button
                 [buttonType]="'button'"
@@ -95,7 +95,7 @@
               >
               </eustrosoft-front-button>
               <mat-menu #actionsMenu="matMenu">
-                <button mat-menu-item>
+                <button (click)="download(i)" mat-menu-item>
                   <mat-icon>download</mat-icon>
                   <span>Download</span>
                 </button>
@@ -124,11 +124,6 @@
         ></tr>
       </table>
     </ng-container>
-    <ng-template #loading>
-      <div class="d-flex justify-content-center">
-        <eustrosoft-front-preloader></eustrosoft-front-preloader>
-      </div>
-    </ng-template>
   </div>
   <div class="row gx-3">
     <ng-container *ngIf="upload$ | async as upload"></ng-container>
@@ -136,11 +131,12 @@
 </div>
 
 <div
-  class="border border-2 border-light rounded-2 p-2 progress-overlay"
+  class="border border-2 border-light rounded-2 p-2 bg-light progress-overlay"
   *ngIf="control.value.length > 0"
 >
   <eustrosoft-front-file-list
     [files]="control.value"
+    [classesForList]="['m-2 p-2 bg-secondary bg-opacity-10 rounded-2']"
     (deleteFile)="deleteFile($event)"
     class="col-12"
   ></eustrosoft-front-file-list>
