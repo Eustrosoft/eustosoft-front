@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CreateFolderDialogComponent } from './create-folder-dialog.component';
+import { CreateRenameFolderDialogComponent } from './create-rename-folder-dialog.component';
 
 describe('CreateFsObjectDialogComponent', () => {
-  let component: CreateFolderDialogComponent;
-  let fixture: ComponentFixture<CreateFolderDialogComponent>;
+  let component: CreateRenameFolderDialogComponent;
+  let fixture: ComponentFixture<CreateRenameFolderDialogComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [CreateFolderDialogComponent],
+      declarations: [CreateRenameFolderDialogComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(CreateFolderDialogComponent);
+    fixture = TestBed.createComponent(CreateRenameFolderDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

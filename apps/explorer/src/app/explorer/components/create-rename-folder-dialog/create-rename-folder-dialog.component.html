@@ -1,11 +1,11 @@
 <div class="container">
   <div class="row">
-    <h1 class="col-12 m-0" mat-dialog-title>New folder</h1>
+    <h1 class="col-12 m-0" mat-dialog-title>{{ data.title }}</h1>
   </div>
   <div class="row">
     <div class="py-2" mat-dialog-content>
       <eustrosoft-front-input
-        [label]="'New folder'"
+        [label]="data.inputLabel"
         [fieldAppearance]="'outline'"
         [control]="control"
       ></eustrosoft-front-input>
@@ -24,7 +24,7 @@
       <eustrosoft-front-button
         [buttonType]="'button'"
         [buttonStyleType]="'flat'"
-        [buttonText]="'Create'"
+        [buttonText]="data.submitButtonText"
         [color]="'primary'"
         [disabled]="control.invalid"
         [mat-dialog-close]="control.value"

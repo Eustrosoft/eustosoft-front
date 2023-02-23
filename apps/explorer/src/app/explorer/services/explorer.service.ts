@@ -189,10 +189,17 @@ export class ExplorerService {
     );
   }
 
-  createFolder(name: string, path = '/'): Observable<string> {
-    return this.http.post<string>(`${environment.apiUrl}/folders`, {
+  createFolder(name: string, path = '/'): Observable<{ path: string }> {
+    return this.http.post<{ path: string }>(`${environment.apiUrl}/folders`, {
       path,
       name,
+    });
+  }
+
+  renameFolder(name: string, source: string): Observable<string> {
+    return this.http.post<string>(`${environment.apiUrl}/folders/rename`, {
+      name,
+      source,
     });
   }
 

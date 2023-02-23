@@ -45,7 +45,8 @@ import { ExplorerRequestBuilderService } from './services/explorer-request-build
 import { ExplorerService } from './services/explorer.service';
 import { HttpResponse } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
-import { CreateFolderDialogComponent } from './components/create-folder-dialog/create-folder-dialog.component';
+import { CreateRenameFolderDialogComponent } from './components/create-rename-folder-dialog/create-rename-folder-dialog.component';
+import { CreateRenameDialogData } from './interfaces/create-rename-dialog-data.interface';
 
 @Component({
   selector: 'eustrosoft-front-explorer',
@@ -57,6 +58,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
   @ViewChild(InputFileComponent) inputFileComponent!: InputFileComponent;
   upload$!: Observable<any>;
   params$!: Observable<any>;
+  refreshFolders$ = new BehaviorSubject<boolean>(true);
 
   folders$!: Observable<FileSystemObject[]>;
 
@@ -88,11 +90,14 @@ export class ExplorerComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.params$ = this.route.params;
-    this.folders$ = this.params$.pipe(
-      switchMap((params: { path: string }) =>
-        this.explorerService.getFsObjects(params.path)
+    this.folders$ = combineLatest([
+      this.route.params,
+      this.refreshFolders$,
+    ]).pipe(
+      switchMap(([params, refresh]) =>
+        this.explorerService.getFsObjects(params['path'])
       ),
-      tap((result) => (this.dataSource.data = result))
+      tap((result: FileSystemObject[]) => (this.dataSource.data = result))
     );
     let uploadError = false;
     this.upload$ = this.control.valueChanges.pipe(
@@ -179,13 +184,13 @@ export class ExplorerComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  isAllSelected() {
+  isAllSelected(): boolean {
     const numSelected = this.selection.selected.length;
     const numRows = this.dataSource.data.length;
     return numSelected === numRows;
   }
 
-  toggleAllRows() {
+  toggleAllRows(): void {
     if (this.isAllSelected()) {
       this.selection.clear();
       return;
@@ -266,26 +271,32 @@ export class ExplorerComponent implements OnInit, OnDestroy {
     }
   }
 
-  back() {
-    this.router.navigate(['..'], { relativeTo: this.route });
-  }
-
   startUpload(): void {
     this.uploadFilesBinary();
   }
 
   createFolder(): void {
-    const dialogRef = this.dialog.open(CreateFolderDialogComponent);
+    const dialogRef = this.dialog.open(CreateRenameFolderDialogComponent, {
+      data: {
+        title: 'New folder',
+        inputLabel: 'New folder',
+        defaultInputValue: 'Untitled folder',
+        submitButtonText: 'Create',
+      } as CreateRenameDialogData,
+    });
 
     dialogRef
       .afterClosed()
       .pipe(
         filter((str) => typeof str === 'string'),
-        switchMap((folderName) =>
-          this.explorerService.createFolder(folderName)
+        switchMap((folderName: string) =>
+          this.explorerService.createFolder(
+            folderName,
+            `/${decodeURIComponent(this.route.snapshot.params['path'])}/` || `/`
+          )
         ),
-        tap((folder) => {
-          console.log('The dialog was closed');
+        tap(() => {
+          this.refreshFolders$.next(true);
         }),
         take(1)
       )
@@ -314,6 +325,35 @@ export class ExplorerComponent implements OnInit, OnDestroy {
             .split('=')[1]
             .trim();
           downloadLink.click();
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
+
+  rename(index: number): void {
+    const row = this.dataSource.data.find(
+      (s, i) => index === i
+    ) as FileSystemObject;
+
+    const dialogRef = this.dialog.open(CreateRenameFolderDialogComponent, {
+      data: {
+        title: 'Rename folder',
+        inputLabel: 'New name',
+        defaultInputValue: row.fileName,
+        submitButtonText: 'Rename',
+      } as CreateRenameDialogData,
+    });
+
+    dialogRef
+      .afterClosed()
+      .pipe(
+        filter((str) => typeof str === 'string'),
+        switchMap((newName: string) =>
+          this.explorerService.renameFolder(newName, row.fullPath)
+        ),
+        tap(() => {
+          this.refreshFolders$.next(true);
         }),
         take(1)
       )
