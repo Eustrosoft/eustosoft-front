@@ -189,8 +189,11 @@ export class ExplorerService {
     );
   }
 
-  createFsObject(obj: any): Observable<any> {
-    return this.http.post(`${environment.apiUrl}/api/folders`, obj);
+  createFolder(name: string, path = '/'): Observable<string> {
+    return this.http.post<string>(`${environment.apiUrl}/folders`, {
+      path,
+      name,
+    });
   }
 
   getDownloadTicket(path: string): Observable<{ ticket: string }> {

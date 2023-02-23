@@ -10,8 +10,8 @@ tr.table-row:hover {
 }
 
 .progress-overlay {
-  position: absolute;
+  position: fixed;
   bottom: 0;
-  right: 0;
+  right: 0.3em;
   left: 60%;
 }

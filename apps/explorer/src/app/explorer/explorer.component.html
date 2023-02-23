@@ -11,7 +11,7 @@
       >
       </eustrosoft-front-button>
       <mat-menu #menu="matMenu">
-        <button mat-menu-item>
+        <button (click)="createFolder()" mat-menu-item>
           <mat-icon>create_new_folder</mat-icon>
           <span>New folder</span>
         </button>
@@ -131,12 +131,14 @@
 </div>
 
 <div
-  class="border border-2 border-light rounded-2 p-2 bg-light progress-overlay"
+  class="border border-2 border-secondary border-opacity-25 rounded-2 p-2 bg-light progress-overlay"
   *ngIf="control.value.length > 0"
 >
   <eustrosoft-front-file-list
     [files]="control.value"
-    [classesForList]="['m-2 p-2 bg-secondary bg-opacity-10 rounded-2']"
+    [classesForList]="[
+      'm-2 p-2 bg-secondary bg-opacity-10 border-dark border-opacity-25 rounded-2'
+    ]"
     (deleteFile)="deleteFile($event)"
     class="col-12"
   ></eustrosoft-front-file-list>

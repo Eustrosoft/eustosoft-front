@@ -16,6 +16,7 @@ import {
   concatMap,
   delay,
   EMPTY,
+  filter,
   finalize,
   from,
   mergeMap,
@@ -43,6 +44,8 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { ExplorerRequestBuilderService } from './services/explorer-request-builder.service';
 import { ExplorerService } from './services/explorer.service';
 import { HttpResponse } from '@angular/common/http';
+import { MatDialog } from '@angular/material/dialog';
+import { CreateFolderDialogComponent } from './components/create-folder-dialog/create-folder-dialog.component';
 
 @Component({
   selector: 'eustrosoft-front-explorer',
@@ -79,7 +82,8 @@ export class ExplorerComponent implements OnInit, OnDestroy {
     private snackBar: MatSnackBar,
     private cd: ChangeDetectorRef,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -268,6 +272,24 @@ export class ExplorerComponent implements OnInit, OnDestroy {
 
   startUpload(): void {
     this.uploadFilesBinary();
+  }
+
+  createFolder(): void {
+    const dialogRef = this.dialog.open(CreateFolderDialogComponent);
+
+    dialogRef
+      .afterClosed()
+      .pipe(
+        filter((str) => typeof str === 'string'),
+        switchMap((folderName) =>
+          this.explorerService.createFolder(folderName)
+        ),
+        tap((folder) => {
+          console.log('The dialog was closed');
+        }),
+        take(1)
+      )
+      .subscribe();
   }
 
   download(index: number): void {

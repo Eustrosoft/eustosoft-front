@@ -25,9 +25,16 @@ import { environment } from '../environments/environment';
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { ToNumberPipe } from './explorer/pipes/to-number.pipe';
 import { PortalModule } from '@angular/cdk/portal';
+import { MatDialogModule } from '@angular/material/dialog';
+import { CreateFolderDialogComponent } from './explorer/components/create-folder-dialog/create-folder-dialog.component';
 
 @NgModule({
-  declarations: [AppComponent, ExplorerComponent, ToNumberPipe],
+  declarations: [
+    AppComponent,
+    ExplorerComponent,
+    ToNumberPipe,
+    CreateFolderDialogComponent,
+  ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -42,6 +49,7 @@ import { PortalModule } from '@angular/cdk/portal';
     MatMenuModule,
     MatBottomSheetModule,
     PortalModule,
+    MatDialogModule,
   ],
   providers: [
     ExplorerService,

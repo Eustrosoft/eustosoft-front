@@ -1,0 +1,36 @@
+<div class="container">
+  <div class="row">
+    <h1 class="col-12 m-0" mat-dialog-title>New folder</h1>
+  </div>
+  <div class="row">
+    <div class="py-2" mat-dialog-content>
+      <eustrosoft-front-input
+        [label]="'New folder'"
+        [fieldAppearance]="'outline'"
+        [control]="control"
+      ></eustrosoft-front-input>
+    </div>
+  </div>
+  <div class="row">
+    <div mat-dialog-actions>
+      <eustrosoft-front-button
+        [buttonType]="'button'"
+        [buttonStyleType]="'flat'"
+        [buttonText]="'Cancel'"
+        (click)="close()"
+        class="col-6"
+      >
+      </eustrosoft-front-button>
+      <eustrosoft-front-button
+        [buttonType]="'button'"
+        [buttonStyleType]="'flat'"
+        [buttonText]="'Create'"
+        [color]="'primary'"
+        [disabled]="control.invalid"
+        [mat-dialog-close]="control.value"
+        class="col-6"
+      >
+      </eustrosoft-front-button>
+    </div>
+  </div>
+</div>
