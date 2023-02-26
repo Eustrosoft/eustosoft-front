@@ -12,7 +12,19 @@ $utilities: (
       25: 25vh,
       50: 50vh,
       75: 75vh,
+      80: 80vh,
       100: 100vh,
+    ),
+  ),
+  "viewport-width": (
+    property: width,
+    class: vw,
+    values: (
+      25: 25vw,
+      50: 50vw,
+      75: 75vw,
+      80: 80vw,
+      100: 100vw,
     ),
   ),
   "line-height": (

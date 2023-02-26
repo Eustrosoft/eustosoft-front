@@ -31,7 +31,7 @@
       hidden="true"
     ></eustrosoft-front-input-file>
   </div>
-  <div class="row gx-3 mb-3">
+  <div class="row gx-3 vh-80 overflow-auto">
     <ng-container *ngIf="folders$ | async as fls">
       <table mat-table [dataSource]="fls" class="mat-elevation-z8">
         <!-- Checkbox Column -->
@@ -95,17 +95,17 @@
               >
               </eustrosoft-front-button>
               <mat-menu #actionsMenu="matMenu">
-                <button (click)="download(i)" mat-menu-item>
+                <button (click)="download(fls[i])" mat-menu-item>
                   <mat-icon>download</mat-icon>
                   <span>Download</span>
                 </button>
-                <button (click)="rename(i)" mat-menu-item>
+                <button (click)="rename(fls[i])" mat-menu-item>
                   <mat-icon> drive_file_rename_outline</mat-icon>
                   <span>Rename</span>
                 </button>
-                <button mat-menu-item disabled>
-                  <mat-icon>preview</mat-icon>
-                  <span>Preview</span>
+                <button (click)="move(fls[i])" mat-menu-item>
+                  <mat-icon>drive_file_move</mat-icon>
+                  <span>Move to</span>
                 </button>
                 <button mat-menu-item>
                   <mat-icon>delete</mat-icon>

@@ -27,6 +27,12 @@ import { ToNumberPipe } from './explorer/pipes/to-number.pipe';
 import { PortalModule } from '@angular/cdk/portal';
 import { MatDialogModule } from '@angular/material/dialog';
 import { CreateRenameFolderDialogComponent } from './explorer/components/create-rename-folder-dialog/create-rename-folder-dialog.component';
+import { MoveFolderDialogComponent } from './explorer/components/move-folder-dialog/move-folder-dialog.component';
+import {
+  CdkFixedSizeVirtualScroll,
+  CdkVirtualScrollViewport,
+} from '@angular/cdk/scrolling';
+import { MatListModule } from '@angular/material/list';
 
 @NgModule({
   declarations: [
@@ -34,6 +40,7 @@ import { CreateRenameFolderDialogComponent } from './explorer/components/create-
     ExplorerComponent,
     ToNumberPipe,
     CreateRenameFolderDialogComponent,
+    MoveFolderDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -50,6 +57,9 @@ import { CreateRenameFolderDialogComponent } from './explorer/components/create-
     MatBottomSheetModule,
     PortalModule,
     MatDialogModule,
+    CdkVirtualScrollViewport,
+    CdkFixedSizeVirtualScroll,
+    MatListModule,
   ],
   providers: [
     ExplorerService,

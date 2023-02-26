@@ -47,6 +47,7 @@ import { HttpResponse } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateRenameFolderDialogComponent } from './components/create-rename-folder-dialog/create-rename-folder-dialog.component';
 import { CreateRenameDialogData } from './interfaces/create-rename-dialog-data.interface';
+import { MoveFolderDialogComponent } from './components/move-folder-dialog/move-folder-dialog.component';
 
 @Component({
   selector: 'eustrosoft-front-explorer',
@@ -303,10 +304,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  download(index: number): void {
-    const row = this.dataSource.data.find(
-      (s, i) => index === i
-    ) as FileSystemObject;
+  download(row: FileSystemObject): void {
     this.explorerService
       .getDownloadTicket(row.fullPath)
       .pipe(
@@ -331,11 +329,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  rename(index: number): void {
-    const row = this.dataSource.data.find(
-      (s, i) => index === i
-    ) as FileSystemObject;
-
+  rename(row: FileSystemObject): void {
     const dialogRef = this.dialog.open(CreateRenameFolderDialogComponent, {
       data: {
         title: 'Rename folder',
@@ -358,5 +352,13 @@ export class ExplorerComponent implements OnInit, OnDestroy {
         take(1)
       )
       .subscribe();
+  }
+
+  move(row: FileSystemObject): void {
+    console.log(row);
+
+    const dialogRef = this.dialog.open(MoveFolderDialogComponent);
+
+    dialogRef.afterClosed().pipe(tap(console.log), take(1)).subscribe();
   }
 }

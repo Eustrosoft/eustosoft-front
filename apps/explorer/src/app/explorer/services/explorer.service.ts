@@ -183,7 +183,7 @@ export class ExplorerService {
   constructor(private http: HttpClient) {}
 
   getFsObjects(path: string): Observable<FileSystemObject[]> {
-    // return of(this.fs);
+    return of(this.fs);
     return this.http.get<FileSystemObject[]>(
       `${environment.apiUrl}/folders?path=/${path}`
     );
@@ -244,7 +244,7 @@ export class ExplorerService {
     body: FormData,
     headers: { [p: string]: string | string[] }
   ): Observable<any> {
-    return of(true).pipe(delay(50000));
+    return of(true).pipe(delay(500));
     return this.http.post<any>(`${environment.apiUrl}/api/dispatch`, body, {
       headers: new HttpHeaders(headers),
       observe: 'response',

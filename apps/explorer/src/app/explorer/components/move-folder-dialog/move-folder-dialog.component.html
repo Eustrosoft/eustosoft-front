@@ -1,0 +1,82 @@
+<div class="container">
+  <div class="row">
+    <h1 class="col-12 m-0" mat-dialog-title>Move to</h1>
+  </div>
+  <div class="row">
+    <div class="py-2 d-flex flex-column" mat-dialog-content>
+      <cdk-virtual-scroll-viewport itemSize="5" class="vh-25 vw-50">
+        <mat-selection-list
+          [multiple]="false"
+          [hideSingleSelectionIndicator]="true"
+          #list
+        >
+          <mat-list-option
+            *ngFor="let object of fsObjects$ | async"
+            [value]="object"
+          >
+            <div class="d-flex justify-content-between">
+              <div class="d-flex align-items-center lh-1">
+                <ng-container [ngSwitch]="object.type">
+                  <div *ngSwitchCase="fsObjTypes.DIRECTORY">
+                    <mat-icon>folder</mat-icon>
+                  </div>
+                  <div *ngSwitchCase="fsObjTypes.FILE">
+                    <mat-icon>draft</mat-icon>
+                  </div>
+                </ng-container>
+                <span>{{ object.fileName }}</span>
+              </div>
+              <eustrosoft-front-button
+                [buttonType]="'button'"
+                [buttonStyleType]="'icon'"
+                [iconName]="'navigate_next'"
+                (click)="$event.stopPropagation()"
+              >
+              </eustrosoft-front-button>
+            </div>
+          </mat-list-option>
+        </mat-selection-list>
+        <!--        <ng-container *ngFor="let object of fsObjects$ | async">-->
+        <!--          <div class="d-flex">-->
+        <!--            <div class="d-flex">-->
+        <!--              <ng-container [ngSwitch]="object.type">-->
+        <!--                <div *ngSwitchCase="fsObjTypes.DIRECTORY" class="mr-2">-->
+        <!--                  <mat-icon>folder</mat-icon>-->
+        <!--                </div>-->
+        <!--                <div *ngSwitchCase="fsObjTypes.FILE" class="pr-2">-->
+        <!--                  <mat-icon>draft</mat-icon>-->
+        <!--                </div>-->
+        <!--              </ng-container>-->
+        <!--              <div class="lh-18">{{ object.fileName }}</div>-->
+        <!--            </div>-->
+        <!--          </div>-->
+        <!--        </ng-container>-->
+      </cdk-virtual-scroll-viewport>
+    </div>
+  </div>
+  <div class="row">
+    <div mat-dialog-actions>
+      <eustrosoft-front-button
+        [buttonType]="'button'"
+        [buttonStyleType]="'flat'"
+        [buttonText]="'Cancel'"
+        (click)="close()"
+        class="col-6"
+      >
+      </eustrosoft-front-button>
+      <eustrosoft-front-button
+        [buttonType]="'button'"
+        [buttonStyleType]="'flat'"
+        [buttonText]="'Move'"
+        [color]="'primary'"
+        [disabled]="false"
+        [mat-dialog-close]="
+          list.selectedOptions.hasValue() &&
+          list.selectedOptions.selected[0].value
+        "
+        class="col-6"
+      >
+      </eustrosoft-front-button>
+    </div>
+  </div>
+</div>
