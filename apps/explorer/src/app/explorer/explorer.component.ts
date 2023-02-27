@@ -96,7 +96,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
       this.refreshFolders$,
     ]).pipe(
       switchMap(([params, refresh]) =>
-        this.explorerService.getFsObjects(params['path'])
+        this.explorerService.getFsObjects(`/${params['path']}`)
       ),
       tap((result: FileSystemObject[]) => (this.dataSource.data = result))
     );
@@ -355,10 +355,17 @@ export class ExplorerComponent implements OnInit, OnDestroy {
   }
 
   move(row: FileSystemObject): void {
-    console.log(row);
-
     const dialogRef = this.dialog.open(MoveFolderDialogComponent);
 
-    dialogRef.afterClosed().pipe(tap(console.log), take(1)).subscribe();
+    dialogRef
+      .afterClosed()
+      .pipe(
+        filter((v) => v !== undefined),
+        switchMap((v: FileSystemObject) =>
+          this.explorerService.moveFolder(row.fullPath, v.fullPath)
+        ),
+        take(1)
+      )
+      .subscribe();
   }
 }

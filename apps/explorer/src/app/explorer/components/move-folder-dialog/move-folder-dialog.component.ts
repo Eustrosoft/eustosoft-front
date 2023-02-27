@@ -3,16 +3,14 @@ import {
   Component,
   inject,
   OnInit,
-  ViewChild,
 } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { ExplorerService } from '../../services/explorer.service';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, map, Observable, switchMap } from 'rxjs';
 import {
   FileSystemObject,
   FileSystemObjectTypes,
 } from '@eustrosoft-front/core';
-import { MatSelectionList } from '@angular/material/list';
 
 @Component({
   selector: 'eustrosoft-front-move-folder-dialog',
@@ -22,9 +20,8 @@ import { MatSelectionList } from '@angular/material/list';
 })
 export class MoveFolderDialogComponent implements OnInit {
   fsObjects$!: Observable<FileSystemObject[]>;
+  newPath$ = new BehaviorSubject<string>('');
   fsObjTypes = FileSystemObjectTypes;
-
-  @ViewChild(MatSelectionList) matSelectionList!: MatSelectionList;
 
   private dialogRef: MatDialogRef<MoveFolderDialogComponent> = inject(
     MatDialogRef<MoveFolderDialogComponent>
@@ -32,14 +29,26 @@ export class MoveFolderDialogComponent implements OnInit {
   private explorerService: ExplorerService = inject(ExplorerService);
 
   ngOnInit(): void {
-    this.fsObjects$ = this.explorerService.getFsObjects('/');
-  }
-
-  selectionChange(v: unknown): void {
-    console.log(v);
+    this.fsObjects$ = this.newPath$.asObservable().pipe(
+      switchMap((path: string) => this.explorerService.getFsObjects(path)),
+      map((objects: FileSystemObject[]) =>
+        objects.filter(
+          (o) =>
+            o.type !== FileSystemObjectTypes.FILE &&
+            o.type !== FileSystemObjectTypes.LINK
+        )
+      )
+    );
   }
 
   close(): void {
     this.dialogRef.close();
   }
+
+  navigateForward($event: MouseEvent, object: FileSystemObject): void {
+    $event.stopPropagation();
+    this.newPath$.next(object.fullPath);
+  }
+
+  navigateBack(): void {}
 }

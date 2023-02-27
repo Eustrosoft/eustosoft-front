@@ -185,7 +185,7 @@ export class ExplorerService {
   getFsObjects(path: string): Observable<FileSystemObject[]> {
     return of(this.fs);
     return this.http.get<FileSystemObject[]>(
-      `${environment.apiUrl}/folders?path=/${path}`
+      `${environment.apiUrl}/folders?path=${path}`
     );
   }
 
@@ -200,6 +200,13 @@ export class ExplorerService {
     return this.http.post<string>(`${environment.apiUrl}/folders/rename`, {
       name,
       source,
+    });
+  }
+
+  moveFolder(from: string, to: string): Observable<any> {
+    return this.http.post(`${environment.apiUrl}/folders/move`, {
+      from,
+      to,
     });
   }
 
