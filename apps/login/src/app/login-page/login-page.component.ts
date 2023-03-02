@@ -12,7 +12,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, take } from 'rxjs';
 import { LoginService } from '@eustrosoft-front/security';
 import { InputTypes } from '@eustrosoft-front/core';
 
@@ -52,7 +52,7 @@ export class LoginPageComponent implements OnInit, OnDestroy {
     this.form.get('submit')?.disable();
     this.loginService
       .login(this.form.value.login, this.form.value.password)
-      .pipe(takeUntil(this.destroyed$))
+      .pipe(take(1))
       .subscribe({
         next: () => this.router.navigate(['apps']),
         error: () => {

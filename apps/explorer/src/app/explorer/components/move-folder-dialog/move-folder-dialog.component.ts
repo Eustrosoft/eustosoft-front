@@ -3,6 +3,7 @@ import {
   Component,
   inject,
   OnInit,
+  ViewChild,
 } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { ExplorerService } from '../../services/explorer.service';
@@ -11,6 +12,7 @@ import {
   FileSystemObject,
   FileSystemObjectTypes,
 } from '@eustrosoft-front/core';
+import { MatSelectionList } from '@angular/material/list';
 
 @Component({
   selector: 'eustrosoft-front-move-folder-dialog',
@@ -20,8 +22,11 @@ import {
 })
 export class MoveFolderDialogComponent implements OnInit {
   fsObjects$!: Observable<FileSystemObject[]>;
-  newPath$ = new BehaviorSubject<string>('');
+  newPath$ = new BehaviorSubject<string>('/');
+  currentPath: string[] = ['/'];
   fsObjTypes = FileSystemObjectTypes;
+
+  @ViewChild(MatSelectionList) matSelectionList!: MatSelectionList;
 
   private dialogRef: MatDialogRef<MoveFolderDialogComponent> = inject(
     MatDialogRef<MoveFolderDialogComponent>
@@ -41,14 +46,23 @@ export class MoveFolderDialogComponent implements OnInit {
     );
   }
 
-  close(): void {
-    this.dialogRef.close();
-  }
-
   navigateForward($event: MouseEvent, object: FileSystemObject): void {
     $event.stopPropagation();
+    this.matSelectionList.deselectAll();
+    this.currentPath.push(object.fullPath);
     this.newPath$.next(object.fullPath);
   }
 
-  navigateBack(): void {}
+  navigateBack(): void {
+    this.matSelectionList.deselectAll();
+    if (this.currentPath.length === 1) {
+      return;
+    }
+    this.currentPath.splice(this.currentPath.length - 1, 1);
+    this.newPath$.next(this.currentPath[this.currentPath.length - 1]);
+  }
+
+  close(): void {
+    this.dialogRef.close();
+  }
 }

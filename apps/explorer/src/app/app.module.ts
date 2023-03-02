@@ -19,7 +19,10 @@ import { MatMenuModule } from '@angular/material/menu';
 import { CoreModule } from '@eustrosoft-front/core';
 import { ExplorerService } from './explorer/services/explorer.service';
 import { ExplorerRequestBuilderService } from './explorer/services/explorer-request-builder.service';
-import { SecurityModule } from '@eustrosoft-front/security';
+import {
+  SecurityModule,
+  UnauthenticatedInterceptor,
+} from '@eustrosoft-front/security';
 import { APP_ENVIRONMENT } from '@eustrosoft-front/app-config';
 import { environment } from '../environments/environment';
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
@@ -33,6 +36,7 @@ import {
   CdkVirtualScrollViewport,
 } from '@angular/cdk/scrolling';
 import { MatListModule } from '@angular/material/list';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -70,6 +74,11 @@ import { MatListModule } from '@angular/material/list';
       useValue: {
         fontSet: 'material-symbols-outlined',
       } as MatIconDefaultOptions,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: UnauthenticatedInterceptor,
+      multi: true,
     },
   ],
   bootstrap: [AppComponent],

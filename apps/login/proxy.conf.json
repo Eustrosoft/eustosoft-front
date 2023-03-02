@@ -1,6 +1,6 @@
 {
-  "/eustrosofthandler_war": {
-    "target": "http://fudo.eustrosoft.org:8080/",
+  "/api": {
+    "target": "http://fudo.eustrosoft.org:54893/",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug"

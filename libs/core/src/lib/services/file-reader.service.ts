@@ -7,7 +7,6 @@ import {
   Observable,
   of,
   Subscriber,
-  toArray,
 } from 'rxjs';
 
 @Injectable()

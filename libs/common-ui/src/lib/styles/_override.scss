@@ -1,11 +1,11 @@
-@import "bootstrap/scss/functions";
-@import "bootstrap/scss/variables";
-@import "bootstrap/scss/maps";
-@import "bootstrap/scss/mixins";
-@import "bootstrap/scss/utilities";
+@import 'bootstrap/scss/functions';
+@import 'bootstrap/scss/variables';
+@import 'bootstrap/scss/maps';
+@import 'bootstrap/scss/mixins';
+@import 'bootstrap/scss/utilities';
 
 $utilities: (
-  "viewport-height": (
+  'viewport-height': (
     property: height,
     class: vh,
     values: (
@@ -16,7 +16,7 @@ $utilities: (
       100: 100vh,
     ),
   ),
-  "viewport-width": (
+  'viewport-width': (
     property: width,
     class: vw,
     values: (
@@ -27,7 +27,7 @@ $utilities: (
       100: 100vw,
     ),
   ),
-  "line-height": (
+  'line-height': (
     property: line-height,
     class: lh,
     values: (
@@ -37,10 +37,8 @@ $utilities: (
       base: $line-height-base,
       lg: $line-height-lg,
       xlg: 3,
-    )
+    ),
   ),
 );
 
-
-
-@import "bootstrap/scss/utilities/api";
+@import 'bootstrap/scss/utilities/api';

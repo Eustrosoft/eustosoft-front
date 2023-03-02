@@ -6,6 +6,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { AuthenticationGuard } from './guards/authentication.guard';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { RedirectGuard } from './guards/redirect.guard';
+import { UnauthenticatedInterceptor } from './interceptors/unauthenticated.interceptor';
 
 @NgModule({
   imports: [CommonModule, HttpClientModule, MatSnackBarModule],
@@ -14,6 +15,7 @@ import { RedirectGuard } from './guards/redirect.guard';
     AuthenticationService,
     AuthenticationGuard,
     RedirectGuard,
+    UnauthenticatedInterceptor,
   ],
 })
 export class SecurityModule {}

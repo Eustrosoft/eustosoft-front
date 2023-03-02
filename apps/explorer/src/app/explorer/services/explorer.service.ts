@@ -8,7 +8,7 @@ import {
   TisResponse,
   TisResponseBody,
 } from '@eustrosoft-front/core';
-import { delay, mergeMap, Observable, of } from 'rxjs';
+import { mergeMap, Observable, of } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 @Injectable()
@@ -183,7 +183,6 @@ export class ExplorerService {
   constructor(private http: HttpClient) {}
 
   getFsObjects(path: string): Observable<FileSystemObject[]> {
-    return of(this.fs);
     return this.http.get<FileSystemObject[]>(
       `${environment.apiUrl}/folders?path=${path}`
     );
@@ -197,14 +196,14 @@ export class ExplorerService {
   }
 
   renameFolder(name: string, source: string): Observable<string> {
-    return this.http.post<string>(`${environment.apiUrl}/folders/rename`, {
+    return this.http.put<string>(`${environment.apiUrl}/folders/rename`, {
       name,
       source,
     });
   }
 
   moveFolder(from: string, to: string): Observable<any> {
-    return this.http.post(`${environment.apiUrl}/folders/move`, {
+    return this.http.put(`${environment.apiUrl}/folders/move`, {
       from,
       to,
     });
@@ -230,7 +229,7 @@ export class ExplorerService {
     currentChunk: number;
   }> {
     return this.http
-      .post<TisResponse>(`${environment.apiUrl}/api/dispatch`, query)
+      .post<TisResponse>(`${environment.apiUrl}/dispatch`, query)
       .pipe(
         mergeMap((response: TisResponse) => {
           const req = query.requests[0] as ChunkedFileRequest;
@@ -251,8 +250,7 @@ export class ExplorerService {
     body: FormData,
     headers: { [p: string]: string | string[] }
   ): Observable<any> {
-    return of(true).pipe(delay(500));
-    return this.http.post<any>(`${environment.apiUrl}/api/dispatch`, body, {
+    return this.http.post<any>(`${environment.apiUrl}/dispatch`, body, {
       headers: new HttpHeaders(headers),
       observe: 'response',
     });
