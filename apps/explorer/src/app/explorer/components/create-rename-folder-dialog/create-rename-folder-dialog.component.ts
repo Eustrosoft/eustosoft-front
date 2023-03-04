@@ -20,7 +20,11 @@ export class CreateRenameFolderDialogComponent {
     validators: [Validators.required],
   });
 
-  close(): void {
+  reject(): void {
     this.dialogRef.close();
+  }
+
+  resolve(): void {
+    this.dialogRef.close(this.control.value);
   }
 }

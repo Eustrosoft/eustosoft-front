@@ -58,7 +58,6 @@ import { MoveFolderDialogComponent } from './components/move-folder-dialog/move-
 export class ExplorerComponent implements OnInit, OnDestroy {
   @ViewChild(InputFileComponent) inputFileComponent!: InputFileComponent;
   upload$!: Observable<any>;
-  params$!: Observable<any>;
   refreshFolders$ = new BehaviorSubject<boolean>(true);
 
   folders$!: Observable<FileSystemObject[]>;
@@ -90,7 +89,6 @@ export class ExplorerComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.params$ = this.route.params;
     this.folders$ = combineLatest([
       this.route.params,
       this.refreshFolders$,
@@ -201,6 +199,9 @@ export class ExplorerComponent implements OnInit, OnDestroy {
   }
 
   openFolder(fsElem: FileSystemObject): void {
+    if (fsElem.type !== FileSystemObjectTypes.DIRECTORY) {
+      return;
+    }
     this.router.navigate([fsElem.fullPath], { relativeTo: this.route }).then();
   }
 

@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { ExplorerService } from '../../services/explorer.service';
-import { BehaviorSubject, map, Observable, switchMap } from 'rxjs';
+import { BehaviorSubject, delay, map, Observable, switchMap } from 'rxjs';
 import {
   FileSystemObject,
   FileSystemObjectTypes,
@@ -62,7 +62,14 @@ export class MoveFolderDialogComponent implements OnInit {
     this.newPath$.next(this.currentPath[this.currentPath.length - 1]);
   }
 
-  close(): void {
+  reject(): void {
     this.dialogRef.close();
+  }
+
+  resolve(): void {
+    this.dialogRef.close(
+      this.matSelectionList.selectedOptions.hasValue() &&
+        this.matSelectionList.selectedOptions.selected[0].value
+    );
   }
 }

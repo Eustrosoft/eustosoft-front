@@ -17,7 +17,7 @@
         [buttonType]="'button'"
         [buttonStyleType]="'flat'"
         [buttonText]="'Cancel'"
-        (click)="close()"
+        (clicked)="reject()"
         class="col-6"
       >
       </eustrosoft-front-button>
@@ -27,7 +27,7 @@
         [buttonText]="data.submitButtonText"
         [color]="'primary'"
         [disabled]="control.invalid"
-        [mat-dialog-close]="control.value"
+        (clicked)="resolve()"
         class="col-6"
       >
       </eustrosoft-front-button>
