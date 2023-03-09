@@ -12,6 +12,8 @@
     "build:login:production": "npx nx run login:build --configuration=production",
     "build:dispatcher:production": "npx nx run dispatcher:build --configuration=production",
     "build:explorer:production": "npx nx run explorer:build --configuration=production",
+    "build:all:stage": "npx nx run-many --target=build --configuration=stage --projects=login,dispatcher,explorer --parallel=3",
+    "build:all:production": "npx nx run-many --target=build --configuration=production --projects=login,dispatcher,explorer --parallel=3",
     "nx:graph": "npx nx graph"
   },
   "private": true,
@@ -64,4 +66,3 @@
     "typescript": "~4.9.4"
   }
 }
-
