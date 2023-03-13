@@ -22,6 +22,7 @@ import { ExplorerRequestBuilderService } from './explorer/services/explorer-requ
 import {
   SecurityModule,
   UnauthenticatedInterceptor,
+  WithCredentialsInterceptor,
 } from '@eustrosoft-front/security';
 import { APP_ENVIRONMENT } from '@eustrosoft-front/app-config';
 import { environment } from '../environments/environment';
@@ -78,6 +79,11 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
     {
       provide: HTTP_INTERCEPTORS,
       useClass: UnauthenticatedInterceptor,
+      multi: true,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: WithCredentialsInterceptor,
       multi: true,
     },
   ],

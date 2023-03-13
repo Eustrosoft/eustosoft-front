@@ -24,7 +24,6 @@ export class LoginService {
       )
       .pipe(
         tap((res) => {
-          console.log(res);
           this.authenticationService.isAuthenticated.next(res.ok);
           localStorage.setItem('isAuthenticated', 'true');
         })
@@ -36,8 +35,8 @@ export class LoginService {
       .post(`${this.appConfig.apiUrl}/logout`, {}, { observe: 'response' })
       .pipe(
         tap(() => {
-          localStorage.setItem('isAuthenticated', 'false');
           this.authenticationService.isAuthenticated.next(false);
+          localStorage.setItem('isAuthenticated', 'false');
         })
       );
   }
