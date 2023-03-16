@@ -294,7 +294,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
         switchMap((folderName: string) =>
           this.explorerService.createFolder(
             folderName,
-            `/${decodeURIComponent(this.route.snapshot.params['path'])}/` || `/`
+            `/${decodeURIComponent(this.route.snapshot.params['path'])}` || `/`
           )
         ),
         tap(() => {
