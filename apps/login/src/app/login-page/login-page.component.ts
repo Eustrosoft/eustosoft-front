@@ -31,6 +31,11 @@ type LoginForm = {
 export class LoginPageComponent implements OnInit, OnDestroy {
   form!: FormGroup;
   InputTypes = InputTypes;
+
+  loginInputLabelText = $localize`Your login`;
+  passwordInputLabelText = $localize`Your password`;
+  submitButtonText = $localize`Submit`;
+
   private destroyed$ = new Subject<void>();
 
   constructor(

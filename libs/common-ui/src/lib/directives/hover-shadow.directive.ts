@@ -1,4 +1,9 @@
-import { Directive, ElementRef, HostListener } from '@angular/core';
+import {
+  Directive,
+  ElementRef,
+  HostBinding,
+  HostListener,
+} from '@angular/core';
 
 @Directive({
   selector: '[eustrosoftFrontHoverShadow]',
@@ -8,6 +13,8 @@ export class HoverShadowDirective {
 
   private classes = this.elementRef.nativeElement.classList as DOMTokenList;
   private shadowClasses = ['shadow-lg', 'p-3', 'bg-body', 'rounded'];
+
+  @HostBinding('style.cursor') cursor = 'pointer';
 
   @HostListener('mouseenter') onMouseEnter() {
     this.applyShadow();
