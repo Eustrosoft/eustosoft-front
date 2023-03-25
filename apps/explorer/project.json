@@ -4,16 +4,24 @@
   "projectType": "application",
   "sourceRoot": "apps/explorer/src",
   "prefix": "eustrosoft-front",
+  "i18n": {
+    "sourceLocale": "en-US",
+    "locales": {
+      "ru-RU": "apps/explorer/src/locale/ru-RU.json"
+    }
+  },
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:browser",
       "outputs": ["{options.outputPath}"],
       "options": {
+        "localize": true,
+        "i18nMissingTranslation": "error",
         "outputPath": "dist/apps/explorer",
         "index": "apps/explorer/src/index.html",
         "main": "apps/explorer/src/main.ts",
         "baseHref": "/explorer/",
-        "polyfills": ["zone.js"],
+        "polyfills": ["zone.js", "apps/explorer/src/polyfills.ts"],
         "tsConfig": "apps/explorer/tsconfig.app.json",
         "stylePreprocessorOptions": {
           "includePaths": ["libs/common-ui/src/lib/styles"]
@@ -58,7 +66,8 @@
           "vendorChunk": true,
           "extractLicenses": false,
           "sourceMap": true,
-          "namedChunks": true
+          "namedChunks": true,
+          "localize": ["en-US"]
         }
       },
       "defaultConfiguration": "production"
@@ -82,7 +91,10 @@
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
       "options": {
-        "browserTarget": "explorer:build"
+        "browserTarget": "explorer:build",
+        "outputPath": "apps/explorer/src/locale",
+        "outFile": "en-US.json",
+        "format": "json"
       }
     },
     "lint": {

@@ -71,6 +71,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
   currentFile$ = new BehaviorSubject<string>('');
 
   fsObjTypes = FileSystemObjectTypes;
+  newButtonText = $localize`New`;
 
   private destroy$ = new Subject<void>();
   private emitBuffer$ = new Subject<void>();
@@ -103,10 +104,9 @@ export class ExplorerComponent implements OnInit, OnDestroy {
       buffer(this.emitBuffer$.pipe(takeUntil(this.destroy$))),
       mergeMap((files: File[][]) => from(files)),
       tap((files: File[]) => {
-        console.log('BUFFER EMITTED: ', files);
         if (files.length === 0 && !uploadError) {
           this.cd.markForCheck();
-          this.snackBar.open('Upload completed', 'Close');
+          this.snackBar.open($localize`Upload complete`, $localize`Close`);
           this.currentFile$.next('');
           this.progressBarValue$.next(0);
         }
@@ -159,7 +159,10 @@ export class ExplorerComponent implements OnInit, OnDestroy {
           catchError((err) => {
             uploadError = true;
             console.error(err);
-            this.snackBar.open('Error making request', 'Close');
+            this.snackBar.open(
+              $localize`Error making request`,
+              $localize`Close`
+            );
             this.control.patchValue([]);
             this.cd.markForCheck();
             return EMPTY;
@@ -207,7 +210,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
 
   uploadFilesBase64(): void {
     if (this.control.value.length === 0) {
-      this.snackBar.open('Select files first', 'Close');
+      this.snackBar.open($localize`Select files first`, $localize`Close`);
       return;
     }
     let uploadError = false;
@@ -237,13 +240,13 @@ export class ExplorerComponent implements OnInit, OnDestroy {
       catchError((err) => {
         uploadError = true;
         console.error(err);
-        this.snackBar.open('Error making request', 'Close');
+        this.snackBar.open($localize`Error making request`, $localize`Close`);
 
         return EMPTY;
       }),
       finalize(() => {
         if (!uploadError) {
-          this.snackBar.open('Upload completed', 'Close');
+          this.snackBar.open($localize`Upload completed`, $localize`Close`);
 
           this.control.patchValue([]);
         }
@@ -253,7 +256,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
 
   uploadFilesBinary(): void {
     if (this.control.value.length === 0) {
-      this.snackBar.open('Select files first', 'Close');
+      this.snackBar.open($localize`Select files first`, `Close`);
       return;
     }
     this.emitBuffer$.next();
@@ -280,10 +283,10 @@ export class ExplorerComponent implements OnInit, OnDestroy {
   createFolder(): void {
     const dialogRef = this.dialog.open(CreateRenameFolderDialogComponent, {
       data: {
-        title: 'New folder',
-        inputLabel: 'New folder',
-        defaultInputValue: 'Untitled folder',
-        submitButtonText: 'Create',
+        title: $localize`New folder`,
+        inputLabel: $localize`Folder name`,
+        defaultInputValue: $localize`Untitled folder`,
+        submitButtonText: $localize`Create`,
       } as CreateRenameDialogData,
     });
 
@@ -333,10 +336,10 @@ export class ExplorerComponent implements OnInit, OnDestroy {
   rename(row: FileSystemObject): void {
     const dialogRef = this.dialog.open(CreateRenameFolderDialogComponent, {
       data: {
-        title: 'Rename folder',
-        inputLabel: 'New name',
+        title: $localize`Rename folder`,
+        inputLabel: $localize`New name`,
         defaultInputValue: row.fileName,
-        submitButtonText: 'Rename',
+        submitButtonText: $localize`Rename`,
       } as CreateRenameDialogData,
     });
 

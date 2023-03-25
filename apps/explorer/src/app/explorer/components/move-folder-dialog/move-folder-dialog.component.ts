@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { ExplorerService } from '../../services/explorer.service';
-import { BehaviorSubject, delay, map, Observable, switchMap } from 'rxjs';
+import { BehaviorSubject, map, Observable, switchMap } from 'rxjs';
 import {
   FileSystemObject,
   FileSystemObjectTypes,
@@ -25,6 +25,8 @@ export class MoveFolderDialogComponent implements OnInit {
   newPath$ = new BehaviorSubject<string>('/');
   currentPath: string[] = ['/'];
   fsObjTypes = FileSystemObjectTypes;
+  cancelButtonText = $localize`Cancel`;
+  moveButtonText = $localize`Move`;
 
   @ViewChild(MatSelectionList) matSelectionList!: MatSelectionList;
 
