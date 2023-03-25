@@ -30,6 +30,12 @@
       hidden="true"
     ></eustrosoft-front-input-file>
   </div>
+  <div class="row gx-3 mb-3">
+    <eustrosoft-front-breadcrumbs
+      [path$]="path$"
+      (breadcrumbClicked)="openByPath($event)"
+    ></eustrosoft-front-breadcrumbs>
+  </div>
   <div class="row gx-3">
     <ng-container *ngIf="folders$ | async as fls">
       <table
@@ -127,12 +133,12 @@
           eustrosoftFrontFilesDropZone
           [fsObjType]="row.type"
           (filesDropped)="filesDroppedOnFolder($event, row)"
-          (click)="openFolder(row)"
+          (click)="open(row)"
           class="table-row"
         ></tr>
       </table>
       <ng-template #emptyTable>
-        <p class="fs-5" i18n>Folder is empty</p>
+        <p class="fs-4" i18n>Folder is empty</p>
       </ng-template>
     </ng-container>
   </div>

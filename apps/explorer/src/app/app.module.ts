@@ -27,7 +27,6 @@ import {
 import { APP_ENVIRONMENT } from '@eustrosoft-front/app-config';
 import { environment } from '../environments/environment';
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
-import { ToNumberPipe } from './explorer/pipes/to-number.pipe';
 import { PortalModule } from '@angular/cdk/portal';
 import { MatDialogModule } from '@angular/material/dialog';
 import { CreateRenameFolderDialogComponent } from './explorer/components/create-rename-folder-dialog/create-rename-folder-dialog.component';
@@ -38,14 +37,15 @@ import {
 } from '@angular/cdk/scrolling';
 import { MatListModule } from '@angular/material/list';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { BreadcrumbsComponent } from './explorer/components/breadcrumbs/breadcrumbs.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     ExplorerComponent,
-    ToNumberPipe,
     CreateRenameFolderDialogComponent,
     MoveFolderDialogComponent,
+    BreadcrumbsComponent,
   ],
   imports: [
     BrowserModule,

@@ -7,7 +7,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { InputFileComponent } from '@eustrosoft-front/common-ui';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import {
   BehaviorSubject,
   buffer,
@@ -59,6 +59,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
   @ViewChild(InputFileComponent) inputFileComponent!: InputFileComponent;
   upload$!: Observable<any>;
   refreshFolders$ = new BehaviorSubject<boolean>(true);
+  path$ = new BehaviorSubject<string>('/');
 
   folders$!: Observable<FileSystemObject[]>;
 
@@ -76,27 +77,19 @@ export class ExplorerComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   private emitBuffer$ = new Subject<void>();
 
-  filesInQueue: File[] = [];
-
   constructor(
     private fileReaderService: FileReaderService,
     private explorerRequestBuilderService: ExplorerRequestBuilderService,
     private explorerService: ExplorerService,
     private snackBar: MatSnackBar,
     private cd: ChangeDetectorRef,
-    private route: ActivatedRoute,
     private router: Router,
     private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
-    this.folders$ = combineLatest([
-      this.route.params,
-      this.refreshFolders$,
-    ]).pipe(
-      switchMap(([params, refresh]) =>
-        this.explorerService.getFsObjects(`/${params['path']}`)
-      ),
+    this.folders$ = combineLatest([this.path$, this.refreshFolders$]).pipe(
+      switchMap(([path, refresh]) => this.explorerService.getFsObjects(path)),
       tap((result: FileSystemObject[]) => (this.dataSource.data = result))
     );
     let uploadError = false;
@@ -201,11 +194,15 @@ export class ExplorerComponent implements OnInit, OnDestroy {
     this.selection.select(...this.dataSource.data);
   }
 
-  openFolder(fsElem: FileSystemObject): void {
+  open(fsElem: FileSystemObject): void {
     if (fsElem.type !== FileSystemObjectTypes.DIRECTORY) {
       return;
     }
-    this.router.navigate([fsElem.fullPath], { relativeTo: this.route }).then();
+    this.path$.next(fsElem.fullPath);
+  }
+
+  openByPath(path: string) {
+    this.path$.next(path);
   }
 
   uploadFilesBase64(): void {
@@ -295,10 +292,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
       .pipe(
         filter((str) => typeof str === 'string'),
         switchMap((folderName: string) =>
-          this.explorerService.createFolder(
-            folderName,
-            `/${decodeURIComponent(this.route.snapshot.params['path'])}` || `/`
-          )
+          this.explorerService.createFolder(folderName, this.path$.getValue())
         ),
         tap(() => {
           this.refreshFolders$.next(true);

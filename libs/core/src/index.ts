@@ -5,6 +5,7 @@ export * from './lib/constants/enums/display-types.enum';
 export * from './lib/constants/enums/file-system-object-types.enum';
 export * from './lib/pipes/form-array.pipe';
 export * from './lib/pipes/form-control.pipe';
+export * from './lib/pipes/to-number.pipe';
 export * from './lib/interfaces/table.interface';
 export * from './lib/interfaces/request.interfaces';
 export * from './lib/interfaces/file-system-object.interface';
