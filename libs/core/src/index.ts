@@ -3,6 +3,7 @@ export * from './lib/constants/enums/input-types.enum';
 export * from './lib/constants/enums/query-types.enum';
 export * from './lib/constants/enums/display-types.enum';
 export * from './lib/constants/enums/file-system-object-types.enum';
+export * from './lib/constants/enums/cursor-types.enum';
 export * from './lib/pipes/form-array.pipe';
 export * from './lib/pipes/form-control.pipe';
 export * from './lib/pipes/to-number.pipe';

@@ -24,6 +24,7 @@ import {
   CdkFixedSizeVirtualScroll,
   CdkVirtualScrollViewport,
 } from '@angular/cdk/scrolling';
+import { HoverCursorDirective } from './directives/hover-cursor.directive';
 
 @NgModule({
   imports: [
@@ -52,6 +53,7 @@ import {
     FilesDropZoneDirective,
     RippleHoverDirective,
     ProgressBarComponent,
+    HoverCursorDirective,
   ],
   exports: [
     HeaderComponent,
@@ -66,6 +68,7 @@ import {
     FilesDropZoneDirective,
     RippleHoverDirective,
     ProgressBarComponent,
+    HoverCursorDirective,
   ],
 })
 export class CommonUiModule {}

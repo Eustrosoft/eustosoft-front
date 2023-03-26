@@ -7,6 +7,7 @@ import {
   Output,
 } from '@angular/core';
 import { map, Observable } from 'rxjs';
+import { CursorTypes } from '@eustrosoft-front/core';
 
 @Component({
   selector: 'eustrosoft-front-breadcrumbs',
@@ -18,6 +19,8 @@ export class BreadcrumbsComponent implements OnInit {
   @Input() path$!: Observable<string>;
   @Output() breadcrumbClicked = new EventEmitter<string>();
   breadcrumbs$!: Observable<{ href: string; text: string }[]>;
+
+  cursorTypes = CursorTypes;
 
   ngOnInit(): void {
     this.breadcrumbs$ = this.path$.pipe(
@@ -38,7 +41,9 @@ export class BreadcrumbsComponent implements OnInit {
     );
   }
 
-  breadcrumbClick(path: string): void {
+  breadcrumbClick(path: string, event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
     this.breadcrumbClicked.emit(path);
   }
 }

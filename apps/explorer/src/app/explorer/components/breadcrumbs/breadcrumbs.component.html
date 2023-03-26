@@ -1,12 +1,17 @@
 <nav aria-label="breadcrumb">
-  <ol class="breadcrumb">
+  <ol class="breadcrumb mb-0">
     <ng-container *ngIf="breadcrumbs$ | async as breadcrumbs">
       <li
-        (click)="breadcrumbClick(breadcrumb.href)"
         *ngFor="let breadcrumb of breadcrumbs; let i = index"
         class="breadcrumb-item"
       >
-        {{ breadcrumb.text }}
+        <a
+          (click)="breadcrumbClick(breadcrumb.href, $event)"
+          [href]="breadcrumb.href"
+          class="text-decoration-none fs-6"
+        >
+          {{ breadcrumb.text }}
+        </a>
       </li>
     </ng-container>
   </ol>

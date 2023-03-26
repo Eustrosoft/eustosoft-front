@@ -22,4 +22,6 @@ export * from './lib/directives/hover-shadow.directive';
 
 export * from './lib/directives/ripple-hover.directive';
 
+export * from './lib/directives/hover-cursor.directive';
+
 export * from './lib/components/progress-bar/progress-bar.component';
