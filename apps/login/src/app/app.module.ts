@@ -18,6 +18,7 @@ import {
 } from '@angular/material/icon';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ApplicationsComponent } from './applications/applications.component';
+import { MatMenuModule } from '@angular/material/menu';
 
 @NgModule({
   declarations: [AppComponent, LoginPageComponent, ApplicationsComponent],
@@ -30,6 +31,7 @@ import { ApplicationsComponent } from './applications/applications.component';
     ReactiveFormsModule,
     SecurityModule,
     MatIconModule,
+    MatMenuModule,
   ],
   providers: [
     { provide: APP_ENVIRONMENT, useValue: environment },

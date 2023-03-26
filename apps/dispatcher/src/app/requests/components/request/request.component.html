@@ -1,7 +1,7 @@
 <div class="d-flex flex-column">
   <h1 class="ml-3 mb-3"># {{ formNumber }}</h1>
   <eustrosoft-front-select
-    [label]="'Query type'"
+    [label]="queryTypeLabelText"
     [control]="form.get('queryType')! | formControl"
     [options]="queryTypeOptions"
     [fieldAppearance]="'outline'"

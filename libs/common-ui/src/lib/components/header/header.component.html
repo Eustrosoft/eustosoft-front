@@ -1,23 +1,46 @@
-<header class="container-fluid py-3">
-  <div class="row">
-    <div class="col-8 d-flex align-items-center justify-content-start">
-      <h2 class="m-0">LOGO</h2>
-      <span class="px-3">|</span>
-      <h1 class="m-0">TIS Apps</h1>
-    </div>
-    <ng-container *ngIf="isAuthenticated | async as isAuth">
-      <div
-        *ngIf="isAuth"
-        class="col-4 d-flex align-items-center justify-content-end"
+<mat-toolbar class="container-fluid mb-3">
+  <span class="mr-4">{{ localizedTexts.title }}</span>
+  <span class="logo-spacer"></span>
+  <ng-container *ngIf="isAuthenticated | async as isAuth">
+    <div class="d-flex">
+      <eustrosoft-front-button
+        [buttonType]="'button'"
+        [buttonStyleType]="'stroked'"
+        [buttonText]="localizedTexts.appsButtonText"
+        [color]="'primary'"
+        [matMenuTriggerFor]="appsMenu"
       >
-        <eustrosoft-front-button
-          [buttonStyleType]="'icon'"
-          [iconName]="'logout'"
-          [buttonType]="'button'"
-          (click)="logout()"
-        >
-        </eustrosoft-front-button>
-      </div>
-    </ng-container>
-  </div>
-</header>
+      </eustrosoft-front-button>
+
+      <mat-menu #appsMenu="matMenu">
+        <ng-container [ngTemplateOutlet]="appsListTemplate"></ng-container>
+      </mat-menu>
+    </div>
+    <span class="spacer"></span>
+    <div
+      *ngIf="isAuth"
+      class="col-4 d-flex align-items-center justify-content-end"
+    >
+      <eustrosoft-front-button
+        [buttonStyleType]="'icon'"
+        [iconName]="'logout'"
+        [buttonType]="'button'"
+        (click)="logout()"
+      >
+      </eustrosoft-front-button>
+    </div>
+  </ng-container>
+</mat-toolbar>
+
+<ng-template #defaultAppsListTemplate>
+  <a mat-menu-item [href]="environment.loginUrl" target="_blank">Login</a>
+  <a mat-menu-item [href]="environment.explorerUrl" target="_blank">
+    Explorer
+  </a>
+  <a mat-menu-item [href]="environment.dispatcherUrl" target="_blank">
+    Dispatcher
+  </a>
+  <a mat-menu-item [href]="environment.appsPageUrl" target="_blank">
+    All apps page
+  </a>
+</ng-template>

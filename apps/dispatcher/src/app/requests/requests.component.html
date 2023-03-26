@@ -11,7 +11,7 @@
   <div class="row justify-content-end">
     <div class="col-lg-6 col-md-6 col-sm-12">
       <eustrosoft-front-select
-        [label]="'Display as'"
+        [label]="displayTypeLabelText"
         [control]="displayType! | formControl"
         [options]="displayTypeOptions"
         [fieldAppearance]="'outline'"
@@ -22,19 +22,19 @@
         [buttonStyleType]="'icon'"
         [iconName]="'add'"
         [buttonType]="'button'"
-        title="Add request form"
+        [title]="addFormButtonTitle"
         (click)="addForm()"
       ></eustrosoft-front-button>
       <eustrosoft-front-button
         [buttonStyleType]="'icon'"
         [iconName]="'remove'"
         [buttonType]="'button'"
-        title="Remove last request form"
+        [title]="removeFormButtonTitle"
         (click)="removeLastForm()"
       ></eustrosoft-front-button>
       <eustrosoft-front-button
         [buttonStyleType]="'stroked'"
-        [buttonText]="'Send'"
+        [buttonText]="submitButtonText"
         [buttonType]="'submit'"
         [disabled]="form.get('submit')!.disabled"
       ></eustrosoft-front-button>

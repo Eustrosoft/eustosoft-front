@@ -30,14 +30,12 @@ export class LoginService {
       );
   }
 
-  logout(): Observable<HttpResponse<object>> {
-    return this.http
-      .post(`${this.appConfig.apiUrl}/logout`, {}, { observe: 'response' })
-      .pipe(
-        tap(() => {
-          this.authenticationService.isAuthenticated.next(false);
-          localStorage.setItem('isAuthenticated', 'false');
-        })
-      );
+  logout(): Observable<any> {
+    return this.http.post(`${this.appConfig.apiUrl}/logout`, {}).pipe(
+      tap(() => {
+        this.authenticationService.isAuthenticated.next(false);
+        localStorage.setItem('isAuthenticated', 'false');
+      })
+    );
   }
 }

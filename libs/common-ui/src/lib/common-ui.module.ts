@@ -25,6 +25,8 @@ import {
   CdkVirtualScrollViewport,
 } from '@angular/cdk/scrolling';
 import { HoverCursorDirective } from './directives/hover-cursor.directive';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatMenuModule } from '@angular/material/menu';
 
 @NgModule({
   imports: [
@@ -39,6 +41,8 @@ import { HoverCursorDirective } from './directives/hover-cursor.directive';
     MatProgressBarModule,
     CdkVirtualScrollViewport,
     CdkFixedSizeVirtualScroll,
+    MatToolbarModule,
+    MatMenuModule,
   ],
   declarations: [
     HeaderComponent,

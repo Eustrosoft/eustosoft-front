@@ -1,2 +1,17 @@
-<eustrosoft-front-header></eustrosoft-front-header>
+<eustrosoft-front-header
+  [appsListTemplate]="appsListTemplate"
+  [localizedTexts]="headerLocalizedTexts"
+></eustrosoft-front-header>
 <router-outlet></router-outlet>
+
+<ng-template #appsListTemplate>
+  <a mat-menu-item [href]="environment.dispatcherUrl" target="_blank">
+    {{ localizedAppsListNames.dispatcher }}
+  </a>
+  <a mat-menu-item [href]="environment.explorerUrl" target="_blank">
+    {{ localizedAppsListNames.explorer }}
+  </a>
+  <a mat-menu-item [href]="environment.appsPageUrl" target="_blank">
+    {{ localizedAppsListNames.appsPage }}
+  </a>
+</ng-template>

@@ -6,4 +6,5 @@ export const environment: Environment = {
   dispatcherUrl: 'http://fudo.eustrosoft.org:8080/dispatcher/',
   explorerUrl: 'http://fudo.eustrosoft.org:8080/explorer/',
   loginUrl: 'http://fudo.eustrosoft.org:8080/login/',
+  appsPageUrl: 'http://fudo.eustrosoft.org:8080/login/apps',
 };

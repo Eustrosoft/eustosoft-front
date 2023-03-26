@@ -7,7 +7,7 @@
   "i18n": {
     "sourceLocale": "en-US",
     "locales": {
-      "ru-RU": "apps/login/src/locale/ru-RU.json"
+      "ru-RU": "apps/dispatcher/src/locale/ru-RU.json"
     }
   },
   "targets": {
@@ -67,7 +67,7 @@
           "extractLicenses": false,
           "sourceMap": true,
           "namedChunks": true,
-          "localize": ["ru-RU"]
+          "localize": ["en-US"]
         }
       },
       "defaultConfiguration": "production"

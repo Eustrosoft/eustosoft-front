@@ -36,11 +36,16 @@ import { RequestService } from './services/request.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RequestsComponent implements OnInit {
-  form!: FormGroup<RequestsForm>;
-  DisplayTypes = DisplayTypes;
-  displayType = new FormControl<DisplayTypes>(DisplayTypes.TEXT);
-  queryTypeOptions: string[] = [...Object.values(QueryTypes)];
-  displayTypeOptions: string[] = [...Object.values(DisplayTypes)];
+  public form!: FormGroup<RequestsForm>;
+  public DisplayTypes = DisplayTypes;
+  public displayType = new FormControl<DisplayTypes>(DisplayTypes.TEXT);
+  public queryTypeOptions: string[] = [...Object.values(QueryTypes)];
+  public displayTypeOptions: string[] = [...Object.values(DisplayTypes)];
+
+  public displayTypeLabelText = $localize`Display as`;
+  public addFormButtonTitle = $localize`Add request form`;
+  public removeFormButtonTitle = $localize`Remove last request form`;
+  public submitButtonText = $localize`Run`;
 
   tables?: Table[][];
 

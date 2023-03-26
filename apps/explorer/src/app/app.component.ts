@@ -1,48 +1,20 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import {
-  NavigationCancel,
-  NavigationEnd,
-  NavigationError,
-  NavigationStart,
-  Router,
-} from '@angular/router';
-import { Subject, takeUntil } from 'rxjs';
+import { Component, inject } from '@angular/core';
+import { APP_ENVIRONMENT } from '@eustrosoft-front/app-config';
 
 @Component({
   selector: 'eustrosoft-front-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit, OnDestroy {
-  loading = true;
-  private router = inject(Router);
-  private destroy$ = new Subject<void>();
-
-  ngOnInit(): void {
-    this.router.events.pipe(takeUntil(this.destroy$)).subscribe((event) => {
-      switch (true) {
-        case event instanceof NavigationStart: {
-          this.loading = true;
-          break;
-        }
-
-        case event instanceof NavigationEnd:
-        case event instanceof NavigationCancel:
-        case event instanceof NavigationError: {
-          setTimeout(() => {
-            this.loading = false;
-          }, 500);
-          break;
-        }
-        default: {
-          break;
-        }
-      }
-    });
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
+export class AppComponent {
+  public environment = inject(APP_ENVIRONMENT);
+  public headerLocalizedTexts = {
+    title: $localize`LOGO | TIS Apps | Explorer`,
+    appsButtonText: $localize`Apps`,
+  };
+  public localizedAppsListNames = {
+    login: $localize`Login`,
+    dispatcher: $localize`Dispatcher`,
+    appsPage: $localize`All apps page`,
+  };
 }

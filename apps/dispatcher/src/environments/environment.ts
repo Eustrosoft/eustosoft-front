@@ -6,4 +6,5 @@ export const environment: Environment = {
   dispatcherUrl: 'http://localhost:4202/dispatcher/',
   explorerUrl: 'http://localhost:4201/explorer/',
   loginUrl: 'http://localhost:4200/login/',
+  appsPageUrl: 'http://localhost:4200/login/apps',
 };

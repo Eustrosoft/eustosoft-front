@@ -1,9 +1,18 @@
-<eustrosoft-front-header></eustrosoft-front-header>
-
-<eustrosoft-front-progress-bar
-  *ngIf="loading"
-  [mode]="'indeterminate'"
-  class="route-loader"
-></eustrosoft-front-progress-bar>
+<eustrosoft-front-header
+  [appsListTemplate]="appsListTemplate"
+  [localizedTexts]="headerLocalizedTexts"
+></eustrosoft-front-header>
 
 <router-outlet></router-outlet>
+
+<ng-template #appsListTemplate>
+  <a mat-menu-item [href]="environment.loginUrl" target="_blank">{{
+    localizedAppsListNames.login
+  }}</a>
+  <a mat-menu-item [href]="environment.dispatcherUrl" target="_blank">
+    {{ localizedAppsListNames.dispatcher }}
+  </a>
+  <a mat-menu-item [href]="environment.appsPageUrl" target="_blank">
+    {{ localizedAppsListNames.appsPage }}
+  </a>
+</ng-template>

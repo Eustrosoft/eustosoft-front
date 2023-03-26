@@ -22,6 +22,7 @@ import { RequestBuilderService } from './requests/services/request-builder.servi
 import { RequestFormBuilderService } from './requests/services/request-form-builder.service';
 import { RequestComponent } from './requests/components/request/request.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatMenuModule } from '@angular/material/menu';
 
 @NgModule({
   declarations: [AppComponent, RequestsComponent, RequestComponent],
@@ -35,6 +36,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     SecurityModule,
     MatTableModule,
     MatIconModule,
+    MatMenuModule,
   ],
   providers: [
     RequestService,

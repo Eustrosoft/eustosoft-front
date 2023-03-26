@@ -20,7 +20,9 @@ export class RequestComponent {
   @Input() queryTypeOptions: string[] = [...Object.values(QueryTypes)];
 
   @ViewChild(InputFileComponent) inputFileComponent!: InputFileComponent;
-  QueryTypes = QueryTypes;
+  public QueryTypes = QueryTypes;
+
+  public queryTypeLabelText = $localize`Query type`;
 
   deleteFile(index: number): void {
     const control = this.form.get('file');

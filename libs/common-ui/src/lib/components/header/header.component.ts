@@ -2,7 +2,9 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
+  Input,
   OnInit,
+  TemplateRef,
 } from '@angular/core';
 import { Observable, take, tap } from 'rxjs';
 import {
@@ -18,13 +20,16 @@ import { APP_ENVIRONMENT } from '@eustrosoft-front/app-config';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeaderComponent implements OnInit {
+  @Input() appsListTemplate!: TemplateRef<any>;
+  @Input() localizedTexts!: { title: string; appsButtonText: string };
+
   constructor(
     private loginService: LoginService,
     private authenticationService: AuthenticationService
   ) {}
 
-  private appEnv = inject(APP_ENVIRONMENT);
-  isAuthenticated: Observable<boolean> | undefined;
+  public environment = inject(APP_ENVIRONMENT);
+  public isAuthenticated: Observable<boolean> | undefined;
 
   ngOnInit() {
     this.isAuthenticated =
@@ -37,7 +42,7 @@ export class HeaderComponent implements OnInit {
       .pipe(
         take(1),
         tap(() => {
-          window.location.href = this.appEnv.loginUrl;
+          window.location.href = this.environment.loginUrl;
         })
       )
       .subscribe();
