@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   inject,
@@ -7,7 +8,7 @@ import {
 } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { ExplorerService } from '../../services/explorer.service';
-import { BehaviorSubject, map, Observable, switchMap } from 'rxjs';
+import { BehaviorSubject, Observable, switchMap } from 'rxjs';
 import {
   FileSystemObject,
   FileSystemObjectTypes,
@@ -20,13 +21,14 @@ import { MatSelectionList } from '@angular/material/list';
   styleUrls: ['./move-folder-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MoveFolderDialogComponent implements OnInit {
+export class MoveFolderDialogComponent implements OnInit, AfterViewInit {
   fsObjects$!: Observable<FileSystemObject[]>;
   newPath$ = new BehaviorSubject<string>('/');
   currentPath: string[] = ['/'];
   fsObjTypes = FileSystemObjectTypes;
   cancelButtonText = $localize`Cancel`;
   moveButtonText = $localize`Move`;
+  createNewFolderTitleText = $localize`Create new folder`;
 
   @ViewChild(MatSelectionList) matSelectionList!: MatSelectionList;
 
@@ -36,16 +38,11 @@ export class MoveFolderDialogComponent implements OnInit {
   private explorerService: ExplorerService = inject(ExplorerService);
 
   ngOnInit(): void {
-    this.fsObjects$ = this.newPath$.asObservable().pipe(
-      switchMap((path: string) => this.explorerService.getFsObjects(path)),
-      map((objects: FileSystemObject[]) =>
-        objects.filter(
-          (o) =>
-            o.type !== FileSystemObjectTypes.FILE &&
-            o.type !== FileSystemObjectTypes.LINK
-        )
-      )
-    );
+    this.fsObjects$ = this.newPath$
+      .asObservable()
+      .pipe(
+        switchMap((path: string) => this.explorerService.getFsObjects(path))
+      );
   }
 
   navigateForward($event: MouseEvent, object: FileSystemObject): void {
@@ -64,6 +61,10 @@ export class MoveFolderDialogComponent implements OnInit {
     this.newPath$.next(this.currentPath[this.currentPath.length - 1]);
   }
 
+  createNewFolder(): void {
+    return;
+  }
+
   reject(): void {
     this.dialogRef.close();
   }
@@ -73,5 +74,9 @@ export class MoveFolderDialogComponent implements OnInit {
       this.matSelectionList.selectedOptions.hasValue() &&
         this.matSelectionList.selectedOptions.selected[0].value
     );
+  }
+
+  ngAfterViewInit(): void {
+    console.log(this.matSelectionList.options);
   }
 }

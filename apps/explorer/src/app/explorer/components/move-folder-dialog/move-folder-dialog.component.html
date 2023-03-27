@@ -16,7 +16,7 @@
     </div>
   </div>
   <div class="row">
-    <div class="py-2 d-flex flex-column" mat-dialog-content>
+    <div class="py-2 px-4 d-flex flex-column" mat-dialog-content>
       <cdk-virtual-scroll-viewport itemSize="5" class="vh-25 vw-50">
         <mat-selection-list
           [multiple]="false"
@@ -24,50 +24,92 @@
           #list
         >
           <ng-container *ngIf="{ objects: fsObjects$ | async } as vm">
-            <mat-list-option *ngFor="let object of vm.objects" [value]="object">
-              <div class="d-flex justify-content-between">
-                <div class="d-flex align-items-center lh-1">
-                  <mat-icon>folder</mat-icon>
-                  <span>{{ object.fileName }}</span>
-                </div>
-                <eustrosoft-front-button
-                  [buttonType]="'button'"
-                  [buttonStyleType]="'icon'"
-                  [iconName]="'navigate_next'"
-                  (click)="navigateForward($event, object)"
+            <mat-list-option
+              *ngFor="let object of vm.objects"
+              [value]="object"
+              [disabled]="
+                object.type === fsObjTypes.FILE ||
+                object.type === fsObjTypes.LINK
+              "
+            >
+              <ng-container [ngSwitch]="object.type">
+                <ng-container
+                  *ngSwitchCase="fsObjTypes.DIRECTORY"
+                  [ngTemplateOutlet]="directoryTemplate"
+                  [ngTemplateOutletContext]="{ $implicit: object }"
                 >
-                </eustrosoft-front-button>
-              </div>
+                </ng-container>
+                <ng-container
+                  *ngSwitchCase="fsObjTypes.LINK"
+                  [ngTemplateOutlet]="linkOrFileTemplate"
+                  [ngTemplateOutletContext]="{ $implicit: object }"
+                >
+                </ng-container>
+                <ng-container
+                  *ngSwitchCase="fsObjTypes.FILE"
+                  [ngTemplateOutlet]="linkOrFileTemplate"
+                  [ngTemplateOutletContext]="{ $implicit: object }"
+                >
+                </ng-container>
+              </ng-container>
             </mat-list-option>
-            <ng-container *ngIf="!vm.objects">
-              <div class="d-flex justify-content-center">
-                <eustrosoft-front-preloader></eustrosoft-front-preloader>
-              </div>
-            </ng-container>
           </ng-container>
         </mat-selection-list>
       </cdk-virtual-scroll-viewport>
     </div>
   </div>
   <div class="row">
-    <div mat-dialog-actions>
+    <div class="px-4" mat-dialog-actions>
+      <eustrosoft-front-button
+        [buttonType]="'button'"
+        [buttonStyleType]="'icon'"
+        [iconName]="'create_new_folder'"
+        [title]="createNewFolderTitleText"
+        (click)="createNewFolder()"
+      >
+      </eustrosoft-front-button>
+      <span class="left-spacer"></span>
       <eustrosoft-front-button
         [buttonType]="'button'"
         [buttonStyleType]="'flat'"
         [buttonText]="cancelButtonText"
         (click)="reject()"
-        class="col-6"
       >
       </eustrosoft-front-button>
+      <span class="buttons-spacer"></span>
+      <!-- TODO кнопка не должна блокироваться если в options нет папок (то есть конец иерархии)-->
       <eustrosoft-front-button
         [buttonStyleType]="'flat'"
         [buttonText]="moveButtonText"
         [color]="'primary'"
         [disabled]="!list.selectedOptions.hasValue()"
         (clicked)="resolve()"
-        class="col-6"
       >
       </eustrosoft-front-button>
     </div>
   </div>
 </div>
+
+<ng-template #directoryTemplate let-object>
+  <div class="d-flex justify-content-between">
+    <div class="d-flex align-items-center lh-1">
+      <mat-icon>folder</mat-icon>
+      <span>{{ object.fileName }}</span>
+    </div>
+    <eustrosoft-front-button
+      [buttonType]="'button'"
+      [buttonStyleType]="'icon'"
+      [iconName]="'navigate_next'"
+      (click)="navigateForward($event, object)"
+    >
+    </eustrosoft-front-button>
+  </div>
+</ng-template>
+<ng-template #linkOrFileTemplate let-object>
+  <div class="d-flex justify-content-between">
+    <div class="d-flex align-items-center lh-1">
+      <mat-icon>draft</mat-icon>
+      <span>{{ object.fileName }}</span>
+    </div>
+  </div>
+</ng-template>
