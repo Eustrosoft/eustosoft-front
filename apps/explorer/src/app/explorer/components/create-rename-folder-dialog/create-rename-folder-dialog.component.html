@@ -12,15 +12,15 @@
     </div>
   </div>
   <div class="row">
-    <div mat-dialog-actions>
+    <div [align]="'end'" mat-dialog-actions>
       <eustrosoft-front-button
         [buttonType]="'button'"
         [buttonStyleType]="'flat'"
         [buttonText]="cancelButtonText"
         (clicked)="reject()"
-        class="col-6"
       >
       </eustrosoft-front-button>
+      <span class="buttons-spacer"></span>
       <eustrosoft-front-button
         [buttonType]="'button'"
         [buttonStyleType]="'flat'"
@@ -28,7 +28,6 @@
         [color]="'primary'"
         [disabled]="control.invalid"
         (clicked)="resolve()"
-        class="col-6"
       >
       </eustrosoft-front-button>
     </div>

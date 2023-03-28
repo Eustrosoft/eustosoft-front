@@ -23,37 +23,34 @@
           [hideSingleSelectionIndicator]="true"
           #list
         >
-          <ng-container *ngIf="{ objects: fsObjects$ | async } as vm">
-            <mat-list-option
-              *ngFor="let object of vm.objects"
-              [value]="object"
-              [disabled]="
-                object.type === fsObjTypes.FILE ||
-                object.type === fsObjTypes.LINK
-              "
-            >
-              <ng-container [ngSwitch]="object.type">
-                <ng-container
-                  *ngSwitchCase="fsObjTypes.DIRECTORY"
-                  [ngTemplateOutlet]="directoryTemplate"
-                  [ngTemplateOutletContext]="{ $implicit: object }"
-                >
-                </ng-container>
-                <ng-container
-                  *ngSwitchCase="fsObjTypes.LINK"
-                  [ngTemplateOutlet]="linkOrFileTemplate"
-                  [ngTemplateOutletContext]="{ $implicit: object }"
-                >
-                </ng-container>
-                <ng-container
-                  *ngSwitchCase="fsObjTypes.FILE"
-                  [ngTemplateOutlet]="linkOrFileTemplate"
-                  [ngTemplateOutletContext]="{ $implicit: object }"
-                >
-                </ng-container>
+          <mat-list-option
+            *ngFor="let object of fsObjects$ | async; let i = index"
+            [value]="object"
+            [disabled]="
+              object.type === fsObjTypes.FILE || object.type === fsObjTypes.LINK
+            "
+          >
+            <ng-container [ngSwitch]="object.type">
+              <ng-container
+                *ngSwitchCase="fsObjTypes.DIRECTORY"
+                [ngTemplateOutlet]="directoryTemplate"
+                [ngTemplateOutletContext]="{ $implicit: object }"
+              >
               </ng-container>
-            </mat-list-option>
-          </ng-container>
+              <ng-container
+                *ngSwitchCase="fsObjTypes.LINK"
+                [ngTemplateOutlet]="linkOrFileTemplate"
+                [ngTemplateOutletContext]="{ $implicit: object }"
+              >
+              </ng-container>
+              <ng-container
+                *ngSwitchCase="fsObjTypes.FILE"
+                [ngTemplateOutlet]="linkOrFileTemplate"
+                [ngTemplateOutletContext]="{ $implicit: object }"
+              >
+              </ng-container>
+            </ng-container>
+          </mat-list-option>
         </mat-selection-list>
       </cdk-virtual-scroll-viewport>
     </div>
@@ -77,12 +74,11 @@
       >
       </eustrosoft-front-button>
       <span class="buttons-spacer"></span>
-      <!-- TODO кнопка не должна блокироваться если в options нет папок (то есть конец иерархии)-->
       <eustrosoft-front-button
         [buttonStyleType]="'flat'"
         [buttonText]="moveButtonText"
         [color]="'primary'"
-        [disabled]="!list.selectedOptions.hasValue()"
+        [disabled]="!!(moveButtonDisabled$ | async)"
         (clicked)="resolve()"
       >
       </eustrosoft-front-button>

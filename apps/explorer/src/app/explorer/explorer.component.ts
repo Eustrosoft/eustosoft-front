@@ -353,15 +353,25 @@ export class ExplorerComponent implements OnInit, OnDestroy {
   }
 
   move(row: FileSystemObject): void {
-    const dialogRef = this.dialog.open(MoveFolderDialogComponent);
+    const dialogRef = this.dialog.open(MoveFolderDialogComponent, {
+      data: { fsObj: row },
+    });
 
     dialogRef
       .afterClosed()
       .pipe(
         filter((v) => v !== undefined),
-        switchMap((v: FileSystemObject) =>
-          this.explorerService.moveFolder(row.fullPath, v.fullPath)
+        switchMap((to: string) =>
+          combineLatest([
+            this.explorerService.moveFolder(row.fullPath, to),
+            of(to),
+          ])
         ),
+        tap(([response, to]) => {
+          const lastIndex = to.lastIndexOf('/');
+          const path = to.substring(0, lastIndex);
+          this.path$.next(path);
+        }),
         take(1)
       )
       .subscribe();

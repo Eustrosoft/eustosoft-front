@@ -202,11 +202,15 @@ export class ExplorerService {
     });
   }
 
-  moveFolder(from: string, to: string): Observable<any> {
-    return this.http.put(`${environment.apiUrl}/folders/move`, {
-      from,
-      to,
-    });
+  moveFolder(from: string, to: string): Observable<HttpResponse<string>> {
+    return this.http.put(
+      `${environment.apiUrl}/folders/move`,
+      {
+        from,
+        to,
+      },
+      { observe: 'response', responseType: 'text' }
+    );
   }
 
   getDownloadTicket(path: string): Observable<{ ticket: string }> {
