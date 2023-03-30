@@ -15,7 +15,7 @@
       "executor": "@angular-devkit/build-angular:browser",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "localize": true,
+        "localize": false,
         "i18nMissingTranslation": "error",
         "outputPath": "dist/apps/explorer",
         "index": "apps/explorer/src/index.html",
