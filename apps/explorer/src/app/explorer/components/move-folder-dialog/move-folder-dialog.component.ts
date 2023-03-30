@@ -24,7 +24,7 @@ import {
   FileSystemObjectTypes,
 } from '@eustrosoft-front/core';
 import { MatListOption, MatSelectionList } from '@angular/material/list';
-import { CreateRenameDialogData } from '../../interfaces/create-rename-dialog-data.interface';
+
 @Component({
   selector: 'eustrosoft-front-move-folder-dialog',
   templateUrl: './move-folder-dialog.component.html',
@@ -35,6 +35,7 @@ export class MoveFolderDialogComponent
   implements OnInit, AfterViewInit, OnDestroy
 {
   currentPath: string[] = [];
+  currentSelectedOptionIndex: number | undefined = undefined;
 
   fsObjects$!: Observable<FileSystemObject[]>;
   moveButtonDisabled$!: Observable<boolean>;
@@ -84,7 +85,6 @@ export class MoveFolderDialogComponent
          * TODO
          *  Если переносится файл - отключать кнопку если в этой папке уже есть этот файл
          *  Если переносится папка - подсвечивать серым эту папку не давая перенести ее в саму себя
-         *  Должна быть возможность выбирать и снимать выбор с папки куда хотим перенести файл
          *  Если выбрана какая-то папка - кнопка должна быть активна и взять путь выбранной папки
          *  Если не выбрана не одна папка или мы находимся в конце иерархии - кнопка должна быть активна и взять текущий путь
          */
@@ -132,7 +132,13 @@ export class MoveFolderDialogComponent
 
   navigateBack(): void {
     this.matSelectionList.deselectAll();
-    if (this.currentPath.length === 1) {
+    /**
+     * TODO
+     *  При быстрых кликах синхронные операции случаются быстрее чем получение папок
+     *  Стирается путь из массива
+     *  Как следствие ломается навигация по папкам, пытается получить папку undefined по пути
+     */
+    if (this.currentPath.length === 0) {
       return;
     }
     this.currentPath.splice(this.currentPath.length - 1, 1);
@@ -156,6 +162,26 @@ export class MoveFolderDialogComponent
       this.dialogRef.close(
         `${this.currentPath.pop()}/${this.data.fsObj.fileName}`
       );
+    }
+  }
+
+  optionClicked(index: number): void {
+    const option = this.matSelectionList.options.get(index);
+    if (!option || option.disabled) {
+      return;
+    }
+    // if we don't have selected option yet, set it
+    if (this.currentSelectedOptionIndex === undefined) {
+      this.currentSelectedOptionIndex = index;
+      return;
+    }
+    // if different option is clicked
+    if (this.currentSelectedOptionIndex !== index) {
+      this.currentSelectedOptionIndex = index;
+    } else {
+      // if click performed on currently selected option
+      option.toggle();
+      this.currentSelectedOptionIndex = undefined;
     }
   }
 }

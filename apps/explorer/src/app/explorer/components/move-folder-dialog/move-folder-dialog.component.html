@@ -21,7 +21,7 @@
         <mat-selection-list
           [multiple]="false"
           [hideSingleSelectionIndicator]="true"
-          #list
+          [disableRipple]="true"
         >
           <mat-list-option
             *ngFor="let object of fsObjects$ | async; let i = index"
@@ -29,6 +29,7 @@
             [disabled]="
               object.type === fsObjTypes.FILE || object.type === fsObjTypes.LINK
             "
+            (click)="optionClicked(i)"
           >
             <ng-container [ngSwitch]="object.type">
               <ng-container
