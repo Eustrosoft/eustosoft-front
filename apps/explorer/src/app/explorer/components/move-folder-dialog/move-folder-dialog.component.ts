@@ -24,6 +24,7 @@ import {
   FileSystemObjectTypes,
 } from '@eustrosoft-front/core';
 import { MatListOption, MatSelectionList } from '@angular/material/list';
+import { Stack } from '../../classes/Stack';
 
 @Component({
   selector: 'eustrosoft-front-move-folder-dialog',
@@ -34,12 +35,11 @@ import { MatListOption, MatSelectionList } from '@angular/material/list';
 export class MoveFolderDialogComponent
   implements OnInit, AfterViewInit, OnDestroy
 {
-  currentPath: string[] = [];
   currentSelectedOptionIndex: number | undefined = undefined;
 
   fsObjects$!: Observable<FileSystemObject[]>;
   moveButtonDisabled$!: Observable<boolean>;
-  newPath$ = new BehaviorSubject<string>('/');
+  path$ = new BehaviorSubject<string>('/');
   private matSelectionListRendered$ = new Subject<void>();
   private destroy$ = new Subject<void>();
 
@@ -47,6 +47,7 @@ export class MoveFolderDialogComponent
   cancelButtonText = $localize`Cancel`;
   moveButtonText = $localize`Move`;
   createNewFolderTitleText = $localize`Create new folder`;
+  moveButtonErrorText = '';
 
   @ViewChild(MatSelectionList) matSelectionList!: MatSelectionList;
 
@@ -56,9 +57,10 @@ export class MoveFolderDialogComponent
   );
   private explorerService: ExplorerService = inject(ExplorerService);
   private cd: ChangeDetectorRef = inject(ChangeDetectorRef);
+  private navigationHistoryStack: Stack<string> = inject(Stack);
 
   ngOnInit(): void {
-    this.fsObjects$ = this.newPath$
+    this.fsObjects$ = this.path$
       .asObservable()
       .pipe(
         switchMap((path: string) => this.explorerService.getFsObjects(path))
@@ -72,39 +74,50 @@ export class MoveFolderDialogComponent
         )
       ),
       map(() => {
-        const hasDirectories =
+        const fileAlreadyExistsInFolder =
           this.matSelectionList.options
             .toArray()
             .map((item: MatListOption) => item.value)
             .filter(
               (value: FileSystemObject) =>
-                value.type === FileSystemObjectTypes.DIRECTORY
+                value.type === FileSystemObjectTypes.FILE &&
+                value.fileName === this.data.fsObj.fileName
             ).length > 0;
 
-        /**
-         * TODO
-         *  Если переносится файл - отключать кнопку если в этой папке уже есть этот файл
-         *  Если переносится папка - подсвечивать серым эту папку не давая перенести ее в саму себя
-         *  Если выбрана какая-то папка - кнопка должна быть активна и взять путь выбранной папки
-         *  Если не выбрана не одна папка или мы находимся в конце иерархии - кнопка должна быть активна и взять текущий путь
-         */
+        const sameFolderIndex = this.matSelectionList.options
+          .toArray()
+          .map((item: MatListOption) => item.value)
+          .findIndex(
+            (value: FileSystemObject) =>
+              value.type === FileSystemObjectTypes.DIRECTORY &&
+              value.fileName === this.data.fsObj.fileName
+          );
+
+        if (sameFolderIndex !== -1) {
+          const item = this.matSelectionList.options.get(sameFolderIndex);
+          if (item) {
+            item.disabled = true;
+          }
+        }
 
         if (
-          hasDirectories &&
+          fileAlreadyExistsInFolder &&
           !this.matSelectionList.selectedOptions.hasValue()
         ) {
+          this.moveButtonErrorText = $localize`File already exist in this folder`;
           return true;
         }
+
         if (
-          hasDirectories &&
-          this.matSelectionList.selectedOptions.hasValue()
+          sameFolderIndex !== -1 &&
+          !this.matSelectionList.selectedOptions.hasValue()
         ) {
-          return false;
+          this.moveButtonErrorText = $localize`Can't move folder into itself`;
+          return true;
         }
-        if (!hasDirectories) {
-          return false;
-        }
-        return true;
+
+        this.moveButtonErrorText = '';
+        return false;
       }),
       tap(() => {
         setTimeout(() => {
@@ -126,26 +139,19 @@ export class MoveFolderDialogComponent
   navigateForward($event: MouseEvent, object: FileSystemObject): void {
     $event.stopPropagation();
     this.matSelectionList.deselectAll();
-    this.currentPath.push(object.fullPath);
-    this.newPath$.next(object.fullPath);
+    this.navigationHistoryStack.push(object.fullPath);
+    this.path$.next(object.fullPath);
   }
 
   navigateBack(): void {
     this.matSelectionList.deselectAll();
-    /**
-     * TODO
-     *  При быстрых кликах синхронные операции случаются быстрее чем получение папок
-     *  Стирается путь из массива
-     *  Как следствие ломается навигация по папкам, пытается получить папку undefined по пути
-     */
-    if (this.currentPath.length === 0) {
-      return;
-    }
-    this.currentPath.splice(this.currentPath.length - 1, 1);
-    this.newPath$.next(this.currentPath[this.currentPath.length - 1]);
+    this.path$.next(this.navigationHistoryStack.pop(true) || '/');
   }
 
   createNewFolder(): void {
+    /** TODO
+     *   Implement
+     */
     return;
   }
 
@@ -159,9 +165,7 @@ export class MoveFolderDialogComponent
         `${this.matSelectionList.selectedOptions.selected[0].value.fullPath}/${this.data.fsObj.fileName}`
       );
     } else {
-      this.dialogRef.close(
-        `${this.currentPath.pop()}/${this.data.fsObj.fileName}`
-      );
+      this.dialogRef.close(`${this.path$.value}/${this.data.fsObj.fileName}`);
     }
   }
 

@@ -80,6 +80,7 @@
         [buttonText]="moveButtonText"
         [color]="'primary'"
         [disabled]="!!(moveButtonDisabled$ | async)"
+        [matTooltip]="moveButtonErrorText"
         (clicked)="resolve()"
       >
       </eustrosoft-front-button>

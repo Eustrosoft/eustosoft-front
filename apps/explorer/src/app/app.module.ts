@@ -38,6 +38,8 @@ import {
 import { MatListModule } from '@angular/material/list';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BreadcrumbsComponent } from './explorer/components/breadcrumbs/breadcrumbs.component';
+import { Stack } from './explorer/classes/Stack';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @NgModule({
   declarations: [
@@ -65,10 +67,12 @@ import { BreadcrumbsComponent } from './explorer/components/breadcrumbs/breadcru
     CdkVirtualScrollViewport,
     CdkFixedSizeVirtualScroll,
     MatListModule,
+    MatTooltipModule,
   ],
   providers: [
     ExplorerService,
     ExplorerRequestBuilderService,
+    Stack,
     { provide: APP_ENVIRONMENT, useValue: environment },
     {
       provide: MAT_ICON_DEFAULT_OPTIONS,
