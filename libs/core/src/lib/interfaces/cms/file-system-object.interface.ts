@@ -1,4 +1,4 @@
-import { FileSystemObjectTypes } from '../constants/enums/file-system-object-types.enum';
+import { FileSystemObjectTypes } from '../../constants/enums/file-system-object-types.enum';
 
 export interface FileSystemObject {
   fileName: string;

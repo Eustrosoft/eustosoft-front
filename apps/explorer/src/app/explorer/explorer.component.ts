@@ -19,6 +19,7 @@ import {
   filter,
   finalize,
   from,
+  map,
   mergeMap,
   Observable,
   of,
@@ -31,11 +32,15 @@ import {
 } from 'rxjs';
 import {
   ChunkedFileRequest,
+  CmsRequestInterface,
+  CmsResponseInterface,
   FileReaderService,
   FileSystemObject,
   FileSystemObjectTypes,
   TisRequest,
   TisResponse,
+  ViewRequest,
+  ViewResponse,
 } from '@eustrosoft-front/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { FormControl } from '@angular/forms';
@@ -89,7 +94,15 @@ export class ExplorerComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.folders$ = combineLatest([this.path$, this.refreshFolders$]).pipe(
-      switchMap(([path, refresh]) => this.explorerService.getFsObjects(path)),
+      switchMap(([path, refresh]) =>
+        this.explorerRequestBuilderService.buildViewRequest(path)
+      ),
+      switchMap((request: CmsRequestInterface<ViewRequest>) =>
+        this.explorerService.getFsObjects(request)
+      ),
+      map((response: CmsResponseInterface<ViewResponse>) =>
+        response.r.flatMap((r: ViewResponse) => r.content)
+      ),
       tap((result: FileSystemObject[]) => (this.dataSource.data = result))
     );
     let uploadError = false;

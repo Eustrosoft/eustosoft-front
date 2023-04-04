@@ -1,5 +1,12 @@
 import { Injectable } from '@angular/core';
-import { TisRequest } from '@eustrosoft-front/core';
+import {
+  CmsRequestActions,
+  CmsRequestInterface,
+  Subsystems,
+  SupportedLanguages,
+  TisRequest,
+  ViewRequest,
+} from '@eustrosoft-front/core';
 import { mergeMap, Observable, of } from 'rxjs';
 
 @Injectable()
@@ -61,5 +68,19 @@ export class ExplorerRequestBuilderService {
       ],
       qtisend: true,
     } as TisRequest;
+  }
+
+  buildViewRequest(path: string): Observable<CmsRequestInterface<ViewRequest>> {
+    return of({
+      r: [
+        {
+          s: Subsystems.CMS,
+          r: CmsRequestActions.VIEW,
+          l: SupportedLanguages.EN_US,
+          path: path,
+        },
+      ],
+      t: 0,
+    });
   }
 }
