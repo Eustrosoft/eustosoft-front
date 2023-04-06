@@ -9,32 +9,30 @@ export class LoginService {
   constructor(
     private http: HttpClient,
     private authenticationService: AuthenticationService,
-    @Inject(APP_ENVIRONMENT) private appConfig: Environment
+    @Inject(APP_ENVIRONMENT) private environment: Environment
   ) {}
 
-  login(username: string, password: string): Observable<HttpResponse<string>> {
+  login(login: string, password: string): Observable<HttpResponse<string>> {
     return this.http
       .post(
-        `${this.appConfig.apiUrl}/login`,
+        `${this.environment.apiUrl}/login`,
         {
-          username,
+          login,
           password,
         },
         { observe: 'response', responseType: 'text' }
       )
       .pipe(
-        tap((res) => {
+        tap((res: HttpResponse<string>) => {
           this.authenticationService.isAuthenticated.next(res.ok);
-          localStorage.setItem('isAuthenticated', 'true');
         })
       );
   }
 
-  logout(): Observable<any> {
-    return this.http.post(`${this.appConfig.apiUrl}/logout`, {}).pipe(
+  logout(): Observable<null> {
+    return this.http.post<null>(`${this.environment.apiUrl}/logout`, {}).pipe(
       tap(() => {
         this.authenticationService.isAuthenticated.next(false);
-        localStorage.setItem('isAuthenticated', 'false');
       })
     );
   }

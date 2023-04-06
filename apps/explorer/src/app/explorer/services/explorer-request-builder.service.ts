@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import {
   CmsRequestActions,
   CmsRequestInterface,
+  CreateRequest,
+  FileSystemObjectTypes,
   Subsystems,
   SupportedLanguages,
   TisRequest,
@@ -78,6 +80,26 @@ export class ExplorerRequestBuilderService {
           r: CmsRequestActions.VIEW,
           l: SupportedLanguages.EN_US,
           path: path,
+        },
+      ],
+      t: 0,
+    });
+  }
+
+  buildCreateRequest(
+    path: string,
+    type: FileSystemObjectTypes,
+    fileName: string
+  ): Observable<CmsRequestInterface<CreateRequest>> {
+    return of({
+      r: [
+        {
+          s: Subsystems.CMS,
+          r: CmsRequestActions.CREATE,
+          l: SupportedLanguages.EN_US,
+          path: path,
+          type,
+          fileName,
         },
       ],
       t: 0,

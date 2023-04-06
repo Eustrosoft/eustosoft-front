@@ -17,6 +17,15 @@ import { environment } from '../../../environments/environment';
 export class ExplorerService {
   constructor(private http: HttpClient) {}
 
+  dispatch<Req, Res>(
+    body: CmsRequestInterface<Req>
+  ): Observable<CmsResponseInterface<Res>> {
+    return this.http.post<CmsResponseInterface<Res>>(
+      `${environment.apiUrl}/dispatch`,
+      body
+    );
+  }
+
   getFsObjects(
     body: CmsRequestInterface<ViewRequest>
   ): Observable<CmsResponseInterface<ViewResponse>> {
@@ -26,11 +35,13 @@ export class ExplorerService {
     );
   }
 
-  createFolder(name: string, path = '/'): Observable<{ path: string }> {
-    return this.http.post<{ path: string }>(`${environment.apiUrl}/folders`, {
-      path,
-      name,
-    });
+  createFolder<Request, Response>(
+    body: CmsRequestInterface<Request>
+  ): Observable<CmsResponseInterface<Response>> {
+    return this.http.post<CmsResponseInterface<Response>>(
+      `${environment.apiUrl}/dispatch`,
+      body
+    );
   }
 
   renameFolder(name: string, source: string): Observable<string> {

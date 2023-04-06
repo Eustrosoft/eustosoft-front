@@ -23,17 +23,18 @@ export class HeaderComponent implements OnInit {
   @Input() appsListTemplate!: TemplateRef<any>;
   @Input() localizedTexts!: { title: string; appsButtonText: string };
 
-  constructor(
-    private loginService: LoginService,
-    private authenticationService: AuthenticationService
-  ) {}
-
+  private loginService: LoginService = inject(LoginService);
+  private authenticationService: AuthenticationService = inject(
+    AuthenticationService
+  );
   public environment = inject(APP_ENVIRONMENT);
-  public isAuthenticated: Observable<boolean> | undefined;
+  public isAuthenticated!: Observable<boolean>;
+  public userName!: Observable<string>;
 
   ngOnInit() {
     this.isAuthenticated =
       this.authenticationService.isAuthenticated.asObservable();
+    this.userName = this.authenticationService.userName.asObservable();
   }
 
   logout() {

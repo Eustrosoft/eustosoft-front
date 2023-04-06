@@ -34,6 +34,8 @@ import {
   ChunkedFileRequest,
   CmsRequestInterface,
   CmsResponseInterface,
+  CreateRequest,
+  CreateResponse,
   FileReaderService,
   FileSystemObject,
   FileSystemObjectTypes,
@@ -98,7 +100,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
         this.explorerRequestBuilderService.buildViewRequest(path)
       ),
       switchMap((request: CmsRequestInterface<ViewRequest>) =>
-        this.explorerService.getFsObjects(request)
+        this.explorerService.dispatch<ViewRequest, ViewResponse>(request)
       ),
       map((response: CmsResponseInterface<ViewResponse>) =>
         response.r.flatMap((r: ViewResponse) => r.content)
@@ -305,7 +307,14 @@ export class ExplorerComponent implements OnInit, OnDestroy {
       .pipe(
         filter((str) => typeof str === 'string'),
         switchMap((folderName: string) =>
-          this.explorerService.createFolder(folderName, this.path$.getValue())
+          this.explorerRequestBuilderService.buildCreateRequest(
+            this.path$.getValue(),
+            FileSystemObjectTypes.DIRECTORY,
+            folderName
+          )
+        ),
+        switchMap((body: CmsRequestInterface<CreateRequest>) =>
+          this.explorerService.dispatch<CreateRequest, CreateResponse>(body)
         ),
         tap(() => {
           this.refreshFolders$.next(true);

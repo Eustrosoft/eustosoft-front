@@ -1,8 +1,8 @@
 {
-  "/cms-0.0.1-SNAPSHOT/": {
+  "/eustrosofthandler_war": {
     "target": "http://fudo.eustrosoft.org:8080/",
     "secure": false,
-    "changeOrigin": false,
+    "changeOrigin": true,
     "logLevel": "debug"
   }
 }

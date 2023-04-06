@@ -2,7 +2,7 @@ import { Environment } from '@eustrosoft-front/app-config';
 
 export const environment: Environment = {
   production: true,
-  apiUrl: 'http://fudo.eustrosoft.org:8080/cms-0.0.1-SNAPSHOT',
+  apiUrl: 'http://fudo.eustrosoft.org:8080/eustrosofthandler_war/api',
   dispatcherUrl: 'http://fudo.eustrosoft.org:8080/dispatcher/',
   explorerUrl: 'http://fudo.eustrosoft.org:8080/explorer/',
   loginUrl: 'http://fudo.eustrosoft.org:8080/login/',

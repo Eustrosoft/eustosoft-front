@@ -15,5 +15,7 @@ export * from './lib/interfaces/dispatcher/request.interfaces';
 export * from './lib/interfaces/cms/file-system-object.interface';
 export * from './lib/interfaces/cms/cms-request.interface';
 export * from './lib/interfaces/cms/cms-response.interface';
+export * from './lib/interfaces/login/login-request.interface';
+export * from './lib/interfaces/login/login-response.interface';
 export * from './lib/types/request.types';
 export * from './lib/services/file-reader.service';

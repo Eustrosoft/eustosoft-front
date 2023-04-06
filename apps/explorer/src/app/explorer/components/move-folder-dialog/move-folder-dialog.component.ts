@@ -20,11 +20,14 @@ import {
   tap,
 } from 'rxjs';
 import {
+  CmsResponseInterface,
   FileSystemObject,
   FileSystemObjectTypes,
+  ViewResponse,
 } from '@eustrosoft-front/core';
 import { MatListOption, MatSelectionList } from '@angular/material/list';
 import { Stack } from '../../classes/Stack';
+import { ExplorerRequestBuilderService } from '../../services/explorer-request-builder.service';
 
 @Component({
   selector: 'eustrosoft-front-move-folder-dialog',
@@ -56,15 +59,22 @@ export class MoveFolderDialogComponent
     MatDialogRef<MoveFolderDialogComponent>
   );
   private explorerService: ExplorerService = inject(ExplorerService);
+  private explorerRequestBuilderService: ExplorerRequestBuilderService = inject(
+    ExplorerRequestBuilderService
+  );
   private cd: ChangeDetectorRef = inject(ChangeDetectorRef);
   private navigationHistoryStack: Stack<string> = inject(Stack);
 
   ngOnInit(): void {
-    this.fsObjects$ = this.path$
-      .asObservable()
-      .pipe(
-        switchMap((path: string) => this.explorerService.getFsObjects(path))
-      );
+    this.fsObjects$ = this.path$.asObservable().pipe(
+      switchMap((path: string) =>
+        this.explorerRequestBuilderService.buildViewRequest(path)
+      ),
+      switchMap((path) => this.explorerService.getFsObjects(path)),
+      map((response: CmsResponseInterface<ViewResponse>) =>
+        response.r.flatMap((r: ViewResponse) => r.content)
+      )
+    );
 
     this.moveButtonDisabled$ = this.matSelectionListRendered$.pipe(
       switchMap(() =>
