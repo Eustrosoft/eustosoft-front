@@ -25,3 +25,6 @@ export * from './lib/directives/ripple-hover.directive';
 export * from './lib/directives/hover-cursor.directive';
 
 export * from './lib/components/progress-bar/progress-bar.component';
+
+export * from './lib/components/prompt-dialog/prompt-dialog.component';
+export * from './lib/components/prompt-dialog/prompt-dialog-data.interface';

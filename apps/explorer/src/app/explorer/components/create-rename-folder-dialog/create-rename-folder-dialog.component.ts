@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { CreateRenameDialogData } from '../../interfaces/create-rename-dialog-data.interface';
+import { CreateRenameDialogDataInterface } from './create-rename-dialog-data.interface';
 
 @Component({
   selector: 'eustrosoft-front-create-fs-object-dialog',
@@ -13,7 +13,7 @@ export class CreateRenameFolderDialogComponent {
   private dialogRef: MatDialogRef<CreateRenameFolderDialogComponent> = inject(
     MatDialogRef<CreateRenameFolderDialogComponent>
   );
-  public data: CreateRenameDialogData = inject(MAT_DIALOG_DATA);
+  public data: CreateRenameDialogDataInterface = inject(MAT_DIALOG_DATA);
   public cancelButtonText = $localize`Cancel`;
 
   control = new FormControl(this.data.defaultInputValue, {

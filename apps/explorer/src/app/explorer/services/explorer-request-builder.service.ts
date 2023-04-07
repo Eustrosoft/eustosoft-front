@@ -3,10 +3,14 @@ import {
   CmsRequestActions,
   CmsRequestInterface,
   CreateRequest,
+  DeleteRequest,
+  FileSystemObject,
   FileSystemObjectTypes,
+  MoveCopyRequest,
   Subsystems,
   SupportedLanguages,
   TisRequest,
+  UploadRequest,
   ViewRequest,
 } from '@eustrosoft-front/core';
 import { mergeMap, Observable, of } from 'rxjs';
@@ -50,11 +54,13 @@ export class ExplorerRequestBuilderService {
     chunk: Blob,
     chunkIndex: number,
     totalChunks: number
-  ): TisRequest {
+  ): CmsRequestInterface<UploadRequest> {
     return {
-      qtisver: 1,
-      requests: [
+      r: [
         {
+          s: Subsystems.CMS,
+          r: CmsRequestActions.UPLOAD,
+          l: SupportedLanguages.EN_US,
           parameters: {
             data: {
               file: '',
@@ -68,8 +74,27 @@ export class ExplorerRequestBuilderService {
           subsystem: 'file',
         },
       ],
-      qtisend: true,
-    } as TisRequest;
+      t: 0,
+    };
+  }
+
+  buildMoveRequest(
+    from: FileSystemObject[],
+    to: string[]
+  ): Observable<CmsRequestInterface<MoveCopyRequest>> {
+    return of({
+      r: from.map(
+        (obj: FileSystemObject, i: number) =>
+          ({
+            s: Subsystems.CMS,
+            r: CmsRequestActions.MOVE,
+            l: SupportedLanguages.EN_US,
+            from: obj.fullPath,
+            to: to[i],
+          } as MoveCopyRequest)
+      ),
+      t: 0,
+    });
   }
 
   buildViewRequest(path: string): Observable<CmsRequestInterface<ViewRequest>> {
@@ -102,6 +127,23 @@ export class ExplorerRequestBuilderService {
           fileName,
         },
       ],
+      t: 0,
+    });
+  }
+
+  buildDeleteRequests(
+    rows: FileSystemObject[]
+  ): Observable<CmsRequestInterface<DeleteRequest>> {
+    return of({
+      r: rows.map(
+        (row: FileSystemObject) =>
+          ({
+            s: Subsystems.CMS,
+            r: CmsRequestActions.DELETE,
+            l: SupportedLanguages.EN_US,
+            path: row.fullPath,
+          } as DeleteRequest)
+      ),
       t: 0,
     });
   }

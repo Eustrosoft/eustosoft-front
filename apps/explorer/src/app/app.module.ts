@@ -40,6 +40,8 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BreadcrumbsComponent } from './explorer/components/breadcrumbs/breadcrumbs.component';
 import { Stack } from './explorer/classes/Stack';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { ExplorerPathService } from './explorer/services/explorer-path.service';
+import { FilesystemTableComponent } from './explorer/components/filesystem-table/filesystem-table.component';
 
 @NgModule({
   declarations: [
@@ -48,6 +50,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     CreateRenameFolderDialogComponent,
     MoveFolderDialogComponent,
     BreadcrumbsComponent,
+    FilesystemTableComponent,
   ],
   imports: [
     BrowserModule,
@@ -71,6 +74,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   ],
   providers: [
     ExplorerService,
+    ExplorerPathService,
     ExplorerRequestBuilderService,
     Stack,
     { provide: APP_ENVIRONMENT, useValue: environment },

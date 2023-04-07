@@ -7,8 +7,6 @@ import {
   TisRequest,
   TisResponse,
   TisResponseBody,
-  ViewRequest,
-  ViewResponse,
 } from '@eustrosoft-front/core';
 import { mergeMap, Observable, of } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -23,42 +21,6 @@ export class ExplorerService {
     return this.http.post<CmsResponseInterface<Res>>(
       `${environment.apiUrl}/dispatch`,
       body
-    );
-  }
-
-  getFsObjects(
-    body: CmsRequestInterface<ViewRequest>
-  ): Observable<CmsResponseInterface<ViewResponse>> {
-    return this.http.post<CmsResponseInterface<ViewResponse>>(
-      `${environment.apiUrl}/dispatch`,
-      body
-    );
-  }
-
-  createFolder<Request, Response>(
-    body: CmsRequestInterface<Request>
-  ): Observable<CmsResponseInterface<Response>> {
-    return this.http.post<CmsResponseInterface<Response>>(
-      `${environment.apiUrl}/dispatch`,
-      body
-    );
-  }
-
-  renameFolder(name: string, source: string): Observable<string> {
-    return this.http.put<string>(`${environment.apiUrl}/folders/rename`, {
-      name,
-      source,
-    });
-  }
-
-  moveFolder(from: string, to: string): Observable<HttpResponse<string>> {
-    return this.http.put(
-      `${environment.apiUrl}/folders/move`,
-      {
-        from,
-        to,
-      },
-      { observe: 'response', responseType: 'text' }
     );
   }
 

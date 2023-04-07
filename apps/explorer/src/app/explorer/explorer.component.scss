@@ -1,22 +1,5 @@
 @import 'variables';
 
-tr.table-row:hover {
-  background: whitesmoke;
-}
-
-tr.table-row {
-  height: 4em;
-}
-
-.mat-column-select {
-  width: 1em;
-}
-
-.files-over {
-  background: $light-gray;
-  transition: 0.2s background;
-}
-
 .progress-overlay {
   position: fixed;
   bottom: 0;

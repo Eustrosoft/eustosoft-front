@@ -22,6 +22,7 @@
           [multiple]="false"
           [hideSingleSelectionIndicator]="true"
           [disableRipple]="true"
+          #list
         >
           <mat-list-option
             *ngFor="let object of fsObjects$ | async; let i = index"
@@ -35,7 +36,10 @@
               <ng-container
                 *ngSwitchCase="fsObjTypes.DIRECTORY"
                 [ngTemplateOutlet]="directoryTemplate"
-                [ngTemplateOutletContext]="{ $implicit: object }"
+                [ngTemplateOutletContext]="{
+                  object: object,
+                  forwardLinkDisabled: list.options.get(i)?.disabled
+                }"
               >
               </ng-container>
               <ng-container
@@ -88,7 +92,11 @@
   </div>
 </div>
 
-<ng-template #directoryTemplate let-object>
+<ng-template
+  #directoryTemplate
+  let-object="object"
+  let-forwardLinkDisabled="forwardLinkDisabled"
+>
   <div class="d-flex justify-content-between">
     <div class="d-flex align-items-center lh-1">
       <mat-icon>folder</mat-icon>
@@ -98,7 +106,8 @@
       [buttonType]="'button'"
       [buttonStyleType]="'icon'"
       [iconName]="'navigate_next'"
-      (click)="navigateForward($event, object)"
+      [disabled]="forwardLinkDisabled"
+      (clicked)="navigateForward($event, object)"
     >
     </eustrosoft-front-button>
   </div>

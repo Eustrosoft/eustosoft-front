@@ -27,6 +27,8 @@ import {
 import { HoverCursorDirective } from './directives/hover-cursor.directive';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatMenuModule } from '@angular/material/menu';
+import { PromptDialogComponent } from './components/prompt-dialog/prompt-dialog.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   imports: [
@@ -43,6 +45,7 @@ import { MatMenuModule } from '@angular/material/menu';
     CdkFixedSizeVirtualScroll,
     MatToolbarModule,
     MatMenuModule,
+    MatDialogModule,
   ],
   declarations: [
     HeaderComponent,
@@ -58,6 +61,7 @@ import { MatMenuModule } from '@angular/material/menu';
     RippleHoverDirective,
     ProgressBarComponent,
     HoverCursorDirective,
+    PromptDialogComponent,
   ],
   exports: [
     HeaderComponent,

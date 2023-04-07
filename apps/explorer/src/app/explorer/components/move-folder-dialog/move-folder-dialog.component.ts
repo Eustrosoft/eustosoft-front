@@ -23,11 +23,13 @@ import {
   CmsResponseInterface,
   FileSystemObject,
   FileSystemObjectTypes,
+  ViewRequest,
   ViewResponse,
 } from '@eustrosoft-front/core';
 import { MatListOption, MatSelectionList } from '@angular/material/list';
 import { Stack } from '../../classes/Stack';
 import { ExplorerRequestBuilderService } from '../../services/explorer-request-builder.service';
+import { MoveDialogDataInterface } from './move-dialog-data.interface';
 
 @Component({
   selector: 'eustrosoft-front-move-folder-dialog',
@@ -54,7 +56,7 @@ export class MoveFolderDialogComponent
 
   @ViewChild(MatSelectionList) matSelectionList!: MatSelectionList;
 
-  private data: { fsObj: FileSystemObject } = inject(MAT_DIALOG_DATA);
+  private data: MoveDialogDataInterface = inject(MAT_DIALOG_DATA);
   private dialogRef: MatDialogRef<MoveFolderDialogComponent> = inject(
     MatDialogRef<MoveFolderDialogComponent>
   );
@@ -70,7 +72,9 @@ export class MoveFolderDialogComponent
       switchMap((path: string) =>
         this.explorerRequestBuilderService.buildViewRequest(path)
       ),
-      switchMap((path) => this.explorerService.getFsObjects(path)),
+      switchMap((body) =>
+        this.explorerService.dispatch<ViewRequest, ViewResponse>(body)
+      ),
       map((response: CmsResponseInterface<ViewResponse>) =>
         response.r.flatMap((r: ViewResponse) => r.content)
       )
@@ -91,24 +95,46 @@ export class MoveFolderDialogComponent
             .filter(
               (value: FileSystemObject) =>
                 value.type === FileSystemObjectTypes.FILE &&
-                value.fileName === this.data.fsObj.fileName
+                this.data.fsObjects.filter(
+                  (fsObj) => fsObj.fileName === value.fileName
+                ).length > 0
             ).length > 0;
 
-        const sameFolderIndex = this.matSelectionList.options
+        const sameFolderIndexes = this.matSelectionList.options
           .toArray()
           .map((item: MatListOption) => item.value)
-          .findIndex(
+          .filter(
             (value: FileSystemObject) =>
-              value.type === FileSystemObjectTypes.DIRECTORY &&
-              value.fileName === this.data.fsObj.fileName
-          );
+              this.data.fsObjects.filter(
+                (fsObj) => fsObj.fileName === value.fileName
+              ).length > 0
+          )
+          .map((el, i) => i);
 
-        if (sameFolderIndex !== -1) {
-          const item = this.matSelectionList.options.get(sameFolderIndex);
+        sameFolderIndexes.forEach((index: number) => {
+          const item = this.matSelectionList.options.get(index);
           if (item) {
             item.disabled = true;
           }
-        }
+        });
+
+        // const sameFolderIndex = this.matSelectionList.options
+        //   .toArray()
+        //   .map((item: MatListOption) => item.value)
+        //   .findIndex(
+        //     (value: FileSystemObject) =>
+        //       value.type === FileSystemObjectTypes.DIRECTORY &&
+        //       this.data.fsObjects.filter(
+        //         (fsObj) => fsObj.fileName === value.fileName
+        //       ).length > 0
+        //   );
+        //
+        // if (sameFolderIndex !== -1) {
+        //   const item = this.matSelectionList.options.get(sameFolderIndex);
+        //   if (item) {
+        //     item.disabled = true;
+        //   }
+        // }
 
         if (
           fileAlreadyExistsInFolder &&
@@ -119,10 +145,10 @@ export class MoveFolderDialogComponent
         }
 
         if (
-          sameFolderIndex !== -1 &&
+          sameFolderIndexes.length > 0 &&
           !this.matSelectionList.selectedOptions.hasValue()
         ) {
-          this.moveButtonErrorText = $localize`Can't move folder into itself`;
+          this.moveButtonErrorText = $localize`This directory already contains folder with same name`;
           return true;
         }
 
@@ -171,11 +197,16 @@ export class MoveFolderDialogComponent
 
   resolve(): void {
     if (this.matSelectionList.selectedOptions.hasValue()) {
-      this.dialogRef.close(
-        `${this.matSelectionList.selectedOptions.selected[0].value.fullPath}/${this.data.fsObj.fileName}`
+      const paths = this.data.fsObjects.map(
+        (fsObj) =>
+          `${this.matSelectionList.selectedOptions.selected[0].value.fullPath}/${fsObj.fileName}`
       );
+      this.dialogRef.close(paths);
     } else {
-      this.dialogRef.close(`${this.path$.value}/${this.data.fsObj.fileName}`);
+      const paths = this.data.fsObjects.map(
+        (fsObj) => `${this.path$.value}/${fsObj.fileName}`
+      );
+      this.dialogRef.close(paths);
     }
   }
 
