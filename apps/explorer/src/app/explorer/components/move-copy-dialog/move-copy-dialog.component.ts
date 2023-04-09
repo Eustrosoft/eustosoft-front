@@ -49,9 +49,7 @@ export class MoveCopyDialogComponent
   private destroy$ = new Subject<void>();
 
   fsObjTypes = FileSystemObjectTypes;
-  cancelButtonText = $localize`Cancel`;
-  moveButtonText = $localize`Move`;
-  createNewFolderTitleText = $localize`Create new folder`;
+  createNewFolderTitleText = `Create new folder`;
   moveButtonErrorText = '';
 
   @ViewChild(MatSelectionList) matSelectionList!: MatSelectionList;
@@ -121,7 +119,7 @@ export class MoveCopyDialogComponent
           objectsAlreadyExistsInFolder &&
           !this.matSelectionList.selectedOptions.hasValue()
         ) {
-          this.moveButtonErrorText = $localize`Selected element already exist in this folder`;
+          this.moveButtonErrorText = `Selected element already exist in this folder`;
           return true;
         }
 
@@ -129,7 +127,7 @@ export class MoveCopyDialogComponent
           matchingIndexes.length > 0 &&
           !this.matSelectionList.selectedOptions.hasValue()
         ) {
-          this.moveButtonErrorText = $localize`This directory already contains folder with same name`;
+          this.moveButtonErrorText = `This directory already contains folder with same name`;
           return true;
         }
 

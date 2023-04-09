@@ -9,12 +9,12 @@ import { APP_ENVIRONMENT } from '@eustrosoft-front/app-config';
 export class AppComponent {
   public environment = inject(APP_ENVIRONMENT);
   public headerLocalizedTexts = {
-    title: $localize`LOGO | TIS Apps | Dispatcher`,
-    appsButtonText: $localize`Apps`,
+    title: `LOGO | TIS Apps | Dispatcher`,
+    appsButtonText: `Apps`,
   };
   public localizedAppsListNames = {
-    login: $localize`Login`,
-    explorer: $localize`Explorer`,
-    appsPage: $localize`All apps page`,
+    login: `Login`,
+    explorer: `Explorer`,
+    appsPage: `All apps page`,
   };
 }

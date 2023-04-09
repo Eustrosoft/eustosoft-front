@@ -32,9 +32,9 @@ export class LoginPageComponent implements OnInit, OnDestroy {
   form!: FormGroup;
   InputTypes = InputTypes;
 
-  loginInputLabelText = $localize`Your login`;
-  passwordInputLabelText = $localize`Your password`;
-  submitButtonText = $localize`Submit`;
+  loginInputLabelText = `Your login`;
+  passwordInputLabelText = `Your password`;
+  submitButtonText = `Submit`;
 
   private destroyed$ = new Subject<void>();
 

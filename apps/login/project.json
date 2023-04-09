@@ -16,7 +16,7 @@
       "outputs": ["{options.outputPath}"],
       "options": {
         "localize": false,
-        "i18nMissingTranslation": "error",
+        "i18nMissingTranslation": "warning",
         "outputPath": "dist/apps/login",
         "index": "apps/login/src/index.html",
         "main": "apps/login/src/main.ts",

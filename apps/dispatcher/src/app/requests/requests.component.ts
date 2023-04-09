@@ -42,10 +42,10 @@ export class RequestsComponent implements OnInit {
   public queryTypeOptions: string[] = [...Object.values(QueryTypes)];
   public displayTypeOptions: string[] = [...Object.values(DisplayTypes)];
 
-  public displayTypeLabelText = $localize`Display as`;
-  public addFormButtonTitle = $localize`Add request form`;
-  public removeFormButtonTitle = $localize`Remove last request form`;
-  public submitButtonText = $localize`Run`;
+  public displayTypeLabelText = `Display as`;
+  public addFormButtonTitle = `Add request form`;
+  public removeFormButtonTitle = `Remove last request form`;
+  public submitButtonText = `Run`;
 
   tables?: Table[][];
 

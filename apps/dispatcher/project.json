@@ -16,7 +16,7 @@
       "outputs": ["{options.outputPath}"],
       "options": {
         "localize": false,
-        "i18nMissingTranslation": "error",
+        "i18nMissingTranslation": "warning",
         "outputPath": "dist/apps/dispatcher",
         "index": "apps/dispatcher/src/index.html",
         "main": "apps/dispatcher/src/main.ts",

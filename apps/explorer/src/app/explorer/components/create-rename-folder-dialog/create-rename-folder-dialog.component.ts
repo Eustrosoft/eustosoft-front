@@ -14,7 +14,7 @@ export class CreateRenameFolderDialogComponent {
     MatDialogRef<CreateRenameFolderDialogComponent>
   );
   public data: CreateRenameDialogDataInterface = inject(MAT_DIALOG_DATA);
-  public cancelButtonText = $localize`Cancel`;
+  public cancelButtonText = `Cancel`;
 
   control = new FormControl(this.data.defaultInputValue, {
     nonNullable: true,

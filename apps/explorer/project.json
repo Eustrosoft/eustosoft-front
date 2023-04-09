@@ -16,7 +16,7 @@
       "outputs": ["{options.outputPath}"],
       "options": {
         "localize": false,
-        "i18nMissingTranslation": "error",
+        "i18nMissingTranslation": "warning",
         "outputPath": "dist/apps/explorer",
         "index": "apps/explorer/src/index.html",
         "main": "apps/explorer/src/main.ts",

@@ -22,7 +22,7 @@ export class RequestComponent {
   @ViewChild(InputFileComponent) inputFileComponent!: InputFileComponent;
   public QueryTypes = QueryTypes;
 
-  public queryTypeLabelText = $localize`Query type`;
+  public queryTypeLabelText = `Query type`;
 
   deleteFile(index: number): void {
     const control = this.form.get('file');

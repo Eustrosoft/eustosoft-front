@@ -12,14 +12,14 @@
       <mat-menu #newActionsMenu="matMenu">
         <button (click)="createFolder()" mat-menu-item>
           <mat-icon>create_new_folder</mat-icon>
-          <span i18n>New folder</span>
+          <span>New folder</span>
         </button>
         <button
           (click)="inputFileComponent.fileInput.nativeElement.click()"
           mat-menu-item
         >
           <mat-icon>upload</mat-icon>
-          <span i18n>New upload</span>
+          <span>New upload</span>
         </button>
       </mat-menu>
     </div>
@@ -38,28 +38,28 @@
         <mat-menu #batchOperationsMenu="matMenu">
           <button disabled mat-menu-item>
             <mat-icon>download</mat-icon>
-            <span i18n>Download</span>
+            <span>Download</span>
           </button>
           <button
             (click)="copy(filesystemTableComponent.selection.selected)"
             mat-menu-item
           >
             <mat-icon>content_copy</mat-icon>
-            <span i18n>Copy</span>
+            <span>Copy</span>
           </button>
           <button
             (click)="move(filesystemTableComponent.selection.selected)"
             mat-menu-item
           >
             <mat-icon>drive_file_move</mat-icon>
-            <span i18n>Move to</span>
+            <span>Move to</span>
           </button>
           <button
             (click)="delete(filesystemTableComponent.selection.selected)"
             mat-menu-item
           >
             <mat-icon>delete</mat-icon>
-            <span i18n>Delete</span>
+            <span>Delete</span>
           </button>
         </mat-menu>
       </div>
