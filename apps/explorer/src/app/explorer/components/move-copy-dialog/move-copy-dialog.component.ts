@@ -20,9 +20,9 @@ import {
   tap,
 } from 'rxjs';
 import {
-  CmsResponseInterface,
   FileSystemObject,
   FileSystemObjectTypes,
+  QtisRequestResponseInterface,
   ViewRequest,
   ViewResponse,
 } from '@eustrosoft-front/core';
@@ -73,7 +73,7 @@ export class MoveCopyDialogComponent
       switchMap((body) =>
         this.explorerService.dispatch<ViewRequest, ViewResponse>(body)
       ),
-      map((response: CmsResponseInterface<ViewResponse>) =>
+      map((response: QtisRequestResponseInterface<ViewResponse>) =>
         response.r.flatMap((r: ViewResponse) => r.content)
       )
     );

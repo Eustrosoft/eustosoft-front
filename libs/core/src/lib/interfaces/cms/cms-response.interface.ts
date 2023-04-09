@@ -1,12 +1,7 @@
-import { CmsRequestActions } from '../../constants/enums/cms-request-actions.enum';
+import { CmsRequestActions } from '../../constants/enums/cms-actions.enum';
 import { FileSystemObject } from './file-system-object.interface';
 import { Subsystems } from '../../constants/enums/subsystems.enum';
 import { SupportedLanguages } from '../../constants/enums/supported-languages.enum';
-
-export interface CmsResponseInterface<T> {
-  r: T[];
-  t: number;
-}
 
 interface BaseCmsResponse {
   s: Subsystems.CMS;

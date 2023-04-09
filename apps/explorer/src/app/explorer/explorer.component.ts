@@ -39,8 +39,6 @@ import {
 import {
   ChunkedFileRequest,
   CmsRequestActions,
-  CmsRequestInterface,
-  CmsResponseInterface,
   CreateRequest,
   CreateResponse,
   DeleteRequest,
@@ -50,6 +48,7 @@ import {
   FileSystemObjectTypes,
   MoveCopyRequest,
   MoveCopyResponse,
+  QtisRequestResponseInterface,
   TisRequest,
   TisResponse,
   ViewRequest,
@@ -113,10 +112,10 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
       switchMap(([path, refresh]) =>
         this.explorerRequestBuilderService.buildViewRequest(path)
       ),
-      switchMap((request: CmsRequestInterface<ViewRequest>) =>
+      switchMap((request: QtisRequestResponseInterface<ViewRequest>) =>
         this.explorerService.dispatch<ViewRequest, ViewResponse>(request)
       ),
-      map((response: CmsResponseInterface<ViewResponse>) =>
+      map((response: QtisRequestResponseInterface<ViewResponse>) =>
         response.r.flatMap((r: ViewResponse) => r.content)
       ),
       tap(() => this.filesystemTableComponent.selection.clear()),
@@ -329,7 +328,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
             folderName
           )
         ),
-        switchMap((body: CmsRequestInterface<CreateRequest>) =>
+        switchMap((body: QtisRequestResponseInterface<CreateRequest>) =>
           this.explorerService.dispatch<CreateRequest, CreateResponse>(body)
         ),
         tap(() => {
@@ -369,7 +368,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
             CmsRequestActions.MOVE
           );
         }),
-        switchMap((body: CmsRequestInterface<MoveCopyRequest>) =>
+        switchMap((body: QtisRequestResponseInterface<MoveCopyRequest>) =>
           this.explorerService.dispatch<MoveCopyRequest, MoveCopyResponse>(body)
         ),
         tap(() => {
@@ -482,7 +481,9 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
     >(PromptDialogComponent, {
       data: {
         title: 'Delete confirmation',
-        text: `${rows.length} objects are marked for deletion. Proceed?`,
+        text: `${rows.length} ${
+          rows.length > 1 ? 'objects' : 'object'
+        } are marked for deletion. Proceed?`,
         cancelButtonText: 'No',
         submitButtonText: 'Yes',
       },
@@ -495,7 +496,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
         switchMap(() =>
           this.explorerRequestBuilderService.buildDeleteRequests(rows)
         ),
-        switchMap((body: CmsRequestInterface<DeleteRequest>) =>
+        switchMap((body: QtisRequestResponseInterface<DeleteRequest>) =>
           this.explorerService.dispatch<DeleteRequest, DeleteResponse>(body)
         ),
         tap(() => this.refreshFolders$.next(true)),

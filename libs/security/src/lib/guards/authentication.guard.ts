@@ -9,7 +9,10 @@ import {
 import { delay, Observable, of, switchMap } from 'rxjs';
 import { AuthenticationService } from '../services/authentication.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { LoginRequestInterface, PingResponse } from '@eustrosoft-front/core';
+import {
+  PingResponse,
+  QtisRequestResponseInterface,
+} from '@eustrosoft-front/core';
 
 @Injectable()
 export class AuthenticationGuard implements CanActivate {
@@ -28,7 +31,7 @@ export class AuthenticationGuard implements CanActivate {
     | boolean
     | UrlTree {
     return this.authenticationService.getAuthenticationInfo().pipe(
-      switchMap((pingResponse: LoginRequestInterface<PingResponse>) => {
+      switchMap((pingResponse: QtisRequestResponseInterface<PingResponse>) => {
         if (pingResponse.r[0].e !== 0) {
           this.snackBar.open(
             'Authenticate in order to access this page',

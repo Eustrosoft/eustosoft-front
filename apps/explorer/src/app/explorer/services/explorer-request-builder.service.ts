@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import {
   CmsRequestActions,
-  CmsRequestInterface,
   CreateRequest,
   DeleteRequest,
   FileSystemObject,
   FileSystemObjectTypes,
   MoveCopyRequest,
+  QtisRequestResponseInterface,
   Subsystems,
   SupportedLanguages,
   TisRequest,
@@ -54,11 +54,11 @@ export class ExplorerRequestBuilderService {
     chunk: Blob,
     chunkIndex: number,
     totalChunks: number
-  ): CmsRequestInterface<UploadRequest> {
+  ): QtisRequestResponseInterface<UploadRequest> {
     return {
       r: [
         {
-          s: Subsystems.CMS,
+          s: Subsystems.FILE,
           r: CmsRequestActions.UPLOAD,
           l: SupportedLanguages.EN_US,
           parameters: {
@@ -82,7 +82,7 @@ export class ExplorerRequestBuilderService {
     from: FileSystemObject[],
     to: string[],
     action: CmsRequestActions
-  ): Observable<CmsRequestInterface<MoveCopyRequest>> {
+  ): Observable<QtisRequestResponseInterface<MoveCopyRequest>> {
     return of({
       r: from.map(
         (obj: FileSystemObject, i: number) =>
@@ -98,7 +98,9 @@ export class ExplorerRequestBuilderService {
     });
   }
 
-  buildViewRequest(path: string): Observable<CmsRequestInterface<ViewRequest>> {
+  buildViewRequest(
+    path: string
+  ): Observable<QtisRequestResponseInterface<ViewRequest>> {
     return of({
       r: [
         {
@@ -116,7 +118,7 @@ export class ExplorerRequestBuilderService {
     path: string,
     type: FileSystemObjectTypes,
     fileName: string
-  ): Observable<CmsRequestInterface<CreateRequest>> {
+  ): Observable<QtisRequestResponseInterface<CreateRequest>> {
     return of({
       r: [
         {
@@ -134,7 +136,7 @@ export class ExplorerRequestBuilderService {
 
   buildDeleteRequests(
     rows: FileSystemObject[]
-  ): Observable<CmsRequestInterface<DeleteRequest>> {
+  ): Observable<QtisRequestResponseInterface<DeleteRequest>> {
     return of({
       r: rows.map(
         (row: FileSystemObject) =>

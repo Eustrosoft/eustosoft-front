@@ -2,8 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import {
   ChunkedFileRequest,
-  CmsRequestInterface,
-  CmsResponseInterface,
+  QtisRequestResponseInterface,
   TisRequest,
   TisResponse,
   TisResponseBody,
@@ -16,9 +15,9 @@ export class ExplorerService {
   constructor(private http: HttpClient) {}
 
   dispatch<Req, Res>(
-    body: CmsRequestInterface<Req>
-  ): Observable<CmsResponseInterface<Res>> {
-    return this.http.post<CmsResponseInterface<Res>>(
+    body: QtisRequestResponseInterface<Req>
+  ): Observable<QtisRequestResponseInterface<Res>> {
+    return this.http.post<QtisRequestResponseInterface<Res>>(
       `${environment.apiUrl}/dispatch`,
       body
     );

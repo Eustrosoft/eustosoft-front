@@ -3,10 +3,9 @@ import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { APP_ENVIRONMENT, Environment } from '@eustrosoft-front/app-config';
 import {
-  LoginRequestInterface,
-  LoginResponseInterface,
   PingRequest,
   PingResponse,
+  QtisRequestResponseInterface,
   Subsystems,
   SupportedLanguages,
 } from '@eustrosoft-front/core';
@@ -19,9 +18,11 @@ export class AuthenticationService {
   isAuthenticated = new BehaviorSubject<boolean>(false);
   userName = new BehaviorSubject<string>('');
 
-  getAuthenticationInfo(): Observable<LoginResponseInterface<PingResponse>> {
+  getAuthenticationInfo(): Observable<
+    QtisRequestResponseInterface<PingResponse>
+  > {
     return this.http
-      .post<LoginResponseInterface<PingResponse>>(
+      .post<QtisRequestResponseInterface<PingResponse>>(
         `${this.environment.apiUrl}/dispatch`,
         {
           r: [
@@ -31,7 +32,7 @@ export class AuthenticationService {
             },
           ],
           t: 0,
-        } as LoginRequestInterface<PingRequest>
+        } as QtisRequestResponseInterface<PingRequest>
       )
       .pipe(
         tap((response) => {
