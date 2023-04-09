@@ -30,7 +30,7 @@ import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { PortalModule } from '@angular/cdk/portal';
 import { MatDialogModule } from '@angular/material/dialog';
 import { CreateRenameFolderDialogComponent } from './explorer/components/create-rename-folder-dialog/create-rename-folder-dialog.component';
-import { MoveFolderDialogComponent } from './explorer/components/move-folder-dialog/move-folder-dialog.component';
+import { MoveCopyDialogComponent } from './explorer/components/move-copy-dialog/move-copy-dialog.component';
 import {
   CdkFixedSizeVirtualScroll,
   CdkVirtualScrollViewport,
@@ -48,7 +48,7 @@ import { FilesystemTableComponent } from './explorer/components/filesystem-table
     AppComponent,
     ExplorerComponent,
     CreateRenameFolderDialogComponent,
-    MoveFolderDialogComponent,
+    MoveCopyDialogComponent,
     BreadcrumbsComponent,
     FilesystemTableComponent,
   ],

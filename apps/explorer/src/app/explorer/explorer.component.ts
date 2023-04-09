@@ -38,6 +38,7 @@ import {
 } from 'rxjs';
 import {
   ChunkedFileRequest,
+  CmsRequestActions,
   CmsRequestInterface,
   CmsResponseInterface,
   CreateRequest,
@@ -62,11 +63,11 @@ import { HttpResponse } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateRenameFolderDialogComponent } from './components/create-rename-folder-dialog/create-rename-folder-dialog.component';
 import { CreateRenameDialogDataInterface } from './components/create-rename-folder-dialog/create-rename-dialog-data.interface';
-import { MoveFolderDialogComponent } from './components/move-folder-dialog/move-folder-dialog.component';
 import { ExplorerPathService } from './services/explorer-path.service';
-import { MoveDialogDataInterface } from './components/move-folder-dialog/move-dialog-data.interface';
 import { FilesystemTableComponent } from './components/filesystem-table/filesystem-table.component';
 import { SelectionChange } from '@angular/cdk/collections';
+import { MoveCopyDialogComponent } from './components/move-copy-dialog/move-copy-dialog.component';
+import { MoveCopyDialogDataInterface } from './components/move-copy-dialog/move-copy-dialog-data.interface';
 
 @Component({
   selector: 'eustrosoft-front-explorer',
@@ -365,9 +366,10 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
           const folder = this.explorerPathService.getFullPathToLastFolder(
             row.fullPath
           );
-          return this.explorerRequestBuilderService.buildMoveRequest(
+          return this.explorerRequestBuilderService.buildMoveCopyRequest(
             [row],
-            [`${folder}/${newName}`]
+            [`${folder}/${newName}`],
+            CmsRequestActions.MOVE
           );
         }),
         switchMap((body: CmsRequestInterface<MoveCopyRequest>) =>
@@ -383,11 +385,16 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   move(rows: FileSystemObject[]): void {
     const dialogRef = this.dialog.open<
-      MoveFolderDialogComponent,
-      MoveDialogDataInterface,
+      MoveCopyDialogComponent,
+      MoveCopyDialogDataInterface,
       string[]
-    >(MoveFolderDialogComponent, {
-      data: { fsObjects: rows },
+    >(MoveCopyDialogComponent, {
+      data: {
+        title: 'Move to',
+        cancelButtonText: 'Cancel',
+        submitButtonText: 'Move',
+        fsObjects: rows,
+      },
     });
 
     dialogRef
@@ -397,7 +404,11 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
         map((str) => str as string[]),
         switchMap((to: string[]) =>
           combineLatest([
-            this.explorerRequestBuilderService.buildMoveRequest(rows, to),
+            this.explorerRequestBuilderService.buildMoveCopyRequest(
+              rows,
+              to,
+              CmsRequestActions.MOVE
+            ),
             of(to),
           ])
         ),
@@ -419,8 +430,51 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe();
   }
 
-  copy(v: unknown): void {
-    console.log(v);
+  copy(rows: FileSystemObject[]): void {
+    const dialogRef = this.dialog.open<
+      MoveCopyDialogComponent,
+      MoveCopyDialogDataInterface,
+      string[]
+    >(MoveCopyDialogComponent, {
+      data: {
+        title: 'Copy to',
+        cancelButtonText: 'Cancel',
+        submitButtonText: 'Copy',
+        fsObjects: rows,
+      },
+    });
+
+    dialogRef
+      .afterClosed()
+      .pipe(
+        filter((str) => typeof str !== 'undefined'),
+        map((str) => str as string[]),
+        switchMap((to: string[]) =>
+          combineLatest([
+            this.explorerRequestBuilderService.buildMoveCopyRequest(
+              rows,
+              to,
+              CmsRequestActions.COPY
+            ),
+            of(to),
+          ])
+        ),
+        switchMap(([body, to]) =>
+          combineLatest([
+            this.explorerService.dispatch<MoveCopyRequest, MoveCopyResponse>(
+              body
+            ),
+            of(to),
+          ])
+        ),
+        tap(([copyResponse, to]) => {
+          const lastIndex = to[0].lastIndexOf('/');
+          const path = to[0].substring(0, lastIndex);
+          this.path$.next(path);
+        }),
+        take(1)
+      )
+      .subscribe();
   }
 
   delete(rows: FileSystemObject[]): void {

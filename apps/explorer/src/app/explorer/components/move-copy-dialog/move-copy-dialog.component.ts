@@ -29,15 +29,15 @@ import {
 import { MatListOption, MatSelectionList } from '@angular/material/list';
 import { Stack } from '../../classes/Stack';
 import { ExplorerRequestBuilderService } from '../../services/explorer-request-builder.service';
-import { MoveDialogDataInterface } from './move-dialog-data.interface';
+import { MoveCopyDialogDataInterface } from './move-copy-dialog-data.interface';
 
 @Component({
   selector: 'eustrosoft-front-move-folder-dialog',
-  templateUrl: './move-folder-dialog.component.html',
-  styleUrls: ['./move-folder-dialog.component.scss'],
+  templateUrl: './move-copy-dialog.component.html',
+  styleUrls: ['./move-copy-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MoveFolderDialogComponent
+export class MoveCopyDialogComponent
   implements OnInit, AfterViewInit, OnDestroy
 {
   currentSelectedOptionIndex: number | undefined = undefined;
@@ -56,9 +56,9 @@ export class MoveFolderDialogComponent
 
   @ViewChild(MatSelectionList) matSelectionList!: MatSelectionList;
 
-  private data: MoveDialogDataInterface = inject(MAT_DIALOG_DATA);
-  private dialogRef: MatDialogRef<MoveFolderDialogComponent> = inject(
-    MatDialogRef<MoveFolderDialogComponent>
+  public data: MoveCopyDialogDataInterface = inject(MAT_DIALOG_DATA);
+  private dialogRef: MatDialogRef<MoveCopyDialogComponent> = inject(
+    MatDialogRef<MoveCopyDialogComponent>
   );
   private explorerService: ExplorerService = inject(ExplorerService);
   private explorerRequestBuilderService: ExplorerRequestBuilderService = inject(
@@ -88,64 +88,45 @@ export class MoveFolderDialogComponent
         )
       ),
       map(() => {
-        const fileAlreadyExistsInFolder =
-          this.matSelectionList.options
-            .toArray()
-            .map((item: MatListOption) => item.value)
-            .filter(
-              (value: FileSystemObject) =>
-                value.type === FileSystemObjectTypes.FILE &&
-                this.data.fsObjects.filter(
-                  (fsObj) => fsObj.fileName === value.fileName
-                ).length > 0
-            ).length > 0;
-
-        const sameFolderIndexes = this.matSelectionList.options
+        const options = this.matSelectionList.options
           .toArray()
-          .map((item: MatListOption) => item.value)
-          .filter(
-            (value: FileSystemObject) =>
-              this.data.fsObjects.filter(
-                (fsObj) => fsObj.fileName === value.fileName
-              ).length > 0
-          )
-          .map((el, i) => i);
+          .map((item: MatListOption) => item.value) as FileSystemObject[];
 
-        sameFolderIndexes.forEach((index: number) => {
+        const matchingObjects = options.filter((option) =>
+          this.data.fsObjects.some(
+            (fsObject) => option.fileName === fsObject.fileName
+          )
+        );
+
+        const matchingIndexes = matchingObjects.map((file) =>
+          options.findIndex((f) => f.fileName === file.fileName)
+        );
+
+        const objectsAlreadyExistsInFolder =
+          options.filter(
+            (value: FileSystemObject) =>
+              (value.type === FileSystemObjectTypes.FILE ||
+                value.type === FileSystemObjectTypes.DIRECTORY) &&
+              matchingIndexes.length > 0
+          ).length > 0;
+
+        matchingIndexes.forEach((index: number) => {
           const item = this.matSelectionList.options.get(index);
           if (item) {
             item.disabled = true;
           }
         });
 
-        // const sameFolderIndex = this.matSelectionList.options
-        //   .toArray()
-        //   .map((item: MatListOption) => item.value)
-        //   .findIndex(
-        //     (value: FileSystemObject) =>
-        //       value.type === FileSystemObjectTypes.DIRECTORY &&
-        //       this.data.fsObjects.filter(
-        //         (fsObj) => fsObj.fileName === value.fileName
-        //       ).length > 0
-        //   );
-        //
-        // if (sameFolderIndex !== -1) {
-        //   const item = this.matSelectionList.options.get(sameFolderIndex);
-        //   if (item) {
-        //     item.disabled = true;
-        //   }
-        // }
-
         if (
-          fileAlreadyExistsInFolder &&
+          objectsAlreadyExistsInFolder &&
           !this.matSelectionList.selectedOptions.hasValue()
         ) {
-          this.moveButtonErrorText = $localize`File already exist in this folder`;
+          this.moveButtonErrorText = $localize`Selected element already exist in this folder`;
           return true;
         }
 
         if (
-          sameFolderIndexes.length > 0 &&
+          matchingIndexes.length > 0 &&
           !this.matSelectionList.selectedOptions.hasValue()
         ) {
           this.moveButtonErrorText = $localize`This directory already contains folder with same name`;

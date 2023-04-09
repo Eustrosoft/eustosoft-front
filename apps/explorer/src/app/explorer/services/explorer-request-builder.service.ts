@@ -78,16 +78,17 @@ export class ExplorerRequestBuilderService {
     };
   }
 
-  buildMoveRequest(
+  buildMoveCopyRequest(
     from: FileSystemObject[],
-    to: string[]
+    to: string[],
+    action: CmsRequestActions
   ): Observable<CmsRequestInterface<MoveCopyRequest>> {
     return of({
       r: from.map(
         (obj: FileSystemObject, i: number) =>
           ({
             s: Subsystems.CMS,
-            r: CmsRequestActions.MOVE,
+            r: action,
             l: SupportedLanguages.EN_US,
             from: obj.fullPath,
             to: to[i],

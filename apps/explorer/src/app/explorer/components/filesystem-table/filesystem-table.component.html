@@ -77,7 +77,7 @@
             <mat-icon>drive_file_move</mat-icon>
             <span i18n>Move to</span>
           </button>
-          <button (click)="copyClicked.emit(content[i])" mat-menu-item>
+          <button (click)="copyClicked.emit([content[i]])" mat-menu-item>
             <mat-icon>content_copy</mat-icon>
             <span i18n>Copy</span>
           </button>

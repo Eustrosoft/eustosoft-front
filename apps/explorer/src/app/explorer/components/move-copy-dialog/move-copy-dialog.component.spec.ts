@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MoveFolderDialogComponent } from './move-folder-dialog.component';
+import { MoveCopyDialogComponent } from './move-copy-dialog.component';
 
 describe('MoveFolderDialogComponent', () => {
-  let component: MoveFolderDialogComponent;
-  let fixture: ComponentFixture<MoveFolderDialogComponent>;
+  let component: MoveCopyDialogComponent;
+  let fixture: ComponentFixture<MoveCopyDialogComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MoveFolderDialogComponent],
+      declarations: [MoveCopyDialogComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(MoveFolderDialogComponent);
+    fixture = TestBed.createComponent(MoveCopyDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

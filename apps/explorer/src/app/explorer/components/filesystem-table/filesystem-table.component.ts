@@ -29,7 +29,7 @@ export class FilesystemTableComponent implements OnChanges, OnDestroy {
   @Output() downloadClicked = new EventEmitter<FileSystemObject>();
   @Output() renameClicked = new EventEmitter<FileSystemObject>();
   @Output() moveClicked = new EventEmitter<FileSystemObject[]>();
-  @Output() copyClicked = new EventEmitter<FileSystemObject>();
+  @Output() copyClicked = new EventEmitter<FileSystemObject[]>();
   @Output() deleteClicked = new EventEmitter<FileSystemObject[]>();
   @Output() filesDroppedOnFolder = new EventEmitter<{
     files: File[];

@@ -40,7 +40,10 @@
             <mat-icon>download</mat-icon>
             <span i18n>Download</span>
           </button>
-          <button disabled mat-menu-item>
+          <button
+            (click)="copy(filesystemTableComponent.selection.selected)"
+            mat-menu-item
+          >
             <mat-icon>content_copy</mat-icon>
             <span i18n>Copy</span>
           </button>
