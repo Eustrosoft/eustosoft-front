@@ -5,9 +5,16 @@ import { AppComponent } from './app.component';
 import { RouterModule } from '@angular/router';
 import { appRoutes } from './app.routes';
 import { CommonUiModule } from '@eustrosoft-front/common-ui';
-import { CoreModule } from '@eustrosoft-front/core';
+import {
+  CoreModule,
+  HttpErrorsInterceptorInterceptor,
+} from '@eustrosoft-front/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { SecurityModule } from '@eustrosoft-front/security';
+import {
+  SecurityModule,
+  UnauthenticatedInterceptor,
+  WithCredentialsInterceptor,
+} from '@eustrosoft-front/security';
 import { APP_ENVIRONMENT } from '@eustrosoft-front/app-config';
 import { environment } from '../environments/environment';
 import {
@@ -23,6 +30,7 @@ import { RequestFormBuilderService } from './requests/services/request-form-buil
 import { RequestComponent } from './requests/components/request/request.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatMenuModule } from '@angular/material/menu';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
 @NgModule({
   declarations: [AppComponent, RequestsComponent, RequestComponent],
@@ -48,6 +56,21 @@ import { MatMenuModule } from '@angular/material/menu';
       useValue: {
         fontSet: 'material-symbols-outlined',
       } as MatIconDefaultOptions,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: UnauthenticatedInterceptor,
+      multi: true,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: WithCredentialsInterceptor,
+      multi: true,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpErrorsInterceptorInterceptor,
+      multi: true,
     },
   ],
   bootstrap: [AppComponent],

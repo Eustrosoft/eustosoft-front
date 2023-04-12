@@ -10,7 +10,7 @@ import {
 } from '@angular/common/http';
 import { catchError, Observable, tap, throwError } from 'rxjs';
 import { Router } from '@angular/router';
-import { getHttpStatusCodeName } from '../../../../core/src/lib/functions/get-http-status-code-name.function';
+import { getHttpStatusCodeName } from '@eustrosoft-front/core';
 
 @Injectable()
 export class UnauthenticatedInterceptor implements HttpInterceptor {
@@ -23,17 +23,13 @@ export class UnauthenticatedInterceptor implements HttpInterceptor {
     return next.handle(request).pipe(
       tap((event) => {
         if (event instanceof HttpResponse) {
-          if (
-            event.body &&
-            Array.isArray(event.body.r) &&
-            event.body.r[0].e === HttpStatusCode.Unauthorized
-          ) {
-            const statusCode = event.body.r[0].e;
+          if (event.body && event.body.r.e === HttpStatusCode.Unauthorized) {
+            const statusCode = event.body.r.e;
             const statusCodeName = getHttpStatusCodeName(statusCode as number);
             throw new HttpErrorResponse({
               status: statusCode,
               statusText: statusCodeName,
-              error: event.body.r[0].m,
+              error: event.body.r.m,
             });
           }
         }

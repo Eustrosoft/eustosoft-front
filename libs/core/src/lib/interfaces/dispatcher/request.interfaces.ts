@@ -6,7 +6,7 @@ export interface TisResponse {
 
 export interface TisRequest {
   qtisver: number;
-  requests: Array<SqlRequest | FileRequest | ChunkedFileRequest>;
+  requests: Array<FileRequest | ChunkedFileRequest>;
   qtisend: boolean;
 }
 
@@ -26,14 +26,17 @@ export interface TisTableResult {
   rows_count: number;
 }
 
-export interface SqlRequest {
-  subsystem: string;
-  request: string;
-  parameters: {
-    method: string;
-    query: string;
-  };
-}
+/**
+ * DEPRECATED
+ */
+// export interface SqlRequest {
+//   subsystem: string;
+//   request: string;
+//   parameters: {
+//     method: string;
+//     query: string;
+//   };
+// }
 
 export interface FileRequest {
   subsystem: string;

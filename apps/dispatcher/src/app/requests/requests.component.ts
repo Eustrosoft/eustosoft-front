@@ -18,10 +18,10 @@ import {
   DisplayTypes,
   QueryTypes,
   RequestsForm,
+  SqlRequest,
+  SqlResponse,
   Table,
-  TisRequest,
   TisResponse,
-  TisResponseBody,
   TisTableResult,
 } from '@eustrosoft-front/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -71,9 +71,11 @@ export class RequestsComponent implements OnInit {
     this.requestResult$ = this.requestBuilderService
       .buildQuery(this.form.controls.forms)
       .pipe(
-        mergeMap((query: TisRequest) => this.requestService.dispatch(query)),
-        map((response: TisResponse) => {
-          this.tables = response.responses.map((res: TisResponseBody) =>
+        mergeMap((query) =>
+          this.requestService.dispatch<SqlRequest, SqlResponse>(query)
+        ),
+        map((response: any) => {
+          this.tables = response.r.map((res: any) =>
             res.result.map((result: TisTableResult) => {
               return {
                 dataSource: result.rows.map((row) => {
