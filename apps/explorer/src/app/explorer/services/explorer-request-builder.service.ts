@@ -3,6 +3,8 @@ import {
   CmsRequestActions,
   CreateRequest,
   DeleteRequest,
+  DownloadRequest,
+  DownloadTicketRequest,
   FileSystemObject,
   FileSystemObjectTypes,
   MoveCopyRequest,
@@ -146,6 +148,40 @@ export class ExplorerRequestBuilderService {
             l: SupportedLanguages.EN_US,
             path: row.fullPath,
           } as DeleteRequest)
+      ),
+      t: 0,
+    });
+  }
+
+  buildDownloadTicketRequests(
+    rows: FileSystemObject[]
+  ): Observable<QtisRequestResponseInterface<DownloadTicketRequest>> {
+    return of({
+      r: rows.map(
+        (row: FileSystemObject) =>
+          ({
+            s: Subsystems.CMS,
+            r: CmsRequestActions.TICKET,
+            l: SupportedLanguages.EN_US,
+            path: row.fullPath,
+          } as DownloadTicketRequest)
+      ),
+      t: 0,
+    });
+  }
+
+  buildDownloadRequests(
+    tickets: string[]
+  ): Observable<QtisRequestResponseInterface<DownloadRequest>> {
+    return of({
+      r: tickets.map(
+        (ticket: string) =>
+          ({
+            s: Subsystems.CMS,
+            r: CmsRequestActions.DOWNLOAD,
+            l: SupportedLanguages.EN_US,
+            ticket,
+          } as DownloadRequest)
       ),
       t: 0,
     });

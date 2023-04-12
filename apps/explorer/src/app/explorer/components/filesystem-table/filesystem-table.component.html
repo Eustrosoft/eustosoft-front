@@ -65,7 +65,7 @@
         >
         </eustrosoft-front-button>
         <mat-menu #actionsMenu="matMenu">
-          <button (click)="downloadClicked.emit(content[i])" mat-menu-item>
+          <button (click)="downloadClicked.emit([content[i]])" mat-menu-item>
             <mat-icon>download</mat-icon>
             <span>Download</span>
           </button>

@@ -41,3 +41,11 @@ export interface MoveCopyRequest extends BaseCmsRequest {
 export interface DeleteRequest extends BaseCmsRequest {
   path: string;
 }
+
+export interface DownloadTicketRequest extends BaseCmsRequest {
+  path: string;
+}
+
+export interface DownloadRequest extends BaseCmsRequest {
+  ticket: string;
+}

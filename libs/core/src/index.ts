@@ -21,3 +21,4 @@ export * from './lib/interfaces/login/login-response.interface';
 export * from './lib/interfaces/shared/shared.interface';
 export * from './lib/types/request.types';
 export * from './lib/services/file-reader.service';
+export * from './lib/interceptors/http-errors-interceptor.interceptor';

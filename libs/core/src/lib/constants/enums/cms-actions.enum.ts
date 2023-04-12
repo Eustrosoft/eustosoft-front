@@ -5,4 +5,6 @@ export enum CmsRequestActions {
   MOVE = 'move',
   COPY = 'copy',
   DELETE = 'delete',
+  TICKET = 'ticket',
+  DOWNLOAD = 'download',
 }

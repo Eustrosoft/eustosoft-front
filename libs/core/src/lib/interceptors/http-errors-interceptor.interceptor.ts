@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import {
   HttpErrorResponse,
   HttpEvent,
@@ -6,16 +6,12 @@ import {
   HttpInterceptor,
   HttpRequest,
   HttpResponse,
-  HttpStatusCode,
 } from '@angular/common/http';
 import { catchError, Observable, tap, throwError } from 'rxjs';
-import { Router } from '@angular/router';
-import { getHttpStatusCodeName } from '../../../../core/src/lib/functions/get-http-status-code-name.function';
+import { getHttpStatusCodeName } from '../functions/get-http-status-code-name.function';
 
 @Injectable()
-export class UnauthenticatedInterceptor implements HttpInterceptor {
-  private router = inject(Router);
-
+export class HttpErrorsInterceptorInterceptor implements HttpInterceptor {
   intercept(
     request: HttpRequest<object>,
     next: HttpHandler
@@ -26,7 +22,7 @@ export class UnauthenticatedInterceptor implements HttpInterceptor {
           if (
             event.body &&
             Array.isArray(event.body.r) &&
-            event.body.r[0].e === HttpStatusCode.Unauthorized
+            event.body.r[0].e !== 0
           ) {
             const statusCode = event.body.r[0].e;
             const statusCodeName = getHttpStatusCodeName(statusCode as number);
@@ -38,12 +34,7 @@ export class UnauthenticatedInterceptor implements HttpInterceptor {
           }
         }
       }),
-      catchError((err: HttpErrorResponse) => {
-        if (err.status === HttpStatusCode.Unauthorized) {
-          this.router.navigate(['login']);
-        }
-        return throwError(() => err);
-      })
+      catchError((err: HttpErrorResponse) => throwError(() => err))
     );
   }
 }

@@ -176,17 +176,24 @@ export class MoveCopyDialogComponent
 
   resolve(): void {
     if (this.matSelectionList.selectedOptions.hasValue()) {
-      const paths = this.data.fsObjects.map(
-        (fsObj) =>
-          `${this.matSelectionList.selectedOptions.selected[0].value.fullPath}/${fsObj.fileName}`
+      const paths = this.buildPaths(
+        this.matSelectionList.selectedOptions.selected[0].value.fullPath,
+        this.data.fsObjects
       );
       this.dialogRef.close(paths);
     } else {
-      const paths = this.data.fsObjects.map(
-        (fsObj) => `${this.path$.value}/${fsObj.fileName}`
-      );
+      const paths = this.buildPaths(this.path$.value, this.data.fsObjects);
       this.dialogRef.close(paths);
     }
+  }
+
+  buildPaths(path: string, fsObjects: FileSystemObject[]): string[] {
+    return fsObjects.map((fsObj) => {
+      if (path === '/') {
+        return `${path}${fsObj.fileName}`;
+      }
+      return `${path}/${fsObj.fileName}`;
+    });
   }
 
   optionClicked(index: number): void {

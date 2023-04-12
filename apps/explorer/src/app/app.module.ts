@@ -16,7 +16,10 @@ import {
 } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatMenuModule } from '@angular/material/menu';
-import { CoreModule } from '@eustrosoft-front/core';
+import {
+  CoreModule,
+  HttpErrorsInterceptorInterceptor,
+} from '@eustrosoft-front/core';
 import { ExplorerService } from './explorer/services/explorer.service';
 import { ExplorerRequestBuilderService } from './explorer/services/explorer-request-builder.service';
 import {
@@ -92,6 +95,11 @@ import { FilesystemTableComponent } from './explorer/components/filesystem-table
     {
       provide: HTTP_INTERCEPTORS,
       useClass: WithCredentialsInterceptor,
+      multi: true,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpErrorsInterceptorInterceptor,
       multi: true,
     },
   ],

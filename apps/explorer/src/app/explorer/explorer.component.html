@@ -36,7 +36,10 @@
         </eustrosoft-front-button>
 
         <mat-menu #batchOperationsMenu="matMenu">
-          <button disabled mat-menu-item>
+          <button
+            (click)="download(filesystemTableComponent.selection.selected)"
+            mat-menu-item
+          >
             <mat-icon>download</mat-icon>
             <span>Download</span>
           </button>

@@ -4,7 +4,7 @@ import { Subsystems } from '../../constants/enums/subsystems.enum';
 import { SupportedLanguages } from '../../constants/enums/supported-languages.enum';
 
 interface BaseCmsResponse {
-  s: Subsystems.CMS;
+  s: Subsystems;
   r: CmsRequestActions;
   l: SupportedLanguages;
 }
@@ -24,6 +24,11 @@ export interface MoveCopyResponse extends BaseCmsResponse {
 }
 
 export interface DeleteResponse extends BaseCmsResponse {
+  e: number;
+  m: string;
+}
+
+export interface DownloadTicketResponse extends BaseCmsResponse {
   e: number;
   m: string;
 }

@@ -43,6 +43,8 @@ import {
   CreateResponse,
   DeleteRequest,
   DeleteResponse,
+  DownloadTicketRequest,
+  DownloadTicketResponse,
   FileReaderService,
   FileSystemObject,
   FileSystemObjectTypes,
@@ -58,7 +60,6 @@ import { FormControl } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ExplorerRequestBuilderService } from './services/explorer-request-builder.service';
 import { ExplorerService } from './services/explorer.service';
-import { HttpResponse } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateRenameFolderDialogComponent } from './components/create-rename-folder-dialog/create-rename-folder-dialog.component';
 import { CreateRenameDialogDataInterface } from './components/create-rename-folder-dialog/create-rename-dialog-data.interface';
@@ -81,7 +82,9 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   upload$!: Observable<any>;
   refreshFolders$ = new BehaviorSubject<boolean>(true);
-  path$ = new BehaviorSubject<string>('/');
+  path$ = new BehaviorSubject<string>(
+    localStorage.getItem('qtis-explorer-last-path') || '/'
+  );
 
   content$!: Observable<FileSystemObject[]>;
   selected$!: Observable<FileSystemObject[]>;
@@ -109,9 +112,12 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     this.content$ = combineLatest([this.path$, this.refreshFolders$]).pipe(
-      switchMap(([path, refresh]) =>
-        this.explorerRequestBuilderService.buildViewRequest(path)
+      tap(([path, refresh]) =>
+        this.explorerPathService.updateLastPathState(path)
       ),
+      switchMap(([path, refresh]) => {
+        return this.explorerRequestBuilderService.buildViewRequest(path);
+      }),
       switchMap((request: QtisRequestResponseInterface<ViewRequest>) =>
         this.explorerService.dispatch<ViewRequest, ViewResponse>(request)
       ),
@@ -418,7 +424,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
         ),
         tap(([moveResponse, to]) => {
           const lastIndex = to[0].lastIndexOf('/');
-          const path = to[0].substring(0, lastIndex);
+          const path = to[0].substring(0, lastIndex) || '/';
           this.path$.next(path);
         }),
         take(1)
@@ -505,12 +511,22 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe();
   }
 
-  download(row: FileSystemObject): void {
-    this.explorerService
-      .getDownloadTicket(row.fullPath)
+  download(rows: FileSystemObject[]): void {
+    this.explorerRequestBuilderService
+      .buildDownloadTicketRequests(rows)
       .pipe(
-        switchMap(({ ticket }) => this.explorerService.download(ticket)),
-        tap((response: HttpResponse<Blob>) => {
+        switchMap((body) =>
+          this.explorerService.dispatch<
+            DownloadTicketRequest,
+            DownloadTicketResponse
+          >(body)
+        ),
+        map((response) => response.r.map((res) => res.m)),
+        switchMap((tickets) =>
+          this.explorerRequestBuilderService.buildDownloadRequests(tickets)
+        ),
+        switchMap((body) => this.explorerService.download(body)),
+        tap((response) => {
           const downloadLink = document.createElement('a');
           downloadLink.href = URL.createObjectURL(
             new Blob([response.body as Blob], { type: response.body?.type })

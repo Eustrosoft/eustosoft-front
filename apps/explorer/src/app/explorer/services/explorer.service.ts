@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import {
   ChunkedFileRequest,
+  DownloadRequest,
   QtisRequestResponseInterface,
   TisRequest,
   TisResponse,
@@ -23,18 +24,27 @@ export class ExplorerService {
     );
   }
 
+  download(
+    body: QtisRequestResponseInterface<DownloadRequest>
+  ): Observable<HttpResponse<Blob>> {
+    return this.http.post(`${environment.apiUrl}/dispatch`, body, {
+      observe: 'response',
+      responseType: 'blob',
+    });
+  }
+
   getDownloadTicket(path: string): Observable<{ ticket: string }> {
     return this.http.get<{ ticket: string }>(
       `${environment.apiUrl}/files/ticket?path=${path}`
     );
   }
 
-  download(ticket: string): Observable<HttpResponse<Blob>> {
-    return this.http.get(
-      `${environment.apiUrl}/files/download?ticket=${ticket}`,
-      { observe: 'response', responseType: 'blob' }
-    );
-  }
+  // download(ticket: string): Observable<HttpResponse<Blob>> {
+  //   return this.http.get(
+  //     `${environment.apiUrl}/files/download?ticket=${ticket}`,
+  //     { observe: 'response', responseType: 'blob' }
+  //   );
+  // }
 
   upload(query: TisRequest): Observable<{
     request: TisRequest;
