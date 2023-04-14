@@ -37,13 +37,6 @@
 
         <mat-menu #batchOperationsMenu="matMenu">
           <button
-            (click)="download(filesystemTableComponent.selection.selected)"
-            mat-menu-item
-          >
-            <mat-icon>download</mat-icon>
-            <span>Download</span>
-          </button>
-          <button
             (click)="copy(filesystemTableComponent.selection.selected)"
             mat-menu-item
           >

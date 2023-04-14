@@ -33,19 +33,6 @@ export class ExplorerService {
     });
   }
 
-  getDownloadTicket(path: string): Observable<{ ticket: string }> {
-    return this.http.get<{ ticket: string }>(
-      `${environment.apiUrl}/files/ticket?path=${path}`
-    );
-  }
-
-  // download(ticket: string): Observable<HttpResponse<Blob>> {
-  //   return this.http.get(
-  //     `${environment.apiUrl}/files/download?ticket=${ticket}`,
-  //     { observe: 'response', responseType: 'blob' }
-  //   );
-  // }
-
   upload(query: TisRequest): Observable<{
     request: TisRequest;
     response: TisResponse;

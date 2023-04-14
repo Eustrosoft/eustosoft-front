@@ -23,7 +23,12 @@ export class UnauthenticatedInterceptor implements HttpInterceptor {
     return next.handle(request).pipe(
       tap((event) => {
         if (event instanceof HttpResponse) {
-          if (event.body && event.body.r.e === HttpStatusCode.Unauthorized) {
+          const isBlob = event.body instanceof Blob;
+          if (
+            event.body &&
+            !isBlob &&
+            event.body.r.e === HttpStatusCode.Unauthorized
+          ) {
             const statusCode = event.body.r.e;
             const statusCodeName = getHttpStatusCodeName(statusCode as number);
             throw new HttpErrorResponse({
