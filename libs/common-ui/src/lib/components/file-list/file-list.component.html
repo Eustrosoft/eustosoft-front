@@ -1,4 +1,4 @@
-<cdk-virtual-scroll-viewport itemSize="5" class="vh-25">
+<cdk-virtual-scroll-viewport itemSize="5" [ngClass]="classesForVirtualViewport">
   <div
     *ngFor="let file of files; let i = index"
     [ngClass]="classesForList"

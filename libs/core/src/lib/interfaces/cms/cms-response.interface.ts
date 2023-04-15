@@ -32,3 +32,8 @@ export interface DownloadTicketResponse extends BaseCmsResponse {
   e: number;
   m: string;
 }
+
+export interface UploadResponse extends BaseCmsResponse {
+  e: number;
+  m: string;
+}

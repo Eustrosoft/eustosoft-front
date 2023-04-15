@@ -15,14 +15,15 @@ import {
 } from 'rxjs';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import {
+  DispatcherTableResult,
   DisplayTypes,
+  FileRequest,
+  QtisRequestResponseInterface,
   QueryTypes,
   RequestsForm,
   SqlRequest,
   SqlResponse,
   Table,
-  TisResponse,
-  TisTableResult,
 } from '@eustrosoft-front/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { RequestBuilderService } from './services/request-builder.service';
@@ -49,7 +50,7 @@ export class RequestsComponent implements OnInit {
 
   tables?: Table[][];
 
-  requestResult$!: Observable<TisResponse | null>;
+  requestResult$!: Observable<QtisRequestResponseInterface<SqlResponse> | null>;
   isResultLoading = new BehaviorSubject<boolean>(false);
 
   constructor(
@@ -72,11 +73,13 @@ export class RequestsComponent implements OnInit {
       .buildQuery(this.form.controls.forms)
       .pipe(
         mergeMap((query) =>
-          this.requestService.dispatch<SqlRequest, SqlResponse>(query)
+          this.requestService.dispatch<SqlRequest | FileRequest, SqlResponse>(
+            query
+          )
         ),
-        map((response: any) => {
-          this.tables = response.r.map((res: any) =>
-            res.result.map((result: TisTableResult) => {
+        map((response: QtisRequestResponseInterface<SqlResponse>) => {
+          this.tables = response.r.map((res: SqlResponse) =>
+            res.r.map((result: DispatcherTableResult) => {
               return {
                 dataSource: result.rows.map((row) => {
                   return Object.fromEntries(

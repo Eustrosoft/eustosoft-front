@@ -21,13 +21,12 @@ export interface CreateRequest extends BaseCmsRequest {
 
 export interface UploadRequest extends BaseCmsRequest {
   parameters: {
-    data: {
-      file: string;
-      name: string;
-      ext: string;
-      chunk: number;
-      all_chunks: number;
-    };
+    file: string;
+    name: string;
+    ext: string;
+    chunk: number;
+    all_chunks: number;
+    path: string;
   };
   request: string;
   subsystem: string;

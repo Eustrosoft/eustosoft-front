@@ -38,16 +38,17 @@ export interface TisTableResult {
 //   };
 // }
 
-export interface FileRequest {
+/**
+ * DEPRECATED
+ */
+interface FileRequest {
   subsystem: string;
   request: string;
   parameters: {
     method: string;
-    data: {
-      file: string;
-      name: string;
-      ext: string;
-    };
+    file: string;
+    name: string;
+    ext: string;
   };
 }
 

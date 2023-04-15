@@ -33,6 +33,7 @@ import {
   switchMap,
   take,
   takeUntil,
+  takeWhile,
   tap,
   toArray,
 } from 'rxjs';
@@ -68,6 +69,7 @@ import { FilesystemTableComponent } from './components/filesystem-table/filesyst
 import { SelectionChange } from '@angular/cdk/collections';
 import { MoveCopyDialogComponent } from './components/move-copy-dialog/move-copy-dialog.component';
 import { MoveCopyDialogDataInterface } from './components/move-copy-dialog/move-copy-dialog-data.interface';
+import { HttpEvent, HttpEventType } from '@angular/common/http';
 
 @Component({
   selector: 'eustrosoft-front-explorer',
@@ -153,7 +155,8 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
                     file,
                     chunk,
                     currentChunk,
-                    chunks.length
+                    chunks.length,
+                    '/'
                   );
                 const formData = new FormData();
                 formData.set('file', chunk);
@@ -521,27 +524,40 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
             DownloadTicketResponse
           >(body)
         ),
-        map((response) => response.r.map((res) => res.m)),
-        switchMap((tickets) =>
-          this.explorerRequestBuilderService.buildDownloadRequests(tickets)
+        map((response: QtisRequestResponseInterface<DownloadTicketResponse>) =>
+          response.r.map((res) => res.m)
         ),
-        switchMap((body) => this.explorerService.download(body)),
-        tap((response) => {
-          const downloadLink = document.createElement('a');
-          downloadLink.href = URL.createObjectURL(
-            new Blob([response.body as Blob], { type: response.body?.type })
-          );
-          const contentDisposition = response.headers.get(
-            'content-disposition'
-          ) as string;
-          downloadLink.download = contentDisposition
-            .split(';')[1]
-            .split('filename')[1]
-            .split('=')[1]
-            .trim();
-          downloadLink.click();
+        switchMap((tickets: string[]) =>
+          this.explorerService.download(tickets[0])
+        ),
+        tap((event: HttpEvent<Blob>) => {
+          if (event.type === HttpEventType.DownloadProgress) {
+            if (event.total) {
+              const progress = Math.round(100 * (event.loaded / event.total));
+              console.log(progress);
+            }
+          } else if (event.type === HttpEventType.Response) {
+            const blob = new Blob([event.body as Blob], {
+              type: event.body?.type,
+            });
+            const link = document.createElement('a');
+            const href = URL.createObjectURL(
+              new Blob([blob], { type: event.body?.type })
+            );
+            link.href = href;
+            const contentDisposition = event.headers.get(
+              'content-disposition'
+            ) as string;
+            link.download = contentDisposition
+              .split(';')[1]
+              .split('filename')[1]
+              .split('=')[1]
+              .trim();
+            link.click();
+            URL.revokeObjectURL(href);
+          }
         }),
-        take(1)
+        takeWhile((event) => event.type !== HttpEventType.Response)
       )
       .subscribe();
   }

@@ -85,9 +85,7 @@
       (filesDroppedOnFolder)="filesDroppedOnFolder($event)"
     ></eustrosoft-front-filesystem-table>
   </div>
-  <div class="row gx-3">
-    <ng-container *ngIf="upload$ | async as upload"></ng-container>
-  </div>
+  <ng-container *ngIf="upload$ | async"></ng-container>
 </div>
 
 <div
@@ -99,6 +97,7 @@
     [classesForList]="[
       'm-2 p-2 bg-secondary bg-opacity-10 border-dark border-opacity-25 rounded-2'
     ]"
+    [classesForVirtualViewport]="['vh-25']"
     (deleteFile)="deleteFile($event)"
     class="col-12"
   ></eustrosoft-front-file-list>

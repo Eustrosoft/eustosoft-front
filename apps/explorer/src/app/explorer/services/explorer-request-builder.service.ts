@@ -3,7 +3,6 @@ import {
   CmsRequestActions,
   CreateRequest,
   DeleteRequest,
-  DownloadRequest,
   DownloadTicketRequest,
   FileSystemObject,
   FileSystemObjectTypes,
@@ -55,22 +54,22 @@ export class ExplorerRequestBuilderService {
     file: File,
     chunk: Blob,
     chunkIndex: number,
-    totalChunks: number
+    totalChunks: number,
+    path: string = '/'
   ): QtisRequestResponseInterface<UploadRequest> {
     return {
       r: [
         {
           s: Subsystems.FILE,
-          r: CmsRequestActions.UPLOAD,
+          r: CmsRequestActions.UPLOAD_CHUNKS,
           l: SupportedLanguages.EN_US,
           parameters: {
-            data: {
-              file: '',
-              name: file.name,
-              ext: file.name.split('.').pop() as string,
-              chunk: chunkIndex,
-              all_chunks: totalChunks,
-            },
+            file: '',
+            name: file.name,
+            ext: file.name.split('.').pop() as string,
+            chunk: chunkIndex,
+            all_chunks: totalChunks,
+            path,
           },
           request: 'upload_chunks_binary',
           subsystem: 'file',
@@ -165,23 +164,6 @@ export class ExplorerRequestBuilderService {
             l: SupportedLanguages.EN_US,
             path: row.fullPath,
           } as DownloadTicketRequest)
-      ),
-      t: 0,
-    });
-  }
-
-  buildDownloadRequests(
-    tickets: string[]
-  ): Observable<QtisRequestResponseInterface<DownloadRequest>> {
-    return of({
-      r: tickets.map(
-        (ticket: string) =>
-          ({
-            s: Subsystems.CMS,
-            r: CmsRequestActions.DOWNLOAD,
-            l: SupportedLanguages.EN_US,
-            ticket,
-          } as DownloadRequest)
       ),
       t: 0,
     });

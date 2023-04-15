@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpEvent, HttpHeaders } from '@angular/common/http';
 import {
   ChunkedFileRequest,
-  DownloadRequest,
+  CmsDownloadParams,
   QtisRequestResponseInterface,
   TisRequest,
   TisResponse,
   TisResponseBody,
+  UploadResponse,
 } from '@eustrosoft-front/core';
 import { mergeMap, Observable, of } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -25,12 +26,17 @@ export class ExplorerService {
   }
 
   download(
-    body: QtisRequestResponseInterface<DownloadRequest>
-  ): Observable<HttpResponse<Blob>> {
-    return this.http.post(`${environment.apiUrl}/dispatch`, body, {
-      observe: 'response',
-      responseType: 'blob',
-    });
+    parameterValue: string,
+    parameterName: CmsDownloadParams = CmsDownloadParams.TICKET
+  ): Observable<HttpEvent<Blob>> {
+    return this.http.get(
+      `${environment.apiUrl}/download?${parameterName}=${parameterValue}`,
+      {
+        reportProgress: true,
+        observe: 'events',
+        responseType: 'blob',
+      }
+    );
   }
 
   upload(query: TisRequest): Observable<{
@@ -60,10 +66,13 @@ export class ExplorerService {
   uploadChunks(
     body: FormData,
     headers: { [p: string]: string | string[] }
-  ): Observable<any> {
-    return this.http.post<any>(`${environment.apiUrl}/dispatch`, body, {
-      headers: new HttpHeaders(headers),
-      observe: 'response',
-    });
+  ): Observable<QtisRequestResponseInterface<UploadResponse>> {
+    return this.http.post<QtisRequestResponseInterface<UploadResponse>>(
+      `${environment.apiUrl}/dispatch`,
+      body,
+      {
+        headers: new HttpHeaders(headers),
+      }
+    );
   }
 }

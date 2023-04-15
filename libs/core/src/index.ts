@@ -6,6 +6,7 @@ export * from './lib/constants/enums/file-system-object-types.enum';
 export * from './lib/constants/enums/cursor-types.enum';
 export * from './lib/constants/enums/subsystems.enum';
 export * from './lib/constants/enums/cms-actions.enum';
+export * from './lib/constants/enums/cms-download-params.enum';
 export * from './lib/constants/enums/login-actions.enum';
 export * from './lib/constants/enums/supported-languages.enum';
 export * from './lib/constants/enums/dispatcher-actions.enum';

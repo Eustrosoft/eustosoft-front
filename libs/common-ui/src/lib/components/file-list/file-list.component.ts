@@ -14,6 +14,7 @@ import {
 })
 export class FileListComponent {
   @Input() files!: File[];
+  @Input() classesForVirtualViewport: string[] = [];
   @Input() classesForList: string[] = [];
   @Output() deleteFile = new EventEmitter<number>();
 

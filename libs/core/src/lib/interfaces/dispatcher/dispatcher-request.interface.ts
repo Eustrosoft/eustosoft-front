@@ -11,3 +11,14 @@ interface BaseDispatcherRequest {
 export interface SqlRequest extends BaseDispatcherRequest {
   query: string;
 }
+
+export interface FileRequest extends BaseDispatcherRequest {
+  subsystem: string;
+  request: string;
+  parameters: {
+    method: string;
+    file: string;
+    name: string;
+    ext: string;
+  };
+}
