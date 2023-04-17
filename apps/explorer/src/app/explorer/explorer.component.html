@@ -85,25 +85,13 @@
       (filesDroppedOnFolder)="filesDroppedOnFolder($event)"
     ></eustrosoft-front-filesystem-table>
   </div>
-  <ng-container *ngIf="upload$ | async"></ng-container>
 </div>
 
-<div
-  class="border border-2 border-secondary border-opacity-25 rounded-2 p-2 bg-light progress-overlay"
-  *ngIf="control.value.length > 0"
->
-  <eustrosoft-front-file-list
-    [files]="control.value"
-    [classesForList]="[
-      'm-2 p-2 bg-secondary bg-opacity-10 border-dark border-opacity-25 rounded-2'
-    ]"
-    [classesForVirtualViewport]="['vh-25']"
-    (deleteFile)="deleteFile($event)"
-    class="col-12"
-  ></eustrosoft-front-file-list>
-  <span class="text-break">{{ currentFile$ | async }}</span>
-  <eustrosoft-front-progress-bar
-    [mode]="'determinate'"
-    [value]="progressBarValue$ | async | toNumber"
-  ></eustrosoft-front-progress-bar>
-</div>
+<!--TODO переделать в отдельный компонент, где у каждого файла будет свой индикатор загрузки-->
+<!--Добавить возможность закрывать это окно (при закрытии отменять все загрузки)-->
+<!--Добавить возможность удалять файлы из очереди загрузки-->
+<!--Добавить возможность прерывать текущую загрузку-->
+
+<eustrosoft-front-upload-overlay
+  [uploadItems]="(uploadItems$ | async) || []"
+></eustrosoft-front-upload-overlay>

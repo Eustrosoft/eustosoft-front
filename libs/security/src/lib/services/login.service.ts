@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { AuthenticationService } from './authentication.service';
@@ -15,11 +15,9 @@ import {
 
 @Injectable()
 export class LoginService {
-  constructor(
-    private http: HttpClient,
-    private authenticationService: AuthenticationService,
-    @Inject(APP_ENVIRONMENT) private environment: Environment
-  ) {}
+  private http = inject(HttpClient);
+  private authenticationService = inject(AuthenticationService);
+  private environment: Environment = inject(APP_ENVIRONMENT);
 
   login(
     login: string,

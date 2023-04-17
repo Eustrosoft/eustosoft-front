@@ -67,6 +67,10 @@ export class ExplorerService {
     body: FormData,
     headers: { [p: string]: string | string[] }
   ): Observable<QtisRequestResponseInterface<UploadResponse>> {
+    // return of({
+    //   r: [],
+    //   t: 0,
+    // }).pipe(delay(1000));
     return this.http.post<QtisRequestResponseInterface<UploadResponse>>(
       `${environment.apiUrl}/dispatch`,
       body,

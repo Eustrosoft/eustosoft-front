@@ -45,6 +45,8 @@ import { Stack } from './explorer/classes/Stack';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ExplorerPathService } from './explorer/services/explorer-path.service';
 import { FilesystemTableComponent } from './explorer/components/filesystem-table/filesystem-table.component';
+import { ExplorerUploadService } from './explorer/services/explorer-upload.service';
+import { UploadOverlayComponent } from './explorer/components/upload-overlay/upload-overlay.component';
 
 @NgModule({
   declarations: [
@@ -54,6 +56,7 @@ import { FilesystemTableComponent } from './explorer/components/filesystem-table
     MoveCopyDialogComponent,
     BreadcrumbsComponent,
     FilesystemTableComponent,
+    UploadOverlayComponent,
   ],
   imports: [
     BrowserModule,
@@ -79,6 +82,7 @@ import { FilesystemTableComponent } from './explorer/components/filesystem-table
     ExplorerService,
     ExplorerPathService,
     ExplorerRequestBuilderService,
+    ExplorerUploadService,
     Stack,
     { provide: APP_ENVIRONMENT, useValue: environment },
     {

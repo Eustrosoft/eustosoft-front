@@ -8,7 +8,10 @@ import { APP_ENVIRONMENT } from '@eustrosoft-front/app-config';
 import { environment } from '../environments/environment';
 import { LoginPageComponent } from './login-page/login-page.component';
 import { ReactiveFormsModule } from '@angular/forms';
-import { CoreModule } from '@eustrosoft-front/core';
+import {
+  CoreModule,
+  HttpErrorsInterceptorInterceptor,
+} from '@eustrosoft-front/core';
 import { CommonUiModule } from '@eustrosoft-front/common-ui';
 import { SecurityModule } from '@eustrosoft-front/security';
 import {
@@ -19,6 +22,7 @@ import {
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ApplicationsComponent } from './applications/applications.component';
 import { MatMenuModule } from '@angular/material/menu';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
 @NgModule({
   declarations: [AppComponent, LoginPageComponent, ApplicationsComponent],
@@ -40,6 +44,11 @@ import { MatMenuModule } from '@angular/material/menu';
       useValue: {
         fontSet: 'material-symbols-outlined',
       } as MatIconDefaultOptions,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpErrorsInterceptorInterceptor,
+      multi: true,
     },
   ],
   bootstrap: [AppComponent],

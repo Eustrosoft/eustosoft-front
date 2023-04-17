@@ -1,9 +1,9 @@
-import { BehaviorSubject, Observable, scan } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 export class Stack<T> {
   private stack$ = new BehaviorSubject<T[]>([]);
 
-  push(value: T) {
+  push(value: T): void {
     this.stack$.next([...this.stack$.value, value]);
   }
 
@@ -18,7 +18,12 @@ export class Stack<T> {
     }
   }
 
+  clear(): void {
+    this.stack$.next([]);
+  }
+
   getStack(): Observable<T[]> {
-    return this.stack$.pipe(scan((acc, curr) => curr));
+    return this.stack$.asObservable();
+    // return this.stack$.pipe(scan((acc, curr) => curr));
   }
 }

@@ -1,0 +1,29 @@
+<div
+  class="border border-2 border-secondary border-opacity-25 rounded-2 p-2 bg-light progress-overlay"
+>
+  <cdk-virtual-scroll-viewport itemSize="5" class="vh-25">
+    <div
+      *ngFor="let item of uploadItems; let i = index"
+      class="m-2 p-2 bg-secondary bg-opacity-10 border-dark border-opacity-25 rounded-2"
+    >
+      <div class="d-flex align-items-center">
+        <span class="col-10 text-break">{{ item.file.name }}</span>
+        <!--          *ngIf="item.state !== UploadingState.UPLOADED"-->
+        <eustrosoft-front-button
+          [buttonType]="'button'"
+          [buttonStyleType]="'icon'"
+          [iconName]="'cancel'"
+          [color]="'warn'"
+          (clicked)="cancelClick()"
+          class="w-auto"
+        >
+        </eustrosoft-front-button>
+      </div>
+      <eustrosoft-front-progress-bar
+        [mode]="'determinate'"
+        [value]="item.progress"
+        class="w-auto h-auto"
+      ></eustrosoft-front-progress-bar>
+    </div>
+  </cdk-virtual-scroll-viewport>
+</div>

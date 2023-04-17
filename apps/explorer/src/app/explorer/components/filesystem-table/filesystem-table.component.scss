@@ -16,3 +16,8 @@ tr.table-row {
   background: $light-gray;
   transition: 0.2s background;
 }
+
+.table-container {
+  max-height: 80vh;
+  overflow: auto;
+}
