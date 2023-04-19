@@ -91,7 +91,12 @@
 <!--Добавить возможность закрывать это окно (при закрытии отменять все загрузки)-->
 <!--Добавить возможность удалять файлы из очереди загрузки-->
 <!--Добавить возможность прерывать текущую загрузку-->
+<!--Проверить что файлы загружаются корректно-->
+<!--Очищать control по завершению загрузки-->
 
 <eustrosoft-front-upload-overlay
+  [hidden]="overlayHidden"
   [uploadItems]="(uploadItems$ | async) || []"
+  (removeItem)="removeItemFromUploadList($event)"
+  (closeOverlay)="overlayClosed()"
 ></eustrosoft-front-upload-overlay>

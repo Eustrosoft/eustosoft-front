@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+} from '@angular/core';
 import { UploadItem } from '../../interfaces/upload-item.interface';
 import { UploadingState } from '../../constants/enums/uploading-state.enum';
 
@@ -11,9 +17,17 @@ import { UploadingState } from '../../constants/enums/uploading-state.enum';
 export class UploadOverlayComponent {
   @Input() uploadItems!: UploadItem[];
 
+  @Output() removeItem = new EventEmitter<UploadItem>();
+  @Output() closeOverlay = new EventEmitter<void>();
+
   UploadingState = UploadingState;
 
-  cancelClick(): void {
-    console.log('Cancel click');
+  remove(item: UploadItem): void {
+    item.hidden = true;
+    this.removeItem.emit(item);
+  }
+
+  close(): void {
+    this.closeOverlay.emit();
   }
 }

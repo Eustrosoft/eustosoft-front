@@ -1,10 +1,21 @@
 <div
   class="border border-2 border-secondary border-opacity-25 rounded-2 p-2 bg-light progress-overlay"
 >
+  <div class="d-flex justify-content-end">
+    <eustrosoft-front-button
+      [buttonType]="'button'"
+      [buttonStyleType]="'icon'"
+      [iconName]="'close'"
+      (clicked)="close()"
+    >
+    </eustrosoft-front-button>
+  </div>
+
   <cdk-virtual-scroll-viewport itemSize="5" class="vh-25">
     <div
       *ngFor="let item of uploadItems; let i = index"
       class="m-2 p-2 bg-secondary bg-opacity-10 border-dark border-opacity-25 rounded-2"
+      [hidden]="item.hidden"
     >
       <div class="d-flex align-items-center">
         <span class="col-10 text-break">{{ item.file.name }}</span>
@@ -14,7 +25,7 @@
           [buttonStyleType]="'icon'"
           [iconName]="'cancel'"
           [color]="'warn'"
-          (clicked)="cancelClick()"
+          (clicked)="remove(item)"
           class="w-auto"
         >
         </eustrosoft-front-button>

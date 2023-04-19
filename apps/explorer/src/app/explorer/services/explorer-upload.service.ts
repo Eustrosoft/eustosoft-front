@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import {
+  BehaviorSubject,
   catchError,
   combineLatest,
   concatMap,
   from,
-  map,
   of,
+  tap,
   throwError,
+  toArray,
 } from 'rxjs';
 import { FileReaderService } from '@eustrosoft-front/core';
 import { ExplorerRequestBuilderService } from './explorer-request-builder.service';
@@ -16,6 +18,8 @@ import { UploadingState } from '../constants/enums/uploading-state.enum';
 
 @Injectable()
 export class ExplorerUploadService {
+  uploadItems$ = new BehaviorSubject<UploadItem[]>([]);
+
   constructor(
     private fileReaderService: FileReaderService,
     private explorerRequestBuilderService: ExplorerRequestBuilderService,
@@ -32,6 +36,7 @@ export class ExplorerUploadService {
                   file,
                   progress: 0,
                   state: UploadingState.PENDING,
+                  hidden: false,
                 } as UploadItem)
             )
           ),
@@ -63,8 +68,8 @@ export class ExplorerUploadService {
               of(currentChunk),
             ]);
           }),
-          map(([response, items, file, chunks, currentChunk]) => {
-            return items.map((item) => {
+          tap(([response, items, file, chunks, currentChunk]) => {
+            const uploadItems = items.map((item) => {
               if (item.file.name === file.name) {
                 item.progress = 100 * ((currentChunk + 1) / chunks.length);
                 if (item.progress === 100) {
@@ -75,7 +80,9 @@ export class ExplorerUploadService {
               }
               return item;
             });
-          })
+            this.uploadItems$.next(uploadItems);
+          }),
+          toArray()
         );
       }),
       catchError((err) => throwError(() => err))

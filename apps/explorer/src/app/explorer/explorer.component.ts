@@ -31,6 +31,7 @@ import {
   takeUntil,
   takeWhile,
   tap,
+  zip,
 } from 'rxjs';
 import {
   CmsRequestActions,
@@ -64,6 +65,7 @@ import { MoveCopyDialogDataInterface } from './components/move-copy-dialog/move-
 import { HttpEvent, HttpEventType } from '@angular/common/http';
 import { ExplorerUploadService } from './services/explorer-upload.service';
 import { UploadItem } from './interfaces/upload-item.interface';
+import { UploadingState } from './constants/enums/uploading-state.enum';
 
 @Component({
   selector: 'eustrosoft-front-explorer',
@@ -85,14 +87,11 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
   selected$!: Observable<FileSystemObject[]>;
 
   control = new FormControl<File[]>([], { nonNullable: true });
-  uploadState$ = new BehaviorSubject<{
-    currentFileName: string;
-    currentFileProgress: number;
-  }>({ currentFileName: '', currentFileProgress: 0 });
-  uploadItems$!: Observable<UploadItem[]>;
+  uploadItems$ = this.explorerUploadService.uploadItems$.asObservable();
 
   newButtonText = `New`;
   uploadError = false;
+  overlayHidden = true;
 
   private destroy$ = new Subject<void>();
   private emitBuffer$ = new Subject<void>();
@@ -128,58 +127,52 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
       share()
     );
 
-    this.uploadItems$ = this.control.valueChanges.pipe(
-      filter((files) => files.length > 0),
-      buffer(this.emitBuffer$.pipe(takeUntil(this.destroy$))),
-      mergeMap((files: File[][]) => files),
-      tap((files: File[]) => {
-        console.log('Buffer', files);
-        if (files.length === 0 && !this.uploadError) {
+    this.control.valueChanges
+      .pipe(
+        filter((files) => files.length > 0),
+        buffer(this.emitBuffer$.pipe(takeUntil(this.destroy$))),
+        mergeMap((files: File[][]) => files),
+        tap((files: File[]) => {
+          console.log('Buffer', files);
+          this.overlayHidden = false;
+          if (files.length === 0 && !this.uploadError) {
+            this.cd.markForCheck();
+            this.snackBar.open(`Upload complete`, `Close`, { duration: 1000 });
+            // this.refreshFolders$.next(true);
+          }
+        }),
+        switchMap((files) => zip([of(files), this.uploadItems$])),
+        switchMap(([files, items]) => {
+          const uploadedFileNames = items
+            .filter((item) => item.state === UploadingState.UPLOADED)
+            .map((item) => item.file.name);
+          const filesToUpload = files.filter(
+            (file) => !uploadedFileNames.includes(file.name)
+          );
+          console.log('FilesToUpload', filesToUpload);
+          return of(filesToUpload);
+        }),
+        switchMap((files: File[]) => this.explorerUploadService.upload(files)),
+        tap((items) => {
+          console.log(items);
+          // const fileName = items[0][2].name;
+          // this.control.patchValue(
+          //   this.control.value.filter((f: File) => f.name !== fileName),
+          //   { emitEvent: false }
+          // );
+          this.emitBuffer$.next();
+        }),
+        catchError((err) => {
+          this.uploadError = true;
+          console.error(err);
+          this.snackBar.open(`Error making request`, `Close`);
+          this.control.patchValue([]);
           this.cd.markForCheck();
-          this.snackBar.open(`Upload complete`, `Close`, { duration: 1000 });
-          this.uploadState$.next({
-            currentFileName: '',
-            currentFileProgress: 0,
-          });
-          // this.refreshFolders$.next(true);
-        }
-      }),
-      mergeMap((files) =>
-        this.explorerUploadService.upload(files).pipe(
-          tap((value) => {
-            console.log(value);
-            // const uploadList = this.uploadList$.value.slice();
-            // const itemIndex = uploadList.findIndex(
-            //   (item) => item.file.name === value.file.name
-            // );
-            // if (itemIndex !== -1) {
-            //   uploadList[itemIndex].progress = value.progress;
-            //   uploadList[itemIndex].state = value.state;
-            // }
-          })
-          // mergeMap((values) => of(values)),
-          // toArray()
-        )
-      ),
-      tap((value) => {
-        // console.log(value);
-        // this.control.patchValue(
-        //   this.control.value.filter(
-        //     (f: File) => f.name !== value[0].file.name
-        //   )
-        // );
-        this.emitBuffer$.next();
-      }),
-      catchError((err) => {
-        this.uploadError = true;
-        console.error(err);
-        this.snackBar.open(`Error making request`, `Close`);
-        this.control.patchValue([]);
-        this.cd.markForCheck();
-        return EMPTY;
-      }),
-      takeUntil(this.destroy$)
-    );
+          return EMPTY;
+        }),
+        takeUntil(this.destroy$)
+      )
+      .subscribe();
 
     this.selected$ = combineLatest([
       this.fileSystemTableRendered$,
@@ -229,13 +222,19 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
     this.uploadFilesBinary();
   }
 
-  deleteFile(index: number): void {
-    const toDelete = this.control.value[index];
+  removeItemFromUploadList(item: UploadItem): void {
+    const index = this.control.value.findIndex(
+      (file) => file.name === item.file.name
+    );
     this.control.value.splice(index, 1);
     this.control.patchValue(this.control.value);
-    if (toDelete.name === this.uploadState$.getValue().currentFileName) {
+    if (item.state === UploadingState.UPLOADING) {
       this.emitBuffer$.next();
     }
+  }
+
+  overlayClosed(): void {
+    console.log('Close clicked');
   }
 
   startUpload(): void {
