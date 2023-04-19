@@ -90,7 +90,6 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
   uploadItems$ = this.explorerUploadService.uploadItems$.asObservable();
 
   newButtonText = `New`;
-  uploadError = false;
   overlayHidden = true;
 
   private destroy$ = new Subject<void>();
@@ -129,41 +128,45 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.control.valueChanges
       .pipe(
-        filter((files) => files.length > 0),
         buffer(this.emitBuffer$.pipe(takeUntil(this.destroy$))),
         mergeMap((files: File[][]) => files),
         tap((files: File[]) => {
           console.log('Buffer', files);
           this.overlayHidden = false;
-          if (files.length === 0 && !this.uploadError) {
-            this.cd.markForCheck();
-            this.snackBar.open(`Upload complete`, `Close`, { duration: 1000 });
-            // this.refreshFolders$.next(true);
+        }),
+        switchMap((files) =>
+          zip([
+            of(
+              files.map(
+                (file) =>
+                  ({
+                    file,
+                    progress: 0,
+                    state: UploadingState.PENDING,
+                    hidden: false,
+                  } as UploadItem)
+              )
+            ),
+            this.uploadItems$,
+          ])
+        ),
+        switchMap(([items, uploadItems]) => {
+          if (uploadItems.length === 0) {
+            return of(items);
           }
+          const uniqueArray = uploadItems
+            .concat(items)
+            .filter(
+              (obj, index, self) =>
+                index === self.findIndex((t) => t.file.name === obj.file.name)
+            )
+            .filter((item) => !item.hidden);
+          return of(uniqueArray);
         }),
-        switchMap((files) => zip([of(files), this.uploadItems$])),
-        switchMap(([files, items]) => {
-          const uploadedFileNames = items
-            .filter((item) => item.state === UploadingState.UPLOADED)
-            .map((item) => item.file.name);
-          const filesToUpload = files.filter(
-            (file) => !uploadedFileNames.includes(file.name)
-          );
-          console.log('FilesToUpload', filesToUpload);
-          return of(filesToUpload);
-        }),
-        switchMap((files: File[]) => this.explorerUploadService.upload(files)),
-        tap((items) => {
-          console.log(items);
-          // const fileName = items[0][2].name;
-          // this.control.patchValue(
-          //   this.control.value.filter((f: File) => f.name !== fileName),
-          //   { emitEvent: false }
-          // );
-          this.emitBuffer$.next();
-        }),
+        switchMap((items) => this.explorerUploadService.upload(items)),
+        // emit buffer after every file upload completion
+        tap(() => this.emitBuffer$.next()),
         catchError((err) => {
-          this.uploadError = true;
           console.error(err);
           this.snackBar.open(`Error making request`, `Close`);
           this.control.patchValue([]);
@@ -233,8 +236,17 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  overlayClosed(): void {
-    console.log('Close clicked');
+  overlayClose(items: UploadItem[]): void {
+    this.explorerUploadService.uploadItems$.next(
+      items.map((item) => ({
+        ...item,
+        hidden: true,
+      }))
+    );
+    this.control.patchValue([]);
+    this.emitBuffer$.next();
+    this.explorerUploadService.uploadItems$.next([]);
+    this.overlayHidden = true;
   }
 
   startUpload(): void {

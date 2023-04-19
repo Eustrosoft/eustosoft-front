@@ -18,7 +18,7 @@ export class UploadOverlayComponent {
   @Input() uploadItems!: UploadItem[];
 
   @Output() removeItem = new EventEmitter<UploadItem>();
-  @Output() closeOverlay = new EventEmitter<void>();
+  @Output() closeOverlay = new EventEmitter<UploadItem[]>();
 
   UploadingState = UploadingState;
 
@@ -28,6 +28,6 @@ export class UploadOverlayComponent {
   }
 
   close(): void {
-    this.closeOverlay.emit();
+    this.closeOverlay.emit(this.uploadItems);
   }
 }

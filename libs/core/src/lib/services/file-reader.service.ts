@@ -76,14 +76,20 @@ export class FileReaderService {
   }
 
   splitOneBinary(
-    file: File,
+    item: { file: File; progress: number; state: string; hidden: boolean },
     chunkSize: number = 1048576
-  ): Observable<{ file: File; chunks: Blob[] }> {
-    return of(file).pipe(
-      concatMap((file: File) => {
-        const buffer = this.blobToArrayBuffer(file);
-        return combineLatest([of(file), buffer]).pipe(
-          mergeMap(([file, buff]) => {
+  ): Observable<{
+    file: File;
+    progress: number;
+    state: string;
+    hidden: boolean;
+    chunks: Blob[];
+  }> {
+    return of(item).pipe(
+      concatMap((item) => {
+        const buffer = this.blobToArrayBuffer(item.file);
+        return combineLatest([of(item), buffer]).pipe(
+          mergeMap(([item, buff]) => {
             let startPointer = 0;
             const endPointer = buff.byteLength;
             const chunks = [];
@@ -93,7 +99,7 @@ export class FileReaderService {
               chunks.push(new Blob([chunk]));
               startPointer = newStartPointer;
             }
-            return of({ file: file, chunks: chunks });
+            return of({ ...item, chunks: chunks });
           })
         );
       })

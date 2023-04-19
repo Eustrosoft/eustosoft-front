@@ -4,6 +4,7 @@ import {
   catchError,
   combineLatest,
   concatMap,
+  filter,
   from,
   of,
   tap,
@@ -25,33 +26,19 @@ export class ExplorerUploadService {
     private explorerRequestBuilderService: ExplorerRequestBuilderService,
     private explorerService: ExplorerService
   ) {}
-  upload(files: File[], path: string = '/') {
-    return of(files).pipe(
-      concatMap((files: File[]) =>
-        combineLatest([
-          of(
-            files.map(
-              (file) =>
-                ({
-                  file,
-                  progress: 0,
-                  state: UploadingState.PENDING,
-                  hidden: false,
-                } as UploadItem)
-            )
-          ),
-          this.fileReaderService.splitBinary(files),
-        ])
-      ),
-      concatMap(([items, { file, chunks }]) => {
-        return from(chunks).pipe(
+  upload(items: UploadItem[], path: string = '/') {
+    return from(items).pipe(
+      filter((item) => item.state !== UploadingState.UPLOADED),
+      concatMap((item) => this.fileReaderService.splitOneBinary(item)),
+      concatMap((item) =>
+        from(item.chunks).pipe(
           concatMap((chunk: Blob, currentChunk: number) => {
             const request =
               this.explorerRequestBuilderService.buildBinaryChunkRequest(
-                file,
+                item.file,
                 chunk,
                 currentChunk,
-                chunks.length,
+                item.chunks.length,
                 path
               );
             const formData = new FormData();
@@ -60,11 +47,11 @@ export class ExplorerUploadService {
 
             return combineLatest([
               this.explorerService.uploadChunks(formData, {
-                'Content-Disposition': `form-data; name="file"; filename="${file.name}"`,
+                'Content-Disposition': `form-data; name="file"; filename="${item.file.name}"`,
               }),
               of(items),
-              of(file),
-              of(chunks),
+              of(item.file),
+              of(item.chunks),
               of(currentChunk),
             ]);
           }),
@@ -83,8 +70,8 @@ export class ExplorerUploadService {
             this.uploadItems$.next(uploadItems);
           }),
           toArray()
-        );
-      }),
+        )
+      ),
       catchError((err) => throwError(() => err))
     );
   }

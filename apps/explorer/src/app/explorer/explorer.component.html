@@ -98,5 +98,5 @@
   [hidden]="overlayHidden"
   [uploadItems]="(uploadItems$ | async) || []"
   (removeItem)="removeItemFromUploadList($event)"
-  (closeOverlay)="overlayClosed()"
+  (closeOverlay)="overlayClose($event)"
 ></eustrosoft-front-upload-overlay>

@@ -19,12 +19,25 @@
     >
       <div class="d-flex align-items-center">
         <span class="col-10 text-break">{{ item.file.name }}</span>
-        <!--          *ngIf="item.state !== UploadingState.UPLOADED"-->
         <eustrosoft-front-button
+          [hidden]="item.state === UploadingState.UPLOADED"
           [buttonType]="'button'"
           [buttonStyleType]="'icon'"
           [iconName]="'cancel'"
           [color]="'warn'"
+          (clicked)="remove(item)"
+          class="w-auto"
+        >
+        </eustrosoft-front-button>
+        <eustrosoft-front-button
+          [hidden]="
+            item.state === UploadingState.PENDING ||
+            item.state === UploadingState.UPLOADING
+          "
+          [buttonType]="'button'"
+          [buttonStyleType]="'icon'"
+          [iconName]="'folder'"
+          [color]="'primary'"
           (clicked)="remove(item)"
           class="w-auto"
         >
