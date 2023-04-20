@@ -8,6 +8,7 @@ import {
   of,
   Subscriber,
 } from 'rxjs';
+import { UploadItem } from '../interfaces/cms/upload-item.interface';
 
 @Injectable()
 export class FileReaderService {
@@ -76,15 +77,13 @@ export class FileReaderService {
   }
 
   splitOneBinary(
-    item: { file: File; progress: number; state: string; hidden: boolean },
+    item: UploadItem,
     chunkSize: number = 1048576
-  ): Observable<{
-    file: File;
-    progress: number;
-    state: string;
-    hidden: boolean;
-    chunks: Blob[];
-  }> {
+  ): Observable<
+    UploadItem & {
+      chunks: Blob[];
+    }
+  > {
     return of(item).pipe(
       concatMap((item) => {
         const buffer = this.blobToArrayBuffer(item.file);

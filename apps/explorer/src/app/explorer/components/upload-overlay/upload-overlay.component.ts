@@ -5,7 +5,7 @@ import {
   Input,
   Output,
 } from '@angular/core';
-import { UploadItem } from '../../interfaces/upload-item.interface';
+import { UploadItem } from '../../../../../../../libs/core/src/lib/interfaces/cms/upload-item.interface';
 import { UploadingState } from '../../constants/enums/uploading-state.enum';
 
 @Component({
@@ -22,8 +22,12 @@ export class UploadOverlayComponent {
 
   UploadingState = UploadingState;
 
+  openFolder(item: UploadItem): void {
+    console.log(item);
+  }
+
   remove(item: UploadItem): void {
-    item.hidden = true;
+    item.cancelled = true;
     this.removeItem.emit(item);
   }
 

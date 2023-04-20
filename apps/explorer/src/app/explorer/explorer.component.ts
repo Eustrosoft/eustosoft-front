@@ -64,7 +64,7 @@ import { MoveCopyDialogComponent } from './components/move-copy-dialog/move-copy
 import { MoveCopyDialogDataInterface } from './components/move-copy-dialog/move-copy-dialog-data.interface';
 import { HttpEvent, HttpEventType } from '@angular/common/http';
 import { ExplorerUploadService } from './services/explorer-upload.service';
-import { UploadItem } from './interfaces/upload-item.interface';
+import { UploadItem } from '../../../../../libs/core/src/lib/interfaces/cms/upload-item.interface';
 import { UploadingState } from './constants/enums/uploading-state.enum';
 
 @Component({
@@ -143,7 +143,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
                     file,
                     progress: 0,
                     state: UploadingState.PENDING,
-                    hidden: false,
+                    cancelled: false,
                   } as UploadItem)
               )
             ),
@@ -160,12 +160,15 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
               (obj, index, self) =>
                 index === self.findIndex((t) => t.file.name === obj.file.name)
             )
-            .filter((item) => !item.hidden);
+            .filter((item: UploadItem) => !item.cancelled);
           return of(uniqueArray);
         }),
         switchMap((items) => this.explorerUploadService.upload(items)),
         // emit buffer after every file upload completion
-        tap(() => this.emitBuffer$.next()),
+        tap(() => {
+          this.emitBuffer$.next();
+          this.refreshFolders$.next(true);
+        }),
         catchError((err) => {
           console.error(err);
           this.snackBar.open(`Error making request`, `Close`);
@@ -240,7 +243,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
     this.explorerUploadService.uploadItems$.next(
       items.map((item) => ({
         ...item,
-        hidden: true,
+        cancelled: true,
       }))
     );
     this.control.patchValue([]);

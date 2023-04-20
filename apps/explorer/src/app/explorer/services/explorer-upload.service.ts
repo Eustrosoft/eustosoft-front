@@ -11,10 +11,9 @@ import {
   throwError,
   toArray,
 } from 'rxjs';
-import { FileReaderService } from '@eustrosoft-front/core';
+import { FileReaderService, UploadItem } from '@eustrosoft-front/core';
 import { ExplorerRequestBuilderService } from './explorer-request-builder.service';
 import { ExplorerService } from './explorer.service';
-import { UploadItem } from '../interfaces/upload-item.interface';
 import { UploadingState } from '../constants/enums/uploading-state.enum';
 
 @Injectable()
