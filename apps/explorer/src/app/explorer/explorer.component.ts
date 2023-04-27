@@ -47,6 +47,7 @@ import {
   MoveCopyRequest,
   MoveCopyResponse,
   QtisRequestResponseInterface,
+  UploadItem,
   ViewRequest,
   ViewResponse,
 } from '@eustrosoft-front/core';
@@ -64,7 +65,6 @@ import { MoveCopyDialogComponent } from './components/move-copy-dialog/move-copy
 import { MoveCopyDialogDataInterface } from './components/move-copy-dialog/move-copy-dialog-data.interface';
 import { HttpEvent, HttpEventType } from '@angular/common/http';
 import { ExplorerUploadService } from './services/explorer-upload.service';
-import { UploadItem } from '../../../../../libs/core/src/lib/interfaces/cms/upload-item.interface';
 import { UploadingState } from './constants/enums/uploading-state.enum';
 
 @Component({
@@ -257,13 +257,16 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   createFolder(): void {
-    const dialogRef = this.dialog.open(CreateRenameFolderDialogComponent, {
+    const dialogRef = this.dialog.open<
+      CreateRenameFolderDialogComponent,
+      CreateRenameDialogDataInterface
+    >(CreateRenameFolderDialogComponent, {
       data: {
         title: `New folder`,
         inputLabel: `Folder name`,
         defaultInputValue: `Untitled folder`,
         submitButtonText: `Create`,
-      } as CreateRenameDialogDataInterface,
+      },
     });
 
     dialogRef
@@ -274,6 +277,41 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
           this.explorerRequestBuilderService.buildCreateRequest(
             this.path$.getValue(),
             FileSystemObjectTypes.DIRECTORY,
+            folderName
+          )
+        ),
+        switchMap((body: QtisRequestResponseInterface<CreateRequest>) =>
+          this.explorerService.dispatch<CreateRequest, CreateResponse>(body)
+        ),
+        tap(() => {
+          this.refreshFolders$.next(true);
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
+
+  createFile(): void {
+    const dialogRef = this.dialog.open<
+      CreateRenameFolderDialogComponent,
+      CreateRenameDialogDataInterface
+    >(CreateRenameFolderDialogComponent, {
+      data: {
+        title: `New file`,
+        inputLabel: `File name`,
+        defaultInputValue: `Untitled`,
+        submitButtonText: `Create`,
+      },
+    });
+
+    dialogRef
+      .afterClosed()
+      .pipe(
+        filter((str) => typeof str === 'string'),
+        switchMap((folderName: string) =>
+          this.explorerRequestBuilderService.buildCreateRequest(
+            this.path$.getValue(),
+            FileSystemObjectTypes.FILE,
             folderName
           )
         ),
