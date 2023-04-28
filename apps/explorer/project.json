@@ -37,10 +37,11 @@
       },
       "configurations": {
         "production": {
-          "fileReplacements": [
+          "assets": [
             {
-              "replace": "apps/explorer/src/environments/environment.ts",
-              "with": "apps/explorer/src/environments/environment.prod.ts"
+              "glob": "config.json",
+              "input": "libs/config/src/lib/configurations/prod",
+              "output": "/"
             }
           ],
           "outputHashing": "all",
@@ -53,14 +54,22 @@
           "buildOptimizer": true
         },
         "stage": {
-          "fileReplacements": [
+          "assets": [
             {
-              "replace": "apps/explorer/src/environments/environment.ts",
-              "with": "apps/explorer/src/environments/environment.stage.ts"
+              "glob": "config.json",
+              "input": "libs/config/src/lib/configurations/stage",
+              "output": "/"
             }
           ]
         },
         "development": {
+          "assets": [
+            {
+              "glob": "config.json",
+              "input": "libs/config/src/lib/configurations/dev",
+              "output": "/"
+            }
+          ],
           "buildOptimizer": false,
           "optimization": false,
           "vendorChunk": true,

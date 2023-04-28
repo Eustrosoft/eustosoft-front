@@ -16,7 +16,6 @@ import { Subject, take } from 'rxjs';
 import { LoginService } from '@eustrosoft-front/security';
 import { InputTypes } from '@eustrosoft-front/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { HttpErrorResponse } from '@angular/common/http';
 
 type LoginForm = {
   login: FormControl<string>;
@@ -63,9 +62,9 @@ export class LoginPageComponent implements OnInit, OnDestroy {
       .pipe(take(1))
       .subscribe({
         next: () => this.router.navigate(['apps']),
-        error: (err: HttpErrorResponse) => {
+        error: (err) => {
           this.form.get('submit')?.enable();
-          this.snackBar.open(err.error, 'Close');
+          this.snackBar.open(err, 'Close');
           this.cd.markForCheck();
         },
       });

@@ -1,8 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { Observable, switchMap, tap } from 'rxjs';
 import { AuthenticationService } from './authentication.service';
-import { APP_ENVIRONMENT, Environment } from '@eustrosoft-front/app-config';
 import {
   LoginActions,
   LoginLogoutResponse,
@@ -12,59 +11,64 @@ import {
   Subsystems,
   SupportedLanguages,
 } from '@eustrosoft-front/core';
+import { APP_CONFIG } from '@eustrosoft-front/config';
 
 @Injectable()
 export class LoginService {
-  private http = inject(HttpClient);
-  private authenticationService = inject(AuthenticationService);
-  private environment: Environment = inject(APP_ENVIRONMENT);
+  private http: HttpClient = inject(HttpClient);
+  private authenticationService: AuthenticationService = inject(
+    AuthenticationService
+  );
+  private config = inject(APP_CONFIG);
 
   login(
     login: string,
     password: string
   ): Observable<QtisRequestResponseInterface<LoginLogoutResponse>> {
-    return this.http
-      .post<QtisRequestResponseInterface<LoginLogoutResponse>>(
-        `${this.environment.apiUrl}/dispatch`,
-        {
-          r: [
-            {
-              s: Subsystems.LOGIN,
-              r: LoginActions.LOGIN,
-              l: SupportedLanguages.EN_US,
-              login,
-              password,
-            },
-          ],
-          t: 0,
-        } as QtisRequestResponseInterface<LoginRequest>
-      )
-      .pipe(
-        tap((v) => {
-          this.authenticationService.isAuthenticated.next(v.r[0].e === 0);
-        })
-      );
+    return this.config.pipe(
+      switchMap((config) =>
+        this.http.post<QtisRequestResponseInterface<LoginLogoutResponse>>(
+          `${config.apiUrl}/dispatch`,
+          {
+            r: [
+              {
+                s: Subsystems.LOGIN,
+                r: LoginActions.LOGIN,
+                l: SupportedLanguages.EN_US,
+                login,
+                password,
+              },
+            ],
+            t: 0,
+          } as QtisRequestResponseInterface<LoginRequest>
+        )
+      ),
+      tap((v) => {
+        this.authenticationService.isAuthenticated.next(v.r[0].e === 0);
+      })
+    );
   }
 
   logout(): Observable<QtisRequestResponseInterface<LoginLogoutResponse>> {
-    return this.http
-      .post<QtisRequestResponseInterface<LoginLogoutResponse>>(
-        `${this.environment.apiUrl}/dispatch`,
-        {
-          r: [
-            {
-              s: Subsystems.LOGIN,
-              r: LoginActions.LOGOUT,
-              l: SupportedLanguages.EN_US,
-            },
-          ],
-          t: 0,
-        } as QtisRequestResponseInterface<LogoutRequest>
-      )
-      .pipe(
-        tap(() => {
-          this.authenticationService.isAuthenticated.next(false);
-        })
-      );
+    return this.config.pipe(
+      switchMap((config) =>
+        this.http.post<QtisRequestResponseInterface<LoginLogoutResponse>>(
+          `${config.apiUrl}/dispatch`,
+          {
+            r: [
+              {
+                s: Subsystems.LOGIN,
+                r: LoginActions.LOGOUT,
+                l: SupportedLanguages.EN_US,
+              },
+            ],
+            t: 0,
+          } as QtisRequestResponseInterface<LogoutRequest>
+        )
+      ),
+      tap(() => {
+        this.authenticationService.isAuthenticated.next(false);
+      })
+    );
   }
 }

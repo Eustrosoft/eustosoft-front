@@ -1,16 +1,16 @@
 import { Route } from '@angular/router';
 import { ExplorerComponent } from './explorer/explorer.component';
-import { AuthenticationGuard, RedirectGuard } from '@eustrosoft-front/security';
+import { authenticationGuard, redirectGuard } from '@eustrosoft-front/security';
 import { AppComponent } from './app.component';
-import { environment } from '../environments/environment';
+import { loginUrlKey } from '@eustrosoft-front/config';
 
 export const appRoutes: Route[] = [
   {
     path: 'login',
-    canActivate: [RedirectGuard],
+    canActivate: [redirectGuard],
     component: AppComponent,
     data: {
-      externalUrl: environment.loginUrl,
+      key: loginUrlKey,
     },
   },
   {
@@ -18,6 +18,6 @@ export const appRoutes: Route[] = [
     pathMatch: 'full',
     title: 'TIS | Explorer',
     component: ExplorerComponent,
-    canActivate: [AuthenticationGuard],
+    canActivate: [authenticationGuard],
   },
 ];

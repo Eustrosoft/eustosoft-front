@@ -33,14 +33,10 @@
 </mat-toolbar>
 
 <ng-template #defaultAppsListTemplate>
-  <a mat-menu-item [href]="environment.loginUrl" target="_blank">Login</a>
-  <a mat-menu-item [href]="environment.explorerUrl" target="_blank">
-    Explorer
-  </a>
-  <a mat-menu-item [href]="environment.dispatcherUrl" target="_blank">
-    Dispatcher
-  </a>
-  <a mat-menu-item [href]="environment.appsPageUrl" target="_blank">
-    All apps page
-  </a>
+  <ng-container *ngIf="config | async as cnf">
+    <a mat-menu-item [href]="cnf.loginUrl">Login</a>
+    <a mat-menu-item [href]="cnf.explorerUrl"> Explorer </a>
+    <a mat-menu-item [href]="cnf.dispatcherUrl"> Dispatcher </a>
+    <a mat-menu-item [href]="cnf.appsPageUrl"> All apps page </a>
+  </ng-container>
 </ng-template>

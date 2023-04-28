@@ -1,19 +1,24 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { QtisRequestResponseInterface } from '@eustrosoft-front/core';
-import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
+import { Observable, switchMap } from 'rxjs';
+import { APP_CONFIG, Config } from '@eustrosoft-front/config';
 
 @Injectable()
 export class RequestService {
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
+  private config = inject(APP_CONFIG);
 
   dispatch<Req, Res>(
     body: QtisRequestResponseInterface<Req>
   ): Observable<QtisRequestResponseInterface<Res>> {
-    return this.http.post<QtisRequestResponseInterface<Res>>(
-      `${environment.apiUrl}/dispatch`,
-      body
+    return this.config.pipe(
+      switchMap((config: Config) =>
+        this.http.post<QtisRequestResponseInterface<Res>>(
+          `${config.apiUrl}/dispatch`,
+          body
+        )
+      )
     );
   }
 }

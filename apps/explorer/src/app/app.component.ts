@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { APP_ENVIRONMENT } from '@eustrosoft-front/app-config';
+import { APP_CONFIG } from '@eustrosoft-front/config';
 
 @Component({
   selector: 'eustrosoft-front-root',
@@ -7,7 +7,7 @@ import { APP_ENVIRONMENT } from '@eustrosoft-front/app-config';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  public environment = inject(APP_ENVIRONMENT);
+  public config = inject(APP_CONFIG);
   public headerLocalizedTexts = {
     title: `LOGO | TIS Apps | Explorer`,
     appsButtonText: `Apps`,

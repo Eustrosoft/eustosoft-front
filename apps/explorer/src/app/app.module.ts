@@ -9,26 +9,13 @@ import { ExplorerComponent } from './explorer/explorer.component';
 import { MatTableModule } from '@angular/material/table';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { CommonUiModule } from '@eustrosoft-front/common-ui';
-import {
-  MAT_ICON_DEFAULT_OPTIONS,
-  MatIconDefaultOptions,
-  MatIconModule,
-} from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatMenuModule } from '@angular/material/menu';
-import {
-  CoreModule,
-  HttpErrorsInterceptorInterceptor,
-} from '@eustrosoft-front/core';
+import { CoreModule } from '@eustrosoft-front/core';
 import { ExplorerService } from './explorer/services/explorer.service';
 import { ExplorerRequestBuilderService } from './explorer/services/explorer-request-builder.service';
-import {
-  SecurityModule,
-  UnauthenticatedInterceptor,
-  WithCredentialsInterceptor,
-} from '@eustrosoft-front/security';
-import { APP_ENVIRONMENT } from '@eustrosoft-front/app-config';
-import { environment } from '../environments/environment';
+import { SecurityModule } from '@eustrosoft-front/security';
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { PortalModule } from '@angular/cdk/portal';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -39,7 +26,6 @@ import {
   CdkVirtualScrollViewport,
 } from '@angular/cdk/scrolling';
 import { MatListModule } from '@angular/material/list';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BreadcrumbsComponent } from './explorer/components/breadcrumbs/breadcrumbs.component';
 import { Stack } from './explorer/classes/Stack';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -84,28 +70,6 @@ import { UploadOverlayComponent } from './explorer/components/upload-overlay/upl
     ExplorerRequestBuilderService,
     ExplorerUploadService,
     Stack,
-    { provide: APP_ENVIRONMENT, useValue: environment },
-    {
-      provide: MAT_ICON_DEFAULT_OPTIONS,
-      useValue: {
-        fontSet: 'material-symbols-outlined',
-      } as MatIconDefaultOptions,
-    },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: UnauthenticatedInterceptor,
-      multi: true,
-    },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: WithCredentialsInterceptor,
-      multi: true,
-    },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: HttpErrorsInterceptorInterceptor,
-      multi: true,
-    },
   ],
   bootstrap: [AppComponent],
 })

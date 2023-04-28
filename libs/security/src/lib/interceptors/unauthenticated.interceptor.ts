@@ -25,8 +25,9 @@ export class UnauthenticatedInterceptor implements HttpInterceptor {
         if (event instanceof HttpResponse) {
           const isBlob = event.body instanceof Blob;
           if (
-            event.body &&
             !isBlob &&
+            event.body &&
+            event.body.r &&
             event.body.r.e === HttpStatusCode.Unauthorized
           ) {
             const statusCode = event.body.r.e;

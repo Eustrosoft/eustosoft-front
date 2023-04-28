@@ -9,7 +9,11 @@ import { PreloaderComponent } from './components/preloader/preloader.component';
 import { SelectComponent } from './components/select/select.component';
 import { TextareaComponent } from './components/textarea/textarea.component';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
+import {
+  MAT_ICON_DEFAULT_OPTIONS,
+  MatIconDefaultOptions,
+  MatIconModule,
+} from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
@@ -29,6 +33,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatMenuModule } from '@angular/material/menu';
 import { PromptDialogComponent } from './components/prompt-dialog/prompt-dialog.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { ConfigModule } from '@eustrosoft-front/config';
 
 @NgModule({
   imports: [
@@ -46,6 +51,7 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatToolbarModule,
     MatMenuModule,
     MatDialogModule,
+    ConfigModule,
   ],
   declarations: [
     HeaderComponent,
@@ -77,6 +83,14 @@ import { MatDialogModule } from '@angular/material/dialog';
     RippleHoverDirective,
     ProgressBarComponent,
     HoverCursorDirective,
+  ],
+  providers: [
+    {
+      provide: MAT_ICON_DEFAULT_OPTIONS,
+      useValue: {
+        fontSet: 'material-symbols-outlined',
+      } as MatIconDefaultOptions,
+    },
   ],
 })
 export class CommonUiModule {}

@@ -1,22 +1,22 @@
 import { Route } from '@angular/router';
 import { RequestsComponent } from './requests/requests.component';
-import { AuthenticationGuard, RedirectGuard } from '@eustrosoft-front/security';
-import { environment } from '../environments/environment';
 import { AppComponent } from './app.component';
+import { authenticationGuard, redirectGuard } from '@eustrosoft-front/security';
+import { loginUrlKey } from '@eustrosoft-front/config';
 
 export const appRoutes: Route[] = [
   {
     path: '',
     title: 'TIS | Dispatcher',
     component: RequestsComponent,
-    canActivate: [AuthenticationGuard],
+    canActivate: [authenticationGuard],
   },
   {
     path: 'login',
-    canActivate: [RedirectGuard],
+    canActivate: [redirectGuard],
     component: AppComponent,
     data: {
-      externalUrl: environment.loginUrl,
+      key: loginUrlKey,
     },
   },
 ];

@@ -6,13 +6,15 @@
 <router-outlet></router-outlet>
 
 <ng-template #appsListTemplate>
-  <a mat-menu-item [href]="environment.loginUrl" target="_blank">{{
-    localizedAppsListNames.login
-  }}</a>
-  <a mat-menu-item [href]="environment.dispatcherUrl" target="_blank">
-    {{ localizedAppsListNames.dispatcher }}
-  </a>
-  <a mat-menu-item [href]="environment.appsPageUrl" target="_blank">
-    {{ localizedAppsListNames.appsPage }}
-  </a>
+  <ng-container *ngIf="config | async as cnf">
+    <a mat-menu-item [href]="cnf.loginUrl">
+      {{ localizedAppsListNames.login }}
+    </a>
+    <a mat-menu-item [href]="cnf.dispatcherUrl">
+      {{ localizedAppsListNames.dispatcher }}
+    </a>
+    <a mat-menu-item [href]="cnf.appsPageUrl">
+      {{ localizedAppsListNames.appsPage }}
+    </a>
+  </ng-container>
 </ng-template>

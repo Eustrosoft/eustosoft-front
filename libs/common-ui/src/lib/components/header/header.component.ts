@@ -6,12 +6,12 @@ import {
   OnInit,
   TemplateRef,
 } from '@angular/core';
-import { Observable, take, tap } from 'rxjs';
+import { Observable, switchMap, take, tap } from 'rxjs';
 import {
   AuthenticationService,
   LoginService,
 } from '@eustrosoft-front/security';
-import { APP_ENVIRONMENT } from '@eustrosoft-front/app-config';
+import { APP_CONFIG } from '@eustrosoft-front/config';
 
 @Component({
   selector: 'eustrosoft-front-header',
@@ -27,7 +27,7 @@ export class HeaderComponent implements OnInit {
   private authenticationService: AuthenticationService = inject(
     AuthenticationService
   );
-  public environment = inject(APP_ENVIRONMENT);
+  public config = inject(APP_CONFIG);
   public isAuthenticated!: Observable<boolean>;
   public userName!: Observable<string>;
 
@@ -41,10 +41,11 @@ export class HeaderComponent implements OnInit {
     this.loginService
       .logout()
       .pipe(
-        take(1),
-        tap(() => {
-          window.location.href = this.environment.loginUrl;
-        })
+        switchMap(() => this.config),
+        tap((config) => {
+          window.location.href = config.loginUrl;
+        }),
+        take(1)
       )
       .subscribe();
   }

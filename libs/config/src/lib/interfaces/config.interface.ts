@@ -1,4 +1,4 @@
-export interface Environment {
+export interface Config {
   production: boolean;
   apiUrl: string;
   loginUrl: string;
@@ -6,3 +6,5 @@ export interface Environment {
   explorerUrl: string;
   appsPageUrl: string;
 }
+
+export type ConfigKey = keyof Config;
