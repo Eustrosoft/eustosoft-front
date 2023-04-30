@@ -28,8 +28,6 @@ export interface UploadRequest extends BaseCmsRequest {
     all_chunks: number;
     path: string;
   };
-  request: string;
-  subsystem: string;
 }
 
 export interface MoveCopyRequest extends BaseCmsRequest {

@@ -29,6 +29,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { RequestBuilderService } from './services/request-builder.service';
 import { RequestFormBuilderService } from './services/request-form-builder.service';
 import { RequestService } from './services/request.service';
+import { Option } from '@eustrosoft-front/common-ui';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'eustrosoft-front-requests',
@@ -40,8 +42,22 @@ export class RequestsComponent implements OnInit {
   public form!: FormGroup<RequestsForm>;
   public DisplayTypes = DisplayTypes;
   public displayType = new FormControl<DisplayTypes>(DisplayTypes.TEXT);
-  public queryTypeOptions: string[] = [...Object.values(QueryTypes)];
-  public displayTypeOptions: string[] = [...Object.values(DisplayTypes)];
+  public queryTypeOptions: Option[] = Object.values(QueryTypes).map(
+    (queryType) =>
+      ({
+        value: queryType,
+        displayText: queryType,
+        disabled: false,
+      } as Option)
+  );
+  public displayTypeOptions: Option[] = Object.values(DisplayTypes).map(
+    (queryType) =>
+      ({
+        value: queryType,
+        displayText: queryType,
+        disabled: false,
+      } as Option)
+  );
 
   public displayTypeLabelText = `Display as`;
   public addFormButtonTitle = `Add request form`;
@@ -98,10 +114,10 @@ export class RequestsComponent implements OnInit {
           this.form.get('submit')?.enable();
           this.isResultLoading.next(false);
         }),
-        catchError((err: string) => {
+        catchError((err: HttpErrorResponse) => {
           this.form.get('submit')?.enable();
           this.isResultLoading.next(false);
-          this.snackBar.open(err, 'Close');
+          this.snackBar.open(err.error, 'Close');
           this.cd.detectChanges();
           return of(null);
         })

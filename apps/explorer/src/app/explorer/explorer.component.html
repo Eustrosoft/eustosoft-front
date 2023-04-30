@@ -27,6 +27,16 @@
         </button>
       </mat-menu>
     </div>
+    <div class="col-2">
+      <eustrosoft-front-select
+        [label]="'Upload type'"
+        [control]="uploadTypeControl | formControl"
+        [options]="uploadTypeOptions"
+        [fieldAppearance]="'outline'"
+        [color]="'primary'"
+        class="uploadType"
+      ></eustrosoft-front-select>
+    </div>
     <ng-container *ngIf="selected$ | async as selected">
       <div class="col-2">
         <eustrosoft-front-button

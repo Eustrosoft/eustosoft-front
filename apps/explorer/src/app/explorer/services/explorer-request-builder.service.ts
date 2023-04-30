@@ -71,8 +71,60 @@ export class ExplorerRequestBuilderService {
             all_chunks: totalChunks,
             path,
           },
-          request: 'upload_chunks_binary',
-          subsystem: 'file',
+        },
+      ],
+      t: 0,
+    };
+  }
+
+  buildBase64ChunkRequest(
+    file: File,
+    chunk: string,
+    chunkIndex: number,
+    totalChunks: number,
+    path: string = '/'
+  ): QtisRequestResponseInterface<UploadRequest> {
+    return {
+      r: [
+        {
+          s: Subsystems.FILE,
+          r: CmsRequestActions.UPLOAD_BASE64,
+          l: SupportedLanguages.EN_US,
+          parameters: {
+            file: chunk,
+            name: file.name,
+            ext: file.name.split('.').pop() as string,
+            chunk: chunkIndex,
+            all_chunks: totalChunks,
+            path,
+          },
+        },
+      ],
+      t: 0,
+    };
+  }
+
+  buildHexChunkRequest(
+    file: File,
+    chunk: string,
+    chunkIndex: number,
+    totalChunks: number,
+    path: string = '/'
+  ): QtisRequestResponseInterface<UploadRequest> {
+    return {
+      r: [
+        {
+          s: Subsystems.FILE,
+          r: CmsRequestActions.UPLOAD_CHUNKS,
+          l: SupportedLanguages.EN_US,
+          parameters: {
+            file: chunk,
+            name: file.name,
+            ext: file.name.split('.').pop() as string,
+            chunk: chunkIndex,
+            all_chunks: totalChunks,
+            path,
+          },
         },
       ],
       t: 0,

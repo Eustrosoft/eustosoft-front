@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import {
   InputFileComponent,
+  Option,
   PromptDialogComponent,
   PromptDialogDataInterface,
 } from '@eustrosoft-front/common-ui';
@@ -87,6 +88,26 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
   selected$!: Observable<FileSystemObject[]>;
 
   control = new FormControl<File[]>([], { nonNullable: true });
+  uploadTypeControl = new FormControl<string>('binary', {
+    nonNullable: true,
+  });
+  uploadTypeOptions: Option[] = [
+    {
+      value: 'binary',
+      displayText: 'binary',
+      disabled: false,
+    },
+    {
+      value: 'base64',
+      displayText: 'base64',
+      disabled: false,
+    },
+    {
+      value: 'hex',
+      displayText: 'hex',
+      disabled: true,
+    },
+  ];
   uploadItems$ = this.explorerUploadService.uploadItems$.asObservable();
 
   newButtonText = `New`;
@@ -123,7 +144,8 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
         response.r.flatMap((r: ViewResponse) => r.content)
       ),
       tap(() => this.filesystemTableComponent.selection.clear()),
-      share()
+      share(),
+      catchError(() => EMPTY)
     );
 
     this.control.valueChanges
@@ -163,7 +185,18 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
             .filter((item: UploadItem) => !item.cancelled);
           return of(uniqueArray);
         }),
-        switchMap((items) => this.explorerUploadService.upload(items)),
+        switchMap((items) => {
+          switch (this.uploadTypeControl.value) {
+            case 'binary':
+              return this.explorerUploadService.uploadBinary(items);
+            case 'hex':
+              return this.explorerUploadService.uploadHexString(items);
+            case 'base64':
+              return this.explorerUploadService.uploadBase64(items);
+            default:
+              return this.explorerUploadService.uploadBinary(items);
+          }
+        }),
         // emit buffer after every file upload completion
         tap(() => {
           this.emitBuffer$.next();

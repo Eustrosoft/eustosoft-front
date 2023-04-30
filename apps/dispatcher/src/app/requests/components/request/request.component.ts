@@ -5,7 +5,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { QueryTypes, SingleRequestForm } from '@eustrosoft-front/core';
-import { InputFileComponent } from '@eustrosoft-front/common-ui';
+import { InputFileComponent, Option } from '@eustrosoft-front/common-ui';
 import { FormGroup } from '@angular/forms';
 
 @Component({
@@ -17,7 +17,14 @@ import { FormGroup } from '@angular/forms';
 export class RequestComponent {
   @Input() form!: FormGroup<SingleRequestForm>;
   @Input() formNumber!: number;
-  @Input() queryTypeOptions: string[] = [...Object.values(QueryTypes)];
+  @Input() queryTypeOptions: Option[] = Object.values(QueryTypes).map(
+    (queryType) =>
+      ({
+        value: queryType,
+        displayText: queryType,
+        disabled: false,
+      } as Option)
+  );
 
   @ViewChild(InputFileComponent) inputFileComponent!: InputFileComponent;
   public QueryTypes = QueryTypes;

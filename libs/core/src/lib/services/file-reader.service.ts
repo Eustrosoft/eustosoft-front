@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import {
   combineLatest,
   concatMap,
-  from,
   mergeMap,
   Observable,
   of,
@@ -18,58 +17,37 @@ export class FileReaderService {
   // 26214400 - 25 MB
   // 52428800 - 50 MB
   // 104857600 - 100 MB
-  splitBase64(
-    files: File[],
-    chunkSize: number = 1048576
-  ): Observable<{ file: File; chunks: string[] }> {
-    return from(files).pipe(
-      mergeMap((file: File) => {
-        const buffer = this.blobToArrayBuffer(file);
-        return combineLatest([of(file), buffer]).pipe(
-          mergeMap(([file, buff]) => {
-            let startPointer = 0;
-            const endPointer = buff.byteLength;
-            let chunks = [];
-            while (startPointer < endPointer) {
-              const newStartPointer = startPointer + chunkSize;
-              chunks.push(buff.slice(startPointer, newStartPointer));
-              startPointer = newStartPointer;
-            }
-            // Super slow
-            chunks = chunks.map((chunk) =>
-              window.btoa(
-                new Uint8Array(chunk).reduce(
-                  (data, byte) => data + String.fromCharCode(byte),
-                  ''
-                )
-              )
-            );
-            return of({ file: file, chunks: chunks });
-          })
-        );
-      })
-    );
-  }
 
-  splitBinary(
-    files: File[],
+  splitOneBase64(
+    item: UploadItem,
     chunkSize: number = 1048576
-  ): Observable<{ file: File; chunks: Blob[] }> {
-    return from(files).pipe(
-      concatMap((file: File) => {
-        const buffer = this.blobToArrayBuffer(file);
-        return combineLatest([of(file), buffer]).pipe(
-          mergeMap(([file, buff]) => {
+  ): Observable<
+    UploadItem & {
+      chunks: string[];
+    }
+  > {
+    return of(item).pipe(
+      concatMap((item) => {
+        const buffer = this.blobToArrayBuffer(item.file);
+        return combineLatest([of(item), buffer]).pipe(
+          mergeMap(([item, buff]) => {
             let startPointer = 0;
             const endPointer = buff.byteLength;
             const chunks = [];
             while (startPointer < endPointer) {
               const newStartPointer = startPointer + chunkSize;
               const chunk = buff.slice(startPointer, newStartPointer);
-              chunks.push(new Blob([chunk]));
+              let binary = '';
+              const bytes = new Uint8Array(chunk);
+              const len = bytes.byteLength;
+              for (let i = 0; i < len; i++) {
+                binary += String.fromCharCode(bytes[i]);
+              }
+              const base64Chunk = window.btoa(binary);
+              chunks.push(base64Chunk);
               startPointer = newStartPointer;
             }
-            return of({ file: file, chunks: chunks });
+            return of({ ...item, chunks: chunks });
           })
         );
       })
@@ -96,6 +74,43 @@ export class FileReaderService {
               const newStartPointer = startPointer + chunkSize;
               const chunk = buff.slice(startPointer, newStartPointer);
               chunks.push(new Blob([chunk]));
+              startPointer = newStartPointer;
+            }
+            return of({ ...item, chunks: chunks });
+          })
+        );
+      })
+    );
+  }
+
+  splitOneToHexString(
+    item: UploadItem,
+    chunkSize: number = 1048576
+  ): Observable<
+    UploadItem & {
+      chunks: string[];
+    }
+  > {
+    return of(item).pipe(
+      concatMap((item) => {
+        const buffer = this.blobToArrayBuffer(item.file);
+        return combineLatest([of(item), buffer]).pipe(
+          mergeMap(([item, buff]) => {
+            let startPointer = 0;
+            const endPointer = buff.byteLength;
+            const chunks = [];
+            while (startPointer < endPointer) {
+              const newStartPointer = startPointer + chunkSize;
+              const chunk = buff.slice(startPointer, newStartPointer);
+
+              let byteaStr = '';
+              const h = '0123456789ABCDEF';
+              new Uint8Array(chunk).forEach((v) => {
+                byteaStr += h[v >> 4] + h[v & 15];
+              });
+
+              console.log('Chunk like Byte String:', byteaStr);
+              chunks.push(byteaStr);
               startPointer = newStartPointer;
             }
             return of({ ...item, chunks: chunks });
