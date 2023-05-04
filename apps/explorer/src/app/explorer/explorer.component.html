@@ -4,7 +4,7 @@
       <eustrosoft-front-button
         [buttonType]="'button'"
         [buttonStyleType]="'stroked'"
-        [buttonText]="newButtonText"
+        [buttonText]="'EXPLORER.NEW_MENU_BUTTON_TEXT' | translate"
         [color]="'primary'"
         [matMenuTriggerFor]="newActionsMenu"
       >
@@ -12,24 +12,24 @@
       <mat-menu #newActionsMenu="matMenu">
         <button (click)="createFolder()" mat-menu-item>
           <mat-icon>create_new_folder</mat-icon>
-          <span>New folder</span>
+          <span>{{ 'EXPLORER.NEW_FOLDER_BUTTON_TEXT' | translate }}</span>
         </button>
         <button (click)="createFile()" mat-menu-item>
           <mat-icon>note_add</mat-icon>
-          <span>New file</span>
+          <span>{{ 'EXPLORER.NEW_FILE_BUTTON_TEXT' | translate }}</span>
         </button>
         <button
           (click)="inputFileComponent.fileInput.nativeElement.click()"
           mat-menu-item
         >
           <mat-icon>upload</mat-icon>
-          <span>New upload</span>
+          <span>{{ 'EXPLORER.NEW_UPLOAD_BUTTON_TEXT' | translate }}</span>
         </button>
       </mat-menu>
     </div>
     <div class="col-2">
       <eustrosoft-front-select
-        [label]="'Upload type'"
+        [label]="'EXPLORER.UPLOAD_TYPE_LABEL_TEXT' | translate"
         [control]="uploadTypeControl | formControl"
         [options]="uploadTypeOptions"
         [fieldAppearance]="'outline'"
@@ -43,7 +43,7 @@
           [hidden]="selected.length === 0"
           [buttonType]="'button'"
           [buttonStyleType]="'stroked'"
-          [buttonText]="'Batch operations'"
+          [buttonText]="'EXPLORER.BATCH_OPERATIONS_BUTTON_TEXT' | translate"
           [color]="'primary'"
           [matMenuTriggerFor]="batchOperationsMenu"
         >
@@ -55,21 +55,21 @@
             mat-menu-item
           >
             <mat-icon>content_copy</mat-icon>
-            <span>Copy</span>
+            <span>{{ 'EXPLORER.COPY_BUTTON_TEXT' | translate }}</span>
           </button>
           <button
             (click)="move(filesystemTableComponent.selection.selected)"
             mat-menu-item
           >
             <mat-icon>drive_file_move</mat-icon>
-            <span>Move to</span>
+            <span>{{ 'EXPLORER.MOVE_TO_BUTTON_TEXT' | translate }}</span>
           </button>
           <button
             (click)="delete(filesystemTableComponent.selection.selected)"
             mat-menu-item
           >
             <mat-icon>delete</mat-icon>
-            <span>Delete</span>
+            <span>{{ 'EXPLORER.DELETE_BUTTON_TEXT' | translate }}</span>
           </button>
         </mat-menu>
       </div>

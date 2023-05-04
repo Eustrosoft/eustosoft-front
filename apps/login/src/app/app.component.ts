@@ -16,7 +16,7 @@ import { combineLatest, map, Observable } from 'rxjs';
 })
 export class AppComponent implements OnInit {
   public config = inject(APP_CONFIG);
-  public translateService = inject(PRECONFIGURED_TRANSLATE_SERVICE);
+  private translateService = inject(PRECONFIGURED_TRANSLATE_SERVICE);
   public translatedValues!: Observable<{
     title: string;
     appsButtonText: string;

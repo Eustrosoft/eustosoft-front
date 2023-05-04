@@ -67,6 +67,7 @@ import { MoveCopyDialogDataInterface } from './components/move-copy-dialog/move-
 import { HttpEvent, HttpEventType } from '@angular/common/http';
 import { ExplorerUploadService } from './services/explorer-upload.service';
 import { UploadingState } from './constants/enums/uploading-state.enum';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'eustrosoft-front-explorer',
@@ -110,7 +111,6 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
   ];
   uploadItems$ = this.explorerUploadService.uploadItems$.asObservable();
 
-  newButtonText = `New`;
   overlayHidden = true;
 
   private destroy$ = new Subject<void>();
@@ -126,7 +126,8 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
     private snackBar: MatSnackBar,
     private cd: ChangeDetectorRef,
     private router: Router,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private translateService: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -295,10 +296,18 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
       CreateRenameDialogDataInterface
     >(CreateRenameFolderDialogComponent, {
       data: {
-        title: `New folder`,
-        inputLabel: `Folder name`,
-        defaultInputValue: `Untitled folder`,
-        submitButtonText: `Create`,
+        title: this.translateService.instant(
+          'EXPLORER.CREATE_FOLDER_MODAL.TITLE'
+        ),
+        inputLabel: this.translateService.instant(
+          'EXPLORER.CREATE_FOLDER_MODAL.INPUT_LABEL_TEXT'
+        ),
+        defaultInputValue: this.translateService.instant(
+          'EXPLORER.CREATE_FOLDER_MODAL.DEFAULT_INPUT_VALUE'
+        ),
+        submitButtonText: this.translateService.instant(
+          'EXPLORER.CREATE_FOLDER_MODAL.SUBMIT_BUTTON_TEXT'
+        ),
       },
     });
 
@@ -330,10 +339,18 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
       CreateRenameDialogDataInterface
     >(CreateRenameFolderDialogComponent, {
       data: {
-        title: `New file`,
-        inputLabel: `File name`,
-        defaultInputValue: `Untitled`,
-        submitButtonText: `Create`,
+        title: this.translateService.instant(
+          'EXPLORER.CREATE_FILE_MODAL.TITLE'
+        ),
+        inputLabel: this.translateService.instant(
+          'EXPLORER.CREATE_FILE_MODAL.INPUT_LABEL_TEXT'
+        ),
+        defaultInputValue: this.translateService.instant(
+          'EXPLORER.CREATE_FILE_MODAL.DEFAULT_INPUT_VALUE'
+        ),
+        submitButtonText: this.translateService.instant(
+          'EXPLORER.CREATE_FILE_MODAL.SUBMIT_BUTTON_TEXT'
+        ),
       },
     });
 
@@ -366,10 +383,14 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
       string
     >(CreateRenameFolderDialogComponent, {
       data: {
-        title: `Rename folder`,
-        inputLabel: `New name`,
+        title: this.translateService.instant('EXPLORER.RENAME_MODAL.TITLE'),
+        inputLabel: this.translateService.instant(
+          'EXPLORER.RENAME_MODAL.INPUT_LABEL_TEXT'
+        ),
         defaultInputValue: row.fileName,
-        submitButtonText: `Rename`,
+        submitButtonText: this.translateService.instant(
+          'EXPLORER.RENAME_MODAL.SUBMIT_BUTTON_TEXT'
+        ),
       },
     });
 
@@ -406,9 +427,13 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
       string[]
     >(MoveCopyDialogComponent, {
       data: {
-        title: 'Move to',
-        cancelButtonText: 'Cancel',
-        submitButtonText: 'Move',
+        title: this.translateService.instant('EXPLORER.MOVE_MODAL.TITLE'),
+        cancelButtonText: this.translateService.instant(
+          'EXPLORER.MOVE_MODAL.CANCEL_BUTTON_TEXT'
+        ),
+        submitButtonText: this.translateService.instant(
+          'EXPLORER.MOVE_MODAL.SUBMIT_BUTTON_TEXT'
+        ),
         fsObjects: rows,
       },
     });
@@ -453,9 +478,13 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
       string[]
     >(MoveCopyDialogComponent, {
       data: {
-        title: 'Copy to',
-        cancelButtonText: 'Cancel',
-        submitButtonText: 'Copy',
+        title: this.translateService.instant('EXPLORER.COPY_MODAL.TITLE'),
+        cancelButtonText: this.translateService.instant(
+          'EXPLORER.COPY_MODAL.CANCEL_BUTTON_TEXT'
+        ),
+        submitButtonText: this.translateService.instant(
+          'EXPLORER.COPY_MODAL.SUBMIT_BUTTON_TEXT'
+        ),
         fsObjects: rows,
       },
     });
@@ -500,12 +529,17 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
       boolean
     >(PromptDialogComponent, {
       data: {
-        title: 'Delete confirmation',
-        text: `${rows.length} ${
-          rows.length > 1 ? 'objects' : 'object'
-        } are marked for deletion. Proceed?`,
-        cancelButtonText: 'No',
-        submitButtonText: 'Yes',
+        title: this.translateService.instant('EXPLORER.DELETE_MODAL.TITLE'),
+        text: this.translateService.instant('EXPLORER.DELETE_MODAL.TEXT', {
+          count: rows.length,
+          objectsWord: rows.length > 1 ? 'objects' : 'object',
+        }),
+        cancelButtonText: this.translateService.instant(
+          'EXPLORER.DELETE_MODAL.CANCEL_BUTTON_TEXT'
+        ),
+        submitButtonText: this.translateService.instant(
+          'EXPLORER.DELETE_MODAL.SUBMIT_BUTTON_TEXT'
+        ),
       },
     });
 
@@ -572,50 +606,4 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
       )
       .subscribe();
   }
-
-  // uploadFilesBase64(): void {
-  //   if (this.control.value.length === 0) {
-  //     this.snackBar.open(`Select files first`, `Close`);
-  //     return;
-  //   }
-  //   let uploadError = false;
-  //
-  //   this.upload$ = this.fileReaderService.splitBase64(this.control.value).pipe(
-  //     mergeMap((fc: { file: File; chunks: string[] }) =>
-  //       this.explorerRequestBuilderService.buildChunkRequest(fc).pipe()
-  //     ),
-  //     tap((request: TisRequest) => {
-  //       console.log(request);
-  //     }),
-  //     concatMap((query: TisRequest) => this.explorerService.upload(query)),
-  //     tap(
-  //       (response: {
-  //         request: TisRequest;
-  //         response: TisResponse;
-  //         totalChunks: number;
-  //         currentChunk: number;
-  //       }) => {
-  //         const req = response.request.requests[0] as ChunkedFileRequest;
-  //         this.currentFile$.next(req.parameters.data.name);
-  //         this.progressBarValue$.next(
-  //           100 * ((response.currentChunk + 1) / response.totalChunks)
-  //         );
-  //       }
-  //     ),
-  //     catchError((err) => {
-  //       uploadError = true;
-  //       console.error(err);
-  //       this.snackBar.open(`Error making request`, `Close`);
-  //
-  //       return EMPTY;
-  //     }),
-  //     finalize(() => {
-  //       if (!uploadError) {
-  //         this.snackBar.open(`Upload completed`, `Close`);
-  //
-  //         this.control.patchValue([]);
-  //       }
-  //     })
-  //   );
-  // }
 }

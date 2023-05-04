@@ -51,7 +51,7 @@ import { PRECONFIGURED_TRANSLATE_SERVICE } from './di/preconfigured-translate-se
           translateService.use(SupportedLanguages.EN_US);
         }
         console.log('Supported Languages:', translateService.getLangs());
-
+        translateService.use(SupportedLanguages.RU_RU);
         return translateService;
       },
       deps: [TranslateService],

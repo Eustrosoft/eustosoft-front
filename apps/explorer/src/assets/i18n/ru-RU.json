@@ -1,0 +1,61 @@
+{
+  "HEADER": {
+    "TITLE": "LOGO | Приложения TIS | Проводник",
+    "APPS_BUTTON_TEXT": "Приложения",
+    "APPS": {
+      "LOGIN": "Логин",
+      "DISPATCHER": "Исполнитель запросов",
+      "ALL_APPS_PAGE": "Все приложения"
+    }
+  },
+  "EXPLORER": {
+    "NEW_MENU_BUTTON_TEXT": "Создать",
+    "NEW_FOLDER_BUTTON_TEXT": "Новую папку",
+    "NEW_FILE_BUTTON_TEXT": "Новый файл",
+    "NEW_UPLOAD_BUTTON_TEXT": "Загрузить",
+    "UPLOAD_TYPE_LABEL_TEXT": "Тип загрузки",
+    "BATCH_OPERATIONS_BUTTON_TEXT": "Операции",
+    "COPY_BUTTON_TEXT": "Копировать",
+    "MOVE_TO_BUTTON_TEXT": "Переместить",
+    "DELETE_BUTTON_TEXT": "Удалить",
+    "DOWNLOAD_BUTTON_TEXT": "Скачать",
+    "RENAME_BUTTON_TEXT": "Переименовать",
+    "NAME_COLUMN_TEXT": "Наименование",
+    "LAST_MODIFIED_COLUMN_TEXT": "Последнее изменение",
+    "ACTIONS_COLUMN_TEXT": "Действия",
+    "FOLDER_IS_EMPTY": "Папка пуста",
+    "CREATE_FOLDER_MODAL": {
+      "TITLE": "Новая папка",
+      "INPUT_LABEL_TEXT": "Наименование папки",
+      "DEFAULT_INPUT_VALUE": "Без названия",
+      "SUBMIT_BUTTON_TEXT": "Создать"
+    },
+    "CREATE_FILE_MODAL": {
+      "TITLE": "Новый файл",
+      "INPUT_LABEL_TEXT": "Наименование файла",
+      "DEFAULT_INPUT_VALUE": "Без названия",
+      "SUBMIT_BUTTON_TEXT": "Создать"
+    },
+    "RENAME_MODAL": {
+      "TITLE": "Переименовать",
+      "INPUT_LABEL_TEXT": "Новое наименование",
+      "SUBMIT_BUTTON_TEXT": "Переименовать"
+    },
+    "MOVE_MODAL": {
+      "TITLE": "Переместить",
+      "CANCEL_BUTTON_TEXT": "Отмена",
+      "SUBMIT_BUTTON_TEXT": "Переместить"
+    },
+    "COPY_MODAL": {
+      "TITLE": "Копировать",
+      "CANCEL_BUTTON_TEXT": "Отмена",
+      "SUBMIT_BUTTON_TEXT": "Копировать"
+    },
+    "DELETE_MODAL": {
+      "TITLE": "Подтверждение удаления",
+      "TEXT": "Удалить элементы ({{count}})?",
+      "CANCEL_BUTTON_TEXT": "Нет",
+      "SUBMIT_BUTTON_TEXT": "Да"
+    }
+  }
+}
