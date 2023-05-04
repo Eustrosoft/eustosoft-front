@@ -40,18 +40,30 @@ import { PRECONFIGURED_TRANSLATE_SERVICE } from './di/preconfigured-translate-se
         translateService.setDefaultLang(SupportedLanguages.EN_US);
 
         const browserLang = translateService.getBrowserCultureLang();
-        const langRegex = `/${languages.join('|')}/`;
+
         if (browserLang) {
-          translateService.use(
-            browserLang.match(langRegex)
-              ? browserLang
-              : SupportedLanguages.EN_US
-          );
+          let closestCode: string | undefined = undefined;
+          let maxMatches = 0;
+
+          for (const lang of languages) {
+            const matches: number = lang.startsWith(browserLang)
+              ? lang.split('-').length
+              : 0;
+            if (matches > maxMatches) {
+              closestCode = lang;
+              maxMatches = matches;
+            }
+          }
+          if (closestCode) {
+            translateService.use(closestCode);
+          } else {
+            translateService.use(SupportedLanguages.EN_US);
+          }
         } else {
           translateService.use(SupportedLanguages.EN_US);
         }
         console.log('Supported Languages:', translateService.getLangs());
-        translateService.use(SupportedLanguages.RU_RU);
+        console.log('Current Language:', translateService.currentLang);
         return translateService;
       },
       deps: [TranslateService],
