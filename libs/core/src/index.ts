@@ -28,3 +28,4 @@ export * from './lib/types/request.types';
 export * from './lib/services/file-reader.service';
 export * from './lib/interceptors/http-errors-interceptor.interceptor';
 export * from './lib/functions/get-http-status-code-name.function';
+export * from './lib/di/preconfigured-translate-service.token';

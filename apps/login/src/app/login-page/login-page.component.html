@@ -3,10 +3,10 @@
   (ngSubmit)="submit()"
   class="d-flex flex-column align-items-center"
 >
-  <h2>Authentication</h2>
+  <h2>{{ 'LOGIN_PAGE.AUTHENTICATION_HEADING' | translate }}</h2>
   <eustrosoft-front-input
     [inputType]="InputTypes.TEXT"
-    [label]="loginInputLabelText"
+    [label]="'LOGIN_PAGE.LOGIN_LABEL' | translate"
     [control]="form.get('login')! | formControl"
     [fieldAppearance]="'outline'"
     [suffixIcon]="'person'"
@@ -16,7 +16,7 @@
 
   <eustrosoft-front-input
     [inputType]="InputTypes.PASSWORD"
-    [label]="passwordInputLabelText"
+    [label]="'LOGIN_PAGE.PASSWORD_LABEL' | translate"
     [control]="form.get('password')! | formControl"
     [fieldAppearance]="'outline'"
     [suffixIcon]="'lock'"
@@ -25,7 +25,7 @@
   </eustrosoft-front-input>
   <eustrosoft-front-button
     [buttonStyleType]="'stroked'"
-    [buttonText]="submitButtonText"
+    [buttonText]="'LOGIN_PAGE.SUBMIT_BUTTON_TEXT' | translate"
     [buttonType]="'submit'"
     [disabled]="form.get('submit')!.disabled"
   ></eustrosoft-front-button>

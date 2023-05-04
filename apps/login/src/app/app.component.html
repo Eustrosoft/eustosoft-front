@@ -1,19 +1,24 @@
-<eustrosoft-front-header
-  [appsListTemplate]="appsListTemplate"
-  [localizedTexts]="headerLocalizedTexts"
-></eustrosoft-front-header>
-<router-outlet></router-outlet>
+<ng-container *ngIf="translatedValues | async as translate">
+  <eustrosoft-front-header
+    [appsListTemplate]="appsListTemplate"
+    [texts]="{
+      title: translate.title,
+      appsButtonText: translate.appsButtonText
+    }"
+  ></eustrosoft-front-header>
+  <router-outlet></router-outlet>
 
-<ng-template #appsListTemplate>
-  <ng-container *ngIf="config | async as cnf">
-    <a mat-menu-item [href]="cnf.dispatcherUrl">
-      {{ localizedAppsListNames.dispatcher }}
-    </a>
-    <a mat-menu-item [href]="cnf.explorerUrl">
-      {{ localizedAppsListNames.explorer }}
-    </a>
-    <a mat-menu-item [href]="cnf.appsPageUrl">
-      {{ localizedAppsListNames.appsPage }}
-    </a>
-  </ng-container>
-</ng-template>
+  <ng-template #appsListTemplate>
+    <ng-container *ngIf="config | async as cnf">
+      <a mat-menu-item [href]="cnf.dispatcherUrl">
+        {{ translate.dispatcher }}
+      </a>
+      <a mat-menu-item [href]="cnf.explorerUrl">
+        {{ translate.explorer }}
+      </a>
+      <a mat-menu-item [href]="cnf.appsPageUrl">
+        {{ translate.appsPage }}
+      </a>
+    </ng-container>
+  </ng-template>
+</ng-container>

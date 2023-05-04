@@ -34,10 +34,6 @@ export class LoginPageComponent implements OnInit, OnDestroy {
   form!: FormGroup;
   InputTypes = InputTypes;
 
-  loginInputLabelText = `Your login`;
-  passwordInputLabelText = `Your password`;
-  submitButtonText = `Submit`;
-
   private destroyed$ = new Subject<void>();
 
   constructor(

@@ -21,7 +21,7 @@ import { APP_CONFIG } from '@eustrosoft-front/config';
 })
 export class HeaderComponent implements OnInit {
   @Input() appsListTemplate!: TemplateRef<any>;
-  @Input() localizedTexts!: { title: string; appsButtonText: string };
+  @Input() texts!: { title: string; appsButtonText: string };
 
   private loginService: LoginService = inject(LoginService);
   private authenticationService: AuthenticationService = inject(
