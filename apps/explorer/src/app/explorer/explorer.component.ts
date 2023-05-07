@@ -106,7 +106,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
     {
       value: 'hex',
       displayText: 'hex',
-      disabled: true,
+      disabled: false,
     },
   ];
   uploadItems$ = this.explorerUploadService.uploadItems$.asObservable();

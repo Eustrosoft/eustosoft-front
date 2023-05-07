@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import {
   CmsRequestActions,
+  crc32,
   CreateRequest,
   DeleteRequest,
   DownloadTicketRequest,
@@ -10,46 +11,13 @@ import {
   QtisRequestResponseInterface,
   Subsystems,
   SupportedLanguages,
-  TisRequest,
   UploadRequest,
   ViewRequest,
 } from '@eustrosoft-front/core';
-import { mergeMap, Observable, of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
 @Injectable()
 export class ExplorerRequestBuilderService {
-  buildChunkRequest(payload: {
-    file: File;
-    chunks: string[];
-  }): Observable<TisRequest> {
-    return of(payload).pipe(
-      mergeMap((obj: { file: File; chunks: string[] }) => {
-        return obj.chunks.map(
-          (chunk: string, index: number) =>
-            ({
-              qtisver: 1,
-              requests: [
-                {
-                  parameters: {
-                    data: {
-                      file: chunk,
-                      name: obj.file.name,
-                      ext: obj.file.name.split('.').pop() as string,
-                      chunk: index,
-                      all_chunks: obj.chunks.length,
-                    },
-                  },
-                  request: 'upload_chunks',
-                  subsystem: 'file',
-                },
-              ],
-              qtisend: true,
-            } as TisRequest)
-        );
-      })
-    );
-  }
-
   buildBinaryChunkRequest(
     file: File,
     chunk: Blob,
@@ -61,7 +29,7 @@ export class ExplorerRequestBuilderService {
       r: [
         {
           s: Subsystems.FILE,
-          r: CmsRequestActions.UPLOAD_CHUNKS,
+          r: CmsRequestActions.UPLOAD_CHUNKS_BINARY,
           l: SupportedLanguages.EN_US,
           parameters: {
             file: '',
@@ -88,7 +56,7 @@ export class ExplorerRequestBuilderService {
       r: [
         {
           s: Subsystems.FILE,
-          r: CmsRequestActions.UPLOAD_BASE64,
+          r: CmsRequestActions.UPLOAD_CHUNKS_BASE64,
           l: SupportedLanguages.EN_US,
           parameters: {
             file: chunk,
@@ -111,11 +79,12 @@ export class ExplorerRequestBuilderService {
     totalChunks: number,
     path: string = '/'
   ): QtisRequestResponseInterface<UploadRequest> {
+    console.log('CRC32 for chunk:', crc32(chunk));
     return {
       r: [
         {
           s: Subsystems.FILE,
-          r: CmsRequestActions.UPLOAD_CHUNKS,
+          r: CmsRequestActions.UPLOAD_CHUNKS_HEX,
           l: SupportedLanguages.EN_US,
           parameters: {
             file: chunk,
