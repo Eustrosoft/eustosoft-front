@@ -13,6 +13,7 @@ export * from './lib/constants/enums/dispatcher-actions.enum';
 export * from './lib/pipes/form-array.pipe';
 export * from './lib/pipes/form-control.pipe';
 export * from './lib/pipes/to-number.pipe';
+export * from './lib/pipes/bytes-to-size.pipe';
 export * from './lib/interfaces/dispatcher/table.interface';
 export * from './lib/interfaces/dispatcher/request.interfaces';
 export * from './lib/interfaces/cms/file-system-object.interface';

@@ -64,10 +64,15 @@ import { FilesystemTableComponent } from './components/filesystem-table/filesyst
 import { SelectionChange } from '@angular/cdk/collections';
 import { MoveCopyDialogComponent } from './components/move-copy-dialog/move-copy-dialog.component';
 import { MoveCopyDialogDataInterface } from './components/move-copy-dialog/move-copy-dialog-data.interface';
-import { HttpEvent, HttpEventType } from '@angular/common/http';
+import {
+  HttpErrorResponse,
+  HttpEvent,
+  HttpEventType,
+} from '@angular/common/http';
 import { ExplorerUploadService } from './services/explorer-upload.service';
 import { UploadingState } from './constants/enums/uploading-state.enum';
 import { TranslateService } from '@ngx-translate/core';
+import { ExplorerUploadItemsService } from './services/explorer-upload-items.service';
 
 @Component({
   selector: 'eustrosoft-front-explorer',
@@ -109,7 +114,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
       disabled: false,
     },
   ];
-  uploadItems$ = this.explorerUploadService.uploadItems$.asObservable();
+  uploadItems$ = this.explorerUploadItemsService.uploadItems$.asObservable();
 
   overlayHidden = true;
 
@@ -123,6 +128,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
     private explorerService: ExplorerService,
     private explorerPathService: ExplorerPathService,
     private explorerUploadService: ExplorerUploadService,
+    private explorerUploadItemsService: ExplorerUploadItemsService,
     private snackBar: MatSnackBar,
     private cd: ChangeDetectorRef,
     private router: Router,
@@ -153,25 +159,20 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
       .pipe(
         buffer(this.emitBuffer$.pipe(takeUntil(this.destroy$))),
         mergeMap((files: File[][]) => files),
-        tap((files: File[]) => {
+        map((files: File[]) => {
           console.log('Buffer', files);
           this.overlayHidden = false;
+          const uploadItems = files.map<UploadItem>((file) => ({
+            file,
+            progress: 0,
+            state: UploadingState.PENDING,
+            cancelled: false,
+          }));
+          this.explorerUploadItemsService.uploadItems$.next(uploadItems);
+          return uploadItems;
         }),
         switchMap((files) =>
-          zip([
-            of(
-              files.map(
-                (file) =>
-                  ({
-                    file,
-                    progress: 0,
-                    state: UploadingState.PENDING,
-                    cancelled: false,
-                  } as UploadItem)
-              )
-            ),
-            this.uploadItems$,
-          ])
+          zip([of(files), this.explorerUploadItemsService.uploadItems$])
         ),
         switchMap(([items, uploadItems]) => {
           if (uploadItems.length === 0) {
@@ -217,7 +218,10 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
         }),
         catchError((err) => {
           console.error(err);
-          this.snackBar.open(`Error making request`, `Close`);
+          this.snackBar.open(
+            this.translateService.instant('EXPLORER.ERRORS.REQUEST_ERROR_TEXT'),
+            this.translateService.instant('EXPLORER.ERRORS.CLOSE_BUTTON_TEXT')
+          );
           this.control.patchValue([]);
           this.cd.markForCheck();
           return EMPTY;
@@ -258,20 +262,12 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
     this.path$.next(path);
   }
 
-  uploadFilesBinary(): void {
-    if (this.control.value.length === 0) {
-      this.snackBar.open(`Select files first`, `Close`);
-      return;
-    }
-    this.emitBuffer$.next();
-  }
-
   filesDroppedOnFolder(event: {
     files: File[];
     fsObj: FileSystemObject;
   }): void {
     this.control.patchValue(event.files);
-    this.uploadFilesBinary();
+    this.emitBuffer$.next();
   }
 
   removeItemFromUploadList(item: UploadItem): void {
@@ -286,7 +282,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   overlayClose(items: UploadItem[]): void {
-    this.explorerUploadService.uploadItems$.next(
+    this.explorerUploadItemsService.uploadItems$.next(
       items.map((item) => ({
         ...item,
         cancelled: true,
@@ -294,12 +290,12 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
     );
     this.control.patchValue([]);
     this.emitBuffer$.next();
-    this.explorerUploadService.uploadItems$.next([]);
+    this.explorerUploadItemsService.uploadItems$.next([]);
     this.overlayHidden = true;
   }
 
   startUpload(): void {
-    this.uploadFilesBinary();
+    this.emitBuffer$.next();
   }
 
   createFolder(): void {
@@ -340,6 +336,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
         tap(() => {
           this.refreshFolders$.next(true);
         }),
+        catchError((err) => this.handleError(err)),
         take(1)
       )
       .subscribe();
@@ -383,6 +380,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
         tap(() => {
           this.refreshFolders$.next(true);
         }),
+        catchError((err) => this.handleError(err)),
         take(1)
       )
       .subscribe();
@@ -427,6 +425,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
         tap(() => {
           this.refreshFolders$.next(true);
         }),
+        catchError((err) => this.handleError(err)),
         take(1)
       )
       .subscribe();
@@ -478,6 +477,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
           const path = to[0].substring(0, lastIndex) || '/';
           this.path$.next(path);
         }),
+        catchError((err) => this.handleError(err)),
         take(1)
       )
       .subscribe();
@@ -529,6 +529,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
           const path = to[0].substring(0, lastIndex);
           this.path$.next(path);
         }),
+        catchError((err) => this.handleError(err)),
         take(1)
       )
       .subscribe();
@@ -566,6 +567,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
           this.explorerService.dispatch<DeleteRequest, DeleteResponse>(body)
         ),
         tap(() => this.refreshFolders$.next(true)),
+        catchError((err) => this.handleError(err)),
         take(1)
       )
       .subscribe();
@@ -614,8 +616,17 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
             URL.revokeObjectURL(href);
           }
         }),
+        catchError((err) => this.handleError(err)),
         takeWhile((event) => event.type !== HttpEventType.Response)
       )
       .subscribe();
+  }
+
+  handleError(err: HttpErrorResponse): Observable<never> {
+    this.snackBar.open(
+      err.error,
+      this.translateService.instant('EXPLORER.ERRORS.CLOSE_BUTTON_TEXT')
+    );
+    return EMPTY;
   }
 }

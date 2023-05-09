@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  HostListener,
+  inject,
+} from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { CreateRenameDialogDataInterface } from './create-rename-dialog-data.interface';
@@ -20,6 +25,12 @@ export class CreateRenameFolderDialogComponent {
     nonNullable: true,
     validators: [Validators.required],
   });
+
+  // TODO сделать чтобы работало только для конкретно этого модального окна
+  @HostListener('document:keydown.enter')
+  onEnterKeydown() {
+    this.dialogRef.close(this.control.value);
+  }
 
   reject(): void {
     this.dialogRef.close();

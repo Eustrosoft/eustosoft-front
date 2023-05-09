@@ -21,9 +21,21 @@
     "DOWNLOAD_BUTTON_TEXT": "Download",
     "RENAME_BUTTON_TEXT": "Rename",
     "NAME_COLUMN_TEXT": "Name",
+    "SPACE_COLUMN_TEXT": "Size",
     "LAST_MODIFIED_COLUMN_TEXT": "Last modified",
     "ACTIONS_COLUMN_TEXT": "Actions",
     "FOLDER_IS_EMPTY": "Folder is empty",
+    "SIZES": {
+      "BYTES": "Bytes",
+      "KB": "KB",
+      "MB": "MB",
+      "GB": "GB",
+      "TB": "TB",
+      "PB": "PB",
+      "EB": "EB",
+      "ZB": "ZB",
+      "YB": "YB"
+    },
     "CREATE_FOLDER_MODAL": {
       "TITLE": "New folder",
       "INPUT_LABEL_TEXT": "Folder name",
@@ -56,6 +68,11 @@
       "TEXT": "{{count}} {{objectsWord}} are marked for deletion. Proceed?",
       "CANCEL_BUTTON_TEXT": "No",
       "SUBMIT_BUTTON_TEXT": "Yes"
+    },
+    "ERRORS": {
+      "REQUEST_ERROR_TEXT": "Error making request",
+      "NO_SELECTED_FILES_ERROR_TEXT": "Select files first",
+      "CLOSE_BUTTON_TEXT": "Close"
     }
   }
 }

@@ -38,7 +38,13 @@ export class FilesystemTableComponent implements OnChanges, OnDestroy {
 
   fsObjTypes = FileSystemObjectTypes;
 
-  displayedColumns: string[] = ['select', 'name', 'lastModified', 'actions'];
+  displayedColumns: string[] = [
+    'select',
+    'name',
+    'space',
+    'lastModified',
+    'actions',
+  ];
   dataSource = new MatTableDataSource<FileSystemObject>([]);
   selection = new SelectionModel<FileSystemObject>(true, []);
 

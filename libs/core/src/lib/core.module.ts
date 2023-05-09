@@ -15,9 +15,10 @@ import {
 import { HttpLoaderFactory } from './functions/i18n-http-loader.function';
 import { SupportedLanguages } from './constants/enums/supported-languages.enum';
 import { PRECONFIGURED_TRANSLATE_SERVICE } from './di/preconfigured-translate-service.token';
+import { BytesToSizePipe } from './pipes/bytes-to-size.pipe';
 
 @NgModule({
-  declarations: [FormControlPipe, FormArrayPipe, ToNumberPipe],
+  declarations: [FormControlPipe, FormArrayPipe, ToNumberPipe, BytesToSizePipe],
   imports: [
     CommonModule,
     ConfigModule,
@@ -74,6 +75,12 @@ import { PRECONFIGURED_TRANSLATE_SERVICE } from './di/preconfigured-translate-se
       multi: true,
     },
   ],
-  exports: [FormControlPipe, FormArrayPipe, ToNumberPipe, TranslateModule],
+  exports: [
+    FormControlPipe,
+    FormArrayPipe,
+    ToNumberPipe,
+    BytesToSizePipe,
+    TranslateModule,
+  ],
 })
 export class CoreModule {}

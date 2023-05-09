@@ -33,6 +33,7 @@ import { ExplorerPathService } from './explorer/services/explorer-path.service';
 import { FilesystemTableComponent } from './explorer/components/filesystem-table/filesystem-table.component';
 import { ExplorerUploadService } from './explorer/services/explorer-upload.service';
 import { UploadOverlayComponent } from './explorer/components/upload-overlay/upload-overlay.component';
+import { ExplorerUploadItemsService } from './explorer/services/explorer-upload-items.service';
 
 @NgModule({
   declarations: [
@@ -69,6 +70,7 @@ import { UploadOverlayComponent } from './explorer/components/upload-overlay/upl
     ExplorerPathService,
     ExplorerRequestBuilderService,
     ExplorerUploadService,
+    ExplorerUploadItemsService,
     Stack,
   ],
   bootstrap: [AppComponent],

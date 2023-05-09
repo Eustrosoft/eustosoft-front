@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import {
-  BehaviorSubject,
   catchError,
   combineLatest,
   concatMap,
@@ -15,15 +14,15 @@ import { FileReaderService, UploadItem } from '@eustrosoft-front/core';
 import { ExplorerRequestBuilderService } from './explorer-request-builder.service';
 import { ExplorerService } from './explorer.service';
 import { UploadingState } from '../constants/enums/uploading-state.enum';
+import { ExplorerUploadItemsService } from './explorer-upload-items.service';
 
 @Injectable()
 export class ExplorerUploadService {
-  uploadItems$ = new BehaviorSubject<UploadItem[]>([]);
-
   constructor(
     private fileReaderService: FileReaderService,
     private explorerRequestBuilderService: ExplorerRequestBuilderService,
-    private explorerService: ExplorerService
+    private explorerService: ExplorerService,
+    private explorerUploadItemsService: ExplorerUploadItemsService
   ) {}
   uploadBinary(items: UploadItem[], path: string = '/') {
     return from(items).pipe(
@@ -66,7 +65,7 @@ export class ExplorerUploadService {
               }
               return item;
             });
-            this.uploadItems$.next(uploadItems);
+            this.explorerUploadItemsService.uploadItems$.next(uploadItems);
           }),
           toArray()
         )
@@ -115,7 +114,7 @@ export class ExplorerUploadService {
               }
               return item;
             });
-            this.uploadItems$.next(uploadItems);
+            this.explorerUploadItemsService.uploadItems$.next(uploadItems);
           }),
           toArray()
         )
@@ -165,7 +164,7 @@ export class ExplorerUploadService {
               }
               return item;
             });
-            this.uploadItems$.next(uploadItems);
+            this.explorerUploadItemsService.uploadItems$.next(uploadItems);
           }),
           toArray()
         )

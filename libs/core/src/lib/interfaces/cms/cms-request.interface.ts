@@ -26,6 +26,7 @@ export interface UploadRequest extends BaseCmsRequest {
     ext: string;
     chunk: number;
     all_chunks: number;
+    hash: string;
     path: string;
   };
 }

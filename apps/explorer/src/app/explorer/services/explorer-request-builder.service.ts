@@ -37,6 +37,7 @@ export class ExplorerRequestBuilderService {
             ext: file.name.split('.').pop() as string,
             chunk: chunkIndex,
             all_chunks: totalChunks,
+            hash: '',
             path,
           },
         },
@@ -64,6 +65,7 @@ export class ExplorerRequestBuilderService {
             ext: file.name.split('.').pop() as string,
             chunk: chunkIndex,
             all_chunks: totalChunks,
+            hash: '',
             path,
           },
         },
@@ -79,7 +81,6 @@ export class ExplorerRequestBuilderService {
     totalChunks: number,
     path: string = '/'
   ): QtisRequestResponseInterface<UploadRequest> {
-    console.log('CRC32 for chunk:', crc32(chunk));
     return {
       r: [
         {
@@ -92,6 +93,7 @@ export class ExplorerRequestBuilderService {
             ext: file.name.split('.').pop() as string,
             chunk: chunkIndex,
             all_chunks: totalChunks,
+            hash: crc32(chunk),
             path,
           },
         },
