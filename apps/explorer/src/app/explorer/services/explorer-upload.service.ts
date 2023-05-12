@@ -44,9 +44,7 @@ export class ExplorerUploadService {
             formData.set('json', JSON.stringify(request));
 
             return combineLatest([
-              this.explorerService.uploadChunks(formData, {
-                'Content-Disposition': `form-data; name="file"; filename="${item.file.name}"`,
-              }),
+              this.explorerService.uploadChunks(formData, {}),
               of(items),
               of(item.file),
               of(item.chunks),
@@ -93,9 +91,7 @@ export class ExplorerUploadService {
             formData.set('json', JSON.stringify(request));
 
             return combineLatest([
-              this.explorerService.uploadChunks(formData, {
-                // 'Content-Disposition': `form-data; name="file"; filename="${item.file.name}"`,
-              }),
+              this.explorerService.uploadChunks(formData, {}),
               of(items),
               of(item.file),
               of(item.chunks),
@@ -143,9 +139,7 @@ export class ExplorerUploadService {
             formData.set('json', JSON.stringify(request));
 
             return combineLatest([
-              this.explorerService.uploadChunks(formData, {
-                // 'Content-Disposition': `form-data; name="file"; filename="${item.file.name}"`,
-              }),
+              this.explorerService.uploadChunks(formData, {}),
               of(items),
               of(item.file),
               of(item.chunks),

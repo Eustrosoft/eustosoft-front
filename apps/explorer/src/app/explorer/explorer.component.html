@@ -91,7 +91,7 @@
     <eustrosoft-front-filesystem-table
       [content]="(content$ | async) || []"
       (openClicked)="open($event)"
-      (downloadClicked)="download($event)"
+      (downloadClicked)="downloadViaPath($event)"
       (renameClicked)="rename($event)"
       (moveClicked)="move($event)"
       (copyClicked)="copy($event)"
@@ -105,5 +105,5 @@
   [hidden]="overlayHidden"
   [uploadItems]="(uploadItems$ | async) || []"
   (removeItem)="removeItemFromUploadList($event)"
-  (closeOverlay)="overlayClose($event)"
+  (closeOverlay)="closeOverlay($event)"
 ></eustrosoft-front-upload-overlay>

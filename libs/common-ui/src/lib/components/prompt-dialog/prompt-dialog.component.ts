@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  HostListener,
+  inject,
+} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { PromptDialogDataInterface } from './prompt-dialog-data.interface';
 
@@ -13,6 +18,12 @@ export class PromptDialogComponent {
     MatDialogRef<PromptDialogComponent>
   );
   public data: PromptDialogDataInterface = inject(MAT_DIALOG_DATA);
+
+  @HostListener('keydown.enter', ['$event'])
+  onEnterKeydown(e: KeyboardEvent) {
+    e.stopPropagation();
+    this.resolve();
+  }
 
   reject(): void {
     this.dialogRef.close(false);

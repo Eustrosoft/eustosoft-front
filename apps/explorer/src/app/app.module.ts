@@ -34,6 +34,7 @@ import { FilesystemTableComponent } from './explorer/components/filesystem-table
 import { ExplorerUploadService } from './explorer/services/explorer-upload.service';
 import { UploadOverlayComponent } from './explorer/components/upload-overlay/upload-overlay.component';
 import { ExplorerUploadItemsService } from './explorer/services/explorer-upload-items.service';
+import { A11yModule } from '@angular/cdk/a11y';
 
 @NgModule({
   declarations: [
@@ -64,6 +65,7 @@ import { ExplorerUploadItemsService } from './explorer/services/explorer-upload-
     CdkFixedSizeVirtualScroll,
     MatListModule,
     MatTooltipModule,
+    A11yModule,
   ],
   providers: [
     ExplorerService,

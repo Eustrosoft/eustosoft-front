@@ -34,6 +34,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { PromptDialogComponent } from './components/prompt-dialog/prompt-dialog.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { ConfigModule } from '@eustrosoft-front/config';
+import { A11yModule } from '@angular/cdk/a11y';
 
 @NgModule({
   imports: [
@@ -52,6 +53,7 @@ import { ConfigModule } from '@eustrosoft-front/config';
     MatMenuModule,
     MatDialogModule,
     ConfigModule,
+    A11yModule,
   ],
   declarations: [
     HeaderComponent,

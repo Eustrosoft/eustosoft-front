@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient, HttpEvent, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {
   ChunkedFileRequest,
   CmsDownloadParams,
@@ -9,7 +9,7 @@ import {
   TisResponseBody,
   UploadResponse,
 } from '@eustrosoft-front/core';
-import { mergeMap, Observable, of, switchMap } from 'rxjs';
+import { map, mergeMap, Observable, of, switchMap } from 'rxjs';
 import { APP_CONFIG } from '@eustrosoft-front/config';
 
 @Injectable()
@@ -33,17 +33,11 @@ export class ExplorerService {
   download(
     parameterValue: string,
     parameterName: CmsDownloadParams = CmsDownloadParams.TICKET
-  ): Observable<HttpEvent<Blob>> {
+  ): Observable<string> {
     return this.config.pipe(
-      switchMap((config) =>
-        this.http.get(
-          `${config.apiUrl}/download?${parameterName}=${parameterValue}`,
-          {
-            reportProgress: true,
-            observe: 'events',
-            responseType: 'blob',
-          }
-        )
+      map(
+        (config) =>
+          `${config.apiUrl}/download?${parameterName}=${parameterValue}`
       )
     );
   }

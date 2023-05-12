@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  HostListener,
   inject,
   OnDestroy,
   OnInit,
@@ -64,6 +65,12 @@ export class MoveCopyDialogComponent
   );
   private cd: ChangeDetectorRef = inject(ChangeDetectorRef);
   private navigationHistoryStack: Stack<string> = inject(Stack);
+
+  @HostListener('keydown.enter', ['$event'])
+  onEnterKeydown(e: KeyboardEvent) {
+    e.stopPropagation();
+    this.resolve();
+  }
 
   ngOnInit(): void {
     this.fsObjects$ = this.path$.asObservable().pipe(

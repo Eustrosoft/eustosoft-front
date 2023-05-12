@@ -26,9 +26,9 @@ export class CreateRenameFolderDialogComponent {
     validators: [Validators.required],
   });
 
-  // TODO сделать чтобы работало только для конкретно этого модального окна
-  @HostListener('document:keydown.enter')
-  onEnterKeydown() {
+  @HostListener('keydown.enter', ['$event'])
+  onEnterKeydown(e: KeyboardEvent) {
+    e.stopPropagation();
     this.dialogRef.close(this.control.value);
   }
 
@@ -37,6 +37,7 @@ export class CreateRenameFolderDialogComponent {
   }
 
   resolve(): void {
+    console.log('resolve()');
     this.dialogRef.close(this.control.value);
   }
 }

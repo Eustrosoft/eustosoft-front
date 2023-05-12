@@ -5,6 +5,7 @@
     [placeholder]="placeholder"
     [type]="inputType"
     [attr.disabled]="disabled"
+    (blur)="blurred.emit($event)"
     matInput
   />
   <mat-icon matSuffix>{{ suffixIcon }}</mat-icon>

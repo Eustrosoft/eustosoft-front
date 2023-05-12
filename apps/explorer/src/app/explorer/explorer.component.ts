@@ -30,11 +30,11 @@ import {
   switchMap,
   take,
   takeUntil,
-  takeWhile,
   tap,
   zip,
 } from 'rxjs';
 import {
+  CmsDownloadParams,
   CmsRequestActions,
   CreateRequest,
   CreateResponse,
@@ -64,15 +64,12 @@ import { FilesystemTableComponent } from './components/filesystem-table/filesyst
 import { SelectionChange } from '@angular/cdk/collections';
 import { MoveCopyDialogComponent } from './components/move-copy-dialog/move-copy-dialog.component';
 import { MoveCopyDialogDataInterface } from './components/move-copy-dialog/move-copy-dialog-data.interface';
-import {
-  HttpErrorResponse,
-  HttpEvent,
-  HttpEventType,
-} from '@angular/common/http';
+import { HttpErrorResponse } from '@angular/common/http';
 import { ExplorerUploadService } from './services/explorer-upload.service';
 import { UploadingState } from './constants/enums/uploading-state.enum';
 import { TranslateService } from '@ngx-translate/core';
 import { ExplorerUploadItemsService } from './services/explorer-upload-items.service';
+import { UploadOverlayComponent } from './components/upload-overlay/upload-overlay.component';
 
 @Component({
   selector: 'eustrosoft-front-explorer',
@@ -84,6 +81,8 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(InputFileComponent) inputFileComponent!: InputFileComponent;
   @ViewChild(FilesystemTableComponent)
   filesystemTableComponent!: FilesystemTableComponent;
+  @ViewChild(UploadOverlayComponent)
+  uploadOverlayComponent!: UploadOverlayComponent;
 
   refreshFolders$ = new BehaviorSubject<boolean>(true);
   path$ = new BehaviorSubject<string>(
@@ -168,16 +167,12 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
             state: UploadingState.PENDING,
             cancelled: false,
           }));
-          this.explorerUploadItemsService.uploadItems$.next(uploadItems);
           return uploadItems;
         }),
         switchMap((files) =>
           zip([of(files), this.explorerUploadItemsService.uploadItems$])
         ),
         switchMap(([items, uploadItems]) => {
-          if (uploadItems.length === 0) {
-            return of(items);
-          }
           const uniqueArray = uploadItems
             .concat(items)
             .filter(
@@ -185,6 +180,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
                 index === self.findIndex((t) => t.file.name === obj.file.name)
             )
             .filter((item: UploadItem) => !item.cancelled);
+          this.explorerUploadItemsService.uploadItems$.next(uniqueArray);
           return of(uniqueArray);
         }),
         switchMap((items) => {
@@ -222,7 +218,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
             this.translateService.instant('EXPLORER.ERRORS.REQUEST_ERROR_TEXT'),
             this.translateService.instant('EXPLORER.ERRORS.CLOSE_BUTTON_TEXT')
           );
-          this.control.patchValue([]);
+          this.closeOverlay(this.explorerUploadItemsService.uploadItems$.value);
           this.cd.markForCheck();
           return EMPTY;
         }),
@@ -279,9 +275,12 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
     if (item.state === UploadingState.UPLOADING) {
       this.emitBuffer$.next();
     }
+    if (this.explorerUploadItemsService.uploadItems$.value.length === 0) {
+      this.uploadOverlayComponent.closeOverlay.emit([]);
+    }
   }
 
-  overlayClose(items: UploadItem[]): void {
+  closeOverlay(items: UploadItem[]): void {
     this.explorerUploadItemsService.uploadItems$.next(
       items.map((item) => ({
         ...item,
@@ -573,7 +572,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe();
   }
 
-  download(rows: FileSystemObject[]): void {
+  downloadViaTicket(rows: FileSystemObject[]): void {
     this.explorerRequestBuilderService
       .buildDownloadTicketRequests(rows)
       .pipe(
@@ -589,35 +588,24 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
         switchMap((tickets: string[]) =>
           this.explorerService.download(tickets[0])
         ),
-        tap((event: HttpEvent<Blob>) => {
-          if (event.type === HttpEventType.DownloadProgress) {
-            if (event.total) {
-              const progress = Math.round(100 * (event.loaded / event.total));
-              console.log(progress);
-            }
-          } else if (event.type === HttpEventType.Response) {
-            const blob = new Blob([event.body as Blob], {
-              type: event.body?.type,
-            });
-            const link = document.createElement('a');
-            const href = URL.createObjectURL(
-              new Blob([blob], { type: event.body?.type })
-            );
-            link.href = href;
-            const contentDisposition = event.headers.get(
-              'content-disposition'
-            ) as string;
-            link.download = contentDisposition
-              .split(';')[1]
-              .split('filename')[1]
-              .split('=')[1]
-              .trim();
-            link.click();
-            URL.revokeObjectURL(href);
-          }
+        tap((url: string) => {
+          window.location.href = url;
         }),
         catchError((err) => this.handleError(err)),
-        takeWhile((event) => event.type !== HttpEventType.Response)
+        takeUntil(this.destroy$)
+      )
+      .subscribe();
+  }
+
+  downloadViaPath(rows: FileSystemObject[]): void {
+    this.explorerService
+      .download(rows[0].fullPath, CmsDownloadParams.PATH)
+      .pipe(
+        tap((url: string) => {
+          window.location.href = url;
+        }),
+        catchError((err) => this.handleError(err)),
+        takeUntil(this.destroy$)
       )
       .subscribe();
   }

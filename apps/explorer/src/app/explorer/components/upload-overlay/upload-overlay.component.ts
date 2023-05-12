@@ -5,7 +5,7 @@ import {
   Input,
   Output,
 } from '@angular/core';
-import { UploadItem } from '../../../../../../../libs/core/src/lib/interfaces/cms/upload-item.interface';
+import { UploadItem } from '@eustrosoft-front/core';
 import { UploadingState } from '../../constants/enums/uploading-state.enum';
 
 @Component({
