@@ -31,6 +31,8 @@
         "styles": [
           "@angular/material/prebuilt-themes/deeppurple-amber.css",
           "node_modules/bootstrap/scss/bootstrap.scss",
+          "libs/common-ui/src/lib/material/css/roboto.css",
+          "libs/common-ui/src/lib/material/css/material-symbols-outlined.css",
           "apps/dispatcher/src/styles.scss"
         ],
         "scripts": []
@@ -38,6 +40,7 @@
       "configurations": {
         "production": {
           "assets": [
+            "apps/login/src/favicon.ico",
             {
               "glob": "config.json",
               "input": "libs/config/src/lib/configurations/prod",
@@ -55,6 +58,7 @@
         },
         "stage": {
           "assets": [
+            "apps/login/src/favicon.ico",
             {
               "glob": "config.json",
               "input": "libs/config/src/lib/configurations/stage",
@@ -64,6 +68,7 @@
         },
         "development": {
           "assets": [
+            "apps/dispatcher/src/favicon.ico",
             {
               "glob": "config.json",
               "input": "libs/config/src/lib/configurations/dev",
