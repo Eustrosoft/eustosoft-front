@@ -35,6 +35,7 @@ import { ExplorerUploadService } from './explorer/services/explorer-upload.servi
 import { UploadOverlayComponent } from './explorer/components/upload-overlay/upload-overlay.component';
 import { ExplorerUploadItemsService } from './explorer/services/explorer-upload-items.service';
 import { A11yModule } from '@angular/cdk/a11y';
+import { LoginPageComponent } from './login-page/login-page.component';
 
 @NgModule({
   declarations: [
@@ -45,6 +46,7 @@ import { A11yModule } from '@angular/cdk/a11y';
     BreadcrumbsComponent,
     FilesystemTableComponent,
     UploadOverlayComponent,
+    LoginPageComponent,
   ],
   imports: [
     BrowserModule,

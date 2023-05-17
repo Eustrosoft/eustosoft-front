@@ -8,6 +8,7 @@ import {
 import { FormControl } from '@angular/forms';
 import { MatFormFieldAppearance } from '@angular/material/form-field';
 import { InputTypes } from '@eustrosoft-front/core';
+import { InputErrorInterface } from './input-error.interface';
 
 @Component({
   selector: 'eustrosoft-front-input',
@@ -23,8 +24,7 @@ export class InputComponent {
   @Input() inputType: InputTypes = InputTypes.TEXT;
   @Input() suffixIcon = '';
   @Input() disabled = false;
+  @Input() errors: InputErrorInterface[] = [];
 
-  @Output() blurred = new EventEmitter<FocusEvent>();
-
-  InputTypes = InputTypes;
+  @Output() blurred = new EventEmitter<FocusEvent | undefined>();
 }

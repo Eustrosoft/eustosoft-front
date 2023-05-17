@@ -35,6 +35,9 @@ import { PromptDialogComponent } from './components/prompt-dialog/prompt-dialog.
 import { MatDialogModule } from '@angular/material/dialog';
 import { ConfigModule } from '@eustrosoft-front/config';
 import { A11yModule } from '@angular/cdk/a11y';
+import { LoginDialogComponent } from './components/login-dialog/login-dialog.component';
+import { LoginComponent } from './components/login-page/login.component';
+import { CoreModule } from '@eustrosoft-front/core';
 
 @NgModule({
   imports: [
@@ -54,6 +57,7 @@ import { A11yModule } from '@angular/cdk/a11y';
     MatDialogModule,
     ConfigModule,
     A11yModule,
+    CoreModule,
   ],
   declarations: [
     HeaderComponent,
@@ -70,6 +74,8 @@ import { A11yModule } from '@angular/cdk/a11y';
     ProgressBarComponent,
     HoverCursorDirective,
     PromptDialogComponent,
+    LoginDialogComponent,
+    LoginComponent,
   ],
   exports: [
     HeaderComponent,
@@ -85,6 +91,7 @@ import { A11yModule } from '@angular/cdk/a11y';
     RippleHoverDirective,
     ProgressBarComponent,
     HoverCursorDirective,
+    LoginComponent,
   ],
   providers: [
     {

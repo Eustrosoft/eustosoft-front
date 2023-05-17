@@ -26,6 +26,7 @@ export * from './lib/interfaces/dispatcher/dispatcher-request.interface';
 export * from './lib/interfaces/dispatcher/dispatcher-response.interface';
 export * from './lib/interfaces/shared/shared.interface';
 export * from './lib/types/request.types';
+export * from './lib/types/login-form.type';
 export * from './lib/services/file-reader.service';
 export * from './lib/interceptors/http-errors-interceptor.interceptor';
 export * from './lib/functions/get-http-status-code-name.function';

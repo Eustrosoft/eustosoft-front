@@ -18,9 +18,15 @@ import { RequestComponent } from './requests/components/request/request.componen
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatMenuModule } from '@angular/material/menu';
 import { ConfigModule } from '@eustrosoft-front/config';
+import { LoginPageComponent } from './login-page/login-page.component';
 
 @NgModule({
-  declarations: [AppComponent, RequestsComponent, RequestComponent],
+  declarations: [
+    AppComponent,
+    RequestsComponent,
+    RequestComponent,
+    LoginPageComponent,
+  ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,

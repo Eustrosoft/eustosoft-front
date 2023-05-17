@@ -1,20 +1,41 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { APP_CONFIG } from '@eustrosoft-front/config';
+import { PRECONFIGURED_TRANSLATE_SERVICE } from '@eustrosoft-front/core';
+import { combineLatest, map, Observable } from 'rxjs';
 
 @Component({
   selector: 'eustrosoft-front-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   public config = inject(APP_CONFIG);
-  public headerLocalizedTexts = {
-    title: `LOGO | TIS Apps | Dispatcher`,
-    appsButtonText: `Apps`,
-  };
-  public localizedAppsListNames = {
-    login: `Login`,
-    explorer: `Explorer`,
-    appsPage: `All apps page`,
-  };
+
+  public translateService = inject(PRECONFIGURED_TRANSLATE_SERVICE);
+
+  public translatedValues!: Observable<{
+    title: string;
+    appsButtonText: string;
+    login: string;
+    explorer: string;
+    appsPage: string;
+  }>;
+
+  ngOnInit(): void {
+    this.translatedValues = combineLatest([
+      this.translateService.get('HEADER.TITLE'),
+      this.translateService.get('HEADER.APPS_BUTTON_TEXT'),
+      this.translateService.get('HEADER.APPS.LOGIN'),
+      this.translateService.get('HEADER.APPS.EXPLORER'),
+      this.translateService.get('HEADER.APPS.ALL_APPS_PAGE'),
+    ]).pipe(
+      map(([title, appsButtonText, login, explorer, appsPage]) => ({
+        title,
+        appsButtonText,
+        login,
+        explorer,
+        appsPage,
+      }))
+    );
+  }
 }

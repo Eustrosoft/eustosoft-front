@@ -12,6 +12,7 @@ import {
   LoginService,
 } from '@eustrosoft-front/security';
 import { APP_CONFIG } from '@eustrosoft-front/config';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'eustrosoft-front-header',
@@ -22,12 +23,14 @@ import { APP_CONFIG } from '@eustrosoft-front/config';
 export class HeaderComponent implements OnInit {
   @Input() appsListTemplate!: TemplateRef<any>;
   @Input() texts!: { title: string; appsButtonText: string };
+  @Input() loginPath!: any[];
 
   private loginService: LoginService = inject(LoginService);
   private authenticationService: AuthenticationService = inject(
     AuthenticationService
   );
   public config = inject(APP_CONFIG);
+  public router = inject(Router);
   public isAuthenticated!: Observable<boolean>;
   public userName!: Observable<string>;
 
@@ -43,7 +46,11 @@ export class HeaderComponent implements OnInit {
       .pipe(
         switchMap(() => this.config),
         tap((config) => {
-          window.location.href = config.loginUrl;
+          if (this.loginPath) {
+            this.router.navigate(this.loginPath);
+          } else {
+            window.location.href = config.loginUrl;
+          }
         }),
         take(1)
       )

@@ -70,6 +70,7 @@
         },
         "development": {
           "assets": [
+            "apps/explorer/src/favicon.ico",
             {
               "glob": "config.json",
               "input": "libs/config/src/lib/configurations/dev",

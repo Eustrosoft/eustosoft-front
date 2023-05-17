@@ -1,12 +1,18 @@
 {
   "HEADER": {
-    "TITLE": "LOGO | Приложения TIS | Проводник",
+    "TITLE": "Приложения TIS | Проводник",
     "APPS_BUTTON_TEXT": "Приложения",
     "APPS": {
       "LOGIN": "Логин",
       "DISPATCHER": "Исполнитель запросов",
       "ALL_APPS_PAGE": "Все приложения"
     }
+  },
+  "LOGIN_PAGE": {
+    "AUTHENTICATION_HEADING": "Аутентификация",
+    "LOGIN_LABEL": "Логин",
+    "PASSWORD_LABEL": "Пароль",
+    "SUBMIT_BUTTON_TEXT": "Войти"
   },
   "EXPLORER": {
     "NEW_MENU_BUTTON_TEXT": "Создать",
