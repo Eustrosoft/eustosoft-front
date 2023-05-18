@@ -36,6 +36,7 @@ import { UploadOverlayComponent } from './explorer/components/upload-overlay/upl
 import { ExplorerUploadItemsService } from './explorer/services/explorer-upload-items.service';
 import { A11yModule } from '@angular/cdk/a11y';
 import { LoginPageComponent } from './login-page/login-page.component';
+import { MatSortModule } from '@angular/material/sort';
 
 @NgModule({
   declarations: [
@@ -53,6 +54,7 @@ import { LoginPageComponent } from './login-page/login-page.component';
     BrowserAnimationsModule,
     RouterModule.forRoot(appRoutes, { initialNavigation: 'enabledBlocking' }),
     MatTableModule,
+    MatSortModule,
     MatCheckboxModule,
     CoreModule,
     CommonUiModule,

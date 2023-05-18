@@ -1,15 +1,12 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {
-  ChunkedFileRequest,
   CmsDownloadParams,
   QtisRequestResponseInterface,
-  TisRequest,
-  TisResponse,
-  TisResponseBody,
+  UploadHexRequest,
   UploadResponse,
 } from '@eustrosoft-front/core';
-import { map, mergeMap, Observable, of, switchMap } from 'rxjs';
+import { map, Observable, switchMap } from 'rxjs';
 import { APP_CONFIG } from '@eustrosoft-front/config';
 
 @Injectable()
@@ -42,34 +39,25 @@ export class ExplorerService {
     );
   }
 
-  upload(query: TisRequest): Observable<{
-    request: TisRequest;
-    response: TisResponse;
-    totalChunks: number;
-    currentChunk: number;
-  }> {
+  uploadChunks(
+    body: FormData,
+    headers: { [p: string]: string | string[] }
+  ): Observable<QtisRequestResponseInterface<UploadResponse>> {
     return this.config.pipe(
       switchMap((config) =>
-        this.http.post<TisResponse>(`${config.apiUrl}/dispatch`, query).pipe(
-          mergeMap((response: TisResponse) => {
-            const req = query.requests[0] as ChunkedFileRequest;
-            const res = response.responses[0] as TisResponseBody;
-            const totalChunks = req.parameters.data.all_chunks;
-            const currentChunk = req.parameters.data.chunk;
-            return of({
-              request: query,
-              response: response,
-              totalChunks,
-              currentChunk,
-            });
-          })
+        this.http.post<QtisRequestResponseInterface<UploadResponse>>(
+          `${config.apiUrl}/dispatch`,
+          body,
+          {
+            headers: new HttpHeaders(headers),
+          }
         )
       )
     );
   }
 
-  uploadChunks(
-    body: FormData,
+  uploadHexChunks(
+    body: QtisRequestResponseInterface<UploadHexRequest>,
     headers: { [p: string]: string | string[] }
   ): Observable<QtisRequestResponseInterface<UploadResponse>> {
     return this.config.pipe(

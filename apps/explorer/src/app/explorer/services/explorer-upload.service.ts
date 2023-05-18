@@ -134,12 +134,9 @@ export class ExplorerUploadService {
                 item.chunks.length,
                 path
               );
-            const formData = new FormData();
-            // formData.set('file', chunk);
-            formData.set('json', JSON.stringify(request));
 
             return combineLatest([
-              this.explorerService.uploadChunks(formData, {}),
+              this.explorerService.uploadHexChunks(request, {}),
               of(items),
               of(item.file),
               of(item.chunks),

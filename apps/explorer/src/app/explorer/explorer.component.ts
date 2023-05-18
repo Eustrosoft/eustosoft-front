@@ -25,6 +25,7 @@ import {
   mergeMap,
   Observable,
   of,
+  repeat,
   share,
   Subject,
   switchMap,
@@ -90,10 +91,11 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
   );
 
   content$!: Observable<FileSystemObject[]>;
+  upload$!: Observable<any>;
   selected$!: Observable<FileSystemObject[]>;
 
-  control = new FormControl<File[]>([], { nonNullable: true });
-  uploadTypeControl = new FormControl<string>('binary', {
+  fileControl = new FormControl<File[]>([], { nonNullable: true });
+  uploadTypeControl = new FormControl<string>('hex', {
     nonNullable: true,
   });
   uploadTypeOptions: Option[] = [
@@ -154,77 +156,75 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
       catchError(() => EMPTY)
     );
 
-    this.control.valueChanges
-      .pipe(
-        buffer(this.emitBuffer$.pipe(takeUntil(this.destroy$))),
-        mergeMap((files: File[][]) => files),
-        map((files: File[]) => {
-          console.log('Buffer', files);
-          this.overlayHidden = false;
-          const uploadItems = files.map<UploadItem>((file) => ({
-            file,
-            progress: 0,
-            state: UploadingState.PENDING,
-            cancelled: false,
-          }));
-          return uploadItems;
-        }),
-        switchMap((files) =>
-          zip([of(files), this.explorerUploadItemsService.uploadItems$])
-        ),
-        switchMap(([items, uploadItems]) => {
-          const uniqueArray = uploadItems
-            .concat(items)
-            .filter(
-              (obj, index, self) =>
-                index === self.findIndex((t) => t.file.name === obj.file.name)
-            )
-            .filter((item: UploadItem) => !item.cancelled);
-          this.explorerUploadItemsService.uploadItems$.next(uniqueArray);
-          return of(uniqueArray);
-        }),
-        switchMap((items) => {
-          switch (this.uploadTypeControl.value) {
-            case 'binary':
-              return this.explorerUploadService.uploadBinary(
-                items,
-                this.path$.getValue()
-              );
-            case 'hex':
-              return this.explorerUploadService.uploadHexString(
-                items,
-                this.path$.getValue()
-              );
-            case 'base64':
-              return this.explorerUploadService.uploadBase64(
-                items,
-                this.path$.getValue()
-              );
-            default:
-              return this.explorerUploadService.uploadBinary(
-                items,
-                this.path$.getValue()
-              );
-          }
-        }),
-        // emit buffer after every file upload completion
-        tap(() => {
-          this.emitBuffer$.next();
-          this.refreshFolders$.next(true);
-        }),
-        catchError((err) => {
-          console.error(err);
-          this.snackBar.open(
-            this.translateService.instant('EXPLORER.ERRORS.REQUEST_ERROR_TEXT'),
-            this.translateService.instant('EXPLORER.ERRORS.CLOSE_BUTTON_TEXT')
-          );
-          this.closeOverlay(this.explorerUploadItemsService.uploadItems$.value);
-          this.cd.markForCheck();
-          return EMPTY;
-        }),
-        takeUntil(this.destroy$)
-      )
-      .subscribe();
+    this.upload$ = this.fileControl.valueChanges.pipe(
+      buffer(this.emitBuffer$.pipe(takeUntil(this.destroy$))),
+      mergeMap((files: File[][]) => files),
+      map((files: File[]) => {
+        console.log('Buffer', files);
+        this.overlayHidden = false;
+        const uploadItems = files.map<UploadItem>((file) => ({
+          file,
+          progress: 0,
+          state: UploadingState.PENDING,
+          cancelled: false,
+        }));
+        return uploadItems;
+      }),
+      switchMap((files) =>
+        zip([of(files), this.explorerUploadItemsService.uploadItems$])
+      ),
+      switchMap(([items, uploadItems]) => {
+        const uniqueArray = uploadItems
+          .concat(items)
+          .filter(
+            (obj, index, self) =>
+              index === self.findIndex((t) => t.file.name === obj.file.name)
+          )
+          .filter((item: UploadItem) => !item.cancelled);
+        this.explorerUploadItemsService.uploadItems$.next(uniqueArray);
+        return of(uniqueArray);
+      }),
+      switchMap((items) => {
+        switch (this.uploadTypeControl.value) {
+          case 'binary':
+            return this.explorerUploadService.uploadBinary(
+              items,
+              this.path$.getValue()
+            );
+          case 'hex':
+            return this.explorerUploadService.uploadHexString(
+              items,
+              this.path$.getValue()
+            );
+          case 'base64':
+            return this.explorerUploadService.uploadBase64(
+              items,
+              this.path$.getValue()
+            );
+          default:
+            return this.explorerUploadService.uploadBinary(
+              items,
+              this.path$.getValue()
+            );
+        }
+      }),
+      // emit buffer after every file upload completion
+      tap(() => {
+        this.emitBuffer$.next();
+        this.refreshFolders$.next(true);
+      }),
+      catchError((err) => {
+        console.error(err);
+        this.snackBar.open(
+          this.translateService.instant('EXPLORER.ERRORS.REQUEST_ERROR_TEXT'),
+          this.translateService.instant('EXPLORER.ERRORS.CLOSE_BUTTON_TEXT')
+        );
+        this.closeOverlay(this.explorerUploadItemsService.uploadItems$.value);
+        this.cd.markForCheck();
+        return EMPTY;
+      }),
+      repeat()
+    );
 
     this.selected$ = combineLatest([
       this.fileSystemTableRendered$,
@@ -262,16 +262,16 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
     files: File[];
     fsObj: FileSystemObject;
   }): void {
-    this.control.patchValue(event.files);
+    this.fileControl.patchValue(event.files);
     this.emitBuffer$.next();
   }
 
   removeItemFromUploadList(item: UploadItem): void {
-    const index = this.control.value.findIndex(
+    const index = this.fileControl.value.findIndex(
       (file) => file.name === item.file.name
     );
-    this.control.value.splice(index, 1);
-    this.control.patchValue(this.control.value);
+    this.fileControl.value.splice(index, 1);
+    this.fileControl.patchValue(this.fileControl.value);
     if (item.state === UploadingState.UPLOADING) {
       this.emitBuffer$.next();
     }
@@ -287,7 +287,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
         cancelled: true,
       }))
     );
-    this.control.patchValue([]);
+    // this.control.patchValue([]);
     this.emitBuffer$.next();
     this.explorerUploadItemsService.uploadItems$.next([]);
     this.overlayHidden = true;

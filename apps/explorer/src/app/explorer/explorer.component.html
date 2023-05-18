@@ -75,7 +75,7 @@
       </div>
     </ng-container>
     <eustrosoft-front-input-file
-      [control]="control"
+      [control]="fileControl"
       [multiple]="true"
       [hidden]="true"
       (filesSelected)="startUpload()"
@@ -107,3 +107,5 @@
   (removeItem)="removeItemFromUploadList($event)"
   (closeOverlay)="closeOverlay($event)"
 ></eustrosoft-front-upload-overlay>
+
+<ng-container *ngIf="upload$ | async"></ng-container>

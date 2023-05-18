@@ -11,6 +11,7 @@ import {
   QtisRequestResponseInterface,
   Subsystems,
   SupportedLanguages,
+  UploadHexRequest,
   UploadRequest,
   ViewRequest,
 } from '@eustrosoft-front/core';
@@ -80,7 +81,7 @@ export class ExplorerRequestBuilderService {
     chunkIndex: number,
     totalChunks: number,
     path: string = '/'
-  ): QtisRequestResponseInterface<UploadRequest> {
+  ): QtisRequestResponseInterface<UploadHexRequest> {
     return {
       r: [
         {
@@ -88,7 +89,7 @@ export class ExplorerRequestBuilderService {
           r: CmsRequestActions.UPLOAD_CHUNKS_HEX,
           l: SupportedLanguages.EN_US,
           parameters: {
-            file: chunk,
+            hexString: chunk,
             name: file.name,
             ext: file.name.split('.').pop() as string,
             chunk: chunkIndex,

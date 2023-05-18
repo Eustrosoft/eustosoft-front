@@ -31,6 +31,18 @@ export interface UploadRequest extends BaseCmsRequest {
   };
 }
 
+export interface UploadHexRequest extends BaseCmsRequest {
+  parameters: {
+    hexString: string;
+    name: string;
+    ext: string;
+    chunk: number;
+    all_chunks: number;
+    hash: string;
+    path: string;
+  };
+}
+
 export interface MoveCopyRequest extends BaseCmsRequest {
   from: string;
   to: string;

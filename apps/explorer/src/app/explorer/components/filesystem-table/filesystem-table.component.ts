@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
@@ -7,6 +8,7 @@ import {
   OnDestroy,
   Output,
   SimpleChanges,
+  ViewChild,
 } from '@angular/core';
 import {
   FileSystemObject,
@@ -15,6 +17,7 @@ import {
 import { MatTableDataSource } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Subject } from 'rxjs';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'eustrosoft-front-filesystem-table',
@@ -22,7 +25,9 @@ import { Subject } from 'rxjs';
   styleUrls: ['./filesystem-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FilesystemTableComponent implements OnChanges, OnDestroy {
+export class FilesystemTableComponent
+  implements OnChanges, AfterViewInit, OnDestroy
+{
   @Input() content!: FileSystemObject[];
 
   @Output() openClicked = new EventEmitter<FileSystemObject>();
@@ -36,19 +41,25 @@ export class FilesystemTableComponent implements OnChanges, OnDestroy {
     fsObj: FileSystemObject;
   }>();
 
+  @ViewChild(MatSort) sort!: MatSort;
+
   fsObjTypes = FileSystemObjectTypes;
 
   displayedColumns: string[] = [
     'select',
-    'name',
+    'fileName',
     'space',
-    'lastModified',
+    'modified',
     'actions',
   ];
   dataSource = new MatTableDataSource<FileSystemObject>([]);
   selection = new SelectionModel<FileSystemObject>(true, []);
 
   private destroy$ = new Subject<void>();
+
+  ngAfterViewInit(): void {
+    this.dataSource.sort = this.sort;
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     this.dataSource.data = this.content;
