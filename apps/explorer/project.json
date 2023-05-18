@@ -32,7 +32,7 @@
       "configurations": {
         "production": {
           "assets": [
-            "apps/login/src/favicon.ico",
+            "apps/explorer/src/favicon.ico",
             {
               "glob": "config.json",
               "input": "libs/config/src/lib/configurations/prod",

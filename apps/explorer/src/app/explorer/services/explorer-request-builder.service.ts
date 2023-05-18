@@ -24,6 +24,7 @@ export class ExplorerRequestBuilderService {
     chunk: Blob,
     chunkIndex: number,
     totalChunks: number,
+    uint8Array: Uint8Array,
     path: string = '/'
   ): QtisRequestResponseInterface<UploadRequest> {
     return {
@@ -38,7 +39,7 @@ export class ExplorerRequestBuilderService {
             ext: file.name.split('.').pop() as string,
             chunk: chunkIndex,
             all_chunks: totalChunks,
-            hash: '',
+            hash: crc32(uint8Array),
             path,
           },
         },

@@ -32,7 +32,7 @@
       "configurations": {
         "production": {
           "assets": [
-            "apps/login/src/favicon.ico",
+            "apps/dispatcher/src/favicon.ico",
             {
               "glob": "config.json",
               "input": "libs/config/src/lib/configurations/prod",
@@ -55,7 +55,7 @@
         },
         "stage": {
           "assets": [
-            "apps/login/src/favicon.ico",
+            "apps/dispatcher/src/favicon.ico",
             {
               "glob": "config.json",
               "input": "libs/config/src/lib/configurations/stage",

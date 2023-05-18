@@ -30,13 +30,21 @@ export class ExplorerUploadService {
       concatMap((item) => this.fileReaderService.splitOneBinary(item)),
       concatMap((item) =>
         from(item.chunks).pipe(
-          concatMap((chunk: Blob, currentChunk: number) => {
+          concatMap((chunk: Blob, currentChunk: number) =>
+            combineLatest([
+              of(chunk),
+              of(currentChunk),
+              this.fileReaderService.blobToUint8Array(chunk),
+            ])
+          ),
+          concatMap(([chunk, currentChunk, uint8Array]) => {
             const request =
               this.explorerRequestBuilderService.buildBinaryChunkRequest(
                 item.file,
                 chunk,
                 currentChunk,
                 item.chunks.length,
+                uint8Array,
                 path
               );
             const formData = new FormData();

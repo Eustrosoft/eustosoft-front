@@ -138,6 +138,28 @@ export class FileReaderService {
     });
   }
 
+  blobToUint8Array(blob: Blob | File): Observable<Uint8Array> {
+    return new Observable((obs: Subscriber<Uint8Array>) => {
+      if (!(blob instanceof Blob)) {
+        obs.error(new Error('`blob` must be an instance of File or Blob.'));
+        return;
+      }
+
+      const reader = new FileReader();
+
+      reader.onerror = (err) => obs.error(err);
+      reader.onabort = (err) => obs.error(err);
+      reader.onload = () => {
+        const arrayBuffer = reader.result as ArrayBuffer;
+        const uint8Array = new Uint8Array(arrayBuffer);
+        return obs.next(uint8Array);
+      };
+      reader.onloadend = () => obs.complete();
+
+      return reader.readAsArrayBuffer(blob);
+    });
+  }
+
   blobToBase64(blob: Blob | File): Observable<string | ArrayBuffer | null> {
     return new Observable((obs: Subscriber<string | ArrayBuffer | null>) => {
       if (!(blob instanceof Blob)) {
