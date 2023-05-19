@@ -37,7 +37,6 @@ export class CreateRenameFolderDialogComponent {
   }
 
   resolve(): void {
-    console.log('resolve()');
     this.dialogRef.close(this.control.value);
   }
 }

@@ -30,7 +30,7 @@
     "SPACE_COLUMN_TEXT": "Size",
     "LAST_MODIFIED_COLUMN_TEXT": "Last modified",
     "ACTIONS_COLUMN_TEXT": "Actions",
-    "FOLDER_IS_EMPTY": "Folder is empty",
+    "FOLDER_IS_EMPTY": "No content",
     "SIZES": {
       "BYTES": "Bytes",
       "KB": "KB",

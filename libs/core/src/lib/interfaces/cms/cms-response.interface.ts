@@ -1,16 +1,16 @@
-import { CmsRequestActions } from '../../constants/enums/cms-actions.enum';
 import { FileSystemObject } from './file-system-object.interface';
 import { Subsystems } from '../../constants/enums/subsystems.enum';
 import { SupportedLanguages } from '../../constants/enums/supported-languages.enum';
 
 interface BaseCmsResponse {
   s: Subsystems;
-  r: CmsRequestActions;
   l: SupportedLanguages;
 }
 
 export interface ViewResponse extends BaseCmsResponse {
   content: FileSystemObject[];
+  e: number;
+  m: string;
 }
 
 export interface CreateResponse extends BaseCmsResponse {

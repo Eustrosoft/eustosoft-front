@@ -13,7 +13,7 @@ import {
   PromptDialogComponent,
   PromptDialogDataInterface,
 } from '@eustrosoft-front/common-ui';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   BehaviorSubject,
   buffer,
@@ -21,6 +21,7 @@ import {
   combineLatest,
   EMPTY,
   filter,
+  iif,
   map,
   mergeMap,
   Observable,
@@ -50,6 +51,8 @@ import {
   MoveCopyRequest,
   MoveCopyResponse,
   QtisRequestResponseInterface,
+  Subsystems,
+  SupportedLanguages,
   UploadItem,
   ViewRequest,
   ViewResponse,
@@ -135,26 +138,62 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
     private cd: ChangeDetectorRef,
     private router: Router,
     private dialog: MatDialog,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    private activatedRoute: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
-    this.content$ = combineLatest([this.path$, this.refreshFolders$]).pipe(
-      tap(([path, refresh]) =>
-        this.explorerPathService.updateLastPathState(path)
+    this.content$ = combineLatest([
+      this.path$.pipe(
+        tap((path) => this.explorerPathService.updateLastPathState(path))
       ),
-      switchMap(([path, refresh]) => {
-        return this.explorerRequestBuilderService.buildViewRequest(path);
-      }),
+      this.refreshFolders$,
+    ]).pipe(
+      switchMap(([path]) =>
+        combineLatest([of(path), this.activatedRoute.queryParamMap])
+      ),
+      switchMap(([path, queryParamMap]) =>
+        iif(
+          () => queryParamMap.get('path') !== null,
+          of<string>(queryParamMap.get('path') as string),
+          of<string>(path)
+        )
+      ),
+      switchMap((path) =>
+        this.explorerRequestBuilderService.buildViewRequest(path)
+      ),
       switchMap((request: QtisRequestResponseInterface<ViewRequest>) =>
-        this.explorerService.dispatch<ViewRequest, ViewResponse>(request)
+        this.explorerService.dispatch<ViewRequest, ViewResponse>(request).pipe(
+          catchError((err: HttpErrorResponse) => {
+            this.snackBar.open(
+              err.error,
+              this.translateService.instant('EXPLORER.ERRORS.CLOSE_BUTTON_TEXT')
+            );
+
+            return of<QtisRequestResponseInterface<ViewResponse>>({
+              r: [
+                {
+                  s: Subsystems.CMS,
+                  e: 0,
+                  m: '',
+                  l: SupportedLanguages.EN_US,
+                  content: [],
+                },
+              ],
+              t: 0,
+            });
+          })
+        )
       ),
       map((response: QtisRequestResponseInterface<ViewResponse>) =>
         response.r.flatMap((r: ViewResponse) => r.content)
       ),
       tap(() => this.filesystemTableComponent.selection.clear()),
       share(),
-      catchError(() => EMPTY)
+      catchError((err) => {
+        console.error(err);
+        return of<FileSystemObject[]>([]);
+      })
     );
 
     this.upload$ = this.fileControl.valueChanges.pipe(
@@ -257,6 +296,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   openByPath(path: string) {
+    this.clearQueryParams();
     this.path$.next(path);
   }
 
@@ -610,6 +650,13 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
         takeUntil(this.destroy$)
       )
       .subscribe();
+  }
+
+  clearQueryParams(): void {
+    this.router.navigate([], {
+      queryParams: null,
+      queryParamsHandling: null,
+    });
   }
 
   handleError(err: HttpErrorResponse): Observable<never> {

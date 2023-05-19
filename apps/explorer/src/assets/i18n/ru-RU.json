@@ -30,7 +30,7 @@
     "SPACE_COLUMN_TEXT": "Размер",
     "LAST_MODIFIED_COLUMN_TEXT": "Последнее изменение",
     "ACTIONS_COLUMN_TEXT": "Действия",
-    "FOLDER_IS_EMPTY": "Папка пуста",
+    "FOLDER_IS_EMPTY": "Пусто",
     "SIZES": {
       "BYTES": "Байт",
       "KB": "КБ",
