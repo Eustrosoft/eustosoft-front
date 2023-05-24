@@ -37,6 +37,10 @@ import { ExplorerUploadItemsService } from './explorer/services/explorer-upload-
 import { A11yModule } from '@angular/cdk/a11y';
 import { LoginPageComponent } from './login-page/login-page.component';
 import { MatSortModule } from '@angular/material/sort';
+import { UploadPageComponent } from './explorer/components/upload-page/upload-page.component';
+import { MatCardModule } from '@angular/material/card';
+import { UploadObjectComponent } from './explorer/components/upload-item/upload-object.component';
+import { ExplorerUploadItemFormFactoryService } from './explorer/services/explorer-upload-item-form-factory.service';
 
 @NgModule({
   declarations: [
@@ -48,6 +52,8 @@ import { MatSortModule } from '@angular/material/sort';
     FilesystemTableComponent,
     UploadOverlayComponent,
     LoginPageComponent,
+    UploadPageComponent,
+    UploadObjectComponent,
   ],
   imports: [
     BrowserModule,
@@ -70,6 +76,7 @@ import { MatSortModule } from '@angular/material/sort';
     MatListModule,
     MatTooltipModule,
     A11yModule,
+    MatCardModule,
   ],
   providers: [
     ExplorerService,
@@ -77,6 +84,7 @@ import { MatSortModule } from '@angular/material/sort';
     ExplorerRequestBuilderService,
     ExplorerUploadService,
     ExplorerUploadItemsService,
+    ExplorerUploadItemFormFactoryService,
     Stack,
   ],
   bootstrap: [AppComponent],

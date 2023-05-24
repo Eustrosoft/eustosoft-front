@@ -1,0 +1,47 @@
+<div class="container-fluid">
+  <div class="row gx-3 mb-3">
+    <div class="col-2">
+      <eustrosoft-front-button
+        [buttonType]="'button'"
+        [buttonStyleType]="'stroked'"
+        [buttonText]="'Select files'"
+        [color]="'primary'"
+        (clicked)="inputFileComponent.fileInput.nativeElement.click()"
+      >
+      </eustrosoft-front-button>
+      <eustrosoft-front-button
+        [buttonType]="'button'"
+        [buttonStyleType]="'stroked'"
+        [buttonText]="'Start'"
+        [color]="'primary'"
+        (clicked)="start()"
+      >
+      </eustrosoft-front-button>
+    </div>
+    <div class="col-2">
+      <eustrosoft-front-select
+        [label]="'EXPLORER.UPLOAD_TYPE_LABEL_TEXT' | translate"
+        [control]="uploadTypeControl | formControl"
+        [options]="uploadTypeOptions"
+        [fieldAppearance]="'outline'"
+        [color]="'primary'"
+        class="uploadType"
+      ></eustrosoft-front-select>
+    </div>
+  </div>
+
+  <div class="row gy-3">
+    <eustrosoft-front-upload-object
+      *ngFor="let uploadObjectForm of uploadObjects.controls; let i = index"
+      [uploadObjectForm]="uploadObjectForm"
+      [formIndex]="i"
+      class="col-6"
+    ></eustrosoft-front-upload-object>
+  </div>
+</div>
+
+<eustrosoft-front-input-file
+  [control]="fileControl"
+  [multiple]="true"
+  [hidden]="true"
+></eustrosoft-front-input-file>

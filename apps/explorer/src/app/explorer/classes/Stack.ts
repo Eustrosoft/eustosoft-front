@@ -1,4 +1,4 @@
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 export class Stack<T> {
   private stack$ = new BehaviorSubject<T[]>([]);
@@ -16,14 +16,5 @@ export class Stack<T> {
     } else {
       return value;
     }
-  }
-
-  clear(): void {
-    this.stack$.next([]);
-  }
-
-  getStack(): Observable<T[]> {
-    return this.stack$.asObservable();
-    // return this.stack$.pipe(scan((acc, curr) => curr));
   }
 }

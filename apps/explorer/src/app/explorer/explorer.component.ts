@@ -27,7 +27,6 @@ import {
   Observable,
   of,
   repeat,
-  retry,
   share,
   Subject,
   switchMap,
@@ -263,8 +262,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
         this.cd.markForCheck();
         return EMPTY;
       }),
-      repeat(),
-      retry(5)
+      repeat()
     );
 
     this.selected$ = combineLatest([

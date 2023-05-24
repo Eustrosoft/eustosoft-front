@@ -1,0 +1,55 @@
+<mat-card class="card-shadow">
+  <mat-card-header>
+    <mat-card-subtitle>Doc №{{ formIndex + 1 }}</mat-card-subtitle>
+    <mat-card-title class="fw-normal truncate">
+      {{ uploadObjectForm.controls.uploadItem.value.file.name }}
+    </mat-card-title>
+  </mat-card-header>
+  <mat-divider class="mt-3 mb-3"></mat-divider>
+  <mat-card-content>
+    <div class="row">
+      <div class="col-4">
+        <eustrosoft-front-select
+          [label]="'Access level'"
+          [control]="uploadObjectForm.controls.accessLevel"
+          [options]="accessLevelOptions"
+          [fieldAppearance]="'outline'"
+        ></eustrosoft-front-select>
+      </div>
+      <div class="col-8">
+        <eustrosoft-front-input
+          [label]="'Note'"
+          [placeholder]="'Some additional info'"
+          [fieldAppearance]="'outline'"
+          [control]="uploadObjectForm.controls.note"
+        ></eustrosoft-front-input>
+      </div>
+    </div>
+    <mat-divider></mat-divider>
+  </mat-card-content>
+  <mat-card-actions [align]="'end'">
+    <ng-container [ngSwitch]="uploadObjectForm.controls.uploadItem.value.state">
+      <eustrosoft-front-button
+        *ngSwitchCase="UploadingState.PENDING"
+        [buttonType]="'button'"
+        [buttonStyleType]="'icon'"
+        [iconName]="'delete'"
+        [color]="'primary'"
+      >
+      </eustrosoft-front-button>
+      <eustrosoft-front-button
+        *ngSwitchCase="UploadingState.UPLOADING"
+        [buttonType]="'button'"
+        [buttonStyleType]="'icon'"
+        [iconName]="'cancel'"
+        [color]="'primary'"
+      >
+      </eustrosoft-front-button>
+    </ng-container>
+  </mat-card-actions>
+  <mat-card-footer>
+    <eustrosoft-front-progress-bar
+      [value]="uploadObjectForm.controls.uploadItem.value.progress"
+    ></eustrosoft-front-progress-bar>
+  </mat-card-footer>
+</mat-card>
