@@ -35,7 +35,7 @@
       *ngFor="let uploadObjectForm of uploadObjects.controls; let i = index"
       [uploadObjectForm]="uploadObjectForm"
       [formIndex]="i"
-      class="col-6"
+      class="col-4"
     ></eustrosoft-front-upload-object>
   </div>
 </div>
@@ -45,3 +45,5 @@
   [multiple]="true"
   [hidden]="true"
 ></eustrosoft-front-input-file>
+
+<ng-container *ngIf="fileControlValueChanges$ | async"></ng-container>

@@ -7,7 +7,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
-import { map, Observable, Subject, takeUntil, tap } from 'rxjs';
+import { map, mergeMap, Observable, scan, Subject, tap } from 'rxjs';
 import { InputFileComponent, Option } from '@eustrosoft-front/common-ui';
 import { UploadObject, UploadObjectForm } from '@eustrosoft-front/core';
 import { ExplorerUploadService } from '../../services/explorer-upload.service';
@@ -25,6 +25,8 @@ export class UploadPageComponent implements OnInit, OnDestroy {
   @ViewChild(InputFileComponent) inputFileComponent!: InputFileComponent;
 
   upload$!: Observable<any>;
+  fileControlValueChanges$!: Observable<UploadObject[]>;
+  objectsToUpload$!: Observable<UploadObject[]>;
   fileControl = new FormControl<File[]>([], { nonNullable: true });
   uploadTypeControl = new FormControl<string>('hex', {
     nonNullable: true,
@@ -48,6 +50,7 @@ export class UploadPageComponent implements OnInit, OnDestroy {
   ];
   uploadObjects = new FormArray<FormGroup<UploadObjectForm>>([]);
 
+  private startUpload$ = new Subject<void>();
   private emitBuffer$ = new Subject<void>();
   private destroy$ = new Subject<void>();
 
@@ -61,32 +64,35 @@ export class UploadPageComponent implements OnInit, OnDestroy {
     inject(ExplorerUploadItemFormFactoryService);
 
   ngOnInit(): void {
-    this.fileControl.valueChanges
-      .pipe(
-        map((files) =>
-          files.map<UploadObject>((file) => ({
-            uploadItem: {
-              file,
-              progress: 0,
-              state: UploadingState.PENDING,
-              cancelled: false,
-            },
-            note: '',
-            accessLevel: 0,
-          }))
-        ),
-        tap((uploadObjects) => {
-          const forms = uploadObjects.map((uploadObject) =>
-            this.explorerUploadItemFormFactoryService.makeNewUploadObjectForm(
-              uploadObject
-            )
-          );
-          forms.forEach((form) => this.uploadObjects.push(form));
-          console.log(this.uploadObjects);
-        }),
-        takeUntil(this.destroy$)
-      )
-      .subscribe();
+    this.fileControlValueChanges$ = this.fileControl.valueChanges.pipe(
+      map((files) =>
+        files.map<UploadObject>((file) => ({
+          uploadItem: {
+            file,
+            progress: 0,
+            state: UploadingState.PENDING,
+            cancelled: false,
+          },
+          note: '',
+          accessLevel: 0,
+        }))
+      ),
+      tap((uploadObjects) => {
+        const forms = uploadObjects.map((uploadObject) =>
+          this.explorerUploadItemFormFactoryService.makeNewUploadObjectForm(
+            uploadObject
+          )
+        );
+        forms.forEach((form) => this.uploadObjects.push(form));
+        console.log(this.uploadObjects);
+      })
+    );
+
+    this.objectsToUpload$ = this.fileControlValueChanges$.pipe(
+      mergeMap((objects) => objects),
+      scan<UploadObject, UploadObject[]>((acc, obj) => [...acc, obj], [])
+    );
+
     // this.upload$ = this.fileControl.valueChanges.pipe(
     //   buffer(this.emitBuffer$.pipe(takeUntil(this.destroy$))),
     //   mergeMap((files: File[][]) => files),
@@ -144,6 +150,6 @@ export class UploadPageComponent implements OnInit, OnDestroy {
   }
 
   start(): void {
-    this.emitBuffer$.next();
+    this.startUpload$.next();
   }
 }
