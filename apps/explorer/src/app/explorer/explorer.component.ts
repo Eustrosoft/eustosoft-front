@@ -142,12 +142,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.content$ = combineLatest([
-      this.path$.pipe(
-        tap((path) => this.explorerPathService.updateLastPathState(path))
-      ),
-      this.refreshFolders$,
-    ]).pipe(
+    this.content$ = combineLatest([this.path$, this.refreshFolders$]).pipe(
       switchMap(([path]) =>
         combineLatest([of(path), this.activatedRoute.queryParamMap])
       ),
@@ -158,9 +153,10 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
           of<string>(path)
         )
       ),
-      switchMap((path) =>
-        this.explorerRequestBuilderService.buildViewRequest(path)
-      ),
+      switchMap((path) => {
+        this.explorerPathService.updateLastPathState(path);
+        return this.explorerRequestBuilderService.buildViewRequest(path);
+      }),
       switchMap((request: QtisRequestResponseInterface<ViewRequest>) =>
         this.explorerService.dispatch<ViewRequest, ViewResponse>(request).pipe(
           catchError((err: HttpErrorResponse) => {
@@ -290,6 +286,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
     if (fsElem.type !== FileSystemObjectTypes.DIRECTORY) {
       return;
     }
+    this.clearQueryParams();
     this.path$.next(fsElem.fullPath);
   }
 
