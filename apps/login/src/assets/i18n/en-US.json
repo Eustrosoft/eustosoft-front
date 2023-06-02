@@ -1,6 +1,7 @@
 {
   "HEADER": {
-    "TITLE": "TIS Apps | Login",
+    "TITLE": "TIS Apps",
+    "APP_NAME": "Login",
     "APPS_BUTTON_TEXT": "Apps",
     "APPS": {
       "EXPLORER": "Explorer",

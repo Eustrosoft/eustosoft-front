@@ -1,6 +1,7 @@
 {
   "HEADER": {
-    "TITLE": "Приложения TIS | Логин",
+    "TITLE": "Приложения TIS",
+    "APP_NAME": "Логин",
     "APPS_BUTTON_TEXT": "Приложения",
     "APPS": {
       "EXPLORER": "Проводник",

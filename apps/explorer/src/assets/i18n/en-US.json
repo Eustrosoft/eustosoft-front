@@ -1,6 +1,7 @@
 {
   "HEADER": {
-    "TITLE": "TIS Apps | Explorer",
+    "TITLE": "TIS Apps",
+    "APP_NAME": "Explorer",
     "APPS_BUTTON_TEXT": "Apps",
     "APPS": {
       "LOGIN": "Login",
@@ -28,7 +29,8 @@
     "RENAME_BUTTON_TEXT": "Rename",
     "NAME_COLUMN_TEXT": "Name",
     "SPACE_COLUMN_TEXT": "Size",
-    "LAST_MODIFIED_COLUMN_TEXT": "Last modified",
+    "DESCRIPTION_COLUMN_TEXT": "Description",
+    "SECURITY_LEVEL_COLUMN_TEXT": "Security level",
     "ACTIONS_COLUMN_TEXT": "Actions",
     "FOLDER_IS_EMPTY": "No content",
     "SIZES": {

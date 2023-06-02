@@ -1,8 +1,17 @@
 <mat-toolbar class="container-fluid mb-3">
-  <span class="mr-4">{{ texts.title }}</span>
+  <span class="mr-4">
+    <a
+      [href]="(config | async)?.homePageUrl || '/'"
+      class="text-decoration-none"
+    >
+      {{ texts.title }}
+    </a>
+    |
+    {{ texts.appName }}
+  </span>
   <span class="logo-spacer"></span>
   <ng-container *ngIf="isAuthenticated | async">
-    <div class="d-flex">
+    <div class="d-flex d-none">
       <eustrosoft-front-button
         [buttonType]="'button'"
         [buttonStyleType]="'stroked'"

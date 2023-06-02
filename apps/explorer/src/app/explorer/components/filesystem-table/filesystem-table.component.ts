@@ -49,7 +49,8 @@ export class FilesystemTableComponent
     'select',
     'fileName',
     'space',
-    'modified',
+    'description',
+    'securityLevel',
     'actions',
   ];
   dataSource = new MatTableDataSource<FileSystemObject>([]);

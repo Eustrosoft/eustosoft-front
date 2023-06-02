@@ -58,13 +58,23 @@
       </td>
     </ng-container>
 
-    <!-- Last modified Column -->
-    <ng-container matColumnDef="modified">
+    <!-- Description Column -->
+    <ng-container matColumnDef="description">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>
-        {{ 'EXPLORER.LAST_MODIFIED_COLUMN_TEXT' | translate }}
+        {{ 'EXPLORER.DESCRIPTION_COLUMN_TEXT' | translate }}
       </th>
       <td mat-cell *matCellDef="let element">
-        {{ element.modified | date }}
+        {{ element.description }}
+      </td>
+    </ng-container>
+
+    <!-- Security Level Column -->
+    <ng-container matColumnDef="securityLevel">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{ 'EXPLORER.SECURITY_LEVEL_COLUMN_TEXT' | translate }}
+      </th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.securityLevel }}
       </td>
     </ng-container>
 
@@ -93,11 +103,19 @@
               <mat-icon>drive_file_rename_outline</mat-icon>
               <span>{{ 'EXPLORER.RENAME_BUTTON_TEXT' | translate }}</span>
             </button>
-            <button (click)="moveClicked.emit([content[i]])" mat-menu-item>
+            <button
+              (click)="moveClicked.emit([content[i]])"
+              hidden
+              mat-menu-item
+            >
               <mat-icon>drive_file_move</mat-icon>
               <span>{{ 'EXPLORER.MOVE_TO_BUTTON_TEXT' | translate }}</span>
             </button>
-            <button (click)="copyClicked.emit([content[i]])" mat-menu-item>
+            <button
+              (click)="copyClicked.emit([content[i]])"
+              hidden
+              mat-menu-item
+            >
               <mat-icon>content_copy</mat-icon>
               <span>{{ 'EXPLORER.COPY_BUTTON_TEXT' | translate }}</span>
             </button>

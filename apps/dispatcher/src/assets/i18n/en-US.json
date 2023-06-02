@@ -1,6 +1,7 @@
 {
   "HEADER": {
-    "TITLE": "TIS Apps | Dispatcher",
+    "TITLE": "TIS Apps",
+    "APP_NAME": "Dispatcher",
     "APPS_BUTTON_TEXT": "Apps",
     "APPS": {
       "LOGIN": "Login",

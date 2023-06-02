@@ -14,7 +14,7 @@
           <mat-icon>create_new_folder</mat-icon>
           <span>{{ 'EXPLORER.NEW_FOLDER_BUTTON_TEXT' | translate }}</span>
         </button>
-        <button (click)="createFile()" mat-menu-item>
+        <button (click)="createFile()" hidden mat-menu-item>
           <mat-icon>note_add</mat-icon>
           <span>{{ 'EXPLORER.NEW_FILE_BUTTON_TEXT' | translate }}</span>
         </button>
@@ -25,13 +25,13 @@
           <mat-icon>upload</mat-icon>
           <span>{{ 'EXPLORER.NEW_UPLOAD_BUTTON_TEXT' | translate }}</span>
         </button>
-        <!--        <button [routerLink]="'upload'" mat-menu-item disabled>-->
-        <!--          <mat-icon>publish</mat-icon>-->
-        <!--          <span>Custom upload</span>-->
-        <!--        </button>-->
+        <button [routerLink]="'upload'" hidden mat-menu-item disabled>
+          <mat-icon>publish</mat-icon>
+          <span>Custom upload</span>
+        </button>
       </mat-menu>
     </div>
-    <div class="col-2">
+    <div class="col-2" hidden>
       <eustrosoft-front-select
         [label]="'EXPLORER.UPLOAD_TYPE_LABEL_TEXT' | translate"
         [control]="uploadTypeControl | formControl"
@@ -56,6 +56,7 @@
         <mat-menu #batchOperationsMenu="matMenu">
           <button
             (click)="copy(filesystemTableComponent.selection.selected)"
+            hidden
             mat-menu-item
           >
             <mat-icon>content_copy</mat-icon>
@@ -63,6 +64,7 @@
           </button>
           <button
             (click)="move(filesystemTableComponent.selection.selected)"
+            hidden
             mat-menu-item
           >
             <mat-icon>drive_file_move</mat-icon>

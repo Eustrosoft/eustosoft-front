@@ -1,6 +1,7 @@
 {
   "HEADER": {
-    "TITLE": "Приложения TIS | Проводник",
+    "TITLE": "Приложения TIS",
+    "APP_NAME": "Проводник",
     "APPS_BUTTON_TEXT": "Приложения",
     "APPS": {
       "LOGIN": "Логин",
@@ -28,7 +29,8 @@
     "RENAME_BUTTON_TEXT": "Переименовать",
     "NAME_COLUMN_TEXT": "Наименование",
     "SPACE_COLUMN_TEXT": "Размер",
-    "LAST_MODIFIED_COLUMN_TEXT": "Последнее изменение",
+    "DESCRIPTION_COLUMN_TEXT": "Описание",
+    "SECURITY_LEVEL_COLUMN_TEXT": "Уровень доступа",
     "ACTIONS_COLUMN_TEXT": "Действия",
     "FOLDER_IS_EMPTY": "Пусто",
     "SIZES": {

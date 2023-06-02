@@ -22,7 +22,7 @@ import { Router } from '@angular/router';
 })
 export class HeaderComponent implements OnInit {
   @Input() appsListTemplate!: TemplateRef<any>;
-  @Input() texts!: { title: string; appsButtonText: string };
+  @Input() texts!: { title: string; appName: string; appsButtonText: string };
   @Input() loginPath!: any[];
 
   private loginService: LoginService = inject(LoginService);

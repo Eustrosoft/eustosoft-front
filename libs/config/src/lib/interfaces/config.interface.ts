@@ -5,6 +5,7 @@ export interface Config {
   dispatcherUrl: string;
   explorerUrl: string;
   appsPageUrl: string;
+  homePageUrl: string;
 }
 
 export type ConfigKey = keyof Config;

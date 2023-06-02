@@ -14,6 +14,7 @@ export class AppComponent implements OnInit {
 
   public translatedValues!: Observable<{
     title: string;
+    appName: string;
     appsButtonText: string;
     login: string;
     dispatcher: string;
@@ -23,13 +24,15 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.translatedValues = combineLatest([
       this.translateService.get('HEADER.TITLE'),
+      this.translateService.get('HEADER.APP_NAME'),
       this.translateService.get('HEADER.APPS_BUTTON_TEXT'),
       this.translateService.get('HEADER.APPS.LOGIN'),
       this.translateService.get('HEADER.APPS.DISPATCHER'),
       this.translateService.get('HEADER.APPS.ALL_APPS_PAGE'),
     ]).pipe(
-      map(([title, appsButtonText, login, dispatcher, appsPage]) => ({
+      map(([title, appName, appsButtonText, login, dispatcher, appsPage]) => ({
         title,
+        appName,
         appsButtonText,
         login,
         dispatcher,
