@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ *
+ * This file is part of eustrosoft-front project.
+ * See the LICENSE file at the project root for licensing information.
+ */
+
 // ***********************************************
 // This example commands.js shows you how to
 // create various custom commands and overwrite

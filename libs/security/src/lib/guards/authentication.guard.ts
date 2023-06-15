@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ *
+ * This file is part of eustrosoft-front project.
+ * See the LICENSE file at the project root for licensing information.
+ */
+
 import { inject } from '@angular/core';
 import { Router, UrlTree } from '@angular/router';
 import { delay, Observable, of, switchMap } from 'rxjs';

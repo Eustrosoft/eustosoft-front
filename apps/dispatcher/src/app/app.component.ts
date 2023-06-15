@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ *
+ * This file is part of eustrosoft-front project.
+ * See the LICENSE file at the project root for licensing information.
+ */
+
 import { Component, inject, OnInit } from '@angular/core';
 import { APP_CONFIG } from '@eustrosoft-front/config';
 import { PRECONFIGURED_TRANSLATE_SERVICE } from '@eustrosoft-front/core';

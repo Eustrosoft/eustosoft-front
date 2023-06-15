@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ *
+ * This file is part of eustrosoft-front project.
+ * See the LICENSE file at the project root for licensing information.
+ */
+
 import { Route } from '@angular/router';
 import { LoginPageComponent } from './login-page/login-page.component';
 import { authenticationGuard, redirectGuard } from '@eustrosoft-front/security';

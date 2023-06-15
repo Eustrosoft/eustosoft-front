@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ *
+ * This file is part of eustrosoft-front project.
+ * See the LICENSE file at the project root for licensing information.
+ */
+
 import { inject, Injectable } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { UploadObject, UploadObjectForm } from '@eustrosoft-front/core';

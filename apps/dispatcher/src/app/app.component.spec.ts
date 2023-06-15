@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ *
+ * This file is part of eustrosoft-front project.
+ * See the LICENSE file at the project root for licensing information.
+ */
+
 import { TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
 import { NxWelcomeComponent } from './nx-welcome.component';

@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ *
+ * This file is part of eustrosoft-front project.
+ * See the LICENSE file at the project root for licensing information.
+ */
+
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { ProgressBarMode } from '@angular/material/progress-bar';
 

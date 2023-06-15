@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ *
+ * This file is part of eustrosoft-front project.
+ * See the LICENSE file at the project root for licensing information.
+ */
+
 import { NgModule } from '@angular/core';
 import { APP_BASE_HREF, CommonModule, PlatformLocation } from '@angular/common';
 import { ConfigService } from './services/config.service';

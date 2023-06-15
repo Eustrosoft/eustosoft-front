@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ *
+ * This file is part of eustrosoft-front project.
+ * See the LICENSE file at the project root for licensing information.
+ */
+
 import { CmsRequestActions } from '../../constants/enums/cms-actions.enum';
 import { Subsystems } from '../../constants/enums/subsystems.enum';
 import { FileSystemObjectTypes } from '../../constants/enums/file-system-object-types.enum';
