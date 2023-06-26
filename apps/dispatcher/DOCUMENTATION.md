@@ -1,94 +1,84 @@
-# Dispatcher Documentation
+# Документация по dispatcher
 
-## Table of Contents
-- [Introduction](#introduction)
-- [Getting Started](#getting-started)
-- [Project Structure](#project-structure)
-- [Dependencies](#dependencies)
-- [Components](#components)
-  - [Component A](#component-a)
-  - [Component B](#component-b)
-- [Services](#services)
-  - [Service A](#service-a)
-  - [Service B](#service-b)
-- [Directives](#directives)
-  - [Directive A](#directive-a)
-  - [Directive B](#directive-b)
-- [Modules](#modules)
-  - [Module A](#module-a)
-  - [Module B](#module-b)
-- [Routing and Navigation](#routing-and-navigation)
-- [Testing](#testing)
-- [Building](#building)
-- [Deployment](#deployment)
-- [Troubleshooting](#troubleshooting)
-- [Contributing](#contributing)
-- [License](#license)
+## Содержание
+- [Введение](#введение)
+- [Начало работы](#начало-работы)
+- [Структура проекта](#структура-проекта)
+- [Компоненты](#компоненты)
+  - [Компонент AppComponent](#компонент-appcomponent)
+  - [Компонент RequestsComponent](#компонент-requestscomponent)
+  - [Компонент RequestComponent](#компонент-requestcomponent)
+- [Сервисы](#сервисы)
+  - [Сервис RequestService](#сервис-requestservice)
+  - [Сервис RequestBuilderService](#сервис-requestbuilderservice)
+- [Модули](#модули)
+  - [Модуль AppModule](#модуль-appmodule)
+- [Маршрутизация и навигация](#маршрутизация-и-навигация)
+- [Тестирование](#тестирование)
+- [Развертывание](#развертывание)
 
-## Introduction
-...
+## Введение
 
-## Getting Started
-...
+Проект `dispatcher` предназначен для свободного исполнения `SQL` запросов с использованием определенного JSON протокола взаимодействия
 
-## Project Structure
-...
+## Начало работы
 
-## Dependencies
-...
+См. `README.md` в корне репозитория, подзаголовок "Локальный запуск"
 
-## Components
+## Структура проекта
 
-### Component A
-...
+Структура проекта соответсвует классической структуре `Angular` приложения. 
+Основная часть файлов и папок сформирована в соответствии с схемами `Angular`
 
-### Component B
-...
+## Компоненты
 
-## Services
+### Компонент `AppComponent`
 
-### Service A
-...
+Корневой компонент, отображает `header` из библиотеки и рендерит в `<router-outlet></router-outlet>` 
+компоненты соответствующие марщрутам в `apps/dispatcher/src/app/app.routes.ts`
 
-### Service B
-...
+### Компонент `LoginPageComponent`
 
-## Directives
+Представляет собой страницу для аутентификации. Использует `LoginComponent` из библиотеки `@eustrosoft-front/common-ui`.
+Внутрь библиотечного компонента передается локализированный текст и путь, куда перенаправить после успешной аутентфикации.
 
-### Directive A
-...
+### Компонент `RequestsComponent`
 
-### Directive B
-...
+Управляющий компонент-обертка для отображения и управления множеством форм запросов и результатов выполнения этих запросов.
 
-## Modules
+### Компонент `RequestComponent`
 
-### Module A
-...
+Компонент содержащий единичную форму. На вход получает конкретную форму и её индекс, а также список возможных типов запросов.
 
-### Module B
-...
+## Сервисы
 
-## Routing and Navigation
-...
+### Сервис `RequestService`
 
-## Testing
-...
+Предоставляет возможность взаимодействия с JSON протоколом Qtis. См. описание протокола и примеры в `README.md` , подзаголовок "Библиотека `core`"  
 
-## Building
-...
+### Сервис `RequestBuilderService`
 
-## Serving
-...
+Вспомогательный сервис для построения запросов в соответствии с интерфейсами протокола `Qtis`.
 
-## Deployment
-...
+## Модули
 
-## Troubleshooting
-...
+### Модуль `AppModule`
 
-## Contributing
-...
+Dispatcher достаточно компактное приложение, поэтому в нем один модуль. 
+Много функционала импортировано из модулей библиотек `common-ui`, `core`
+ 
+## Маршрутизация и навигация
 
-## License
-...
+Файл с маршрутизацией: `apps/dispatcher/src/app/app.routes.ts`
+
+## Тестирование
+
+На текущий момент в проекте отсутствуют тесты и инструкции по их запуску
+
+## Развертывание
+
+См. `README.md` в корне репозитория, подзаголовок "Развертывание"
+
+## Лицензия
+
+См. `LICENSE` в корне репозитория
