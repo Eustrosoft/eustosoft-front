@@ -1,4 +1,4 @@
-# Документация по dispatcher
+# Документация библиотеки common-ui
 
 ## Содержание
 - [Введение](#введение)
@@ -23,6 +23,7 @@
   - [Директива HoverShadowDirective](#директива-hovershadowdirective)
   - [Директива RippleHoverDirective](#директива-ripplehoverdirective)
 - [Тестирование](#тестирование)
+- [Лицензия](#лицензия)
 
 ## Введение
 
