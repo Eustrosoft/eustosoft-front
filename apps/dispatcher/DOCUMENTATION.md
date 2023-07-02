@@ -36,7 +36,7 @@
 ### Компонент `AppComponent`
 
 Корневой компонент, отображает `header` из библиотеки и рендерит в `<router-outlet></router-outlet>` 
-компоненты соответствующие марщрутам в `apps/dispatcher/src/app/app.routes.ts`
+компоненты соответствующие маршрутам в `apps/dispatcher/src/app/app.routes.ts`
 
 ### Компонент `LoginPageComponent`
 

@@ -331,7 +331,6 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
         cancelled: true,
       }))
     );
-    // this.control.patchValue([]);
     this.emitBuffer$.next();
     this.explorerUploadItemsService.uploadItems$.next([]);
     this.overlayHidden = true;

@@ -26,6 +26,7 @@ export class AppComponent implements OnInit {
   private translateService = inject(PRECONFIGURED_TRANSLATE_SERVICE);
   public translatedValues!: Observable<{
     title: string;
+    appName: string;
     appsButtonText: string;
     explorer: string;
     dispatcher: string;
@@ -35,18 +36,22 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.translatedValues = combineLatest([
       this.translateService.get('HEADER.TITLE'),
+      this.translateService.get('HEADER.APP_NAME'),
       this.translateService.get('HEADER.APPS_BUTTON_TEXT'),
       this.translateService.get('HEADER.APPS.EXPLORER'),
       this.translateService.get('HEADER.APPS.DISPATCHER'),
       this.translateService.get('HEADER.APPS.ALL_APPS_PAGE'),
     ]).pipe(
-      map(([title, appsButtonText, explorer, dispatcher, appsPage]) => ({
-        title,
-        appsButtonText,
-        explorer,
-        dispatcher,
-        appsPage,
-      }))
+      map(
+        ([title, appName, appsButtonText, explorer, dispatcher, appsPage]) => ({
+          title,
+          appName,
+          appsButtonText,
+          explorer,
+          dispatcher,
+          appsPage,
+        })
+      )
     );
   }
 }
