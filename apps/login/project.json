@@ -105,7 +105,7 @@
         },
         "development": {
           "browserTarget": "login:build:development",
-          "proxyConfig": "apps/login/proxy.conf.json"
+          "proxyConfig": "proxy.conf.js"
         }
       },
       "defaultConfiguration": "development"

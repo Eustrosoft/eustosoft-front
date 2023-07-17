@@ -104,7 +104,7 @@
         },
         "development": {
           "browserTarget": "dispatcher:build:development",
-          "proxyConfig": "apps/dispatcher/proxy.conf.json"
+          "proxyConfig": "proxy.conf.js"
         }
       },
       "defaultConfiguration": "development"
