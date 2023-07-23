@@ -5,11 +5,12 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-import { HoverShadowDirective } from './hover-shadow.directive';
+import { HoverDirective } from './hover.directive';
+import { ElementRef } from '@angular/core';
 
 describe('HoverShadowDirective', () => {
   it('should create an instance', () => {
-    const directive = new HoverShadowDirective();
+    const directive = new HoverDirective({} as ElementRef);
     expect(directive).toBeTruthy();
   });
 });

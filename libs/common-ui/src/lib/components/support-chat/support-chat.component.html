@@ -1,0 +1,120 @@
+<div class="container-fluid mt-3">
+  <div class="row h-inherit">
+    <div class="col-4 pe-0 h-inherit">
+      <div class="d-flex flex-column h-inherit">
+        <div
+          class="flex-grow-0 flex-shrink-0 bg-secondary bg-opacity-25 rounded-top"
+        >
+          <div class="d-flex align-items-center justify-content-between ps-2">
+            <h2 class="mb-0">Tickets</h2>
+            <div class="d-flex align-items-center">
+              <eustrosoft-front-button
+                [buttonType]="'button'"
+                [buttonStyleType]="'icon'"
+                [iconName]="'settings'"
+              ></eustrosoft-front-button>
+              <eustrosoft-front-button
+                [buttonType]="'button'"
+                [buttonStyleType]="'icon'"
+                [iconName]="'more_vert'"
+              ></eustrosoft-front-button>
+            </div>
+          </div>
+        </div>
+        <div class="flex-grow-1 h-100">
+          <mat-list class="h-100">
+            <cdk-virtual-scroll-viewport class="h-100" itemSize="50">
+              <ng-container *cdkVirtualFor="let ticket of tickets">
+                <mat-list-item
+                  eustrosoftFrontHoverCursor
+                  eustrosoftFrontHover
+                  [hoverClasses]="['shadow']"
+                  class="p-2 rounded-start"
+                  lines="3"
+                  [ngClass]="{
+                    'border-3 border-start border-secondary bg-secondary bg-opacity-10':
+                      selectedTicket.title === ticket.title
+                  }"
+                  (click)="ticketSelected(ticket)"
+                >
+                  <span matListItemTitle>{{ ticket.title }}</span>
+                  <span>
+                    {{ ticket.messages[ticket.messages.length - 1].message }}
+                  </span>
+                </mat-list-item>
+                <mat-divider></mat-divider>
+              </ng-container>
+            </cdk-virtual-scroll-viewport>
+          </mat-list>
+        </div>
+      </div>
+    </div>
+    <div class="col-8 h-inherit">
+      <div class="d-flex flex-column h-inherit">
+        <div
+          class="flex-grow-0 flex-shrink-0 bg-secondary bg-opacity-25 rounded-top"
+        >
+          <div class="d-flex align-items-center justify-content-between ps-2">
+            <h2 class="mb-0">{{ selectedTicket.title }}</h2>
+            <div class="d-flex align-items-center">
+              <eustrosoft-front-button
+                [buttonType]="'button'"
+                [buttonStyleType]="'icon'"
+                [iconName]="'more_vert'"
+              ></eustrosoft-front-button>
+            </div>
+          </div>
+        </div>
+        <div class="flex-grow-1 h-100 bg-secondary bg-opacity-10">
+          <div class="d-flex flex-column justify-content-between h-inherit">
+            <cdk-virtual-scroll-viewport
+              class="d-flex flex-column justify-content-end h-100"
+              itemSize="50"
+              #messagesVirtualScrollViewport
+            >
+              <ng-container *cdkVirtualFor="let msg of selectedTicket.messages">
+                <ng-container [ngSwitch]="msg.author">
+                  <div
+                    *ngSwitchCase="msgAuthor.ME"
+                    class="d-flex justify-content-end m-2 list-message-item"
+                  >
+                    <ng-container
+                      [ngTemplateOutlet]="msgTemplate"
+                      [ngTemplateOutletContext]="{ $implicit: msg }"
+                    ></ng-container>
+                  </div>
+                  <div
+                    *ngSwitchCase="msgAuthor.SUPPORT"
+                    class="d-flex m-2 list-message-item"
+                  >
+                    <ng-container
+                      [ngTemplateOutlet]="msgTemplate"
+                      [ngTemplateOutletContext]="{ $implicit: msg }"
+                    ></ng-container>
+                  </div>
+                </ng-container>
+              </ng-container>
+            </cdk-virtual-scroll-viewport>
+            <div class="d-flex align-items-center p-3 pe-1">
+              <eustrosoft-front-input
+                [fieldAppearance]="'outline'"
+                [control]="control"
+                [placeholder]="'Write a message...'"
+                class="flex-grow-1"
+              ></eustrosoft-front-input>
+              <eustrosoft-front-button
+                [buttonType]="'button'"
+                [buttonStyleType]="'icon'"
+                [iconName]="'send'"
+              ></eustrosoft-front-button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #msgTemplate let-msg>
+  <span class="p-2 bg-light rounded-1 mw-45">{{ msg.message }}</span>
+</ng-template>

@@ -24,7 +24,7 @@ import {
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
-import { HoverShadowDirective } from './directives/hover-shadow.directive';
+import { HoverDirective } from './directives/hover.directive';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { FilesDropZoneDirective } from './directives/files-drop-zone.directive';
@@ -33,6 +33,7 @@ import { ProgressBarComponent } from './components/progress-bar/progress-bar.com
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import {
   CdkFixedSizeVirtualScroll,
+  CdkVirtualForOf,
   CdkVirtualScrollViewport,
 } from '@angular/cdk/scrolling';
 import { HoverCursorDirective } from './directives/hover-cursor.directive';
@@ -45,6 +46,8 @@ import { A11yModule } from '@angular/cdk/a11y';
 import { LoginDialogComponent } from './components/login-dialog/login-dialog.component';
 import { LoginComponent } from './components/login-page/login.component';
 import { CoreModule } from '@eustrosoft-front/core';
+import { SupportChatComponent } from './components/support-chat/support-chat.component';
+import { MatListModule } from '@angular/material/list';
 
 @NgModule({
   imports: [
@@ -65,6 +68,8 @@ import { CoreModule } from '@eustrosoft-front/core';
     ConfigModule,
     A11yModule,
     CoreModule,
+    MatListModule,
+    CdkVirtualForOf,
   ],
   declarations: [
     HeaderComponent,
@@ -75,7 +80,7 @@ import { CoreModule } from '@eustrosoft-front/core';
     PreloaderComponent,
     SelectComponent,
     TextareaComponent,
-    HoverShadowDirective,
+    HoverDirective,
     FilesDropZoneDirective,
     RippleHoverDirective,
     ProgressBarComponent,
@@ -83,6 +88,7 @@ import { CoreModule } from '@eustrosoft-front/core';
     PromptDialogComponent,
     LoginDialogComponent,
     LoginComponent,
+    SupportChatComponent,
   ],
   exports: [
     HeaderComponent,
@@ -93,7 +99,7 @@ import { CoreModule } from '@eustrosoft-front/core';
     PreloaderComponent,
     SelectComponent,
     TextareaComponent,
-    HoverShadowDirective,
+    HoverDirective,
     FilesDropZoneDirective,
     RippleHoverDirective,
     ProgressBarComponent,

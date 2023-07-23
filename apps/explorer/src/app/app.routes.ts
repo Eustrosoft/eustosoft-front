@@ -10,11 +10,16 @@ import { ExplorerComponent } from './explorer/explorer.component';
 import { authenticationGuard } from '@eustrosoft-front/security';
 import { LoginPageComponent } from './login-page/login-page.component';
 import { UploadPageComponent } from './explorer/components/upload-page/upload-page.component';
+import { SupportChatComponent } from '@eustrosoft-front/common-ui';
 
 export const appRoutes: Route[] = [
   {
     path: 'login',
     component: LoginPageComponent,
+  },
+  {
+    path: 'support-chat',
+    component: SupportChatComponent,
   },
   {
     path: '',

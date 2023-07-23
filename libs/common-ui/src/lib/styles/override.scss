@@ -1,0 +1,136 @@
+/*!
+ * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ *
+ * This file is part of eustrosoft-front project.
+ * See the LICENSE file at the project root for licensing information.
+ */
+
+@import 'bootstrap/scss/functions';
+@import 'bootstrap/scss/variables';
+@import 'bootstrap/scss/maps';
+@import 'bootstrap/scss/mixins';
+@import 'bootstrap/scss/utilities';
+
+$utilities: (
+  "height": (
+    property: height,
+    class: h,
+    values: (
+      25: 25%,
+      50: 50%,
+      75: 75%,
+      100: 100%,
+      auto: auto,
+      inherit: inherit
+    )
+  ),
+  'viewport-height': (
+    property: height,
+    class: vh,
+    values: (
+      10: 10vh,
+      15: 15vh,
+      25: 25vh,
+      30: 35vh,
+      40: 40vh,
+      45: 45vh,
+      50: 50vh,
+      55: 55vh,
+      60: 65vh,
+      70: 70vh,
+      75: 75vh,
+      80: 80vh,
+      85: 85vh,
+      90: 90vh,
+      95: 95vh,
+      100: 100vh,
+    ),
+  ),
+  "max-width": (
+    property: max-width,
+    class: mw,
+    values: (
+      10: 10%,
+      15: 15%,
+      20: 20%,
+      25: 25%,
+      30: 30%,
+      35: 35%,
+      40: 40%,
+      45: 45%,
+      50: 50%,
+      55: 55%,
+      60: 60%,
+      65: 65%,
+      70: 70%,
+      75: 75%,
+      80: 80%,
+      85: 85%,
+      90: 90%,
+      95: 95%,
+      100: 100%,
+    )
+  ),
+  'viewport-width': (
+    property: width,
+    class: vw,
+    values: (
+      10: 10vw,
+      15: 15vw,
+      25: 25vw,
+      30: 35vw,
+      40: 40vw,
+      45: 45vw,
+      50: 50vw,
+      55: 55vw,
+      60: 65vw,
+      70: 70vw,
+      75: 75vw,
+      80: 80vw,
+      85: 85vw,
+      90: 90vw,
+      95: 95vw,
+      100: 100vw,
+    ),
+  ),
+  'line-height': (
+    property: line-height,
+    class: lh,
+    values: (
+      1: 1,
+      18: 1.8em,
+      sm: $line-height-sm,
+      base: $line-height-base,
+      lg: $line-height-lg,
+      xlg: 3,
+    ),
+  ),
+  'flex-basis': (
+    property: flex-basis,
+    class: flex-basis,
+    values: (
+      10: 10%,
+      15: 15%,
+      20: 20%,
+      25: 25%,
+      30: 30%,
+      35: 35%,
+      40: 40%,
+      45: 45%,
+      50: 50%,
+      55: 55%,
+      60: 60%,
+      65: 65%,
+      70: 70%,
+      75: 75%,
+      80: 80%,
+      85: 85%,
+      90: 90%,
+      95: 95%,
+      100: 100%,
+      auto: auto,
+    ),
+  ),
+);
+
+@import 'bootstrap/scss/utilities/api';

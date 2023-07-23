@@ -10,32 +10,33 @@ import {
   ElementRef,
   HostBinding,
   HostListener,
+  Input,
 } from '@angular/core';
 
 @Directive({
-  selector: '[eustrosoftFrontHoverShadow]',
+  selector: '[eustrosoftFrontHover]',
 })
-export class HoverShadowDirective {
+export class HoverDirective {
   constructor(private elementRef: ElementRef) {}
 
+  @Input() hoverClasses = ['shadow-lg', 'p-3', 'bg-body', 'rounded'];
   private classes = this.elementRef.nativeElement.classList as DOMTokenList;
-  private shadowClasses = ['shadow-lg', 'p-3', 'bg-body', 'rounded'];
 
   @HostBinding('style.cursor') cursor = 'pointer';
 
   @HostListener('mouseenter') onMouseEnter() {
-    this.applyShadow();
+    this.applyHover();
   }
 
   @HostListener('mouseleave') onMouseLeave() {
-    this.removeShadow();
+    this.removeHover();
   }
 
-  private applyShadow(): void {
-    this.classes.add(...this.shadowClasses);
+  private applyHover(): void {
+    this.classes.add(...this.hoverClasses);
   }
 
-  private removeShadow(): void {
-    this.classes.remove(...this.shadowClasses);
+  private removeHover(): void {
+    this.classes.remove(...this.hoverClasses);
   }
 }

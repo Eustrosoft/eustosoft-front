@@ -4,6 +4,18 @@
  * This file is part of eustrosoft-front project.
  * See the LICENSE file at the project root for licensing information.
  */
+@import 'variables';
+
+:host {
+  display: block;
+  height: $header-height;
+
+  ::ng-deep {
+    .mat-toolbar-row, .mat-toolbar-single-row {
+      height: inherit;
+    }
+  }
+}
 
 .logo-spacer {
   flex: 0.05 1 auto;
