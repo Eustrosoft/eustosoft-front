@@ -48,6 +48,8 @@ import { LoginComponent } from './components/login-page/login.component';
 import { CoreModule } from '@eustrosoft-front/core';
 import { SupportChatComponent } from './components/support-chat/support-chat.component';
 import { MatListModule } from '@angular/material/list';
+import { TicketListComponent } from './components/support-chat/ticket-list/ticket-list.component';
+import { TicketViewComponent } from './components/support-chat/ticket-view/ticket-view.component';
 
 @NgModule({
   imports: [
@@ -89,6 +91,8 @@ import { MatListModule } from '@angular/material/list';
     LoginDialogComponent,
     LoginComponent,
     SupportChatComponent,
+    TicketListComponent,
+    TicketViewComponent,
   ],
   exports: [
     HeaderComponent,

@@ -1,12 +1,10 @@
 import {
-  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
-  ViewChild,
+  HostListener,
+  OnInit,
 } from '@angular/core';
 import { Author, MessageMock, TicketMock } from './ticket-mocks.interface';
-import { FormControl } from '@angular/forms';
-import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 
 @Component({
   selector: 'eustrosoft-front-support-chat',
@@ -14,34 +12,37 @@ import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
   styleUrls: ['./support-chat.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SupportChatComponent implements AfterViewInit {
-  @ViewChild('messagesVirtualScrollViewport')
-  messagesVirtualScrollViewport!: CdkVirtualScrollViewport;
-
+export class SupportChatComponent implements OnInit {
   tickets = this.mockChats();
   selectedTicket: TicketMock = this.tickets[0];
-  control = new FormControl('', {
-    nonNullable: true,
-  });
-  msgAuthor = Author;
+  isCollapsed = true;
+  isXs = false;
 
-  ngAfterViewInit(): void {
-    this.messagesVirtualScrollViewport.scrollToIndex(
-      this.tickets[0].messages.length - 1
-    );
+  @HostListener('window:resize', ['$event'])
+  onWindowResize() {
+    this.setUpSidebar();
+  }
+
+  ngOnInit(): void {
+    this.setUpSidebar();
+  }
+
+  setUpSidebar() {
+    if (window.innerWidth <= 576) {
+      this.isCollapsed = true;
+      this.isXs = true;
+    } else {
+      this.isCollapsed = false;
+      this.isXs = false;
+    }
+  }
+
+  toggleSidebar() {
+    this.isCollapsed = !this.isCollapsed;
   }
 
   ticketSelected(ticket: TicketMock) {
     this.selectedTicket = ticket;
-    this.messagesVirtualScrollViewport.scrollToIndex(
-      ticket.messages.length - 1
-    );
-    // const items = document.getElementsByClassName('list-message-item');
-    // items[items.length - 1].scrollIntoView();
-    setTimeout(() => {
-      const items = document.getElementsByClassName('list-message-item');
-      items[items.length - 1].scrollIntoView();
-    }, 10);
   }
 
   mockChats(): TicketMock[] {
