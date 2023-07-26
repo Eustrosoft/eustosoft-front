@@ -32,6 +32,7 @@ export class TicketViewComponent implements AfterViewInit, OnChanges {
   msgAuthor = Author;
 
   scrollToBottom() {
+    // TODO работает не корректно, то скроллит на середину, то в конец, то не скроллит вовсе, нужно переделывать
     setTimeout(() => {
       this.messagesVirtualScrollViewport.scrollTo({
         bottom: 0,

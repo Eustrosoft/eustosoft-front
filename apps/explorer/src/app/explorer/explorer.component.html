@@ -5,8 +5,8 @@
   ~ See the LICENSE file at the project root for licensing information.
   -->
 
-<div class="container-fluid">
-  <div class="row gx-3 mb-3">
+<div class="container-fluid d-flex flex-column">
+  <div class="row gx-3 mt-3 mb-3">
     <div class="col-2">
       <eustrosoft-front-button
         [buttonType]="'button'"
@@ -37,6 +37,16 @@
           <span>Custom upload</span>
         </button>
       </mat-menu>
+    </div>
+    <div class="col-2">
+      <eustrosoft-front-button
+        [buttonType]="'button'"
+        [buttonStyleType]="'stroked'"
+        [buttonText]="'MSG'"
+        [color]="'primary'"
+        routerLink="support-chat"
+      >
+      </eustrosoft-front-button>
     </div>
     <div class="col-2" hidden>
       <eustrosoft-front-select
@@ -100,7 +110,7 @@
       (breadcrumbClicked)="openByPath($event)"
     ></eustrosoft-front-breadcrumbs>
   </div>
-  <div class="row gx-3">
+  <div class="row gx-3 flex-grow-1 overflow-auto">
     <eustrosoft-front-filesystem-table
       [content]="(content$ | async) || []"
       (openClicked)="open($event)"

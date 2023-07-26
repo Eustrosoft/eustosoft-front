@@ -7,13 +7,14 @@
 
 import { inject } from '@angular/core';
 import { Router, UrlTree } from '@angular/router';
-import { delay, Observable, of, switchMap } from 'rxjs';
+import { catchError, delay, Observable, of, switchMap } from 'rxjs';
 import { AuthenticationService } from '../services/authentication.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import {
   PingResponse,
   QtisRequestResponseInterface,
 } from '@eustrosoft-front/core';
+import { HttpErrorResponse } from '@angular/common/http';
 
 export const authenticationGuard = (): Observable<UrlTree | boolean> => {
   const authenticationService: AuthenticationService = inject(
@@ -22,6 +23,7 @@ export const authenticationGuard = (): Observable<UrlTree | boolean> => {
   const snackBar: MatSnackBar = inject(MatSnackBar);
   const router: Router = inject(Router);
 
+  // TODO локализация ошибок
   return authenticationService.getAuthenticationInfo().pipe(
     switchMap((pingResponse: QtisRequestResponseInterface<PingResponse>) => {
       if (pingResponse.r[0].e !== 0) {
@@ -30,6 +32,13 @@ export const authenticationGuard = (): Observable<UrlTree | boolean> => {
       }
       authenticationService.isAuthenticated.next(true);
       return of(true);
+    }),
+    catchError((err: HttpErrorResponse) => {
+      snackBar.open(
+        `${err.status} ${err.statusText} | Error text: ${err.error}`,
+        'Close'
+      );
+      return of(false);
     })
   );
 };

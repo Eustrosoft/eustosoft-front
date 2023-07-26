@@ -6,8 +6,15 @@
  */
 
 import { inject, Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, switchMap, tap } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import {
+  BehaviorSubject,
+  catchError,
+  Observable,
+  switchMap,
+  tap,
+  throwError,
+} from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import {
   PingRequest,
   PingResponse,
@@ -45,7 +52,8 @@ export class AuthenticationService {
       ),
       tap((response) => {
         this.userName.next(response.r[0].fullName);
-      })
+      }),
+      catchError((err: HttpErrorResponse) => throwError(() => err))
     );
   }
 }

@@ -6,19 +6,27 @@
  */
 
 @import 'variables';
-
-:host::ng-deep.uploadType {
-  .mat-mdc-form-field-subscript-wrapper {
-    display: none;
-  }
-  .mat-mdc-text-field-wrapper {
-    padding-bottom: 0 !important;
-    margin: 0 !important;
-    height: 2.3em;
-    .mat-mdc-form-field-flex {
-      .mat-mdc-form-field-infix {
-        padding: 0.5em 0 !important;
+:host {
+  ::ng-deep {
+    .uploadType {
+      .mat-mdc-form-field-subscript-wrapper {
+        display: none;
+      }
+      .mat-mdc-text-field-wrapper {
+        padding-bottom: 0 !important;
+        margin: 0 !important;
+        height: 2.3em;
+        .mat-mdc-form-field-flex {
+          .mat-mdc-form-field-infix {
+            padding: 0.5em 0 !important;
+          }
+        }
       }
     }
   }
+}
+
+.container-fluid {
+  height: 92vh;
+  overflow:hidden;
 }

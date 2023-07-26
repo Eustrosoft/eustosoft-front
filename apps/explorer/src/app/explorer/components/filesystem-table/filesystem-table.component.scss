@@ -24,11 +24,6 @@ tr.table-row {
   transition: 0.2s background;
 }
 
-.table-container {
-  max-height: 75vh;
-  overflow: auto;
-}
-
 .truncate-filename {
   max-width: 50vw;
   white-space: nowrap;
