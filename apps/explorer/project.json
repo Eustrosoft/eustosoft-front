@@ -87,8 +87,7 @@
           "vendorChunk": true,
           "extractLicenses": false,
           "sourceMap": true,
-          "namedChunks": true,
-          "localize": ["en-US"]
+          "namedChunks": true
         }
       },
       "defaultConfiguration": "production"
@@ -112,10 +111,7 @@
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
       "options": {
-        "browserTarget": "explorer:build",
-        "outputPath": "apps/explorer/src/locale",
-        "outFile": "en-US.json",
-        "format": "json"
+        "browserTarget": "explorer:build"
       }
     },
     "lint": {

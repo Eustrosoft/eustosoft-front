@@ -27,4 +27,3 @@ export * from './lib/components/progress-bar/progress-bar.component';
 export * from './lib/components/prompt-dialog/prompt-dialog.component';
 export * from './lib/components/prompt-dialog/prompt-dialog-data.interface';
 export * from './lib/components/select/option.interface';
-export * from './lib/components/support-chat/support-chat.component';

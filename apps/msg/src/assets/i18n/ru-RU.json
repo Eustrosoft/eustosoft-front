@@ -1,0 +1,19 @@
+{
+  "HEADER": {
+    "TITLE": "Приложения TIS",
+    "APP_NAME": "Сообщения",
+    "APPS_BUTTON_TEXT": "Приложения",
+    "APPS": {
+      "LOGIN": "Логин",
+      "DISPATCHER": "Исполнитель запросов",
+      "EXPLORER": "Проводник",
+      "ALL_APPS_PAGE": "Все приложения"
+    }
+  },
+  "LOGIN_PAGE": {
+    "AUTHENTICATION_HEADING": "Аутентификация",
+    "LOGIN_LABEL": "Логин",
+    "PASSWORD_LABEL": "Пароль",
+    "SUBMIT_BUTTON_TEXT": "Войти"
+  }
+}

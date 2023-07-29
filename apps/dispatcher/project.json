@@ -13,8 +13,11 @@
         "index": "apps/dispatcher/src/index.html",
         "main": "apps/dispatcher/src/main.ts",
         "baseHref": "/dispatcher/",
-        "polyfills": ["zone.js", "apps/dispatcher/src/polyfills.ts"],
+        "polyfills": ["zone.js"],
         "tsConfig": "apps/dispatcher/tsconfig.app.json",
+        "stylePreprocessorOptions": {
+          "includePaths": ["libs/common-ui/src/lib/styles"]
+        },
         "inlineStyleLanguage": "scss",
         "assets": [
           "apps/dispatcher/src/favicon.ico",
@@ -87,8 +90,7 @@
           "vendorChunk": true,
           "extractLicenses": false,
           "sourceMap": true,
-          "namedChunks": true,
-          "localize": ["en-US"]
+          "namedChunks": true
         }
       },
       "defaultConfiguration": "production"
@@ -112,10 +114,7 @@
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
       "options": {
-        "browserTarget": "dispatcher:build",
-        "outputPath": "apps/dispatcher/src/locale",
-        "outFile": "en-US.json",
-        "format": "json"
+        "browserTarget": "dispatcher:build"
       }
     },
     "lint": {

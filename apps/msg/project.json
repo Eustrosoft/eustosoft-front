@@ -1,0 +1,140 @@
+{
+  "name": "msg",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/msg/src",
+  "prefix": "eustrosoft-front",
+  "targets": {
+    "build": {
+      "executor": "@angular-devkit/build-angular:browser",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/msg",
+        "index": "apps/msg/src/index.html",
+        "main": "apps/msg/src/main.ts",
+        "baseHref": "/msg/",
+        "polyfills": ["zone.js"],
+        "tsConfig": "apps/msg/tsconfig.app.json",
+        "stylePreprocessorOptions": {
+          "includePaths": ["libs/common-ui/src/lib/styles"]
+        },
+        "inlineStyleLanguage": "scss",
+        "assets": ["apps/msg/src/favicon.ico", "apps/msg/src/assets"],
+        "styles": [
+          "@angular/material/prebuilt-themes/deeppurple-amber.css",
+          "node_modules/bootstrap/scss/bootstrap.scss",
+          "libs/common-ui/src/lib/material/css/roboto.css",
+          "libs/common-ui/src/lib/material/css/material-symbols-outlined.css",
+          "apps/msg/src/styles.scss"
+        ],
+        "scripts": []
+      },
+      "configurations": {
+        "production": {
+          "assets": [
+            "apps/msg/src/favicon.ico",
+            {
+              "glob": "config.json",
+              "input": "libs/config/src/lib/configurations/prod",
+              "output": "/"
+            },
+            {
+              "glob": "*.json",
+              "input": "apps/msg/src/assets/i18n",
+              "output": "/assets/i18n/"
+            }
+          ],
+          "outputHashing": "all",
+          "optimization": true,
+          "sourceMap": false,
+          "namedChunks": false,
+          "aot": true,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "buildOptimizer": true
+        },
+        "stage": {
+          "assets": [
+            "apps/msg/src/favicon.ico",
+            {
+              "glob": "config.json",
+              "input": "libs/config/src/lib/configurations/stage",
+              "output": "/"
+            },
+            {
+              "glob": "*.json",
+              "input": "apps/msg/src/assets/i18n",
+              "output": "/assets/i18n/"
+            }
+          ]
+        },
+        "development": {
+          "assets": [
+            "apps/msg/src/favicon.ico",
+            {
+              "glob": "config.json",
+              "input": "libs/config/src/lib/configurations/dev",
+              "output": "/"
+            },
+            {
+              "glob": "*.json",
+              "input": "apps/msg/src/assets/i18n",
+              "output": "/assets/i18n/"
+            }
+          ],
+          "buildOptimizer": false,
+          "optimization": false,
+          "vendorChunk": true,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "executor": "@angular-devkit/build-angular:dev-server",
+      "options": {
+        "port": 4203
+      },
+      "configurations": {
+        "production": {
+          "browserTarget": "msg:build:production"
+        },
+        "development": {
+          "browserTarget": "msg:build:development",
+          "proxyConfig": "proxy.conf.js"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "browserTarget": "msg:build"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/msg/**/*.ts", "apps/msg/**/*.html"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/msg/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    }
+  },
+  "tags": []
+}

@@ -6,6 +6,7 @@
  */
 
 @import 'variables';
+
 :host {
   ::ng-deep {
     .uploadType {
@@ -27,6 +28,6 @@
 }
 
 .container-fluid {
-  height: 92vh;
-  overflow:hidden;
+  height: $main-container-height;
+  overflow: hidden;
 }

@@ -13,7 +13,7 @@
         "index": "apps/login/src/index.html",
         "main": "apps/login/src/main.ts",
         "baseHref": "/login/",
-        "polyfills": ["zone.js", "apps/login/src/polyfills.ts"],
+        "polyfills": ["zone.js"],
         "tsConfig": "apps/login/tsconfig.app.json",
         "stylePreprocessorOptions": {
           "includePaths": ["libs/common-ui/src/lib/styles"]
@@ -76,7 +76,6 @@
               "input": "libs/config/src/lib/configurations/dev",
               "output": "/"
             },
-
             {
               "glob": "*.json",
               "input": "apps/login/src/assets/i18n",
@@ -88,8 +87,7 @@
           "vendorChunk": true,
           "extractLicenses": false,
           "sourceMap": true,
-          "namedChunks": true,
-          "localize": ["en-US"]
+          "namedChunks": true
         }
       },
       "defaultConfiguration": "production"
@@ -113,10 +111,7 @@
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
       "options": {
-        "browserTarget": "login:build",
-        "outputPath": "apps/login/src/locale",
-        "outFile": "en-US.json",
-        "format": "json"
+        "browserTarget": "login:build"
       }
     },
     "lint": {

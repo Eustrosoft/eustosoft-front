@@ -46,10 +46,7 @@ import { A11yModule } from '@angular/cdk/a11y';
 import { LoginDialogComponent } from './components/login-dialog/login-dialog.component';
 import { LoginComponent } from './components/login-page/login.component';
 import { CoreModule } from '@eustrosoft-front/core';
-import { SupportChatComponent } from './components/support-chat/support-chat.component';
 import { MatListModule } from '@angular/material/list';
-import { TicketListComponent } from './components/support-chat/ticket-list/ticket-list.component';
-import { TicketViewComponent } from './components/support-chat/ticket-view/ticket-view.component';
 
 @NgModule({
   imports: [
@@ -90,9 +87,6 @@ import { TicketViewComponent } from './components/support-chat/ticket-view/ticke
     PromptDialogComponent,
     LoginDialogComponent,
     LoginComponent,
-    SupportChatComponent,
-    TicketListComponent,
-    TicketViewComponent,
   ],
   exports: [
     HeaderComponent,

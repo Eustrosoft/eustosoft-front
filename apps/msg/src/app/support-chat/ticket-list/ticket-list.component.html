@@ -1,0 +1,59 @@
+<!--
+  ~ Copyright (c) 2023. IdrisovII & EustroSoft.org
+  ~
+  ~ This file is part of eustrosoft-front project.
+  ~ See the LICENSE file at the project root for licensing information.
+  -->
+
+<div class="d-flex flex-column h-inherit">
+  <div
+    [ngClass]="{ 'rounded-top': !removeBorderRadius }"
+    class="flex-grow-0 flex-shrink-0 bg-secondary bg-opacity-25"
+  >
+    <div class="d-flex align-items-center justify-content-between ps-2">
+      <div class="d-flex align-items-center">
+        <eustrosoft-front-button
+          [buttonType]="'button'"
+          [buttonStyleType]="'icon'"
+          [iconName]="'menu'"
+          class="d-sm-none"
+          (clicked)="collapseClicked.emit()"
+        ></eustrosoft-front-button>
+        <h2 class="mb-0">Tickets</h2>
+      </div>
+      <div class="d-flex align-items-center">
+        <eustrosoft-front-button
+          [buttonType]="'button'"
+          [buttonStyleType]="'icon'"
+          [iconName]="'settings'"
+        ></eustrosoft-front-button>
+      </div>
+    </div>
+  </div>
+  <div class="flex-grow-1 h-100">
+    <mat-list class="h-100">
+      <cdk-virtual-scroll-viewport class="h-100" itemSize="50">
+        <ng-container *cdkVirtualFor="let ticket of tickets">
+          <mat-list-item
+            eustrosoftFrontHoverCursor
+            eustrosoftFrontHover
+            [hoverClasses]="['shadow']"
+            class="p-2 rounded-start"
+            lines="3"
+            [ngClass]="{
+              'border-3 border-start border-secondary bg-secondary bg-opacity-10':
+                selectedTicket.title === ticket.title
+            }"
+            (click)="selectTicket(ticket)"
+          >
+            <span matListItemTitle>{{ ticket.title }}</span>
+            <span>
+              {{ ticket.messages[ticket.messages.length - 1].message }}
+            </span>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+        </ng-container>
+      </cdk-virtual-scroll-viewport>
+    </mat-list>
+  </div>
+</div>

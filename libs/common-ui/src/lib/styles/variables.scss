@@ -6,6 +6,7 @@
  */
 
 $header-height: 8vh;
+$main-container-height: calc(100vh - $header-height);
 
 $blue: #004b87;
 $gray: #c0c0c0;
