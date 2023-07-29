@@ -12,7 +12,7 @@
       class="col-6 col-sm-4 col-md-4 col-lg-4 col-xl-4 pe-0 h-inherit"
     >
       <eustrosoft-front-ticket-list
-        [tickets]="tickets"
+        [tickets]="(tickets$ | async) || []"
         [removeBorderRadius]="isXs"
         (ticketSelected)="ticketSelected($event)"
         (collapseClicked)="toggleSidebar()"
@@ -21,7 +21,8 @@
     </div>
     <div class="col-12 col-sm-8 col-md-8 col-lg-8 col-xl-8 h-inherit">
       <eustrosoft-front-ticket-view
-        [selectedTicket]="this.selectedTicket"
+        [selectedTicket]="selectedTicket"
+        [selectedTicketMessages]="(ticketMessages$ | async) || []"
         (collapseClicked)="toggleSidebar()"
         class="h-inherit"
       ></eustrosoft-front-ticket-view>

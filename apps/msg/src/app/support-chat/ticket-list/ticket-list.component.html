@@ -25,30 +25,35 @@
         <eustrosoft-front-button
           [buttonType]="'button'"
           [buttonStyleType]="'icon'"
+          [iconName]="'add'"
+        ></eustrosoft-front-button>
+        <eustrosoft-front-button
+          [buttonType]="'button'"
+          [buttonStyleType]="'icon'"
           [iconName]="'settings'"
         ></eustrosoft-front-button>
       </div>
     </div>
   </div>
   <div class="flex-grow-1 h-100">
-    <mat-list class="h-100">
+    <mat-list *ngIf="tickets.length > 0; else noTicketsTemplate" class="h-100">
       <cdk-virtual-scroll-viewport class="h-100" itemSize="50">
         <ng-container *cdkVirtualFor="let ticket of tickets">
           <mat-list-item
             eustrosoftFrontHoverCursor
             eustrosoftFrontHover
-            [hoverClasses]="['shadow']"
-            class="p-2 rounded-start"
+            [hoverClasses]="['shadow-lg']"
+            class="p-2 my-2 rounded-start"
             lines="3"
             [ngClass]="{
-              'border-3 border-start border-secondary bg-secondary bg-opacity-10':
-                selectedTicket.title === ticket.title
+              'border-3 border-start border-secondary bg-secondary bg-opacity-25':
+                selectedTicket && selectedTicket.id === ticket.id
             }"
             (click)="selectTicket(ticket)"
           >
             <span matListItemTitle>{{ ticket.title }}</span>
             <span>
-              {{ ticket.messages[ticket.messages.length - 1].message }}
+              {{ ticket.date | date }}
             </span>
           </mat-list-item>
           <mat-divider></mat-divider>
@@ -57,3 +62,16 @@
     </mat-list>
   </div>
 </div>
+
+<ng-template #noTicketsTemplate>
+  <div
+    class="d-flex flex-column align-items-center justify-content-center h-inherit"
+  >
+    <h2>Create new ticket</h2>
+    <eustrosoft-front-button
+      [buttonType]="'button'"
+      [buttonStyleType]="'icon'"
+      [iconName]="'add'"
+    ></eustrosoft-front-button>
+  </div>
+</ng-template>

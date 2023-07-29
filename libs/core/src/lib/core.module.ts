@@ -5,7 +5,7 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, LOCALE_ID, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControlPipe } from './pipes/form-control.pipe';
 import { FormArrayPipe } from './pipes/form-array.pipe';
@@ -23,6 +23,7 @@ import { HttpLoaderFactory } from './functions/i18n-http-loader.function';
 import { SupportedLanguages } from './constants/enums/supported-languages.enum';
 import { PRECONFIGURED_TRANSLATE_SERVICE } from './di/preconfigured-translate-service.token';
 import { BytesToSizePipe } from './pipes/bytes-to-size.pipe';
+import { initializeLocales } from './functions/locale-initializer.function';
 
 @NgModule({
   declarations: [FormControlPipe, FormArrayPipe, ToNumberPipe, BytesToSizePipe],
@@ -75,6 +76,17 @@ import { BytesToSizePipe } from './pipes/bytes-to-size.pipe';
         return translateService;
       },
       deps: [TranslateService],
+    },
+    {
+      provide: LOCALE_ID,
+      useFactory: (translateService: TranslateService) =>
+        translateService.getBrowserCultureLang(),
+      deps: [TranslateService],
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: () => initializeLocales,
+      multi: true,
     },
     {
       provide: HTTP_INTERCEPTORS,

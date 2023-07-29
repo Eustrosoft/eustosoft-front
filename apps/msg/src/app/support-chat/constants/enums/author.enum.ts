@@ -5,17 +5,8 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-export interface TicketMock {
-  title: string;
-  messages: MessageMock[];
-}
-
-export interface MessageMock {
-  author: Author;
-  message: string;
-}
-
 export enum Author {
   ME = 'me',
   SUPPORT = 'support',
+  THIRD_USER = 'third_user',
 }

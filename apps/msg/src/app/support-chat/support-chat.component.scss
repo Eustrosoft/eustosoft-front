@@ -12,6 +12,9 @@
   }
 
   ::ng-deep {
+    .mdc-icon-button {
+      font-size: 22px;
+    }
     .mdc-list-item {
       padding-left: 0;
       padding-right: 0;

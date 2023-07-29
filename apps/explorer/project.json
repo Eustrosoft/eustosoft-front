@@ -13,7 +13,7 @@
         "index": "apps/explorer/src/index.html",
         "main": "apps/explorer/src/main.ts",
         "baseHref": "/explorer/",
-        "polyfills": ["zone.js", "apps/explorer/src/polyfills.ts"],
+        "polyfills": ["zone.js"],
         "tsConfig": "apps/explorer/tsconfig.app.json",
         "stylePreprocessorOptions": {
           "includePaths": ["libs/common-ui/src/lib/styles"]

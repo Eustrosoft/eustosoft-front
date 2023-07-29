@@ -16,14 +16,8 @@
           class="d-sm-none"
           (clicked)="collapseClicked.emit()"
         ></eustrosoft-front-button>
-        <eustrosoft-front-button
-          [buttonType]="'button'"
-          [buttonStyleType]="'icon'"
-          [iconName]="'arrow_downward'"
-          (clicked)="scrollToBottom()"
-        ></eustrosoft-front-button>
         <h2 class="mb-0">
-          {{ selectedTicket.title }} MSG: {{ selectedTicket.messages.length }}
+          {{ selectedTicket && selectedTicket.title }}
         </h2>
       </div>
       <div class="d-flex align-items-center">
@@ -31,18 +25,29 @@
           [buttonType]="'button'"
           [buttonStyleType]="'icon'"
           [iconName]="'more_vert'"
+          [matMenuTriggerFor]="ticketActionsMenu"
+          [hidden]="!selectedTicket"
         ></eustrosoft-front-button>
+        <mat-menu #ticketActionsMenu="matMenu">
+          <button mat-menu-item>
+            <mat-icon>cancel</mat-icon>
+            <span>Close ticket</span>
+          </button>
+        </mat-menu>
       </div>
     </div>
   </div>
   <div class="flex-grow-1 h-100 bg-secondary bg-opacity-10">
-    <div class="d-flex flex-column justify-content-between h-inherit">
+    <div
+      *ngIf="selectedTicket; else noSelectedTicketTemplate"
+      class="d-flex flex-column justify-content-between h-inherit"
+    >
       <cdk-virtual-scroll-viewport
         class="d-flex flex-column justify-content-end h-100"
         itemSize="50"
         #messagesVirtualScrollViewport
       >
-        <ng-container *cdkVirtualFor="let msg of selectedTicket.messages">
+        <ng-container *cdkVirtualFor="let msg of selectedTicketMessages">
           <ng-container [ngSwitch]="msg.author">
             <div
               *ngSwitchCase="msgAuthor.ME"
@@ -53,10 +58,7 @@
                 [ngTemplateOutletContext]="{ $implicit: msg }"
               ></ng-container>
             </div>
-            <div
-              *ngSwitchCase="msgAuthor.SUPPORT"
-              class="d-flex m-2 list-message-item"
-            >
+            <div *ngSwitchDefault class="d-flex m-2 list-message-item">
               <ng-container
                 [ngTemplateOutlet]="msgTemplate"
                 [ngTemplateOutletContext]="{ $implicit: msg }"
@@ -82,5 +84,21 @@
   </div>
 </div>
 <ng-template #msgTemplate let-msg>
-  <span class="p-2 bg-light rounded-1 mw-45">{{ msg.message }}</span>
+  <div class="d-flex flex-column mw-45">
+    <div class="p-2 bg-light rounded-1">
+      <span>{{ msg.message }}</span>
+      <div class="d-flex justify-content-end">
+        <span class="fw-light fst-italic">{{ msg.author }}</span>
+        <!--      <span class="fw-light">{{ msg.messageDateTime | date : 'short' }}</span>-->
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #noSelectedTicketTemplate>
+  <div
+    class="d-flex flex-column align-items-center justify-content-center h-inherit"
+  >
+    <h2>Select ticket from menu</h2>
+  </div>
 </ng-template>

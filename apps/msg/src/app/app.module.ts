@@ -26,6 +26,9 @@ import {
 } from '@angular/cdk/scrolling';
 import { MatListModule } from '@angular/material/list';
 import { LoginPageComponent } from './login-page/login-page.component';
+import { TicketsService } from './support-chat/services/tickets.service';
+import { TicketMessagesService } from './support-chat/services/ticket-messages.service';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   declarations: [
@@ -47,8 +50,9 @@ import { LoginPageComponent } from './login-page/login-page.component';
     MatListModule,
     CdkVirtualForOf,
     CdkFixedSizeVirtualScroll,
+    MatIconModule,
   ],
-  providers: [],
+  providers: [TicketsService, TicketMessagesService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

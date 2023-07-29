@@ -10,12 +10,10 @@ import {
   Component,
   EventEmitter,
   Input,
-  OnChanges,
   OnInit,
   Output,
-  SimpleChanges,
 } from '@angular/core';
-import { TicketMock } from '../ticket-mocks.interface';
+import { Ticket } from '../interfaces/ticket.interface';
 
 @Component({
   selector: 'eustrosoft-front-ticket-list',
@@ -23,24 +21,19 @@ import { TicketMock } from '../ticket-mocks.interface';
   styleUrls: ['./ticket-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TicketListComponent implements OnInit, OnChanges {
-  @Input() tickets!: TicketMock[];
+export class TicketListComponent implements OnInit {
+  @Input() tickets!: Ticket[];
   @Input() removeBorderRadius!: boolean;
-  @Output() ticketSelected = new EventEmitter<TicketMock>();
+  @Output() ticketSelected = new EventEmitter<Ticket>();
   @Output() collapseClicked = new EventEmitter<void>();
 
-  selectedTicket!: TicketMock;
+  selectedTicket: Ticket | undefined = undefined;
 
   ngOnInit(): void {
-    this.selectedTicket = this.tickets[0];
+    // this.selectedTicket = this.tickets[0];
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    // console.log(changes);
-    // console.log(this.removeBorderRadius);
-  }
-
-  selectTicket(ticket: TicketMock) {
+  selectTicket(ticket: Ticket) {
     this.selectedTicket = ticket;
     this.ticketSelected.emit(ticket);
   }
