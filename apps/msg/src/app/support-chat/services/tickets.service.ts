@@ -14,7 +14,7 @@ import { LocalDbNameEnum } from '../constants/enums/local-db-name.enum';
 
 @Injectable()
 export class TicketsService {
-  getTickets(): Observable<Ticket[]> {
+  getTickets(userId: number): Observable<Ticket[]> {
     return of(localStorage.getItem(LocalDbNameEnum.TIS_TICKET)).pipe(
       switchMap((value) =>
         iif(
@@ -24,6 +24,11 @@ export class TicketsService {
         )
       ),
       map<string, Ticket[]>((value) => JSON.parse(value)),
+      map((tickets) =>
+        tickets.filter((ticket) =>
+          ticket.users.some((user) => user.id === userId)
+        )
+      ),
       catchError((error: string) => {
         console.error('Error occurred:', error);
         return EMPTY;

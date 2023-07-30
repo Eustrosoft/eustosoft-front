@@ -11,6 +11,7 @@ import {
 } from 'rxjs';
 import { LocalDbNameEnum } from '../constants/enums/local-db-name.enum';
 import { TicketMessage } from '../interfaces/ticket-message.interface';
+import { User } from '../interfaces/user.interface';
 
 @Injectable()
 export class TicketMessagesService {
@@ -25,12 +26,32 @@ export class TicketMessagesService {
       ),
       map<string, TicketMessage[]>((value) => JSON.parse(value)),
       map((messages) =>
-        messages.filter((message) => message.ticketId === ticketId)
+        messages.filter((message) => message.chat_id === ticketId)
       ),
       catchError((error: string) => {
         console.error('Error occurred:', error);
         return EMPTY;
       })
     );
+  }
+
+  putMessage(ticketId: number, message: string, user: User) {
+    const messages = JSON.parse(
+      localStorage.getItem(LocalDbNameEnum.TIS_MESSAGE) as string
+    ) as TicketMessage[];
+    const lastId = messages[messages.length - 1].id;
+
+    messages.push({
+      id: lastId + 1,
+      chat_id: ticketId,
+      user_id: user.id,
+      user_name: user.name,
+      text: message,
+      content: null,
+      time_created: new Date().toISOString(),
+      time_changed: '',
+    });
+
+    localStorage.setItem(LocalDbNameEnum.TIS_MESSAGE, JSON.stringify(messages));
   }
 }

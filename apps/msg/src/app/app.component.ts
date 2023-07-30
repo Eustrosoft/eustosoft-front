@@ -9,10 +9,10 @@ import { Component, inject, OnInit } from '@angular/core';
 import { APP_CONFIG } from '@eustrosoft-front/config';
 import { PRECONFIGURED_TRANSLATE_SERVICE } from '@eustrosoft-front/core';
 import { combineLatest, map, Observable } from 'rxjs';
-import { LocalDbNameEnum } from './support-chat/constants/enums/local-db-name.enum';
 import { TicketMessage } from './support-chat/interfaces/ticket-message.interface';
+import { User } from './support-chat/interfaces/user.interface';
 import { Ticket } from './support-chat/interfaces/ticket.interface';
-import { Author } from './support-chat/constants/enums/author.enum';
+import { LocalDbNameEnum } from './support-chat/constants/enums/local-db-name.enum';
 
 @Component({
   selector: 'eustrosoft-front-root',
@@ -61,13 +61,29 @@ export class AppComponent implements OnInit {
       return;
     }
 
+    const users: User[] = [];
     const tickets: Ticket[] = [];
     const messages: TicketMessage[] = [];
 
-    // Helper function to get a random author from the Author enum
-    function getRandomAuthor(): Author {
-      const authors = Object.values(Author);
-      return authors[Math.floor(Math.random() * authors.length)];
+    function getRandomUsers(users: User[], count: number): User[] {
+      const randomUsers: User[] = [];
+      const shuffledUsers = users.slice(); // Create a copy of the users array
+
+      // Shuffle the array to get random users
+      for (let i = shuffledUsers.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffledUsers[i], shuffledUsers[j]] = [
+          shuffledUsers[j],
+          shuffledUsers[i],
+        ];
+      }
+
+      // Get the first 'count' users from the shuffled array
+      for (let i = 0; i < count && i < shuffledUsers.length; i++) {
+        randomUsers.push(shuffledUsers[i]);
+      }
+
+      return randomUsers;
     }
 
     function getRandomDate(): string {
@@ -88,12 +104,29 @@ export class AppComponent implements OnInit {
       return randomDate.toISOString(); // Get the date and time in 'YYYY-MM-DDTHH:mm:ssZ' format
     }
 
+    function getRandomBoolean(): boolean {
+      return Math.random() < 0.5; // Randomly return true or false
+    }
+
+    // Generate 10 users
+    for (let userId = 1; userId <= 10; userId++) {
+      const user = this.generateMockUser(userId);
+      users.push(user);
+    }
     // Generate 25 tickets
     for (let i = 1; i <= 25; i++) {
+      const ticketUsers = getRandomUsers(
+        users,
+        Math.floor(Math.random() * 9) + 2
+      );
+
       const ticket: Ticket = {
         id: i,
-        title: `Ticket ${i}`,
-        date: getRandomDate(),
+        name: `Ticket №${i}`,
+        time_created: getRandomDate(),
+        owner: getRandomUsers(users, 1)[0],
+        users: ticketUsers,
+        active: getRandomBoolean(),
       };
       tickets.push(ticket);
 
@@ -101,16 +134,20 @@ export class AppComponent implements OnInit {
       const numOfMessages = Math.floor(Math.random() * 6) + 5; // Random between 5 and 10
       for (let j = 1; j <= numOfMessages; j++) {
         // Add some random long text for some messages
-        let messageText = `Message ${j} for Ticket ${i}`;
+        const user = getRandomUsers(ticketUsers, 1)[0];
+        let messageText = `Message ${j} for Ticket ${i} from ${user.name}`;
         if (Math.random() < 0.2) {
-          messageText += ' ' + this.generateRandomLongText();
+          messageText += this.generateRandomLongText();
         }
         const message: TicketMessage = {
           id: messages.length + 1,
-          ticketId: i,
-          message: messageText,
-          author: getRandomAuthor(),
-          messageDateTime: getRandomDateTime(),
+          chat_id: i,
+          user_id: user.id,
+          user_name: user.name,
+          text: messageText,
+          content: null,
+          time_created: getRandomDateTime(),
+          time_changed: '',
         };
         messages.push(message);
       }
@@ -119,6 +156,13 @@ export class AppComponent implements OnInit {
     // Store the mock data in localStorage
     localStorage.setItem(LocalDbNameEnum.TIS_TICKET, JSON.stringify(tickets));
     localStorage.setItem(LocalDbNameEnum.TIS_MESSAGE, JSON.stringify(messages));
+  }
+
+  generateMockUser(userId: number): User {
+    return {
+      id: userId,
+      name: `User ${userId}`,
+    };
   }
 
   generateRandomLongText(): string {

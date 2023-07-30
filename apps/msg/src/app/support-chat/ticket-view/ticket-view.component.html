@@ -17,7 +17,7 @@
           (clicked)="collapseClicked.emit()"
         ></eustrosoft-front-button>
         <h2 class="mb-0">
-          {{ selectedTicket && selectedTicket.title }}
+          {{ selectedTicket && selectedTicket.name }}
         </h2>
       </div>
       <div class="d-flex align-items-center">
@@ -48,17 +48,16 @@
         #messagesVirtualScrollViewport
       >
         <ng-container *cdkVirtualFor="let msg of selectedTicketMessages">
-          <ng-container [ngSwitch]="msg.author">
-            <div
-              *ngSwitchCase="msgAuthor.ME"
-              class="d-flex justify-content-end m-2 list-message-item"
-            >
+          <ng-container *ngIf="selectedUser && selectedUser.id === msg.user_id">
+            <div class="d-flex justify-content-end m-2 list-message-item">
               <ng-container
                 [ngTemplateOutlet]="msgTemplate"
                 [ngTemplateOutletContext]="{ $implicit: msg }"
               ></ng-container>
             </div>
-            <div *ngSwitchDefault class="d-flex m-2 list-message-item">
+          </ng-container>
+          <ng-container *ngIf="selectedUser && selectedUser.id !== msg.user_id">
+            <div class="d-flex m-2 list-message-item">
               <ng-container
                 [ngTemplateOutlet]="msgTemplate"
                 [ngTemplateOutletContext]="{ $implicit: msg }"
@@ -67,8 +66,12 @@
           </ng-container>
         </ng-container>
       </cdk-virtual-scroll-viewport>
-      <div class="d-flex align-items-center p-3 pe-1">
+      <div
+        *ngIf="selectedTicket.active; else inactiveTicketTemplate"
+        class="d-flex align-items-center p-3 pe-1"
+      >
         <eustrosoft-front-input
+          [label]="'Message'"
           [fieldAppearance]="'outline'"
           [control]="control"
           [placeholder]="'Write a message...'"
@@ -78,6 +81,7 @@
           [buttonType]="'button'"
           [buttonStyleType]="'icon'"
           [iconName]="'send'"
+          (clicked)="sendMessage()"
         ></eustrosoft-front-button>
       </div>
     </div>
@@ -86,9 +90,21 @@
 <ng-template #msgTemplate let-msg>
   <div class="d-flex flex-column mw-45">
     <div class="p-2 bg-light rounded-1">
-      <span>{{ msg.message }}</span>
-      <div class="d-flex justify-content-end">
-        <span class="fw-light fst-italic">{{ msg.author }}</span>
+      <span>{{ msg.text }}</span>
+      <div class="d-flex align-items-center justify-content-between">
+        <eustrosoft-front-button
+          *ngIf="msg.user_name === selectedUser?.name"
+          [buttonType]="'button'"
+          [buttonStyleType]="'icon'"
+          [iconName]="'edit'"
+          class="edit-icon"
+        ></eustrosoft-front-button>
+        <span class="fw-light fst-italic">
+          {{ msg.time_changed ? 'edited' : '' }}
+        </span>
+        <span class="fw-light fst-italic">
+          {{ msg.user_name === selectedUser?.name ? 'me' : msg.user_name }}
+        </span>
         <!--      <span class="fw-light">{{ msg.messageDateTime | date : 'short' }}</span>-->
       </div>
     </div>
@@ -100,5 +116,11 @@
     class="d-flex flex-column align-items-center justify-content-center h-inherit"
   >
     <h2>Select ticket from menu</h2>
+  </div>
+</ng-template>
+
+<ng-template #inactiveTicketTemplate>
+  <div class="d-flex justify-content-center align-items-center p-3 pe-1">
+    <h4>Ticket is inactive</h4>
   </div>
 </ng-template>

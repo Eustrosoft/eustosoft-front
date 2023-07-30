@@ -5,8 +5,13 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
+import { User } from './user.interface';
+
 export interface Ticket {
   id: number;
-  title: string;
-  date: string;
+  name: string;
+  time_created: string;
+  owner: User;
+  users: User[];
+  active: boolean;
 }

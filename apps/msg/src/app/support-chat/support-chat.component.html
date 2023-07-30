@@ -16,14 +16,17 @@
         [removeBorderRadius]="isXs"
         (ticketSelected)="ticketSelected($event)"
         (collapseClicked)="toggleSidebar()"
+        (userChanged)="userChanged($event)"
         class="h-inherit"
       ></eustrosoft-front-ticket-list>
     </div>
     <div class="col-12 col-sm-8 col-md-8 col-lg-8 col-xl-8 h-inherit">
       <eustrosoft-front-ticket-view
         [selectedTicket]="selectedTicket"
+        [selectedUser]="selectedUser"
         [selectedTicketMessages]="(ticketMessages$ | async) || []"
         (collapseClicked)="toggleSidebar()"
+        (sendMessageClicked)="sendMessage($event)"
         class="h-inherit"
       ></eustrosoft-front-ticket-view>
     </div>

@@ -30,6 +30,20 @@
         <eustrosoft-front-button
           [buttonType]="'button'"
           [buttonStyleType]="'icon'"
+          [iconName]="'manage_accounts'"
+          [matMenuTriggerFor]="userMenu"
+        ></eustrosoft-front-button>
+        <mat-menu #userMenu="matMenu">
+          <ng-container *ngFor="let number of numbers">
+            <button (click)="changeCurrentUser(number)" mat-menu-item>
+              <mat-icon>switch_account</mat-icon>
+              <span>User {{ number }}</span>
+            </button>
+          </ng-container>
+        </mat-menu>
+        <eustrosoft-front-button
+          [buttonType]="'button'"
+          [buttonStyleType]="'icon'"
           [iconName]="'settings'"
         ></eustrosoft-front-button>
       </div>
@@ -51,9 +65,9 @@
             }"
             (click)="selectTicket(ticket)"
           >
-            <span matListItemTitle>{{ ticket.title }}</span>
+            <span matListItemTitle>{{ ticket.name }}</span>
             <span>
-              {{ ticket.date | date }}
+              {{ ticket.time_created | date }}
             </span>
           </mat-list-item>
           <mat-divider></mat-divider>

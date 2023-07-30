@@ -15,9 +15,9 @@ import {
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
-import { Author } from '../constants/enums/author.enum';
 import { Ticket } from '../interfaces/ticket.interface';
 import { TicketMessage } from '../interfaces/ticket-message.interface';
+import { User } from '../interfaces/user.interface';
 
 @Component({
   selector: 'eustrosoft-front-ticket-view',
@@ -27,8 +27,10 @@ import { TicketMessage } from '../interfaces/ticket-message.interface';
 })
 export class TicketViewComponent {
   @Input() selectedTicket: Ticket | undefined = undefined;
+  @Input() selectedUser: User | undefined = undefined;
   @Input() selectedTicketMessages!: TicketMessage[];
   @Output() collapseClicked = new EventEmitter<void>();
+  @Output() sendMessageClicked = new EventEmitter<string>();
 
   @ViewChild('messagesVirtualScrollViewport')
   messagesVirtualScrollViewport!: CdkVirtualScrollViewport;
@@ -36,8 +38,14 @@ export class TicketViewComponent {
   control = new FormControl('', {
     nonNullable: true,
   });
-  msgAuthor = Author;
 
+  sendMessage() {
+    if (this.control.value.length === 0) {
+      return;
+    }
+    this.sendMessageClicked.emit(this.control.value);
+    this.control.reset('');
+  }
   // scrollToBottom() {
   //   // TODO работает не корректно, то скроллит на середину, то в конец, то не скроллит вовсе, нужно переделывать
   //   setTimeout(() => {

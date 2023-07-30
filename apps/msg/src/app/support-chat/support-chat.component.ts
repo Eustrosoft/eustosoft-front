@@ -17,6 +17,7 @@ import { Observable } from 'rxjs';
 import { TicketsService } from './services/tickets.service';
 import { TicketMessage } from './interfaces/ticket-message.interface';
 import { TicketMessagesService } from './services/ticket-messages.service';
+import { User } from './interfaces/user.interface';
 
 @Component({
   selector: 'eustrosoft-front-support-chat',
@@ -30,7 +31,8 @@ export class SupportChatComponent implements OnInit {
 
   tickets$!: Observable<Ticket[]>;
   ticketMessages$!: Observable<TicketMessage[]>;
-  selectedTicket!: Ticket;
+  selectedTicket: Ticket | undefined = undefined;
+  selectedUser: User = { id: 1, name: 'User 1' };
   isCollapsed = true;
   isXs = false;
 
@@ -40,7 +42,14 @@ export class SupportChatComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.tickets$ = this.ticketsService.getTickets();
+    this.tickets$ = this.ticketsService.getTickets(this.selectedUser.id);
+    // this.ticketMessages$ = this.refreshMessages$.pipe(
+    //   switchMap(() =>
+    //     this.ticketMessagesService.getMessages(
+    //       this.selectedTicket?.id as number
+    //     )
+    //   )
+    // );
     this.setUpSidebar();
   }
 
@@ -61,5 +70,22 @@ export class SupportChatComponent implements OnInit {
   ticketSelected(ticket: Ticket) {
     this.selectedTicket = ticket;
     this.ticketMessages$ = this.ticketMessagesService.getMessages(ticket.id);
+  }
+
+  userChanged(user: User) {
+    this.selectedUser = user;
+    this.tickets$ = this.ticketsService.getTickets(user.id);
+    this.selectedTicket = undefined;
+  }
+
+  sendMessage(message: string) {
+    this.ticketMessagesService.putMessage(
+      this.selectedTicket?.id as number,
+      message,
+      this.selectedUser
+    );
+    this.ticketMessages$ = this.ticketMessagesService.getMessages(
+      this.selectedTicket?.id as number
+    );
   }
 }
