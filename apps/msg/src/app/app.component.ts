@@ -13,6 +13,7 @@ import { TicketMessage } from './support-chat/interfaces/ticket-message.interfac
 import { User } from './support-chat/interfaces/user.interface';
 import { Ticket } from './support-chat/interfaces/ticket.interface';
 import { LocalDbNameEnum } from './support-chat/constants/enums/local-db-name.enum';
+import { MockService } from './support-chat/services/mock.service';
 
 @Component({
   selector: 'eustrosoft-front-root',
@@ -20,6 +21,7 @@ import { LocalDbNameEnum } from './support-chat/constants/enums/local-db-name.en
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
+  private mockService = inject(MockService);
   public config = inject(APP_CONFIG);
   public translateService = inject(PRECONFIGURED_TRANSLATE_SERVICE);
 
@@ -61,61 +63,13 @@ export class AppComponent implements OnInit {
       return;
     }
 
-    const users: User[] = [];
+    const users: User[] = this.mockService.generateMockUsers(10);
     const tickets: Ticket[] = [];
     const messages: TicketMessage[] = [];
 
-    function getRandomUsers(users: User[], count: number): User[] {
-      const randomUsers: User[] = [];
-      const shuffledUsers = users.slice(); // Create a copy of the users array
-
-      // Shuffle the array to get random users
-      for (let i = shuffledUsers.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [shuffledUsers[i], shuffledUsers[j]] = [
-          shuffledUsers[j],
-          shuffledUsers[i],
-        ];
-      }
-
-      // Get the first 'count' users from the shuffled array
-      for (let i = 0; i < count && i < shuffledUsers.length; i++) {
-        randomUsers.push(shuffledUsers[i]);
-      }
-
-      return randomUsers;
-    }
-
-    function getRandomDate(): string {
-      const startTimestamp = new Date(2023, 0, 1).getTime(); // January 1, 2023
-      const endTimestamp = new Date().getTime(); // Current date
-      const randomTimestamp =
-        Math.random() * (endTimestamp - startTimestamp) + startTimestamp;
-      const randomDate = new Date(randomTimestamp);
-      return randomDate.toISOString().slice(0, 10); // Get the date in 'YYYY-MM-DD' format
-    }
-
-    function getRandomDateTime(): string {
-      const startTimestamp = new Date(2023, 0, 1).getTime(); // January 1, 2023
-      const endTimestamp = new Date().getTime(); // Current date
-      const randomTimestamp =
-        Math.random() * (endTimestamp - startTimestamp) + startTimestamp;
-      const randomDate = new Date(randomTimestamp);
-      return randomDate.toISOString(); // Get the date and time in 'YYYY-MM-DDTHH:mm:ssZ' format
-    }
-
-    function getRandomBoolean(): boolean {
-      return Math.random() < 0.5; // Randomly return true or false
-    }
-
-    // Generate 10 users
-    for (let userId = 1; userId <= 10; userId++) {
-      const user = this.generateMockUser(userId);
-      users.push(user);
-    }
     // Generate 25 tickets
     for (let i = 1; i <= 25; i++) {
-      const ticketUsers = getRandomUsers(
+      const ticketUsers = this.mockService.getRandomUsers(
         users,
         Math.floor(Math.random() * 9) + 2
       );
@@ -123,10 +77,10 @@ export class AppComponent implements OnInit {
       const ticket: Ticket = {
         id: i,
         name: `Ticket №${i}`,
-        time_created: getRandomDate(),
-        owner: getRandomUsers(users, 1)[0],
+        time_created: this.mockService.getRandomDate(),
+        owner: this.mockService.getRandomUsers(users, 1)[0],
         users: ticketUsers,
-        active: getRandomBoolean(),
+        active: this.mockService.getRandomBoolean(),
       };
       tickets.push(ticket);
 
@@ -134,10 +88,10 @@ export class AppComponent implements OnInit {
       const numOfMessages = Math.floor(Math.random() * 6) + 5; // Random between 5 and 10
       for (let j = 1; j <= numOfMessages; j++) {
         // Add some random long text for some messages
-        const user = getRandomUsers(ticketUsers, 1)[0];
+        const user = this.mockService.getRandomUsers(ticketUsers, 1)[0];
         let messageText = `Message ${j} for Ticket ${i} from ${user.name}`;
         if (Math.random() < 0.2) {
-          messageText += this.generateRandomLongText();
+          messageText += this.mockService.generateRandomLongText();
         }
         const message: TicketMessage = {
           id: messages.length + 1,
@@ -146,7 +100,7 @@ export class AppComponent implements OnInit {
           user_name: user.name,
           text: messageText,
           content: null,
-          time_created: getRandomDateTime(),
+          time_created: this.mockService.getRandomDateTime(),
           time_changed: '',
         };
         messages.push(message);
@@ -156,95 +110,5 @@ export class AppComponent implements OnInit {
     // Store the mock data in localStorage
     localStorage.setItem(LocalDbNameEnum.TIS_TICKET, JSON.stringify(tickets));
     localStorage.setItem(LocalDbNameEnum.TIS_MESSAGE, JSON.stringify(messages));
-  }
-
-  generateMockUser(userId: number): User {
-    return {
-      id: userId,
-      name: `User ${userId}`,
-    };
-  }
-
-  generateRandomLongText(): string {
-    const words = [
-      'Lorem',
-      'ipsum',
-      'dolor',
-      'sit',
-      'amet',
-      'consectetur',
-      'adipiscing',
-      'elit',
-      'sed',
-      'do',
-      'eiusmod',
-      'tempor',
-      'incididunt',
-      'ut',
-      'labore',
-      'et',
-      'dolore',
-      'magna',
-      'aliqua',
-      'Ut',
-      'enim',
-      'ad',
-      'minim',
-      'veniam',
-      'quis',
-      'nostrud',
-      'exercitation',
-      'ullamco',
-      'laboris',
-      'nisi',
-      'ut',
-      'aliquip',
-      'ex',
-      'ea',
-      'commodo',
-      'consequat',
-      'Duis',
-      'aute',
-      'irure',
-      'dolor',
-      'in',
-      'reprehenderit',
-      'in',
-      'voluptate',
-      'velit',
-      'esse',
-      'cillum',
-      'dolore',
-      'eu',
-      'fugiat',
-      'nulla',
-      'pariatur',
-      'Excepteur',
-      'sint',
-      'occaecat',
-      'cupidatat',
-      'non',
-      'proident',
-      'sunt',
-      'in',
-      'culpa',
-      'qui',
-      'officia',
-      'deserunt',
-      'mollit',
-      'anim',
-      'id',
-      'est',
-      'laborum',
-    ];
-
-    let longText = '';
-
-    for (let i = 0; i < 100; i++) {
-      const randomIndex = Math.floor(Math.random() * words.length);
-      longText += words[randomIndex] + ' ';
-    }
-
-    return longText;
   }
 }

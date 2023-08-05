@@ -17,8 +17,8 @@ import { MatMenuModule } from '@angular/material/menu';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SecurityModule } from '@eustrosoft-front/security';
 import { SupportChatComponent } from './support-chat/support-chat.component';
-import { TicketListComponent } from './support-chat/ticket-list/ticket-list.component';
-import { TicketViewComponent } from './support-chat/ticket-view/ticket-view.component';
+import { TicketListComponent } from './support-chat/components/ticket-list/ticket-list.component';
+import { TicketViewComponent } from './support-chat/components/ticket-view/ticket-view.component';
 import {
   CdkFixedSizeVirtualScroll,
   CdkVirtualForOf,
@@ -29,6 +29,9 @@ import { LoginPageComponent } from './login-page/login-page.component';
 import { TicketsService } from './support-chat/services/tickets.service';
 import { TicketMessagesService } from './support-chat/services/ticket-messages.service';
 import { MatIconModule } from '@angular/material/icon';
+import { CreateTicketDialogComponent } from './support-chat/components/create-ticket-dialog/create-ticket-dialog.component';
+import { MockService } from './support-chat/services/mock.service';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [
@@ -37,6 +40,7 @@ import { MatIconModule } from '@angular/material/icon';
     TicketListComponent,
     TicketViewComponent,
     LoginPageComponent,
+    CreateTicketDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -51,8 +55,9 @@ import { MatIconModule } from '@angular/material/icon';
     CdkVirtualForOf,
     CdkFixedSizeVirtualScroll,
     MatIconModule,
+    MatDialogModule,
   ],
-  providers: [TicketsService, TicketMessagesService],
+  providers: [TicketsService, TicketMessagesService, MockService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

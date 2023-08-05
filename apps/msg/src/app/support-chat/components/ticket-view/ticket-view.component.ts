@@ -15,9 +15,9 @@ import {
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
-import { Ticket } from '../interfaces/ticket.interface';
-import { TicketMessage } from '../interfaces/ticket-message.interface';
-import { User } from '../interfaces/user.interface';
+import { Ticket } from '../../interfaces/ticket.interface';
+import { TicketMessage } from '../../interfaces/ticket-message.interface';
+import { User } from '../../interfaces/user.interface';
 
 @Component({
   selector: 'eustrosoft-front-ticket-view',

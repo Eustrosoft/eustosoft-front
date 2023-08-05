@@ -13,11 +13,25 @@ import {
   OnInit,
 } from '@angular/core';
 import { Ticket } from './interfaces/ticket.interface';
-import { Observable } from 'rxjs';
+import {
+  BehaviorSubject,
+  combineLatest,
+  filter,
+  Observable,
+  of,
+  switchMap,
+  take,
+  tap,
+} from 'rxjs';
 import { TicketsService } from './services/tickets.service';
 import { TicketMessage } from './interfaces/ticket-message.interface';
 import { TicketMessagesService } from './services/ticket-messages.service';
 import { User } from './interfaces/user.interface';
+import { MatDialog } from '@angular/material/dialog';
+import { CreateTicketDialogComponent } from './components/create-ticket-dialog/create-ticket-dialog.component';
+import { CreateTicketDialogDataInterface } from './components/create-ticket-dialog/create-ticket-dialog-data.interface';
+import { CreateTicketDialogReturnDataInterface } from './components/create-ticket-dialog/create-ticket-dialog-return-data.interface';
+import { MockService } from './services/mock.service';
 
 @Component({
   selector: 'eustrosoft-front-support-chat',
@@ -26,11 +40,14 @@ import { User } from './interfaces/user.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SupportChatComponent implements OnInit {
-  ticketsService = inject(TicketsService);
-  ticketMessagesService = inject(TicketMessagesService);
+  private ticketsService = inject(TicketsService);
+  private ticketMessagesService = inject(TicketMessagesService);
+  private mockService = inject(MockService);
+  private dialog = inject(MatDialog);
 
   tickets$!: Observable<Ticket[]>;
   ticketMessages$!: Observable<TicketMessage[]>;
+  refreshView$ = new BehaviorSubject(true);
   selectedTicket: Ticket | undefined = undefined;
   selectedUser: User = { id: 1, name: 'User 1' };
   isCollapsed = true;
@@ -42,14 +59,9 @@ export class SupportChatComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.tickets$ = this.ticketsService.getTickets(this.selectedUser.id);
-    // this.ticketMessages$ = this.refreshMessages$.pipe(
-    //   switchMap(() =>
-    //     this.ticketMessagesService.getMessages(
-    //       this.selectedTicket?.id as number
-    //     )
-    //   )
-    // );
+    this.tickets$ = combineLatest([this.refreshView$]).pipe(
+      switchMap(() => this.ticketsService.getTickets(this.selectedUser.id))
+    );
     this.setUpSidebar();
   }
 
@@ -74,12 +86,73 @@ export class SupportChatComponent implements OnInit {
 
   userChanged(user: User) {
     this.selectedUser = user;
-    this.tickets$ = this.ticketsService.getTickets(user.id);
+    this.refreshView$.next(true);
     this.selectedTicket = undefined;
   }
 
+  createNewTicket() {
+    const dialogRef = this.dialog.open<
+      CreateTicketDialogComponent,
+      CreateTicketDialogDataInterface,
+      CreateTicketDialogReturnDataInterface
+    >(CreateTicketDialogComponent, {
+      data: {
+        title: 'Create new ticket',
+        subjectInputLabel: 'Subject',
+        messageInputLabel: 'Message',
+        cancelButtonText: 'Cancel',
+        submitButtonText: 'Create',
+      },
+      minHeight: '25vh',
+      minWidth: '50vw',
+    });
+
+    dialogRef
+      .afterClosed()
+      .pipe(
+        filter(
+          (data): data is CreateTicketDialogReturnDataInterface =>
+            typeof data !== 'undefined'
+        ),
+        switchMap((ticketData) => {
+          const users: User[] = this.mockService.generateMockUsers(10);
+          const ticketUsers = this.mockService.getRandomUsers(
+            users,
+            Math.floor(Math.random() * 9) + 2
+          );
+          return combineLatest([of(ticketData), of(ticketUsers)]);
+        }),
+        switchMap(([ticketData, ticketUsers]) =>
+          combineLatest([
+            of(ticketData),
+            of(
+              this.ticketsService.addTicket(
+                ticketData.subject,
+                this.selectedUser,
+                ticketUsers
+              )
+            ),
+          ])
+        ),
+        switchMap(([ticketData, createdTicket]) => {
+          this.ticketMessagesService.addMessage(
+            createdTicket.id,
+            ticketData.message,
+            this.selectedUser
+          );
+          return of(createdTicket);
+        }),
+        tap((createdTicket) => {
+          this.refreshView$.next(true);
+          this.ticketSelected(createdTicket);
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
+
   sendMessage(message: string) {
-    this.ticketMessagesService.putMessage(
+    this.ticketMessagesService.addMessage(
       this.selectedTicket?.id as number,
       message,
       this.selectedUser

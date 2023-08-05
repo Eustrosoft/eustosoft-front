@@ -26,13 +26,24 @@
           [buttonType]="'button'"
           [buttonStyleType]="'icon'"
           [iconName]="'add'"
+          (clicked)="createNewTicket()"
         ></eustrosoft-front-button>
         <eustrosoft-front-button
           [buttonType]="'button'"
           [buttonStyleType]="'icon'"
-          [iconName]="'manage_accounts'"
-          [matMenuTriggerFor]="userMenu"
+          [iconName]="'more_vert'"
+          [matMenuTriggerFor]="menu"
         ></eustrosoft-front-button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item [matMenuTriggerFor]="userMenu">
+            <mat-icon>switch_account</mat-icon>
+            Switch user
+          </button>
+          <button mat-menu-item>
+            <mat-icon>settings</mat-icon>
+            Settings
+          </button>
+        </mat-menu>
         <mat-menu #userMenu="matMenu">
           <ng-container *ngFor="let number of numbers">
             <button (click)="changeCurrentUser(number)" mat-menu-item>
@@ -41,11 +52,6 @@
             </button>
           </ng-container>
         </mat-menu>
-        <eustrosoft-front-button
-          [buttonType]="'button'"
-          [buttonStyleType]="'icon'"
-          [iconName]="'settings'"
-        ></eustrosoft-front-button>
       </div>
     </div>
   </div>

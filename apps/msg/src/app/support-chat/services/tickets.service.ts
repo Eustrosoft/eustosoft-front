@@ -11,6 +11,7 @@ import {
 } from 'rxjs';
 import { Ticket } from '../interfaces/ticket.interface';
 import { LocalDbNameEnum } from '../constants/enums/local-db-name.enum';
+import { User } from '../interfaces/user.interface';
 
 @Injectable()
 export class TicketsService {
@@ -34,5 +35,27 @@ export class TicketsService {
         return EMPTY;
       })
     );
+  }
+
+  addTicket(name: string, owner: User, users: User[]): Ticket {
+    const tickets = JSON.parse(
+      localStorage.getItem(LocalDbNameEnum.TIS_TICKET) as string
+    ) as Ticket[];
+    const lastId = tickets[tickets.length - 1].id;
+    const date = new Date();
+
+    const ticket = {
+      id: lastId + 1,
+      name: name,
+      time_created: `${date.getFullYear()}-${date.getMonth()}-${date.getDay()}`,
+      owner: owner,
+      users: [owner, ...users],
+      active: true,
+    };
+    tickets.push(ticket);
+
+    localStorage.setItem(LocalDbNameEnum.TIS_TICKET, JSON.stringify(tickets));
+
+    return ticket;
   }
 }

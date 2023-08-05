@@ -35,13 +35,13 @@ export class TicketMessagesService {
     );
   }
 
-  putMessage(ticketId: number, message: string, user: User) {
+  addMessage(ticketId: number, message: string, user: User): TicketMessage {
     const messages = JSON.parse(
       localStorage.getItem(LocalDbNameEnum.TIS_MESSAGE) as string
     ) as TicketMessage[];
     const lastId = messages[messages.length - 1].id;
 
-    messages.push({
+    const ticketMessage = {
       id: lastId + 1,
       chat_id: ticketId,
       user_id: user.id,
@@ -50,8 +50,12 @@ export class TicketMessagesService {
       content: null,
       time_created: new Date().toISOString(),
       time_changed: '',
-    });
+    };
+
+    messages.push(ticketMessage);
 
     localStorage.setItem(LocalDbNameEnum.TIS_MESSAGE, JSON.stringify(messages));
+
+    return ticketMessage;
   }
 }

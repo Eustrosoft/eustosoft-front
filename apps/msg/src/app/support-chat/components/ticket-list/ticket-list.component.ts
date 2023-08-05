@@ -12,8 +12,8 @@ import {
   Input,
   Output,
 } from '@angular/core';
-import { Ticket } from '../interfaces/ticket.interface';
-import { User } from '../interfaces/user.interface';
+import { Ticket } from '../../interfaces/ticket.interface';
+import { User } from '../../interfaces/user.interface';
 
 @Component({
   selector: 'eustrosoft-front-ticket-list',
@@ -26,6 +26,7 @@ export class TicketListComponent {
   @Input() removeBorderRadius!: boolean;
   @Output() ticketSelected = new EventEmitter<Ticket>();
   @Output() collapseClicked = new EventEmitter<void>();
+  @Output() newTicketCreateClicked = new EventEmitter<void>();
   @Output() userChanged = new EventEmitter<User>();
 
   selectedTicket: Ticket | undefined = undefined;
@@ -42,5 +43,9 @@ export class TicketListComponent {
       name: `User ${id}`,
     });
     this.selectedTicket = undefined;
+  }
+
+  createNewTicket() {
+    this.newTicketCreateClicked.emit();
   }
 }
