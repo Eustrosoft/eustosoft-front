@@ -30,7 +30,8 @@ export class TicketViewComponent {
   @Input() selectedUser: User | undefined = undefined;
   @Input() selectedTicketMessages!: TicketMessage[];
   @Output() collapseClicked = new EventEmitter<void>();
-  @Output() sendMessageClicked = new EventEmitter<string>();
+  @Output() messageSent = new EventEmitter<string>();
+  @Output() messageEdited = new EventEmitter<TicketMessage>();
 
   @ViewChild('messagesVirtualScrollViewport')
   messagesVirtualScrollViewport!: CdkVirtualScrollViewport;
@@ -38,14 +39,31 @@ export class TicketViewComponent {
   control = new FormControl('', {
     nonNullable: true,
   });
+  messageInEdit: TicketMessage | undefined = undefined;
+
+  editMessage(message: TicketMessage) {
+    this.messageInEdit = message;
+    this.control.setValue(message.text);
+  }
+
+  saveEditedMessage() {
+    const editedMessage: TicketMessage = {
+      ...(this.messageInEdit as TicketMessage),
+      text: this.control.value,
+    };
+    this.messageEdited.emit(editedMessage);
+    this.messageInEdit = undefined;
+    this.control.setValue('');
+  }
 
   sendMessage() {
     if (this.control.value.length === 0) {
       return;
     }
-    this.sendMessageClicked.emit(this.control.value);
+    this.messageSent.emit(this.control.value);
     this.control.reset('');
   }
+
   // scrollToBottom() {
   //   // TODO работает не корректно, то скроллит на середину, то в конец, то не скроллит вовсе, нужно переделывать
   //   setTimeout(() => {
@@ -65,5 +83,4 @@ export class TicketViewComponent {
   // ngAfterViewInit(): void {
   //   this.scrollToBottom();
   // }
-  protected readonly undefined = undefined;
 }

@@ -27,7 +27,8 @@
         [selectedUser]="selectedUser"
         [selectedTicketMessages]="(ticketMessages$ | async) || []"
         (collapseClicked)="toggleSidebar()"
-        (sendMessageClicked)="sendMessage($event)"
+        (messageSent)="sendMessage($event)"
+        (messageEdited)="editMessage($event)"
         class="h-inherit"
       ></eustrosoft-front-ticket-view>
     </div>

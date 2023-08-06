@@ -58,4 +58,22 @@ export class TicketMessagesService {
 
     return ticketMessage;
   }
+
+  putMessage(message: TicketMessage): TicketMessage {
+    const messages = JSON.parse(
+      localStorage.getItem(LocalDbNameEnum.TIS_MESSAGE) as string
+    ) as TicketMessage[];
+
+    const storedMsgIndex = messages.findIndex((msg) => msg.id === message.id);
+
+    const updatedMessage = (messages[storedMsgIndex] = {
+      ...messages[storedMsgIndex],
+      text: message.text,
+      time_changed: new Date().toISOString(),
+    });
+
+    localStorage.setItem(LocalDbNameEnum.TIS_MESSAGE, JSON.stringify(messages));
+
+    return updatedMessage;
+  }
 }

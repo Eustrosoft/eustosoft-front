@@ -12,7 +12,7 @@
         "outputPath": "dist/apps/msg",
         "index": "apps/msg/src/index.html",
         "main": "apps/msg/src/main.ts",
-        "baseHref": "/msg/",
+        "baseHref": "./",
         "polyfills": ["zone.js"],
         "tsConfig": "apps/msg/tsconfig.app.json",
         "stylePreprocessorOptions": {

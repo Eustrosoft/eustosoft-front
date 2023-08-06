@@ -57,7 +57,7 @@
   </div>
   <div class="flex-grow-1 h-100">
     <mat-list *ngIf="tickets.length > 0; else noTicketsTemplate" class="h-100">
-      <cdk-virtual-scroll-viewport class="h-100" itemSize="50">
+      <cdk-virtual-scroll-viewport class="h-100" itemSize="88">
         <ng-container *cdkVirtualFor="let ticket of tickets">
           <mat-list-item
             eustrosoftFrontHoverCursor
@@ -74,6 +74,9 @@
             <span matListItemTitle>{{ ticket.name }}</span>
             <span>
               {{ ticket.time_created | date }}
+            </span>
+            <span class="fst-italic">
+              {{ ticket.active ? '' : 'Archive' }}
             </span>
           </mat-list-item>
           <mat-divider></mat-divider>

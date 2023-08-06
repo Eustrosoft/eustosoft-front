@@ -47,7 +47,10 @@ export class SupportChatComponent implements OnInit {
 
   tickets$!: Observable<Ticket[]>;
   ticketMessages$!: Observable<TicketMessage[]>;
-  refreshView$ = new BehaviorSubject(true);
+  refreshTicketsView$ = new BehaviorSubject(true);
+  refreshTicketMessagesView$ = new BehaviorSubject<number | undefined>(
+    undefined
+  );
   selectedTicket: Ticket | undefined = undefined;
   selectedUser: User = { id: 1, name: 'User 1' };
   isCollapsed = true;
@@ -59,9 +62,14 @@ export class SupportChatComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.tickets$ = combineLatest([this.refreshView$]).pipe(
+    this.tickets$ = combineLatest([this.refreshTicketsView$]).pipe(
       switchMap(() => this.ticketsService.getTickets(this.selectedUser.id))
     );
+    this.ticketMessages$ = combineLatest([
+      this.refreshTicketMessagesView$.pipe(
+        filter((id): id is number => typeof id !== 'undefined')
+      ),
+    ]).pipe(switchMap(([id]) => this.ticketMessagesService.getMessages(id)));
     this.setUpSidebar();
   }
 
@@ -81,12 +89,12 @@ export class SupportChatComponent implements OnInit {
 
   ticketSelected(ticket: Ticket) {
     this.selectedTicket = ticket;
-    this.ticketMessages$ = this.ticketMessagesService.getMessages(ticket.id);
+    this.refreshTicketMessagesView$.next(ticket.id);
   }
 
   userChanged(user: User) {
     this.selectedUser = user;
-    this.refreshView$.next(true);
+    this.refreshTicketsView$.next(true);
     this.selectedTicket = undefined;
   }
 
@@ -143,7 +151,7 @@ export class SupportChatComponent implements OnInit {
           return of(createdTicket);
         }),
         tap((createdTicket) => {
-          this.refreshView$.next(true);
+          this.refreshTicketsView$.next(true);
           this.ticketSelected(createdTicket);
         }),
         take(1)
@@ -157,8 +165,11 @@ export class SupportChatComponent implements OnInit {
       message,
       this.selectedUser
     );
-    this.ticketMessages$ = this.ticketMessagesService.getMessages(
-      this.selectedTicket?.id as number
-    );
+    this.refreshTicketMessagesView$.next(this.selectedTicket?.id as number);
+  }
+
+  editMessage(message: TicketMessage) {
+    this.ticketMessagesService.putMessage(message);
+    this.refreshTicketMessagesView$.next(this.selectedTicket?.id as number);
   }
 }
