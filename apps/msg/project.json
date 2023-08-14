@@ -95,6 +95,7 @@
     "serve": {
       "executor": "@angular-devkit/build-angular:dev-server",
       "options": {
+        "servePath": "/msg/",
         "port": 4203
       },
       "configurations": {
