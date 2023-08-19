@@ -7,18 +7,18 @@
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TicketViewComponent } from './ticket-view.component';
+import { ChatListComponent } from './chat-list.component';
 
-describe('TicketViewComponent', () => {
-  let component: TicketViewComponent;
-  let fixture: ComponentFixture<TicketViewComponent>;
+describe('ChatListComponent', () => {
+  let component: ChatListComponent;
+  let fixture: ComponentFixture<ChatListComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [TicketViewComponent],
+      declarations: [ChatListComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(TicketViewComponent);
+    fixture = TestBed.createComponent(ChatListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

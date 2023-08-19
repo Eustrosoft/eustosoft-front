@@ -5,7 +5,13 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-export interface CreateTicketDialogReturnDataInterface {
-  subject: string;
-  message: string;
+import { User } from './user.interface';
+
+export interface Chat {
+  id: number;
+  name: string;
+  time_created: string;
+  owner: User;
+  users: User[];
+  active: boolean;
 }

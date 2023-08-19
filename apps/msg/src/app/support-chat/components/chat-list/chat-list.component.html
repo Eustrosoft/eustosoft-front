@@ -26,7 +26,7 @@
           [buttonType]="'button'"
           [buttonStyleType]="'icon'"
           [iconName]="'add'"
-          (clicked)="createNewTicket()"
+          (clicked)="createNewChat()"
         ></eustrosoft-front-button>
         <eustrosoft-front-button
           [buttonType]="'button'"
@@ -56,9 +56,9 @@
     </div>
   </div>
   <div class="flex-grow-1 h-100">
-    <mat-list *ngIf="tickets.length > 0; else noTicketsTemplate" class="h-100">
+    <mat-list *ngIf="chats.length > 0; else noChatsTemplate" class="h-100">
       <cdk-virtual-scroll-viewport class="h-100" itemSize="88">
-        <ng-container *cdkVirtualFor="let ticket of tickets">
+        <ng-container *cdkVirtualFor="let chat of chats">
           <mat-list-item
             eustrosoftFrontHoverCursor
             eustrosoftFrontHover
@@ -67,16 +67,16 @@
             lines="3"
             [ngClass]="{
               'border-3 border-start border-secondary bg-secondary bg-opacity-25':
-                selectedTicket && selectedTicket.id === ticket.id
+                selectedChat && selectedChat.id === chat.id
             }"
-            (click)="selectTicket(ticket)"
+            (click)="selectChat(chat)"
           >
-            <span matListItemTitle>{{ ticket.name }}</span>
+            <span matListItemTitle>{{ chat.name }}</span>
             <span>
-              {{ ticket.time_created | date }}
+              {{ chat.time_created | date }}
             </span>
             <span class="fst-italic">
-              {{ ticket.active ? '' : 'Archive' }}
+              {{ chat.active ? '' : 'Archive' }}
             </span>
           </mat-list-item>
           <mat-divider></mat-divider>
@@ -86,7 +86,7 @@
   </div>
 </div>
 
-<ng-template #noTicketsTemplate>
+<ng-template #noChatsTemplate>
   <div
     class="d-flex flex-column align-items-center justify-content-center h-inherit"
   >

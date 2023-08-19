@@ -15,23 +15,23 @@ import {
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
-import { Ticket } from '../../interfaces/ticket.interface';
-import { TicketMessage } from '../../interfaces/ticket-message.interface';
+import { Chat } from '../../interfaces/chat.interface';
+import { ChatMessage } from '../../interfaces/chat-message.interface';
 import { User } from '../../interfaces/user.interface';
 
 @Component({
-  selector: 'eustrosoft-front-ticket-view',
-  templateUrl: './ticket-view.component.html',
-  styleUrls: ['./ticket-view.component.scss'],
+  selector: 'eustrosoft-front-chat-view',
+  templateUrl: './chat-view.component.html',
+  styleUrls: ['./chat-view.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TicketViewComponent {
-  @Input() selectedTicket: Ticket | undefined = undefined;
+export class ChatViewComponent {
+  @Input() selectedChat: Chat | undefined = undefined;
   @Input() selectedUser: User | undefined = undefined;
-  @Input() selectedTicketMessages!: TicketMessage[];
+  @Input() selectedChatMessages!: ChatMessage[];
   @Output() collapseClicked = new EventEmitter<void>();
   @Output() messageSent = new EventEmitter<string>();
-  @Output() messageEdited = new EventEmitter<TicketMessage>();
+  @Output() messageEdited = new EventEmitter<ChatMessage>();
 
   @ViewChild('messagesVirtualScrollViewport')
   messagesVirtualScrollViewport!: CdkVirtualScrollViewport;
@@ -39,16 +39,16 @@ export class TicketViewComponent {
   control = new FormControl('', {
     nonNullable: true,
   });
-  messageInEdit: TicketMessage | undefined = undefined;
+  messageInEdit: ChatMessage | undefined = undefined;
 
-  editMessage(message: TicketMessage) {
+  editMessage(message: ChatMessage) {
     this.messageInEdit = message;
     this.control.setValue(message.text);
   }
 
   saveEditedMessage() {
-    const editedMessage: TicketMessage = {
-      ...(this.messageInEdit as TicketMessage),
+    const editedMessage: ChatMessage = {
+      ...(this.messageInEdit as ChatMessage),
       text: this.control.value,
     };
     this.messageEdited.emit(editedMessage);

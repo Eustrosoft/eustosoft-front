@@ -11,26 +11,26 @@
       [ngClass]="{ sidebar: isXs, collapsed: isCollapsed }"
       class="col-6 col-sm-4 col-md-4 col-lg-4 col-xl-4 pe-0 h-inherit"
     >
-      <eustrosoft-front-ticket-list
-        [tickets]="(tickets$ | async) || []"
+      <eustrosoft-front-chat-list
+        [chats]="(chats$ | async) || []"
         [removeBorderRadius]="isXs"
-        (ticketSelected)="ticketSelected($event)"
+        (chatSelected)="chatSelected($event)"
         (collapseClicked)="toggleSidebar()"
         (userChanged)="userChanged($event)"
-        (newTicketCreateClicked)="createNewTicket()"
+        (newChatCreateClicked)="createNewChat()"
         class="h-inherit"
-      ></eustrosoft-front-ticket-list>
+      ></eustrosoft-front-chat-list>
     </div>
     <div class="col-12 col-sm-8 col-md-8 col-lg-8 col-xl-8 h-inherit">
-      <eustrosoft-front-ticket-view
-        [selectedTicket]="selectedTicket"
+      <eustrosoft-front-chat-view
+        [selectedChat]="selectedChat"
         [selectedUser]="selectedUser"
-        [selectedTicketMessages]="(ticketMessages$ | async) || []"
+        [selectedChatMessages]="(chatMessages$ | async) || []"
         (collapseClicked)="toggleSidebar()"
         (messageSent)="sendMessage($event)"
         (messageEdited)="editMessage($event)"
         class="h-inherit"
-      ></eustrosoft-front-ticket-view>
+      ></eustrosoft-front-chat-view>
     </div>
   </div>
 </div>

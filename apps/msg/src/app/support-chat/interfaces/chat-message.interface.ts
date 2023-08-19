@@ -5,7 +5,7 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-export interface TicketMessage {
+export interface ChatMessage {
   id: number;
   chat_id: number;
   user_id: number;

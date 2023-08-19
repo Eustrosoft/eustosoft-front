@@ -9,9 +9,9 @@ import { Component, inject, OnInit } from '@angular/core';
 import { APP_CONFIG } from '@eustrosoft-front/config';
 import { PRECONFIGURED_TRANSLATE_SERVICE } from '@eustrosoft-front/core';
 import { combineLatest, map, Observable } from 'rxjs';
-import { TicketMessage } from './support-chat/interfaces/ticket-message.interface';
+import { ChatMessage } from './support-chat/interfaces/chat-message.interface';
 import { User } from './support-chat/interfaces/user.interface';
-import { Ticket } from './support-chat/interfaces/ticket.interface';
+import { Chat } from './support-chat/interfaces/chat.interface';
 import { LocalDbNameEnum } from './support-chat/constants/enums/local-db-name.enum';
 import { MockService } from './support-chat/services/mock.service';
 
@@ -64,36 +64,36 @@ export class AppComponent implements OnInit {
     }
 
     const users: User[] = this.mockService.generateMockUsers(10);
-    const tickets: Ticket[] = [];
-    const messages: TicketMessage[] = [];
+    const chats: Chat[] = [];
+    const messages: ChatMessage[] = [];
 
     // Generate 25 tickets
     for (let i = 1; i <= 25; i++) {
-      const ticketUsers = this.mockService.getRandomUsers(
+      const chatUsers = this.mockService.getRandomUsers(
         users,
         Math.floor(Math.random() * 9) + 2
       );
 
-      const ticket: Ticket = {
+      const ticket: Chat = {
         id: i,
         name: `Ticket №${i}`,
         time_created: this.mockService.getRandomDate(),
         owner: this.mockService.getRandomUsers(users, 1)[0],
-        users: ticketUsers,
+        users: chatUsers,
         active: this.mockService.getRandomBoolean(),
       };
-      tickets.push(ticket);
+      chats.push(ticket);
 
       // Generate 5 to 10 messages for each ticket
       const numOfMessages = Math.floor(Math.random() * 6) + 5; // Random between 5 and 10
       for (let j = 1; j <= numOfMessages; j++) {
         // Add some random long text for some messages
-        const user = this.mockService.getRandomUsers(ticketUsers, 1)[0];
+        const user = this.mockService.getRandomUsers(chatUsers, 1)[0];
         let messageText = `Message ${j} for Ticket ${i} from ${user.name}`;
         if (Math.random() < 0.2) {
           messageText += this.mockService.generateRandomLongText();
         }
-        const message: TicketMessage = {
+        const message: ChatMessage = {
           id: messages.length + 1,
           chat_id: i,
           user_id: user.id,
@@ -108,7 +108,7 @@ export class AppComponent implements OnInit {
     }
 
     // Store the mock data in localStorage
-    localStorage.setItem(LocalDbNameEnum.TIS_TICKET, JSON.stringify(tickets));
+    localStorage.setItem(LocalDbNameEnum.TIS_TICKET, JSON.stringify(chats));
     localStorage.setItem(LocalDbNameEnum.TIS_MESSAGE, JSON.stringify(messages));
   }
 }

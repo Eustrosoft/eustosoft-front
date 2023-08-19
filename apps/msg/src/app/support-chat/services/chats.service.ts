@@ -9,13 +9,13 @@ import {
   switchMap,
   throwError,
 } from 'rxjs';
-import { Ticket } from '../interfaces/ticket.interface';
+import { Chat } from '../interfaces/chat.interface';
 import { LocalDbNameEnum } from '../constants/enums/local-db-name.enum';
 import { User } from '../interfaces/user.interface';
 
 @Injectable()
-export class TicketsService {
-  getTickets(userId: number): Observable<Ticket[]> {
+export class ChatsService {
+  getChats(userId: number): Observable<Chat[]> {
     return of(localStorage.getItem(LocalDbNameEnum.TIS_TICKET)).pipe(
       switchMap((value) =>
         iif(
@@ -24,11 +24,9 @@ export class TicketsService {
           throwError(() => 'Unable to parse TIS_TICKET json from localStorage')
         )
       ),
-      map<string, Ticket[]>((value) => JSON.parse(value)),
-      map((tickets) =>
-        tickets.filter((ticket) =>
-          ticket.users.some((user) => user.id === userId)
-        )
+      map<string, Chat[]>((value) => JSON.parse(value)),
+      map((chats) =>
+        chats.filter((chat) => chat.users.some((user) => user.id === userId))
       ),
       catchError((error: string) => {
         console.error('Error occurred:', error);
@@ -37,10 +35,10 @@ export class TicketsService {
     );
   }
 
-  addTicket(name: string, owner: User, users: User[]): Ticket {
+  addChats(name: string, owner: User, users: User[]): Chat {
     const tickets = JSON.parse(
       localStorage.getItem(LocalDbNameEnum.TIS_TICKET) as string
-    ) as Ticket[];
+    ) as Chat[];
     const lastId = tickets[tickets.length - 1].id;
     const date = new Date();
 

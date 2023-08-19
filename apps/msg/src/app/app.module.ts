@@ -17,8 +17,8 @@ import { MatMenuModule } from '@angular/material/menu';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SecurityModule } from '@eustrosoft-front/security';
 import { SupportChatComponent } from './support-chat/support-chat.component';
-import { TicketListComponent } from './support-chat/components/ticket-list/ticket-list.component';
-import { TicketViewComponent } from './support-chat/components/ticket-view/ticket-view.component';
+import { ChatListComponent } from './support-chat/components/chat-list/chat-list.component';
+import { ChatViewComponent } from './support-chat/components/chat-view/chat-view.component';
 import {
   CdkFixedSizeVirtualScroll,
   CdkVirtualForOf,
@@ -26,10 +26,10 @@ import {
 } from '@angular/cdk/scrolling';
 import { MatListModule } from '@angular/material/list';
 import { LoginPageComponent } from './login-page/login-page.component';
-import { TicketsService } from './support-chat/services/tickets.service';
-import { TicketMessagesService } from './support-chat/services/ticket-messages.service';
+import { ChatsService } from './support-chat/services/chats.service';
+import { ChatMessagesService } from './support-chat/services/chat-messages.service';
 import { MatIconModule } from '@angular/material/icon';
-import { CreateTicketDialogComponent } from './support-chat/components/create-ticket-dialog/create-ticket-dialog.component';
+import { CreateChatDialogComponent } from './support-chat/components/create-chat-dialog/create-chat-dialog.component';
 import { MockService } from './support-chat/services/mock.service';
 import { MatDialogModule } from '@angular/material/dialog';
 
@@ -37,10 +37,10 @@ import { MatDialogModule } from '@angular/material/dialog';
   declarations: [
     AppComponent,
     SupportChatComponent,
-    TicketListComponent,
-    TicketViewComponent,
+    ChatListComponent,
+    ChatViewComponent,
     LoginPageComponent,
-    CreateTicketDialogComponent,
+    CreateChatDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -57,7 +57,7 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatIconModule,
     MatDialogModule,
   ],
-  providers: [TicketsService, TicketMessagesService, MockService],
+  providers: [ChatsService, ChatMessagesService, MockService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

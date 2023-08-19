@@ -12,7 +12,7 @@ import {
   inject,
   OnInit,
 } from '@angular/core';
-import { Ticket } from './interfaces/ticket.interface';
+import { Chat } from './interfaces/chat.interface';
 import {
   BehaviorSubject,
   combineLatest,
@@ -23,14 +23,14 @@ import {
   take,
   tap,
 } from 'rxjs';
-import { TicketsService } from './services/tickets.service';
-import { TicketMessage } from './interfaces/ticket-message.interface';
-import { TicketMessagesService } from './services/ticket-messages.service';
+import { ChatsService } from './services/chats.service';
+import { ChatMessage } from './interfaces/chat-message.interface';
+import { ChatMessagesService } from './services/chat-messages.service';
 import { User } from './interfaces/user.interface';
 import { MatDialog } from '@angular/material/dialog';
-import { CreateTicketDialogComponent } from './components/create-ticket-dialog/create-ticket-dialog.component';
-import { CreateTicketDialogDataInterface } from './components/create-ticket-dialog/create-ticket-dialog-data.interface';
-import { CreateTicketDialogReturnDataInterface } from './components/create-ticket-dialog/create-ticket-dialog-return-data.interface';
+import { CreateChatDialogComponent } from './components/create-chat-dialog/create-chat-dialog.component';
+import { CreateChatDialogDataInterface } from './components/create-chat-dialog/create-chat-dialog-data.interface';
+import { CreateChatDialogReturnDataInterface } from './components/create-chat-dialog/create-chat-dialog-return-data.interface';
 import { MockService } from './services/mock.service';
 
 @Component({
@@ -40,18 +40,16 @@ import { MockService } from './services/mock.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SupportChatComponent implements OnInit {
-  private ticketsService = inject(TicketsService);
-  private ticketMessagesService = inject(TicketMessagesService);
+  private chatsService = inject(ChatsService);
+  private chatMessagesService = inject(ChatMessagesService);
   private mockService = inject(MockService);
   private dialog = inject(MatDialog);
 
-  tickets$!: Observable<Ticket[]>;
-  ticketMessages$!: Observable<TicketMessage[]>;
-  refreshTicketsView$ = new BehaviorSubject(true);
-  refreshTicketMessagesView$ = new BehaviorSubject<number | undefined>(
-    undefined
-  );
-  selectedTicket: Ticket | undefined = undefined;
+  chats$!: Observable<Chat[]>;
+  chatMessages$!: Observable<ChatMessage[]>;
+  refreshChatsView$ = new BehaviorSubject(true);
+  refreshChatMessagesView$ = new BehaviorSubject<number | undefined>(undefined);
+  selectedChat: Chat | undefined = undefined;
   selectedUser: User = { id: 1, name: 'User 1' };
   isCollapsed = true;
   isXs = false;
@@ -62,14 +60,14 @@ export class SupportChatComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.tickets$ = combineLatest([this.refreshTicketsView$]).pipe(
-      switchMap(() => this.ticketsService.getTickets(this.selectedUser.id))
+    this.chats$ = combineLatest([this.refreshChatsView$]).pipe(
+      switchMap(() => this.chatsService.getChats(this.selectedUser.id))
     );
-    this.ticketMessages$ = combineLatest([
-      this.refreshTicketMessagesView$.pipe(
+    this.chatMessages$ = combineLatest([
+      this.refreshChatMessagesView$.pipe(
         filter((id): id is number => typeof id !== 'undefined')
       ),
-    ]).pipe(switchMap(([id]) => this.ticketMessagesService.getMessages(id)));
+    ]).pipe(switchMap(([id]) => this.chatMessagesService.getMessages(id)));
     this.setUpSidebar();
   }
 
@@ -87,23 +85,23 @@ export class SupportChatComponent implements OnInit {
     this.isCollapsed = !this.isCollapsed;
   }
 
-  ticketSelected(ticket: Ticket) {
-    this.selectedTicket = ticket;
-    this.refreshTicketMessagesView$.next(ticket.id);
+  chatSelected(chat: Chat) {
+    this.selectedChat = chat;
+    this.refreshChatMessagesView$.next(chat.id);
   }
 
   userChanged(user: User) {
     this.selectedUser = user;
-    this.refreshTicketsView$.next(true);
-    this.selectedTicket = undefined;
+    this.refreshChatsView$.next(true);
+    this.selectedChat = undefined;
   }
 
-  createNewTicket() {
+  createNewChat() {
     const dialogRef = this.dialog.open<
-      CreateTicketDialogComponent,
-      CreateTicketDialogDataInterface,
-      CreateTicketDialogReturnDataInterface
-    >(CreateTicketDialogComponent, {
+      CreateChatDialogComponent,
+      CreateChatDialogDataInterface,
+      CreateChatDialogReturnDataInterface
+    >(CreateChatDialogComponent, {
       data: {
         title: 'Create new ticket',
         subjectInputLabel: 'Subject',
@@ -119,40 +117,40 @@ export class SupportChatComponent implements OnInit {
       .afterClosed()
       .pipe(
         filter(
-          (data): data is CreateTicketDialogReturnDataInterface =>
+          (data): data is CreateChatDialogReturnDataInterface =>
             typeof data !== 'undefined'
         ),
-        switchMap((ticketData) => {
+        switchMap((chatData) => {
           const users: User[] = this.mockService.generateMockUsers(10);
-          const ticketUsers = this.mockService.getRandomUsers(
+          const chatUsers = this.mockService.getRandomUsers(
             users,
             Math.floor(Math.random() * 9) + 2
           );
-          return combineLatest([of(ticketData), of(ticketUsers)]);
+          return combineLatest([of(chatData), of(chatUsers)]);
         }),
-        switchMap(([ticketData, ticketUsers]) =>
+        switchMap(([chatData, chatUsers]) =>
           combineLatest([
-            of(ticketData),
+            of(chatData),
             of(
-              this.ticketsService.addTicket(
-                ticketData.subject,
+              this.chatsService.addChats(
+                chatData.subject,
                 this.selectedUser,
-                ticketUsers
+                chatUsers
               )
             ),
           ])
         ),
-        switchMap(([ticketData, createdTicket]) => {
-          this.ticketMessagesService.addMessage(
-            createdTicket.id,
-            ticketData.message,
+        switchMap(([chatData, createdChat]) => {
+          this.chatMessagesService.addMessage(
+            createdChat.id,
+            chatData.message,
             this.selectedUser
           );
-          return of(createdTicket);
+          return of(createdChat);
         }),
-        tap((createdTicket) => {
-          this.refreshTicketsView$.next(true);
-          this.ticketSelected(createdTicket);
+        tap((createdChat) => {
+          this.refreshChatsView$.next(true);
+          this.chatSelected(createdChat);
         }),
         take(1)
       )
@@ -160,16 +158,16 @@ export class SupportChatComponent implements OnInit {
   }
 
   sendMessage(message: string) {
-    this.ticketMessagesService.addMessage(
-      this.selectedTicket?.id as number,
+    this.chatMessagesService.addMessage(
+      this.selectedChat?.id as number,
       message,
       this.selectedUser
     );
-    this.refreshTicketMessagesView$.next(this.selectedTicket?.id as number);
+    this.refreshChatMessagesView$.next(this.selectedChat?.id as number);
   }
 
-  editMessage(message: TicketMessage) {
-    this.ticketMessagesService.putMessage(message);
-    this.refreshTicketMessagesView$.next(this.selectedTicket?.id as number);
+  editMessage(message: ChatMessage) {
+    this.chatMessagesService.putMessage(message);
+    this.refreshChatMessagesView$.next(this.selectedChat?.id as number);
   }
 }

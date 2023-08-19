@@ -17,7 +17,7 @@
           (clicked)="collapseClicked.emit()"
         ></eustrosoft-front-button>
         <h2 class="mb-0">
-          {{ selectedTicket && selectedTicket.name }}
+          {{ selectedChat && selectedChat.name }}
         </h2>
       </div>
       <div class="d-flex align-items-center">
@@ -25,10 +25,10 @@
           [buttonType]="'button'"
           [buttonStyleType]="'icon'"
           [iconName]="'more_vert'"
-          [matMenuTriggerFor]="ticketActionsMenu"
-          [hidden]="!selectedTicket"
+          [matMenuTriggerFor]="chatActionsMenu"
+          [hidden]="!selectedChat"
         ></eustrosoft-front-button>
-        <mat-menu #ticketActionsMenu="matMenu">
+        <mat-menu #chatActionsMenu="matMenu">
           <button mat-menu-item>
             <mat-icon>cancel</mat-icon>
             <span>Close ticket</span>
@@ -39,7 +39,7 @@
   </div>
   <div class="flex-grow-1 h-100 bg-secondary bg-opacity-10">
     <div
-      *ngIf="selectedTicket; else noSelectedTicketTemplate"
+      *ngIf="selectedChat; else noSelectedTicketTemplate"
       class="d-flex flex-column justify-content-between h-inherit"
     >
       <cdk-virtual-scroll-viewport
@@ -47,7 +47,7 @@
         itemSize="50"
         #messagesVirtualScrollViewport
       >
-        <ng-container *cdkVirtualFor="let msg of selectedTicketMessages">
+        <ng-container *cdkVirtualFor="let msg of selectedChatMessages">
           <ng-container *ngIf="selectedUser && selectedUser.id === msg.user_id">
             <div class="d-flex justify-content-end m-2 list-message-item">
               <ng-container
@@ -67,7 +67,7 @@
         </ng-container>
       </cdk-virtual-scroll-viewport>
       <div
-        *ngIf="selectedTicket.active; else inactiveTicketTemplate"
+        *ngIf="selectedChat.active; else inactiveTicketTemplate"
         class="d-flex align-items-center p-3 pe-1"
       >
         <ng-container

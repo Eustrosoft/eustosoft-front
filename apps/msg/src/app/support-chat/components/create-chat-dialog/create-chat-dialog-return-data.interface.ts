@@ -5,10 +5,7 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-export interface CreateTicketDialogDataInterface {
-  title: string;
-  subjectInputLabel: string;
-  messageInputLabel: string;
-  cancelButtonText: string;
-  submitButtonText: string;
+export interface CreateChatDialogReturnDataInterface {
+  subject: string;
+  message: string;
 }

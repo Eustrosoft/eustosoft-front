@@ -10,12 +10,12 @@ import {
   throwError,
 } from 'rxjs';
 import { LocalDbNameEnum } from '../constants/enums/local-db-name.enum';
-import { TicketMessage } from '../interfaces/ticket-message.interface';
+import { ChatMessage } from '../interfaces/chat-message.interface';
 import { User } from '../interfaces/user.interface';
 
 @Injectable()
-export class TicketMessagesService {
-  getMessages(ticketId: number): Observable<TicketMessage[]> {
+export class ChatMessagesService {
+  getMessages(ticketId: number): Observable<ChatMessage[]> {
     return of(localStorage.getItem(LocalDbNameEnum.TIS_MESSAGE)).pipe(
       switchMap((value) =>
         iif(
@@ -24,7 +24,7 @@ export class TicketMessagesService {
           throwError(() => 'Unable to parse TIS_MESSAGE json from localStorage')
         )
       ),
-      map<string, TicketMessage[]>((value) => JSON.parse(value)),
+      map<string, ChatMessage[]>((value) => JSON.parse(value)),
       map((messages) =>
         messages.filter((message) => message.chat_id === ticketId)
       ),
@@ -35,10 +35,10 @@ export class TicketMessagesService {
     );
   }
 
-  addMessage(ticketId: number, message: string, user: User): TicketMessage {
+  addMessage(ticketId: number, message: string, user: User): ChatMessage {
     const messages = JSON.parse(
       localStorage.getItem(LocalDbNameEnum.TIS_MESSAGE) as string
-    ) as TicketMessage[];
+    ) as ChatMessage[];
     const lastId = messages[messages.length - 1].id;
 
     const ticketMessage = {
@@ -59,10 +59,10 @@ export class TicketMessagesService {
     return ticketMessage;
   }
 
-  putMessage(message: TicketMessage): TicketMessage {
+  putMessage(message: ChatMessage): ChatMessage {
     const messages = JSON.parse(
       localStorage.getItem(LocalDbNameEnum.TIS_MESSAGE) as string
-    ) as TicketMessage[];
+    ) as ChatMessage[];
 
     const storedMsgIndex = messages.findIndex((msg) => msg.id === message.id);
 

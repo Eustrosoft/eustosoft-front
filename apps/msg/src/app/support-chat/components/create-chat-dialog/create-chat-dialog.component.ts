@@ -6,23 +6,23 @@ import {
 } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, Validators } from '@angular/forms';
-import { CreateTicketDialogFormInterface } from './create-ticket-dialog-form.interface';
-import { CreateTicketDialogDataInterface } from './create-ticket-dialog-data.interface';
+import { CreateChatDialogFormInterface } from './create-chat-dialog-form.interface';
+import { CreateChatDialogDataInterface } from './create-chat-dialog-data.interface';
 
 @Component({
-  selector: 'eustrosoft-front-create-ticket-dialog',
-  templateUrl: './create-ticket-dialog.component.html',
-  styleUrls: ['./create-ticket-dialog.component.scss'],
+  selector: 'eustrosoft-front-create-chat-dialog',
+  templateUrl: './create-chat-dialog.component.html',
+  styleUrls: ['./create-chat-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CreateTicketDialogComponent {
-  private dialogRef: MatDialogRef<CreateTicketDialogComponent> = inject(
-    MatDialogRef<CreateTicketDialogComponent>
+export class CreateChatDialogComponent {
+  private dialogRef: MatDialogRef<CreateChatDialogComponent> = inject(
+    MatDialogRef<CreateChatDialogComponent>
   );
-  public data: CreateTicketDialogDataInterface = inject(MAT_DIALOG_DATA);
+  public data: CreateChatDialogDataInterface = inject(MAT_DIALOG_DATA);
   private fb = inject(FormBuilder);
 
-  form = this.fb.nonNullable.group<CreateTicketDialogFormInterface>({
+  form = this.fb.nonNullable.group<CreateChatDialogFormInterface>({
     subject: this.fb.nonNullable.control('', [Validators.required]),
     message: this.fb.nonNullable.control('', [Validators.required]),
   });

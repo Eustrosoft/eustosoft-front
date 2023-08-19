@@ -5,13 +5,10 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-import { User } from './user.interface';
-
-export interface Ticket {
-  id: number;
-  name: string;
-  time_created: string;
-  owner: User;
-  users: User[];
-  active: boolean;
+export interface CreateChatDialogDataInterface {
+  title: string;
+  subjectInputLabel: string;
+  messageInputLabel: string;
+  cancelButtonText: string;
+  submitButtonText: string;
 }

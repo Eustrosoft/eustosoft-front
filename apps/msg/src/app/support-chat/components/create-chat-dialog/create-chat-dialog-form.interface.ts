@@ -6,11 +6,11 @@
  */
 
 import { FormControl } from '@angular/forms';
-import { CreateTicketDialogReturnDataInterface } from './create-ticket-dialog-return-data.interface';
+import { CreateChatDialogReturnDataInterface } from './create-chat-dialog-return-data.interface';
 
 type FormControls<T> = {
   [K in keyof T]: FormControl<T[K]>;
 };
 
-export type CreateTicketDialogFormInterface =
-  FormControls<CreateTicketDialogReturnDataInterface>;
+export type CreateChatDialogFormInterface =
+  FormControls<CreateChatDialogReturnDataInterface>;
