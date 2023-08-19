@@ -15,8 +15,7 @@ import {
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
-import { Chat } from '../../interfaces/chat.interface';
-import { ChatMessage } from '../../interfaces/chat-message.interface';
+import { Chat, ChatMessage, MsgChatStatus } from '@eustrosoft-front/core';
 import { User } from '../../interfaces/user.interface';
 
 @Component({
@@ -27,7 +26,6 @@ import { User } from '../../interfaces/user.interface';
 })
 export class ChatViewComponent {
   @Input() selectedChat: Chat | undefined = undefined;
-  @Input() selectedUser: User | undefined = undefined;
   @Input() selectedChatMessages!: ChatMessage[];
   @Output() collapseClicked = new EventEmitter<void>();
   @Output() messageSent = new EventEmitter<string>();
@@ -40,16 +38,21 @@ export class ChatViewComponent {
     nonNullable: true,
   });
   messageInEdit: ChatMessage | undefined = undefined;
+  selectedUser: User = {
+    id: 1,
+    name: 'User 1',
+  };
+  MSG_CHAT_STATUS = MsgChatStatus;
 
   editMessage(message: ChatMessage) {
     this.messageInEdit = message;
-    this.control.setValue(message.text);
+    this.control.setValue(message.content);
   }
 
   saveEditedMessage() {
     const editedMessage: ChatMessage = {
       ...(this.messageInEdit as ChatMessage),
-      text: this.control.value,
+      content: this.control.value,
     };
     this.messageEdited.emit(editedMessage);
     this.messageInEdit = undefined;

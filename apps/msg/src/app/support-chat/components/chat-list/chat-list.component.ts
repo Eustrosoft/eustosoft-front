@@ -12,8 +12,7 @@ import {
   Input,
   Output,
 } from '@angular/core';
-import { Chat } from '../../interfaces/chat.interface';
-import { User } from '../../interfaces/user.interface';
+import { Chat } from '@eustrosoft-front/core';
 
 @Component({
   selector: 'eustrosoft-front-chat-list',
@@ -27,7 +26,6 @@ export class ChatListComponent {
   @Output() chatSelected = new EventEmitter<Chat>();
   @Output() collapseClicked = new EventEmitter<void>();
   @Output() newChatCreateClicked = new EventEmitter<void>();
-  @Output() userChanged = new EventEmitter<User>();
 
   selectedChat: Chat | undefined = undefined;
   numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -35,14 +33,6 @@ export class ChatListComponent {
   selectChat(chat: Chat) {
     this.selectedChat = chat;
     this.chatSelected.emit(chat);
-  }
-
-  changeCurrentUser(id: number) {
-    this.userChanged.emit({
-      id,
-      name: `User ${id}`,
-    });
-    this.selectedChat = undefined;
   }
 
   createNewChat() {

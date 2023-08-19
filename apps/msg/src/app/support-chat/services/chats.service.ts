@@ -1,59 +1,80 @@
 import { Injectable } from '@angular/core';
-import {
-  catchError,
-  EMPTY,
-  iif,
-  map,
-  Observable,
-  of,
-  switchMap,
-  throwError,
-} from 'rxjs';
-import { Chat } from '../interfaces/chat.interface';
-import { LocalDbNameEnum } from '../constants/enums/local-db-name.enum';
-import { User } from '../interfaces/user.interface';
+import { Observable, of } from 'rxjs';
+import { Chat, MsgChatStatus } from '@eustrosoft-front/core';
 
 @Injectable()
 export class ChatsService {
-  getChats(userId: number): Observable<Chat[]> {
-    return of(localStorage.getItem(LocalDbNameEnum.TIS_TICKET)).pipe(
-      switchMap((value) =>
-        iif(
-          () => typeof value === 'string',
-          of(value as string),
-          throwError(() => 'Unable to parse TIS_TICKET json from localStorage')
-        )
-      ),
-      map<string, Chat[]>((value) => JSON.parse(value)),
-      map((chats) =>
-        chats.filter((chat) => chat.users.some((user) => user.id === userId))
-      ),
-      catchError((error: string) => {
-        console.error('Error occurred:', error);
-        return EMPTY;
-      })
-    );
+  getChats(): Observable<Chat[]> {
+    return of([
+      {
+        id: 1,
+        subject: 'Help with Account Access',
+        status: MsgChatStatus.OPEN,
+        document: null,
+      },
+      {
+        id: 2,
+        subject: 'Product Inquiry',
+        status: MsgChatStatus.OPEN,
+        document: null,
+      },
+      {
+        id: 3,
+        subject: 'Technical Support',
+        status: MsgChatStatus.CLOSED,
+        document: null,
+      },
+      {
+        id: 4,
+        subject: 'Order Status',
+        status: MsgChatStatus.OPEN,
+        document: null,
+      },
+      {
+        id: 5,
+        subject: 'Feedback',
+        status: MsgChatStatus.OPEN,
+        document: null,
+      },
+      {
+        id: 6,
+        subject: 'Cancellation Request',
+        status: MsgChatStatus.CLOSED,
+        document: null,
+      },
+      {
+        id: 7,
+        subject: 'Account Update',
+        status: MsgChatStatus.OPEN,
+        document: null,
+      },
+      {
+        id: 8,
+        subject: 'Promotions',
+        status: MsgChatStatus.OPEN,
+        document: null,
+      },
+      {
+        id: 9,
+        subject: 'Billing Inquiry',
+        status: MsgChatStatus.OPEN,
+        document: null,
+      },
+      {
+        id: 10,
+        subject: 'New Feature Request',
+        status: MsgChatStatus.CLOSED,
+        document: null,
+      },
+    ]);
   }
 
-  addChats(name: string, owner: User, users: User[]): Chat {
-    const tickets = JSON.parse(
-      localStorage.getItem(LocalDbNameEnum.TIS_TICKET) as string
-    ) as Chat[];
-    const lastId = tickets[tickets.length - 1].id;
-    const date = new Date();
-
-    const ticket = {
-      id: lastId + 1,
-      name: name,
-      time_created: `${date.getFullYear()}-${date.getMonth()}-${date.getDay()}`,
-      owner: owner,
-      users: [owner, ...users],
-      active: true,
-    };
-    tickets.push(ticket);
-
-    localStorage.setItem(LocalDbNameEnum.TIS_TICKET, JSON.stringify(tickets));
-
-    return ticket;
-  }
+  // addChats(subject: string): Observable<Chat> {
+  //   return of({
+  //     id: 35,
+  //     subject,
+  //     status: MsgChatStatus.OPEN,
+  //     document: null,
+  //   });
+  // }
 }

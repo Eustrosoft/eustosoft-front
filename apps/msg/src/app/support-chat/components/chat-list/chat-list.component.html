@@ -35,22 +35,10 @@
           [matMenuTriggerFor]="menu"
         ></eustrosoft-front-button>
         <mat-menu #menu="matMenu">
-          <button mat-menu-item [matMenuTriggerFor]="userMenu">
-            <mat-icon>switch_account</mat-icon>
-            Switch user
-          </button>
           <button mat-menu-item>
             <mat-icon>settings</mat-icon>
             Settings
           </button>
-        </mat-menu>
-        <mat-menu #userMenu="matMenu">
-          <ng-container *ngFor="let number of numbers">
-            <button (click)="changeCurrentUser(number)" mat-menu-item>
-              <mat-icon>switch_account</mat-icon>
-              <span>User {{ number }}</span>
-            </button>
-          </ng-container>
         </mat-menu>
       </div>
     </div>
@@ -71,12 +59,13 @@
             }"
             (click)="selectChat(chat)"
           >
-            <span matListItemTitle>{{ chat.name }}</span>
+            <span matListItemTitle>{{ chat.subject }}</span>
             <span>
-              {{ chat.time_created | date }}
+              Some date ...
+              <!-- { chat.time_created | date }}-->
             </span>
             <span class="fst-italic">
-              {{ chat.active ? '' : 'Archive' }}
+              {{ chat.status }}
             </span>
           </mat-list-item>
           <mat-divider></mat-divider>

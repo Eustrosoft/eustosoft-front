@@ -12,26 +12,21 @@ import {
   inject,
   OnInit,
 } from '@angular/core';
-import { Chat } from './interfaces/chat.interface';
 import {
   BehaviorSubject,
   combineLatest,
   filter,
   Observable,
-  of,
   switchMap,
   take,
-  tap,
 } from 'rxjs';
 import { ChatsService } from './services/chats.service';
-import { ChatMessage } from './interfaces/chat-message.interface';
 import { ChatMessagesService } from './services/chat-messages.service';
-import { User } from './interfaces/user.interface';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateChatDialogComponent } from './components/create-chat-dialog/create-chat-dialog.component';
 import { CreateChatDialogDataInterface } from './components/create-chat-dialog/create-chat-dialog-data.interface';
 import { CreateChatDialogReturnDataInterface } from './components/create-chat-dialog/create-chat-dialog-return-data.interface';
-import { MockService } from './services/mock.service';
+import { Chat, ChatMessage } from '@eustrosoft-front/core';
 
 @Component({
   selector: 'eustrosoft-front-support-chat',
@@ -42,7 +37,6 @@ import { MockService } from './services/mock.service';
 export class SupportChatComponent implements OnInit {
   private chatsService = inject(ChatsService);
   private chatMessagesService = inject(ChatMessagesService);
-  private mockService = inject(MockService);
   private dialog = inject(MatDialog);
 
   chats$!: Observable<Chat[]>;
@@ -50,7 +44,6 @@ export class SupportChatComponent implements OnInit {
   refreshChatsView$ = new BehaviorSubject(true);
   refreshChatMessagesView$ = new BehaviorSubject<number | undefined>(undefined);
   selectedChat: Chat | undefined = undefined;
-  selectedUser: User = { id: 1, name: 'User 1' };
   isCollapsed = true;
   isXs = false;
 
@@ -61,7 +54,7 @@ export class SupportChatComponent implements OnInit {
 
   ngOnInit(): void {
     this.chats$ = combineLatest([this.refreshChatsView$]).pipe(
-      switchMap(() => this.chatsService.getChats(this.selectedUser.id))
+      switchMap(() => this.chatsService.getChats())
     );
     this.chatMessages$ = combineLatest([
       this.refreshChatMessagesView$.pipe(
@@ -90,12 +83,6 @@ export class SupportChatComponent implements OnInit {
     this.refreshChatMessagesView$.next(chat.id);
   }
 
-  userChanged(user: User) {
-    this.selectedUser = user;
-    this.refreshChatsView$.next(true);
-    this.selectedChat = undefined;
-  }
-
   createNewChat() {
     const dialogRef = this.dialog.open<
       CreateChatDialogComponent,
@@ -120,54 +107,18 @@ export class SupportChatComponent implements OnInit {
           (data): data is CreateChatDialogReturnDataInterface =>
             typeof data !== 'undefined'
         ),
-        switchMap((chatData) => {
-          const users: User[] = this.mockService.generateMockUsers(10);
-          const chatUsers = this.mockService.getRandomUsers(
-            users,
-            Math.floor(Math.random() * 9) + 2
-          );
-          return combineLatest([of(chatData), of(chatUsers)]);
-        }),
-        switchMap(([chatData, chatUsers]) =>
-          combineLatest([
-            of(chatData),
-            of(
-              this.chatsService.addChats(
-                chatData.subject,
-                this.selectedUser,
-                chatUsers
-              )
-            ),
-          ])
-        ),
-        switchMap(([chatData, createdChat]) => {
-          this.chatMessagesService.addMessage(
-            createdChat.id,
-            chatData.message,
-            this.selectedUser
-          );
-          return of(createdChat);
-        }),
-        tap((createdChat) => {
-          this.refreshChatsView$.next(true);
-          this.chatSelected(createdChat);
-        }),
         take(1)
       )
-      .subscribe();
+      .subscribe(console.log);
   }
 
   sendMessage(message: string) {
-    this.chatMessagesService.addMessage(
-      this.selectedChat?.id as number,
-      message,
-      this.selectedUser
-    );
+    console.log(`message: ${message}`);
     this.refreshChatMessagesView$.next(this.selectedChat?.id as number);
   }
 
   editMessage(message: ChatMessage) {
-    this.chatMessagesService.putMessage(message);
+    console.log('message', message);
     this.refreshChatMessagesView$.next(this.selectedChat?.id as number);
   }
 }

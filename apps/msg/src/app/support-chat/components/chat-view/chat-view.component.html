@@ -17,7 +17,7 @@
           (clicked)="collapseClicked.emit()"
         ></eustrosoft-front-button>
         <h2 class="mb-0">
-          {{ selectedChat && selectedChat.name }}
+          {{ selectedChat && selectedChat.subject }}
         </h2>
       </div>
       <div class="d-flex align-items-center">
@@ -48,7 +48,7 @@
         #messagesVirtualScrollViewport
       >
         <ng-container *cdkVirtualFor="let msg of selectedChatMessages">
-          <ng-container *ngIf="selectedUser && selectedUser.id === msg.user_id">
+          <ng-container *ngIf="selectedUser && selectedUser.id === msg.user.id">
             <div class="d-flex justify-content-end m-2 list-message-item">
               <ng-container
                 [ngTemplateOutlet]="msgTemplate"
@@ -56,7 +56,7 @@
               ></ng-container>
             </div>
           </ng-container>
-          <ng-container *ngIf="selectedUser && selectedUser.id !== msg.user_id">
+          <ng-container *ngIf="selectedUser && selectedUser.id !== msg.user.id">
             <div class="d-flex m-2 list-message-item">
               <ng-container
                 [ngTemplateOutlet]="msgTemplate"
@@ -67,7 +67,10 @@
         </ng-container>
       </cdk-virtual-scroll-viewport>
       <div
-        *ngIf="selectedChat.active; else inactiveTicketTemplate"
+        *ngIf="
+          selectedChat.status === MSG_CHAT_STATUS.OPEN;
+          else inactiveChatTemplate
+        "
         class="d-flex align-items-center p-3 pe-1"
       >
         <ng-container
@@ -81,10 +84,10 @@
 <ng-template #msgTemplate let-msg>
   <div class="d-flex flex-column mw-45">
     <div class="p-2 bg-light rounded-1">
-      <span>{{ msg.text }}</span>
+      <span>{{ msg.content }}</span>
       <div class="d-flex align-items-center justify-content-between">
         <eustrosoft-front-button
-          *ngIf="msg.user_name === selectedUser?.name"
+          *ngIf="msg.user.id === selectedUser?.id"
           [buttonType]="'button'"
           [buttonStyleType]="'icon'"
           [iconName]="'edit'"
@@ -92,10 +95,10 @@
           class="edit-icon"
         ></eustrosoft-front-button>
         <span class="fw-light fst-italic">
-          {{ msg.time_changed ? 'edited' : '' }}
+          <!--          {{ msg.time_changed ? 'edited' : '' }}-->
         </span>
         <span class="fw-light fst-italic">
-          {{ msg.user_name === selectedUser?.name ? 'me' : msg.user_name }}
+          {{ msg.user.id === selectedUser?.id ? 'me' : msg.user.username }}
         </span>
         <!--      <span class="fw-light">{{ msg.messageDateTime | date : 'short' }}</span>-->
       </div>
@@ -111,7 +114,7 @@
   </div>
 </ng-template>
 
-<ng-template #inactiveTicketTemplate>
+<ng-template #inactiveChatTemplate>
   <div class="d-flex justify-content-center align-items-center p-3 pe-1">
     <h4>Ticket is inactive</h4>
   </div>

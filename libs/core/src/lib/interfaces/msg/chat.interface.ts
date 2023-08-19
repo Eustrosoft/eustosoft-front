@@ -5,13 +5,11 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-export interface ChatMessage {
+import { MsgChatStatus } from '../../constants/enums/msg-chat-status.enum';
+
+export interface Chat {
   id: number;
-  chat_id: number;
-  user_id: number;
-  user_name: string;
-  text: string;
-  content: any;
-  time_created: string;
-  time_changed: string;
+  subject: string;
+  status: MsgChatStatus;
+  document: unknown;
 }

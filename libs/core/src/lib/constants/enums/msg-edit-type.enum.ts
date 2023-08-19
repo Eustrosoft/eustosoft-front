@@ -5,11 +5,9 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-export enum Subsystems {
-  CMS = 'cms',
-  SQL = 'sql',
-  PING = 'ping',
-  FILE = 'file',
-  LOGIN = 'login',
-  MSG = 'msg',
+export enum MessageType {
+  MESSAGE = 'M',
+  LIKE = 'L',
+  SURVEY = 'P',
+  ANSWER = 'A',
 }

@@ -16,7 +16,6 @@
         [removeBorderRadius]="isXs"
         (chatSelected)="chatSelected($event)"
         (collapseClicked)="toggleSidebar()"
-        (userChanged)="userChanged($event)"
         (newChatCreateClicked)="createNewChat()"
         class="h-inherit"
       ></eustrosoft-front-chat-list>
@@ -24,7 +23,6 @@
     <div class="col-12 col-sm-8 col-md-8 col-lg-8 col-xl-8 h-inherit">
       <eustrosoft-front-chat-view
         [selectedChat]="selectedChat"
-        [selectedUser]="selectedUser"
         [selectedChatMessages]="(chatMessages$ | async) || []"
         (collapseClicked)="toggleSidebar()"
         (messageSent)="sendMessage($event)"

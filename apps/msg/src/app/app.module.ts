@@ -32,6 +32,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { CreateChatDialogComponent } from './support-chat/components/create-chat-dialog/create-chat-dialog.component';
 import { MockService } from './support-chat/services/mock.service';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MsgService } from './support-chat/services/msg.service';
+import { MsgRequestBuilderService } from './support-chat/services/msg-request-builder.service';
 
 @NgModule({
   declarations: [
@@ -57,7 +59,13 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatIconModule,
     MatDialogModule,
   ],
-  providers: [ChatsService, ChatMessagesService, MockService],
+  providers: [
+    ChatsService,
+    ChatMessagesService,
+    MockService,
+    MsgService,
+    MsgRequestBuilderService,
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
