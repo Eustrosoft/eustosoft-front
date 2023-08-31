@@ -69,7 +69,7 @@ export class MsgRequestBuilderService {
   }
 
   buildSendMessageToChatRequest(
-    id: number
+    params: SendMessageChatRequest['params']
   ): Observable<QtisRequestResponseInterface<SendMessageChatRequest>> {
     return of({
       r: [
@@ -77,7 +77,7 @@ export class MsgRequestBuilderService {
           s: Subsystems.MSG,
           r: MsgRequestActions.SEND_MESSAGE,
           l: SupportedLanguages.EN_US,
-          id,
+          params: params,
         },
       ],
       t: 0,

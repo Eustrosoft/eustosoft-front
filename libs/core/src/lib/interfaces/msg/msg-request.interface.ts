@@ -35,7 +35,12 @@ export interface CreateChatRequest extends BaseMsgRequest {
 export interface SendMessageChatRequest extends BaseMsgRequest {
   s: Subsystems.MSG;
   r: MsgRequestActions.SEND_MESSAGE;
-  id: number;
+  params: {
+    id: number; // chat id
+    content: string;
+    reference: string;
+    type: MessageType.MESSAGE;
+  };
 }
 
 export interface EditMessageChatRequest extends BaseMsgRequest {

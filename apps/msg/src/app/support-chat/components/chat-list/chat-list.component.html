@@ -51,12 +51,12 @@
             eustrosoftFrontHoverCursor
             eustrosoftFrontHover
             [hoverClasses]="['shadow-lg']"
-            class="p-2 my-2 rounded-start"
-            lines="3"
             [ngClass]="{
               'border-3 border-start border-secondary bg-secondary bg-opacity-25':
                 selectedChat && selectedChat.id === chat.id
             }"
+            class="p-2 my-2 rounded-start"
+            lines="3"
             (click)="selectChat(chat)"
           >
             <span matListItemTitle>{{ chat.subject }}</span>

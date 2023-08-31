@@ -87,7 +87,7 @@
       <span>{{ msg.content }}</span>
       <div class="d-flex align-items-center justify-content-between">
         <eustrosoft-front-button
-          *ngIf="msg.user.id === selectedUser?.id"
+          *ngIf="msg.user.id === selectedUser.id"
           [buttonType]="'button'"
           [buttonStyleType]="'icon'"
           [iconName]="'edit'"

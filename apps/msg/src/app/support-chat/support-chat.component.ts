@@ -19,6 +19,7 @@ import {
   Observable,
   switchMap,
   take,
+  tap,
 } from 'rxjs';
 import { ChatsService } from './services/chats.service';
 import { ChatMessagesService } from './services/chat-messages.service';
@@ -26,7 +27,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { CreateChatDialogComponent } from './components/create-chat-dialog/create-chat-dialog.component';
 import { CreateChatDialogDataInterface } from './components/create-chat-dialog/create-chat-dialog-data.interface';
 import { CreateChatDialogReturnDataInterface } from './components/create-chat-dialog/create-chat-dialog-return-data.interface';
-import { Chat, ChatMessage } from '@eustrosoft-front/core';
+import { Chat, ChatMessage, MessageType } from '@eustrosoft-front/core';
+import { MsgRequestBuilderService } from './services/msg-request-builder.service';
 
 @Component({
   selector: 'eustrosoft-front-support-chat',
@@ -37,6 +39,7 @@ import { Chat, ChatMessage } from '@eustrosoft-front/core';
 export class SupportChatComponent implements OnInit {
   private chatsService = inject(ChatsService);
   private chatMessagesService = inject(ChatMessagesService);
+  private msgRequestBuilderService = inject(MsgRequestBuilderService);
   private dialog = inject(MatDialog);
 
   chats$!: Observable<Chat[]>;
@@ -54,7 +57,8 @@ export class SupportChatComponent implements OnInit {
 
   ngOnInit(): void {
     this.chats$ = combineLatest([this.refreshChatsView$]).pipe(
-      switchMap(() => this.chatsService.getChats())
+      switchMap(() => this.msgRequestBuilderService.buildViewChatsRequest()),
+      switchMap((req) => this.chatsService.getChats())
     );
     this.chatMessages$ = combineLatest([
       this.refreshChatMessagesView$.pipe(
@@ -113,8 +117,22 @@ export class SupportChatComponent implements OnInit {
   }
 
   sendMessage(message: string) {
-    console.log(`message: ${message}`);
-    this.refreshChatMessagesView$.next(this.selectedChat?.id as number);
+    this.msgRequestBuilderService
+      .buildSendMessageToChatRequest({
+        id: <number>this.selectedChat?.id,
+        content: message,
+        reference: '',
+        type: MessageType.MESSAGE,
+      })
+      .pipe(
+        switchMap((request) => this.chatsService.dispatch(request)),
+        tap(() => console.log),
+        tap(() =>
+          this.refreshChatMessagesView$.next(this.selectedChat?.id as number)
+        ),
+        take(1)
+      )
+      .subscribe();
   }
 
   editMessage(message: ChatMessage) {
