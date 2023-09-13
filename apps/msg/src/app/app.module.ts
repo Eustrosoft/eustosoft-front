@@ -34,6 +34,7 @@ import { MockService } from './support-chat/services/mock.service';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MsgService } from './support-chat/services/msg.service';
 import { MsgRequestBuilderService } from './support-chat/services/msg-request-builder.service';
+import { MsgChatStatusPipe } from './support-chat/pipes/msg-chat-status.pipe';
 
 @NgModule({
   declarations: [
@@ -43,6 +44,7 @@ import { MsgRequestBuilderService } from './support-chat/services/msg-request-bu
     ChatViewComponent,
     LoginPageComponent,
     CreateChatDialogComponent,
+    MsgChatStatusPipe,
   ],
   imports: [
     BrowserModule,

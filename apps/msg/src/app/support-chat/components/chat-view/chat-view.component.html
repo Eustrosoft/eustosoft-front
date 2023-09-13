@@ -68,7 +68,7 @@
       </cdk-virtual-scroll-viewport>
       <div
         *ngIf="
-          selectedChat.status === MSG_CHAT_STATUS.OPEN;
+          selectedChat.status !== MSG_CHAT_STATUS.CLOSED;
           else inactiveChatTemplate
         "
         class="d-flex align-items-center p-3 pe-1"
@@ -98,7 +98,7 @@
           <!--          {{ msg.time_changed ? 'edited' : '' }}-->
         </span>
         <span class="fw-light fst-italic">
-          {{ msg.user.id === selectedUser?.id ? 'me' : msg.user.username }}
+          {{ msg.user.id === selectedUser.id ? 'me' : msg.user.username }}
         </span>
         <!--      <span class="fw-light">{{ msg.messageDateTime | date : 'short' }}</span>-->
       </div>

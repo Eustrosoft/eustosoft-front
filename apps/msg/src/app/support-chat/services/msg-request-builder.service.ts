@@ -38,7 +38,7 @@ export class MsgRequestBuilderService {
     });
   }
   buildViewChatRequest(
-    id: number
+    zoid: number
   ): Observable<QtisRequestResponseInterface<ViewChatRequest>> {
     return of({
       r: [
@@ -46,7 +46,9 @@ export class MsgRequestBuilderService {
           s: Subsystems.MSG,
           r: MsgRequestActions.VIEW_CHAT,
           l: SupportedLanguages.EN_US,
-          id,
+          params: {
+            zoid,
+          },
         },
       ],
       t: 0,

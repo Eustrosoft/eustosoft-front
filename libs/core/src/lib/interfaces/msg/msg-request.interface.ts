@@ -24,7 +24,9 @@ export interface ViewChatsRequest extends BaseMsgRequest {
 export interface ViewChatRequest extends BaseMsgRequest {
   s: Subsystems.MSG;
   r: MsgRequestActions.VIEW_CHAT;
-  id: number;
+  params: {
+    zoid: number;
+  };
 }
 
 export interface CreateChatRequest extends BaseMsgRequest {
@@ -36,7 +38,7 @@ export interface SendMessageChatRequest extends BaseMsgRequest {
   s: Subsystems.MSG;
   r: MsgRequestActions.SEND_MESSAGE;
   params: {
-    id: number; // chat id
+    zoid: number; // chat id
     content: string;
     reference: string;
     type: MessageType.MESSAGE;

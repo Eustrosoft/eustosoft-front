@@ -8,8 +8,11 @@
 import { MsgChatStatus } from '../../constants/enums/msg-chat-status.enum';
 
 export interface Chat {
-  id: number;
+  documentId: number;
   subject: string;
   status: MsgChatStatus;
-  document: unknown;
+  zoid: number;
+  zver: number;
+  zrid: number;
+  zlvl: number;
 }

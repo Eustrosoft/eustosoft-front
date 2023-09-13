@@ -16,6 +16,7 @@ import {
   BehaviorSubject,
   combineLatest,
   filter,
+  map,
   Observable,
   switchMap,
   take,
@@ -27,7 +28,16 @@ import { MatDialog } from '@angular/material/dialog';
 import { CreateChatDialogComponent } from './components/create-chat-dialog/create-chat-dialog.component';
 import { CreateChatDialogDataInterface } from './components/create-chat-dialog/create-chat-dialog-data.interface';
 import { CreateChatDialogReturnDataInterface } from './components/create-chat-dialog/create-chat-dialog-return-data.interface';
-import { Chat, ChatMessage, MessageType } from '@eustrosoft-front/core';
+import {
+  Chat,
+  ChatMessage,
+  MessageType,
+  QtisRequestResponseInterface,
+  ViewChatRequest,
+  ViewChatResponse,
+  ViewChatsRequest,
+  ViewChatsResponse,
+} from '@eustrosoft-front/core';
 import { MsgRequestBuilderService } from './services/msg-request-builder.service';
 
 @Component({
@@ -58,13 +68,32 @@ export class SupportChatComponent implements OnInit {
   ngOnInit(): void {
     this.chats$ = combineLatest([this.refreshChatsView$]).pipe(
       switchMap(() => this.msgRequestBuilderService.buildViewChatsRequest()),
-      switchMap((req) => this.chatsService.getChats())
+      switchMap((req: QtisRequestResponseInterface<ViewChatsRequest>) =>
+        this.chatsService.dispatch<ViewChatsRequest, ViewChatsResponse>(req)
+      ),
+      map((response: QtisRequestResponseInterface<ViewChatsResponse>) =>
+        response.r.flatMap((r: ViewChatsResponse) => r.chats)
+      ),
+      tap(console.log)
     );
+
     this.chatMessages$ = combineLatest([
       this.refreshChatMessagesView$.pipe(
-        filter((id): id is number => typeof id !== 'undefined')
+        filter((zoid): zoid is number => typeof zoid !== 'undefined')
       ),
-    ]).pipe(switchMap(([id]) => this.chatMessagesService.getMessages(id)));
+    ]).pipe(
+      switchMap(([zoid]) =>
+        this.msgRequestBuilderService.buildViewChatRequest(zoid)
+      ),
+      switchMap((req: QtisRequestResponseInterface<ViewChatRequest>) =>
+        this.chatsService.dispatch<ViewChatRequest, ViewChatResponse>(req)
+      ),
+      map((response: QtisRequestResponseInterface<ViewChatResponse>) =>
+        response.r.flatMap((r: ViewChatResponse) => r.messages)
+      ),
+      tap(console.log)
+    );
+
     this.setUpSidebar();
   }
 
@@ -84,7 +113,7 @@ export class SupportChatComponent implements OnInit {
 
   chatSelected(chat: Chat) {
     this.selectedChat = chat;
-    this.refreshChatMessagesView$.next(chat.id);
+    this.refreshChatMessagesView$.next(chat.zoid);
   }
 
   createNewChat() {
@@ -119,7 +148,7 @@ export class SupportChatComponent implements OnInit {
   sendMessage(message: string) {
     this.msgRequestBuilderService
       .buildSendMessageToChatRequest({
-        id: <number>this.selectedChat?.id,
+        zoid: <number>this.selectedChat?.zoid,
         content: message,
         reference: '',
         type: MessageType.MESSAGE,
@@ -128,7 +157,7 @@ export class SupportChatComponent implements OnInit {
         switchMap((request) => this.chatsService.dispatch(request)),
         tap(() => console.log),
         tap(() =>
-          this.refreshChatMessagesView$.next(this.selectedChat?.id as number)
+          this.refreshChatMessagesView$.next(this.selectedChat?.zoid as number)
         ),
         take(1)
       )
@@ -137,6 +166,6 @@ export class SupportChatComponent implements OnInit {
 
   editMessage(message: ChatMessage) {
     console.log('message', message);
-    this.refreshChatMessagesView$.next(this.selectedChat?.id as number);
+    this.refreshChatMessagesView$.next(this.selectedChat?.zoid as number);
   }
 }

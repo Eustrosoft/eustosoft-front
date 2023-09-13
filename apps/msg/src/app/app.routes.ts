@@ -8,6 +8,7 @@
 import { Route } from '@angular/router';
 import { LoginPageComponent } from './login-page/login-page.component';
 import { SupportChatComponent } from './support-chat/support-chat.component';
+import { authenticationGuard } from '@eustrosoft-front/security';
 
 export const appRoutes: Route[] = [
   {
@@ -16,7 +17,7 @@ export const appRoutes: Route[] = [
   },
   {
     path: '',
-    // canActivate: [authenticationGuard],
+    canActivate: [authenticationGuard],
     children: [
       {
         path: '',

@@ -6,6 +6,8 @@
  */
 
 export enum MsgChatStatus {
-  OPEN = 'OPEN',
-  CLOSED = 'CLOSED',
+  NEW = 'N',
+  WIP = 'W',
+  INTERNAL = 'I',
+  CLOSED = 'C',
 }
