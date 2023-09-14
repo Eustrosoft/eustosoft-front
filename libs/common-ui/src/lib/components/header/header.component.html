@@ -17,7 +17,7 @@
     {{ texts.appName }}
   </span>
   <span class="logo-spacer"></span>
-  <ng-container *ngIf="isAuthenticated | async">
+  <ng-container *ngIf="isAuthenticated$ | async">
     <div class="d-flex d-none">
       <eustrosoft-front-button
         [buttonType]="'button'"
@@ -34,8 +34,8 @@
     </div>
     <span class="spacer"></span>
     <div class="col-4 d-flex align-items-center justify-content-end">
-      <ng-container *ngIf="userName | async as name">
-        <span class="px-3">{{ name }}</span>
+      <ng-container *ngIf="userInfo$ | async as info">
+        <span class="px-3">{{ info.userFullName }}</span>
       </ng-container>
       <eustrosoft-front-button
         [buttonStyleType]="'icon'"

@@ -35,9 +35,9 @@ import {
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { RequestBuilderService } from './services/request-builder.service';
 import { RequestFormBuilderService } from './services/request-form-builder.service';
-import { RequestService } from './services/request.service';
 import { Option } from '@eustrosoft-front/common-ui';
 import { HttpErrorResponse } from '@angular/common/http';
+import { DispatchService } from '@eustrosoft-front/security';
 
 @Component({
   selector: 'eustrosoft-front-requests',
@@ -80,7 +80,7 @@ export class RequestsComponent implements OnInit {
     private fb: FormBuilder,
     private requestBuilderService: RequestBuilderService,
     private requestFormBuilderService: RequestFormBuilderService,
-    private requestService: RequestService,
+    private dispatchService: DispatchService,
     private cd: ChangeDetectorRef,
     private snackBar: MatSnackBar
   ) {}
@@ -96,7 +96,7 @@ export class RequestsComponent implements OnInit {
       .buildQuery(this.form.controls.forms)
       .pipe(
         mergeMap((query) =>
-          this.requestService.dispatch<SqlRequest | FileRequest, SqlResponse>(
+          this.dispatchService.dispatch<SqlRequest | FileRequest, SqlResponse>(
             query
           )
         ),

@@ -11,7 +11,6 @@ import {
   CreateChatRequest,
   DeleteMessageChatRequest,
   EditMessageChatRequest,
-  MessageType,
   MsgRequestActions,
   QtisRequestResponseInterface,
   SendMessageChatRequest,
@@ -55,15 +54,16 @@ export class MsgRequestBuilderService {
     });
   }
 
-  buildCreateChatRequest(): Observable<
-    QtisRequestResponseInterface<CreateChatRequest>
-  > {
+  buildCreateChatRequest(
+    params: CreateChatRequest['params']
+  ): Observable<QtisRequestResponseInterface<CreateChatRequest>> {
     return of({
       r: [
         {
           s: Subsystems.MSG,
           r: MsgRequestActions.CREATE_CHAT,
           l: SupportedLanguages.EN_US,
+          params,
         },
       ],
       t: 0,
@@ -79,7 +79,7 @@ export class MsgRequestBuilderService {
           s: Subsystems.MSG,
           r: MsgRequestActions.SEND_MESSAGE,
           l: SupportedLanguages.EN_US,
-          params: params,
+          params,
         },
       ],
       t: 0,
@@ -87,10 +87,7 @@ export class MsgRequestBuilderService {
   }
 
   buildEditMessageRequest(
-    id: number,
-    content: string,
-    reference: string,
-    type: MessageType
+    params: EditMessageChatRequest['params']
   ): Observable<QtisRequestResponseInterface<EditMessageChatRequest>> {
     return of({
       r: [
@@ -98,12 +95,7 @@ export class MsgRequestBuilderService {
           s: Subsystems.MSG,
           r: MsgRequestActions.EDIT_MESSAGE,
           l: SupportedLanguages.EN_US,
-          params: {
-            id,
-            content,
-            reference,
-            type,
-          },
+          params,
         },
       ],
       t: 0,
@@ -111,7 +103,7 @@ export class MsgRequestBuilderService {
   }
 
   buildDeleteMessageToChatRequest(
-    id: number
+    params: DeleteMessageChatRequest['params']
   ): Observable<QtisRequestResponseInterface<DeleteMessageChatRequest>> {
     return of({
       r: [
@@ -119,7 +111,7 @@ export class MsgRequestBuilderService {
           s: Subsystems.MSG,
           r: MsgRequestActions.DELETE_MESSAGE,
           l: SupportedLanguages.EN_US,
-          id,
+          params,
         },
       ],
       t: 0,

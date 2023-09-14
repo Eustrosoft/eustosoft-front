@@ -9,50 +9,71 @@ import { inject, Injectable } from '@angular/core';
 import {
   BehaviorSubject,
   catchError,
+  combineLatest,
+  map,
   Observable,
+  of,
   switchMap,
   tap,
   throwError,
 } from 'rxjs';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse } from '@angular/common/http';
 import {
+  AuthenticatedUserInterface,
   PingRequest,
   PingResponse,
   QtisRequestResponseInterface,
   Subsystems,
   SupportedLanguages,
 } from '@eustrosoft-front/core';
-import { APP_CONFIG } from '@eustrosoft-front/config';
+import { DispatchService } from './dispatch.service';
+import { SamService } from './sam.service';
 
 @Injectable()
 export class AuthenticationService {
-  private http: HttpClient = inject(HttpClient);
-  private config = inject(APP_CONFIG);
+  private dispatchService = inject(DispatchService);
+  private samService = inject(SamService);
 
-  isAuthenticated = new BehaviorSubject<boolean>(false);
-  userName = new BehaviorSubject<string>('');
+  isAuthenticated$ = new BehaviorSubject<boolean>(false);
+  userInfo$ = new BehaviorSubject<AuthenticatedUserInterface>({
+    userAvailableSlvl: '',
+    userLang: '',
+    userLogin: '',
+    userId: -1,
+    userSlvl: '',
+    userFullName: '',
+  });
 
   getAuthenticationInfo(): Observable<
     QtisRequestResponseInterface<PingResponse>
   > {
-    return this.config.pipe(
-      switchMap((config) =>
-        this.http.post<QtisRequestResponseInterface<PingResponse>>(
-          `${config.apiUrl}/dispatch`,
+    return combineLatest([
+      this.dispatchService.dispatch<PingRequest, PingResponse>({
+        r: [
           {
-            r: [
-              {
-                s: Subsystems.PING,
-                l: SupportedLanguages.EN_US,
-              },
-            ],
-            t: 0,
-          } as QtisRequestResponseInterface<PingRequest>
-        )
+            s: Subsystems.PING,
+            l: SupportedLanguages.EN_US,
+          },
+        ],
+        t: 0,
+      } as QtisRequestResponseInterface<PingRequest>),
+      this.samService.getUserId().pipe(map((res) => +res.r[0].data)),
+      this.samService.getUserLogin().pipe(map((res) => res.r[0].data)),
+      this.samService.getUserLang().pipe(map((res) => res.r[0].data)),
+      this.samService.getUserSlvl().pipe(map((res) => res.r[0].data)),
+      this.samService.getUserAvailableSlvl().pipe(map((res) => res.r[0].data)),
+    ]).pipe(
+      tap(([pingRes, id, login, lang, slvl, availableSlvl]) =>
+        this.userInfo$.next({
+          userAvailableSlvl: availableSlvl,
+          userLang: lang,
+          userLogin: login,
+          userId: id,
+          userFullName: pingRes.r[0].fullName,
+          userSlvl: slvl,
+        })
       ),
-      tap((response) => {
-        this.userName.next(response.r[0].fullName);
-      }),
+      switchMap(([pingRes]) => of(pingRes)),
       catchError((err: HttpErrorResponse) => throwError(() => err))
     );
   }

@@ -48,21 +48,23 @@
         #messagesVirtualScrollViewport
       >
         <ng-container *cdkVirtualFor="let msg of selectedChatMessages">
-          <ng-container *ngIf="selectedUser && selectedUser.id === msg.user.id">
-            <div class="d-flex justify-content-end m-2 list-message-item">
-              <ng-container
-                [ngTemplateOutlet]="msgTemplate"
-                [ngTemplateOutletContext]="{ $implicit: msg }"
-              ></ng-container>
-            </div>
-          </ng-container>
-          <ng-container *ngIf="selectedUser && selectedUser.id !== msg.user.id">
-            <div class="d-flex m-2 list-message-item">
-              <ng-container
-                [ngTemplateOutlet]="msgTemplate"
-                [ngTemplateOutletContext]="{ $implicit: msg }"
-              ></ng-container>
-            </div>
+          <ng-container *ngIf="userInfo$ | async as info">
+            <ng-container *ngIf="+info.userId === msg.user.id">
+              <div class="d-flex justify-content-end m-2 list-message-item">
+                <ng-container
+                  [ngTemplateOutlet]="msgTemplate"
+                  [ngTemplateOutletContext]="{ $implicit: msg }"
+                ></ng-container>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="+info.userId !== msg.user.id">
+              <div class="d-flex m-2 list-message-item">
+                <ng-container
+                  [ngTemplateOutlet]="msgTemplate"
+                  [ngTemplateOutletContext]="{ $implicit: msg }"
+                ></ng-container>
+              </div>
+            </ng-container>
           </ng-container>
         </ng-container>
       </cdk-virtual-scroll-viewport>
@@ -82,28 +84,52 @@
   </div>
 </div>
 <ng-template #msgTemplate let-msg>
-  <div class="d-flex flex-column mw-45">
-    <div class="p-2 bg-light rounded-1">
-      <span>{{ msg.content }}</span>
-      <div class="d-flex align-items-center justify-content-between">
-        <eustrosoft-front-button
-          *ngIf="msg.user.id === selectedUser.id"
-          [buttonType]="'button'"
-          [buttonStyleType]="'icon'"
-          [iconName]="'edit'"
-          (clicked)="editMessage(msg)"
-          class="edit-icon"
-        ></eustrosoft-front-button>
-        <span class="fw-light fst-italic">
-          <!--          {{ msg.time_changed ? 'edited' : '' }}-->
-        </span>
-        <span class="fw-light fst-italic">
-          {{ msg.user.id === selectedUser.id ? 'me' : msg.user.username }}
-        </span>
-        <!--      <span class="fw-light">{{ msg.messageDateTime | date : 'short' }}</span>-->
+  <ng-container *ngIf="userInfo$ | async as info">
+    <div class="d-flex flex-column mw-45">
+      <div class="p-2 bg-light rounded-1">
+        <span class="text-break">{{ msg.content }}</span>
+        <div class="d-flex align-items-center justify-content-between">
+          <span class="fw-light fst-italic me-2">
+            {{ msg.user.id === info.userId ? 'me' : msg.user.username }}
+          </span>
+          <ng-container *ngIf="msg.user.id === info.userId">
+            <eustrosoft-front-button
+              [buttonType]="'button'"
+              [buttonStyleType]="'icon'"
+              [iconName]="'more_vert'"
+              [matMenuTriggerFor]="messageActionsMenu"
+              class="icon"
+            ></eustrosoft-front-button>
+            <mat-menu #messageActionsMenu="matMenu">
+              <button (click)="editMessage(msg)" mat-menu-item>
+                <mat-icon>edit</mat-icon>
+                <span>Edit message</span>
+              </button>
+              <button (click)="deleteMessage(msg)" mat-menu-item>
+                <mat-icon>delete</mat-icon>
+                <span>Delete message</span>
+              </button>
+            </mat-menu>
+            <!--            <eustrosoft-front-button-->
+            <!--              [buttonType]="'button'"-->
+            <!--              [buttonStyleType]="'icon'"-->
+            <!--              [iconName]="'edit'"-->
+            <!--              (clicked)="editMessage(msg)"-->
+            <!--              class="icon"-->
+            <!--            ></eustrosoft-front-button>-->
+            <!--            <eustrosoft-front-button-->
+            <!--              *ngIf="msg.user.id === info.userId"-->
+            <!--              [buttonType]="'button'"-->
+            <!--              [buttonStyleType]="'icon'"-->
+            <!--              [iconName]="'delete'"-->
+            <!--              (clicked)="deleteMessage(msg)"-->
+            <!--              class="icon"-->
+            <!--            ></eustrosoft-front-button>-->
+          </ng-container>
+        </div>
       </div>
     </div>
-  </div>
+  </ng-container>
 </ng-template>
 
 <ng-template #noSelectedTicketTemplate>

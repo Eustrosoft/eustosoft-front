@@ -1,11 +1,11 @@
 import { inject, Injectable } from '@angular/core';
-import { Observable, switchMap } from 'rxjs';
-import { QtisRequestResponseInterface } from '@eustrosoft-front/core';
 import { HttpClient } from '@angular/common/http';
-import { APP_CONFIG } from '@eustrosoft-front/config';
+import { APP_CONFIG, Config } from '@eustrosoft-front/config';
+import { QtisRequestResponseInterface } from '@eustrosoft-front/core';
+import { Observable, switchMap } from 'rxjs';
 
 @Injectable()
-export class ChatsService {
+export class DispatchService {
   private http = inject(HttpClient);
   private config = inject(APP_CONFIG);
 
@@ -13,7 +13,7 @@ export class ChatsService {
     body: QtisRequestResponseInterface<Req>
   ): Observable<QtisRequestResponseInterface<Res>> {
     return this.config.pipe(
-      switchMap((config) =>
+      switchMap((config: Config) =>
         this.http.post<QtisRequestResponseInterface<Res>>(
           `${config.apiUrl}/dispatch`,
           body

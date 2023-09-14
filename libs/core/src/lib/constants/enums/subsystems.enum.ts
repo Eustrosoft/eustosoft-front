@@ -12,4 +12,5 @@ export enum Subsystems {
   FILE = 'file',
   LOGIN = 'login',
   MSG = 'msg',
+  SAM = 'sam',
 }

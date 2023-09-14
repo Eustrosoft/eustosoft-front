@@ -21,19 +21,6 @@ export class ExplorerService {
   private http = inject(HttpClient);
   private config = inject(APP_CONFIG);
 
-  dispatch<Req, Res>(
-    body: QtisRequestResponseInterface<Req>
-  ): Observable<QtisRequestResponseInterface<Res>> {
-    return this.config.pipe(
-      switchMap((config) =>
-        this.http.post<QtisRequestResponseInterface<Res>>(
-          `${config.apiUrl}/dispatch`,
-          body
-        )
-      )
-    );
-  }
-
   download(
     parameterValue: string,
     parameterName: CmsDownloadParams = CmsDownloadParams.TICKET

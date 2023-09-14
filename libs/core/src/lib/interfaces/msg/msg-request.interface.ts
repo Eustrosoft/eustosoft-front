@@ -32,6 +32,10 @@ export interface ViewChatRequest extends BaseMsgRequest {
 export interface CreateChatRequest extends BaseMsgRequest {
   s: Subsystems.MSG;
   r: MsgRequestActions.CREATE_CHAT;
+  params: {
+    content: string;
+    slvl: number;
+  };
 }
 
 export interface SendMessageChatRequest extends BaseMsgRequest {
@@ -49,7 +53,8 @@ export interface EditMessageChatRequest extends BaseMsgRequest {
   s: Subsystems.MSG;
   r: MsgRequestActions.EDIT_MESSAGE;
   params: {
-    id: number;
+    zoid: number; // chatId
+    zrid: number; // messageId
     content: string;
     reference: string;
     type: MessageType;
@@ -59,5 +64,8 @@ export interface EditMessageChatRequest extends BaseMsgRequest {
 export interface DeleteMessageChatRequest extends BaseMsgRequest {
   s: Subsystems.MSG;
   r: MsgRequestActions.DELETE_MESSAGE;
-  id: number;
+  params: {
+    zoid: number; // chatId
+    zrid: number; // messageId
+  };
 }

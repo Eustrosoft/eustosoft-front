@@ -5,8 +5,11 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-export enum Author {
-  ME = 'me',
-  SUPPORT = 'support',
-  THIRD_USER = 'third_user',
+export interface AuthenticatedUserInterface {
+  userId: number;
+  userFullName: string;
+  userLogin: string;
+  userLang: string;
+  userSlvl: string;
+  userAvailableSlvl: string;
 }

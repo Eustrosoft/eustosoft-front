@@ -81,6 +81,7 @@ import { UploadingState } from './constants/enums/uploading-state.enum';
 import { TranslateService } from '@ngx-translate/core';
 import { ExplorerUploadItemsService } from './services/explorer-upload-items.service';
 import { UploadOverlayComponent } from './components/upload-overlay/upload-overlay.component';
+import { DispatchService } from '@eustrosoft-front/security';
 
 @Component({
   selector: 'eustrosoft-front-explorer',
@@ -135,6 +136,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private fileReaderService: FileReaderService,
+    private dispatchService: DispatchService,
     private explorerRequestBuilderService: ExplorerRequestBuilderService,
     private explorerService: ExplorerService,
     private explorerPathService: ExplorerPathService,
@@ -165,7 +167,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
         return this.explorerRequestBuilderService.buildViewRequest(path);
       }),
       switchMap((request: QtisRequestResponseInterface<ViewRequest>) =>
-        this.explorerService.dispatch<ViewRequest, ViewResponse>(request).pipe(
+        this.dispatchService.dispatch<ViewRequest, ViewResponse>(request).pipe(
           catchError((err: HttpErrorResponse) => {
             this.snackBar.open(
               err.error,
@@ -373,7 +375,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
           )
         ),
         switchMap((body: QtisRequestResponseInterface<CreateRequest>) =>
-          this.explorerService.dispatch<CreateRequest, CreateResponse>(body)
+          this.dispatchService.dispatch<CreateRequest, CreateResponse>(body)
         ),
         tap(() => {
           this.refreshFolders$.next(true);
@@ -417,7 +419,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
           )
         ),
         switchMap((body: QtisRequestResponseInterface<CreateRequest>) =>
-          this.explorerService.dispatch<CreateRequest, CreateResponse>(body)
+          this.dispatchService.dispatch<CreateRequest, CreateResponse>(body)
         ),
         tap(() => {
           this.refreshFolders$.next(true);
@@ -462,7 +464,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
           );
         }),
         switchMap((body: QtisRequestResponseInterface<MoveCopyRequest>) =>
-          this.explorerService.dispatch<MoveCopyRequest, MoveCopyResponse>(body)
+          this.dispatchService.dispatch<MoveCopyRequest, MoveCopyResponse>(body)
         ),
         tap(() => {
           this.refreshFolders$.next(true);
@@ -508,7 +510,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
         ),
         switchMap(([body, to]) =>
           combineLatest([
-            this.explorerService.dispatch<MoveCopyRequest, MoveCopyResponse>(
+            this.dispatchService.dispatch<MoveCopyRequest, MoveCopyResponse>(
               body
             ),
             of(to),
@@ -560,7 +562,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
         ),
         switchMap(([body, to]) =>
           combineLatest([
-            this.explorerService.dispatch<MoveCopyRequest, MoveCopyResponse>(
+            this.dispatchService.dispatch<MoveCopyRequest, MoveCopyResponse>(
               body
             ),
             of(to),
@@ -606,7 +608,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
           this.explorerRequestBuilderService.buildDeleteRequests(rows)
         ),
         switchMap((body: QtisRequestResponseInterface<DeleteRequest>) =>
-          this.explorerService.dispatch<DeleteRequest, DeleteResponse>(body)
+          this.dispatchService.dispatch<DeleteRequest, DeleteResponse>(body)
         ),
         tap(() => this.refreshFolders$.next(true)),
         catchError((err) => this.handleError(err)),
@@ -620,7 +622,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
       .buildDownloadTicketRequests(rows)
       .pipe(
         switchMap((body) =>
-          this.explorerService.dispatch<
+          this.dispatchService.dispatch<
             DownloadTicketRequest,
             DownloadTicketResponse
           >(body)

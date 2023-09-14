@@ -4,12 +4,12 @@
  * This file is part of eustrosoft-front project.
  * See the LICENSE file at the project root for licensing information.
  */
-.edit-icon {
+.icon {
   ::ng-deep {
     .mat-icon {
-      height:1rem !important;
-      width:1rem !important;
-      font-size:1rem !important;
+      height: auto !important;
+      width: auto !important;
+      font-size: 1rem !important;
     }
     .mat-mdc-icon-button.mat-mdc-button-base {
       height: 2rem;

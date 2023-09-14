@@ -14,12 +14,16 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { ConfigModule } from '@eustrosoft-front/config';
 import { UnauthenticatedInterceptor } from './interceptors/unauthenticated.interceptor';
 import { WithCredentialsInterceptor } from './interceptors/with-credentials.interceptor';
+import { SamService } from './services/sam.service';
+import { DispatchService } from './services/dispatch.service';
 
 @NgModule({
   imports: [CommonModule, HttpClientModule, MatSnackBarModule, ConfigModule],
   providers: [
     LoginService,
     AuthenticationService,
+    SamService,
+    DispatchService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: UnauthenticatedInterceptor,

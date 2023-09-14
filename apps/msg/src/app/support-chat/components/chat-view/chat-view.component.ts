@@ -9,14 +9,18 @@ import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
+  inject,
   Input,
+  OnChanges,
   Output,
+  SimpleChanges,
   ViewChild,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { Chat, ChatMessage, MsgChatStatus } from '@eustrosoft-front/core';
-import { User } from '../../interfaces/user.interface';
+import { AuthenticationService } from '@eustrosoft-front/security';
+import { shareReplay } from 'rxjs';
 
 @Component({
   selector: 'eustrosoft-front-chat-view',
@@ -24,25 +28,28 @@ import { User } from '../../interfaces/user.interface';
   styleUrls: ['./chat-view.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ChatViewComponent {
+export class ChatViewComponent implements OnChanges {
   @Input() selectedChat: Chat | undefined = undefined;
   @Input() selectedChatMessages!: ChatMessage[];
   @Output() collapseClicked = new EventEmitter<void>();
   @Output() messageSent = new EventEmitter<string>();
   @Output() messageEdited = new EventEmitter<ChatMessage>();
+  @Output() messageDeleted = new EventEmitter<ChatMessage>();
 
   @ViewChild('messagesVirtualScrollViewport')
   messagesVirtualScrollViewport!: CdkVirtualScrollViewport;
+
+  private authenticationService = inject(AuthenticationService);
 
   control = new FormControl('', {
     nonNullable: true,
   });
   messageInEdit: ChatMessage | undefined = undefined;
-  selectedUser: User = {
-    id: 1,
-    name: 'User 1',
-  };
   MSG_CHAT_STATUS = MsgChatStatus;
+
+  userInfo$ = this.authenticationService.userInfo$
+    .asObservable()
+    .pipe(shareReplay(1));
 
   editMessage(message: ChatMessage) {
     this.messageInEdit = message;
@@ -64,7 +71,18 @@ export class ChatViewComponent {
       return;
     }
     this.messageSent.emit(this.control.value);
-    this.control.reset('');
+    this.control.reset();
+  }
+
+  deleteMessage(message: ChatMessage) {
+    this.messageDeleted.emit(message);
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if ('selectedChat' in changes) {
+      this.messageInEdit = undefined;
+      this.control.reset();
+    }
   }
 
   // scrollToBottom() {
@@ -86,4 +104,5 @@ export class ChatViewComponent {
   // ngAfterViewInit(): void {
   //   this.scrollToBottom();
   // }
+  protected readonly undefined = undefined;
 }

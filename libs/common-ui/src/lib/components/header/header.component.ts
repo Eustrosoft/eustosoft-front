@@ -20,6 +20,7 @@ import {
 } from '@eustrosoft-front/security';
 import { APP_CONFIG } from '@eustrosoft-front/config';
 import { Router } from '@angular/router';
+import { AuthenticatedUserInterface } from '@eustrosoft-front/core';
 
 @Component({
   selector: 'eustrosoft-front-header',
@@ -38,13 +39,13 @@ export class HeaderComponent implements OnInit {
   );
   public config = inject(APP_CONFIG);
   public router = inject(Router);
-  public isAuthenticated!: Observable<boolean>;
-  public userName!: Observable<string>;
+  public isAuthenticated$!: Observable<boolean>;
+  public userInfo$!: Observable<AuthenticatedUserInterface>;
 
   ngOnInit() {
-    this.isAuthenticated =
-      this.authenticationService.isAuthenticated.asObservable();
-    this.userName = this.authenticationService.userName.asObservable();
+    this.isAuthenticated$ =
+      this.authenticationService.isAuthenticated$.asObservable();
+    this.userInfo$ = this.authenticationService.userInfo$.asObservable();
   }
 
   logout() {

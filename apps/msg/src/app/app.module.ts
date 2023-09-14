@@ -26,13 +26,10 @@ import {
 } from '@angular/cdk/scrolling';
 import { MatListModule } from '@angular/material/list';
 import { LoginPageComponent } from './login-page/login-page.component';
-import { ChatsService } from './support-chat/services/chats.service';
-import { ChatMessagesService } from './support-chat/services/chat-messages.service';
 import { MatIconModule } from '@angular/material/icon';
 import { CreateChatDialogComponent } from './support-chat/components/create-chat-dialog/create-chat-dialog.component';
 import { MockService } from './support-chat/services/mock.service';
 import { MatDialogModule } from '@angular/material/dialog';
-import { MsgService } from './support-chat/services/msg.service';
 import { MsgRequestBuilderService } from './support-chat/services/msg-request-builder.service';
 import { MsgChatStatusPipe } from './support-chat/pipes/msg-chat-status.pipe';
 
@@ -61,13 +58,7 @@ import { MsgChatStatusPipe } from './support-chat/pipes/msg-chat-status.pipe';
     MatIconModule,
     MatDialogModule,
   ],
-  providers: [
-    ChatsService,
-    ChatMessagesService,
-    MockService,
-    MsgService,
-    MsgRequestBuilderService,
-  ],
+  providers: [MockService, MsgRequestBuilderService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

@@ -30,7 +30,7 @@ export const authenticationGuard = (): Observable<UrlTree | boolean> => {
         snackBar.open('Authenticate in order to access this page', 'Close');
         return of(router.createUrlTree(['login'])).pipe(delay(2000));
       }
-      authenticationService.isAuthenticated.next(true);
+      authenticationService.isAuthenticated$.next(true);
       return of(true);
     }),
     catchError((err: HttpErrorResponse) => {

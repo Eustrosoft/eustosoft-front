@@ -17,7 +17,6 @@ import {
   ViewChild,
 } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { ExplorerService } from '../../services/explorer.service';
 import {
   BehaviorSubject,
   map,
@@ -38,6 +37,7 @@ import { MatListOption, MatSelectionList } from '@angular/material/list';
 import { Stack } from '../../classes/Stack';
 import { ExplorerRequestBuilderService } from '../../services/explorer-request-builder.service';
 import { MoveCopyDialogDataInterface } from './move-copy-dialog-data.interface';
+import { DispatchService } from '@eustrosoft-front/security';
 
 @Component({
   selector: 'eustrosoft-front-move-folder-dialog',
@@ -66,7 +66,7 @@ export class MoveCopyDialogComponent
   private dialogRef: MatDialogRef<MoveCopyDialogComponent> = inject(
     MatDialogRef<MoveCopyDialogComponent>
   );
-  private explorerService: ExplorerService = inject(ExplorerService);
+  private dispatchService: DispatchService = inject(DispatchService);
   private explorerRequestBuilderService: ExplorerRequestBuilderService = inject(
     ExplorerRequestBuilderService
   );
@@ -85,7 +85,7 @@ export class MoveCopyDialogComponent
         this.explorerRequestBuilderService.buildViewRequest(path)
       ),
       switchMap((body) =>
-        this.explorerService.dispatch<ViewRequest, ViewResponse>(body)
+        this.dispatchService.dispatch<ViewRequest, ViewResponse>(body)
       ),
       map((response: QtisRequestResponseInterface<ViewResponse>) =>
         response.r.flatMap((r: ViewResponse) => r.content)

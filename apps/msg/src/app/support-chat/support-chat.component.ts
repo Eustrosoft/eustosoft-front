@@ -18,12 +18,11 @@ import {
   filter,
   map,
   Observable,
+  of,
   switchMap,
   take,
   tap,
 } from 'rxjs';
-import { ChatsService } from './services/chats.service';
-import { ChatMessagesService } from './services/chat-messages.service';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateChatDialogComponent } from './components/create-chat-dialog/create-chat-dialog.component';
 import { CreateChatDialogDataInterface } from './components/create-chat-dialog/create-chat-dialog-data.interface';
@@ -31,6 +30,8 @@ import { CreateChatDialogReturnDataInterface } from './components/create-chat-di
 import {
   Chat,
   ChatMessage,
+  CreateChatRequest,
+  CreateChatResponse,
   MessageType,
   QtisRequestResponseInterface,
   ViewChatRequest,
@@ -39,6 +40,7 @@ import {
   ViewChatsResponse,
 } from '@eustrosoft-front/core';
 import { MsgRequestBuilderService } from './services/msg-request-builder.service';
+import { DispatchService, SamService } from '@eustrosoft-front/security';
 
 @Component({
   selector: 'eustrosoft-front-support-chat',
@@ -47,9 +49,9 @@ import { MsgRequestBuilderService } from './services/msg-request-builder.service
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SupportChatComponent implements OnInit {
-  private chatsService = inject(ChatsService);
-  private chatMessagesService = inject(ChatMessagesService);
+  private dispatchService = inject(DispatchService);
   private msgRequestBuilderService = inject(MsgRequestBuilderService);
+  private samService = inject(SamService);
   private dialog = inject(MatDialog);
 
   chats$!: Observable<Chat[]>;
@@ -69,7 +71,7 @@ export class SupportChatComponent implements OnInit {
     this.chats$ = combineLatest([this.refreshChatsView$]).pipe(
       switchMap(() => this.msgRequestBuilderService.buildViewChatsRequest()),
       switchMap((req: QtisRequestResponseInterface<ViewChatsRequest>) =>
-        this.chatsService.dispatch<ViewChatsRequest, ViewChatsResponse>(req)
+        this.dispatchService.dispatch<ViewChatsRequest, ViewChatsResponse>(req)
       ),
       map((response: QtisRequestResponseInterface<ViewChatsResponse>) =>
         response.r.flatMap((r: ViewChatsResponse) => r.chats)
@@ -86,7 +88,7 @@ export class SupportChatComponent implements OnInit {
         this.msgRequestBuilderService.buildViewChatRequest(zoid)
       ),
       switchMap((req: QtisRequestResponseInterface<ViewChatRequest>) =>
-        this.chatsService.dispatch<ViewChatRequest, ViewChatResponse>(req)
+        this.dispatchService.dispatch<ViewChatRequest, ViewChatResponse>(req)
       ),
       map((response: QtisRequestResponseInterface<ViewChatResponse>) =>
         response.r.flatMap((r: ViewChatResponse) => r.messages)
@@ -140,6 +142,25 @@ export class SupportChatComponent implements OnInit {
           (data): data is CreateChatDialogReturnDataInterface =>
             typeof data !== 'undefined'
         ),
+        switchMap((data) =>
+          combineLatest([
+            of(data),
+            this.samService.getUserSlvl().pipe(map((slvl) => slvl.r[0].data)),
+            this.samService.getUserId(),
+          ])
+        ),
+        switchMap(([content, slvl, userId]) => {
+          console.log(userId);
+          return this.msgRequestBuilderService.buildCreateChatRequest({
+            content: content.subject,
+            slvl: +slvl,
+          });
+        }),
+        switchMap((req) =>
+          this.dispatchService.dispatch<CreateChatRequest, CreateChatResponse>(
+            req
+          )
+        ),
         take(1)
       )
       .subscribe(console.log);
@@ -154,8 +175,7 @@ export class SupportChatComponent implements OnInit {
         type: MessageType.MESSAGE,
       })
       .pipe(
-        switchMap((request) => this.chatsService.dispatch(request)),
-        tap(() => console.log),
+        switchMap((request) => this.dispatchService.dispatch(request)),
         tap(() =>
           this.refreshChatMessagesView$.next(this.selectedChat?.zoid as number)
         ),
@@ -165,7 +185,37 @@ export class SupportChatComponent implements OnInit {
   }
 
   editMessage(message: ChatMessage) {
-    console.log('message', message);
-    this.refreshChatMessagesView$.next(this.selectedChat?.zoid as number);
+    this.msgRequestBuilderService
+      .buildEditMessageRequest({
+        zoid: <number>this.selectedChat?.zoid,
+        zrid: message.zrid,
+        content: message.content,
+        reference: '',
+        type: MessageType.MESSAGE,
+      })
+      .pipe(
+        switchMap((request) => this.dispatchService.dispatch(request)),
+        tap(() =>
+          this.refreshChatMessagesView$.next(this.selectedChat?.zoid as number)
+        ),
+        take(1)
+      )
+      .subscribe();
+  }
+
+  deleteMessage(message: ChatMessage) {
+    this.msgRequestBuilderService
+      .buildDeleteMessageToChatRequest({
+        zoid: <number>this.selectedChat?.zoid,
+        zrid: message.zrid,
+      })
+      .pipe(
+        switchMap((request) => this.dispatchService.dispatch(request)),
+        tap(() =>
+          this.refreshChatMessagesView$.next(this.selectedChat?.zoid as number)
+        ),
+        take(1)
+      )
+      .subscribe();
   }
 }
