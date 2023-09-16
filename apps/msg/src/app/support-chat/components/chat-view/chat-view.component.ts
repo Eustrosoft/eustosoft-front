@@ -104,5 +104,4 @@ export class ChatViewComponent implements OnChanges {
   // ngAfterViewInit(): void {
   //   this.scrollToBottom();
   // }
-  protected readonly undefined = undefined;
 }
