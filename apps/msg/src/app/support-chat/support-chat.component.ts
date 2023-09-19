@@ -14,11 +14,13 @@ import {
 } from '@angular/core';
 import {
   BehaviorSubject,
+  catchError,
   combineLatest,
   filter,
+  ignoreElements,
   map,
-  Observable,
   of,
+  shareReplay,
   switchMap,
   take,
   tap,
@@ -54,10 +56,47 @@ export class SupportChatComponent implements OnInit {
   private samService = inject(SamService);
   private dialog = inject(MatDialog);
 
-  chats$!: Observable<Chat[]>;
-  chatMessages$!: Observable<ChatMessage[]>;
   refreshChatsView$ = new BehaviorSubject(true);
   refreshChatMessagesView$ = new BehaviorSubject<number | undefined>(undefined);
+
+  chats$ = combineLatest([this.refreshChatsView$]).pipe(
+    switchMap(() => this.msgRequestBuilderService.buildViewChatsRequest()),
+    switchMap((req: QtisRequestResponseInterface<ViewChatsRequest>) =>
+      this.dispatchService.dispatch<ViewChatsRequest, ViewChatsResponse>(req)
+    ),
+    map((response: QtisRequestResponseInterface<ViewChatsResponse>) =>
+      response.r.flatMap((r: ViewChatsResponse) => r.chats)
+    ),
+    shareReplay(1)
+  );
+
+  chatsError$ = this.chats$.pipe(
+    ignoreElements(),
+    catchError((err) => of(err))
+  );
+
+  chatMessages$ = combineLatest([
+    this.refreshChatMessagesView$.pipe(
+      filter((zoid): zoid is number => typeof zoid !== 'undefined')
+    ),
+  ]).pipe(
+    switchMap(([zoid]) =>
+      this.msgRequestBuilderService.buildViewChatRequest(zoid)
+    ),
+    switchMap((req: QtisRequestResponseInterface<ViewChatRequest>) =>
+      this.dispatchService.dispatch<ViewChatRequest, ViewChatResponse>(req)
+    ),
+    map((response: QtisRequestResponseInterface<ViewChatResponse>) =>
+      response.r.flatMap((r: ViewChatResponse) => r.messages)
+    ),
+    shareReplay(1)
+  );
+
+  chatMessagesError$ = this.chatMessages$.pipe(
+    ignoreElements(),
+    catchError((err) => of(err))
+  );
+
   selectedChat: Chat | undefined = undefined;
   isCollapsed = true;
   isXs = false;
@@ -68,34 +107,6 @@ export class SupportChatComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.chats$ = combineLatest([this.refreshChatsView$]).pipe(
-      switchMap(() => this.msgRequestBuilderService.buildViewChatsRequest()),
-      switchMap((req: QtisRequestResponseInterface<ViewChatsRequest>) =>
-        this.dispatchService.dispatch<ViewChatsRequest, ViewChatsResponse>(req)
-      ),
-      map((response: QtisRequestResponseInterface<ViewChatsResponse>) =>
-        response.r.flatMap((r: ViewChatsResponse) => r.chats)
-      ),
-      tap(console.log)
-    );
-
-    this.chatMessages$ = combineLatest([
-      this.refreshChatMessagesView$.pipe(
-        filter((zoid): zoid is number => typeof zoid !== 'undefined')
-      ),
-    ]).pipe(
-      switchMap(([zoid]) =>
-        this.msgRequestBuilderService.buildViewChatRequest(zoid)
-      ),
-      switchMap((req: QtisRequestResponseInterface<ViewChatRequest>) =>
-        this.dispatchService.dispatch<ViewChatRequest, ViewChatResponse>(req)
-      ),
-      map((response: QtisRequestResponseInterface<ViewChatResponse>) =>
-        response.r.flatMap((r: ViewChatResponse) => r.messages)
-      ),
-      tap(console.log)
-    );
-
     this.setUpSidebar();
   }
 

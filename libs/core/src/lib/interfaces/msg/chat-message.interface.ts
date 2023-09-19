@@ -9,11 +9,12 @@ import { MessageType } from '../../constants/enums/msg-edit-type.enum';
 
 export interface ChatMessage {
   content: string;
-  answerId: number;
+  created: string;
   type: MessageType;
   user: {
     id: number;
     username: string;
+    fullName: string;
   };
   zoid: number;
   zver: number;

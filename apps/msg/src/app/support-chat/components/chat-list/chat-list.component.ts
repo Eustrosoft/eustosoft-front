@@ -12,7 +12,7 @@ import {
   Input,
   Output,
 } from '@angular/core';
-import { Chat } from '@eustrosoft-front/core';
+import { Chat, trackByZridFunction } from '@eustrosoft-front/core';
 
 @Component({
   selector: 'eustrosoft-front-chat-list',
@@ -28,7 +28,7 @@ export class ChatListComponent {
   @Output() newChatCreateClicked = new EventEmitter<void>();
 
   selectedChat: Chat | undefined = undefined;
-  numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  trackByFn = trackByZridFunction;
 
   selectChat(chat: Chat) {
     this.selectedChat = chat;

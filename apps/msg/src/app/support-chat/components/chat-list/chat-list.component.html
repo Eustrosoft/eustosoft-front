@@ -45,8 +45,10 @@
   </div>
   <div class="flex-grow-1 h-100">
     <mat-list *ngIf="chats.length > 0; else noChatsTemplate" class="h-100">
-      <cdk-virtual-scroll-viewport class="h-100" itemSize="88">
-        <ng-container *cdkVirtualFor="let chat of chats">
+      <virtual-scroller #scroll [items]="chats" class="h-100">
+        <ng-container
+          *ngFor="let chat of scroll.viewPortItems; trackBy: trackByFn"
+        >
           <mat-list-item
             eustrosoftFrontHoverCursor
             eustrosoftFrontHover
@@ -60,17 +62,13 @@
             (click)="selectChat(chat)"
           >
             <span matListItemTitle>{{ chat.subject }}</span>
-            <!--            <span>-->
-            <!--              Some date ...-->
-            <!--               {{ chat.time_created | date }}-->
-            <!--            </span>-->
             <span class="fst-italic">
               {{ chat.status | msgChatStatus }}
             </span>
           </mat-list-item>
           <mat-divider></mat-divider>
         </ng-container>
-      </cdk-virtual-scroll-viewport>
+      </virtual-scroller>
     </mat-list>
   </div>
 </div>
@@ -79,7 +77,7 @@
   <div
     class="d-flex flex-column align-items-center justify-content-center h-inherit"
   >
-    <h2>Create new ticket</h2>
+    <h2>Create new chat</h2>
     <eustrosoft-front-button
       [buttonType]="'button'"
       [buttonStyleType]="'icon'"

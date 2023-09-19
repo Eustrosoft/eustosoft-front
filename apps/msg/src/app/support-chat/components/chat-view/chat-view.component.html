@@ -42,15 +42,17 @@
   </div>
   <div class="flex-grow-1 h-100 bg-secondary bg-opacity-10">
     <div
-      *ngIf="selectedChat; else noSelectedTicketTemplate"
+      *ngIf="selectedChat"
       class="d-flex flex-column justify-content-between h-inherit"
     >
-      <cdk-virtual-scroll-viewport
-        class="d-flex flex-column justify-content-end h-100"
-        itemSize="50"
-        #messagesVirtualScrollViewport
+      <virtual-scroller
+        #scroll
+        [items]="selectedChatMessages"
+        [class.h-100]="selectedChatMessages.length > 0"
       >
-        <ng-container *cdkVirtualFor="let msg of selectedChatMessages">
+        <ng-container
+          *ngFor="let msg of scroll.viewPortItems; trackBy: trackByFn"
+        >
           <ng-container *ngIf="userInfo$ | async as info">
             <ng-container *ngIf="+info.userId === msg.user.id">
               <div class="d-flex justify-content-end m-2 list-message-item">
@@ -70,7 +72,14 @@
             </ng-container>
           </ng-container>
         </ng-container>
-      </cdk-virtual-scroll-viewport>
+      </virtual-scroller>
+      <ng-container *ngIf="!(selectedChatMessages.length > 0)">
+        <div
+          class="d-flex flex-column align-items-center justify-content-center h-inherit"
+        >
+          <h2>No messages available</h2>
+        </div>
+      </ng-container>
       <div
         *ngIf="
           selectedChat.status !== MSG_CHAT_STATUS.CLOSED;
@@ -93,7 +102,7 @@
         <span class="text-break">{{ msg.content }}</span>
         <div class="d-flex align-items-center justify-content-between">
           <span class="fw-light fst-italic me-2">
-            {{ msg.user.id === info.userId ? 'me' : msg.user.username }}
+            {{ msg.user.id === info.userId ? 'me' : msg.user.fullName }}
           </span>
           <ng-container *ngIf="msg.user.id === info.userId">
             <eustrosoft-front-button
@@ -113,34 +122,11 @@
                 <span>Delete message</span>
               </button>
             </mat-menu>
-            <!--            <eustrosoft-front-button-->
-            <!--              [buttonType]="'button'"-->
-            <!--              [buttonStyleType]="'icon'"-->
-            <!--              [iconName]="'edit'"-->
-            <!--              (clicked)="editMessage(msg)"-->
-            <!--              class="icon"-->
-            <!--            ></eustrosoft-front-button>-->
-            <!--            <eustrosoft-front-button-->
-            <!--              *ngIf="msg.user.id === info.userId"-->
-            <!--              [buttonType]="'button'"-->
-            <!--              [buttonStyleType]="'icon'"-->
-            <!--              [iconName]="'delete'"-->
-            <!--              (clicked)="deleteMessage(msg)"-->
-            <!--              class="icon"-->
-            <!--            ></eustrosoft-front-button>-->
           </ng-container>
         </div>
       </div>
     </div>
   </ng-container>
-</ng-template>
-
-<ng-template #noSelectedTicketTemplate>
-  <div
-    class="d-flex flex-column align-items-center justify-content-center h-inherit"
-  >
-    <h2>Select ticket from menu</h2>
-  </div>
 </ng-template>
 
 <ng-template #inactiveChatTemplate>

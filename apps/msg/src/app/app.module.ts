@@ -19,11 +19,6 @@ import { SecurityModule } from '@eustrosoft-front/security';
 import { SupportChatComponent } from './support-chat/support-chat.component';
 import { ChatListComponent } from './support-chat/components/chat-list/chat-list.component';
 import { ChatViewComponent } from './support-chat/components/chat-view/chat-view.component';
-import {
-  CdkFixedSizeVirtualScroll,
-  CdkVirtualForOf,
-  CdkVirtualScrollViewport,
-} from '@angular/cdk/scrolling';
 import { MatListModule } from '@angular/material/list';
 import { LoginPageComponent } from './login-page/login-page.component';
 import { MatIconModule } from '@angular/material/icon';
@@ -32,6 +27,7 @@ import { MockService } from './support-chat/services/mock.service';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MsgRequestBuilderService } from './support-chat/services/msg-request-builder.service';
 import { MsgChatStatusPipe } from './support-chat/pipes/msg-chat-status.pipe';
+import { VirtualScrollerModule } from '@iharbeck/ngx-virtual-scroller';
 
 @NgModule({
   declarations: [
@@ -51,12 +47,10 @@ import { MsgChatStatusPipe } from './support-chat/pipes/msg-chat-status.pipe';
     CommonUiModule,
     SecurityModule,
     MatMenuModule,
-    CdkVirtualScrollViewport,
     MatListModule,
-    CdkVirtualForOf,
-    CdkFixedSizeVirtualScroll,
     MatIconModule,
     MatDialogModule,
+    VirtualScrollerModule,
   ],
   providers: [MockService, MsgRequestBuilderService],
   bootstrap: [AppComponent],

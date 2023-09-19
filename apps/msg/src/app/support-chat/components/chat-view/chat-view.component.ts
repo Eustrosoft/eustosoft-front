@@ -18,9 +18,15 @@ import {
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
-import { Chat, ChatMessage, MsgChatStatus } from '@eustrosoft-front/core';
+import {
+  Chat,
+  ChatMessage,
+  MsgChatStatus,
+  trackByZridFunction,
+} from '@eustrosoft-front/core';
 import { AuthenticationService } from '@eustrosoft-front/security';
 import { shareReplay } from 'rxjs';
+import { VirtualScrollerComponent } from '@iharbeck/ngx-virtual-scroller';
 
 @Component({
   selector: 'eustrosoft-front-chat-view',
@@ -30,7 +36,15 @@ import { shareReplay } from 'rxjs';
 })
 export class ChatViewComponent implements OnChanges {
   @Input() selectedChat: Chat | undefined = undefined;
-  @Input() selectedChatMessages!: ChatMessage[];
+  private _selectedChatMessages!: ChatMessage[];
+  @Input()
+  set selectedChatMessages(value: ChatMessage[]) {
+    this._selectedChatMessages = value;
+    this.vScroll?.scrollToIndex(value.length - 1, true, 0, 0);
+  }
+  get selectedChatMessages(): ChatMessage[] {
+    return this._selectedChatMessages;
+  }
   @Output() collapseClicked = new EventEmitter<void>();
   @Output() messageSent = new EventEmitter<string>();
   @Output() messageEdited = new EventEmitter<ChatMessage>();
@@ -39,6 +53,8 @@ export class ChatViewComponent implements OnChanges {
   @ViewChild('messagesVirtualScrollViewport')
   messagesVirtualScrollViewport!: CdkVirtualScrollViewport;
 
+  @ViewChild(VirtualScrollerComponent) vScroll!: VirtualScrollerComponent;
+
   private authenticationService = inject(AuthenticationService);
 
   control = new FormControl('', {
@@ -46,6 +62,7 @@ export class ChatViewComponent implements OnChanges {
   });
   messageInEdit: ChatMessage | undefined = undefined;
   MSG_CHAT_STATUS = MsgChatStatus;
+  trackByFn = trackByZridFunction;
 
   userInfo$ = this.authenticationService.userInfo$
     .asObservable()
@@ -66,7 +83,7 @@ export class ChatViewComponent implements OnChanges {
     this.control.setValue('');
   }
 
-  sendMessage() {
+  sendMessage(): void {
     if (this.control.value.length === 0) {
       return;
     }
@@ -74,7 +91,7 @@ export class ChatViewComponent implements OnChanges {
     this.control.reset();
   }
 
-  deleteMessage(message: ChatMessage) {
+  deleteMessage(message: ChatMessage): void {
     this.messageDeleted.emit(message);
   }
 
@@ -84,24 +101,4 @@ export class ChatViewComponent implements OnChanges {
       this.control.reset();
     }
   }
-
-  // scrollToBottom() {
-  //   // TODO работает не корректно, то скроллит на середину, то в конец, то не скроллит вовсе, нужно переделывать
-  //   setTimeout(() => {
-  //     this.messagesVirtualScrollViewport.scrollTo({
-  //       bottom: 0,
-  //       behavior: 'auto',
-  //     });
-  //   }, 10);
-  // }
-  //
-  // ngOnChanges(changes: SimpleChanges): void {
-  //   if ('selectedTicket' in changes) {
-  //     this.scrollToBottom();
-  //   }
-  // }
-
-  // ngAfterViewInit(): void {
-  //   this.scrollToBottom();
-  // }
 }
