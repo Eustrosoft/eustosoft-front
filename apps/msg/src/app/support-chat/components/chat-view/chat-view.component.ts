@@ -6,6 +6,7 @@
  */
 
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
@@ -34,13 +35,13 @@ import { VirtualScrollerComponent } from '@iharbeck/ngx-virtual-scroller';
   styleUrls: ['./chat-view.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ChatViewComponent implements OnChanges {
+export class ChatViewComponent implements OnChanges, AfterViewInit {
   @Input() selectedChat: Chat | undefined = undefined;
   private _selectedChatMessages!: ChatMessage[];
   @Input()
   set selectedChatMessages(value: ChatMessage[]) {
     this._selectedChatMessages = value;
-    this.vScroll?.scrollToIndex(value.length - 1, true, 0, 0);
+    this.vScroll?.scrollToIndex(value.length - 1, true, 10000, 0);
   }
   get selectedChatMessages(): ChatMessage[] {
     return this._selectedChatMessages;
@@ -100,5 +101,14 @@ export class ChatViewComponent implements OnChanges {
       this.messageInEdit = undefined;
       this.control.reset();
     }
+  }
+
+  ngAfterViewInit(): void {
+    this.vScroll.scrollToIndex(
+      this.selectedChatMessages.length - 1,
+      true,
+      10000,
+      0
+    );
   }
 }

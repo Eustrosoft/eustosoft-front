@@ -16,6 +16,7 @@ export interface PingResponse {
   userId: string;
   fullName: string;
   username: string;
+  dbUser: string;
 }
 
 export interface LoginLogoutResponse {

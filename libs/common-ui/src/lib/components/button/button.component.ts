@@ -29,10 +29,12 @@ export class ButtonComponent {
     | 'flat'
     | 'icon'
     | 'fab'
-    | 'mini-fab' = 'flat';
+    | 'mini-fab'
+    | 'with-icon' = 'flat';
   @Input() buttonText = '';
   @Input() disabled = false;
   @Input() iconName = '';
+  @Input() iconPosition: 'start' | 'end' = 'start';
 
   @Output() clicked = new EventEmitter<MouseEvent>();
 }

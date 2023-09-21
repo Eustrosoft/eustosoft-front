@@ -59,7 +59,6 @@
     class="w-100"
   >
     <mat-icon>{{ iconName }}</mat-icon>
-    <span> {{ buttonText }}</span>
   </button>
   <button
     *ngSwitchCase="'fab'"
@@ -82,5 +81,22 @@
     class="w-100"
   >
     {{ buttonText }}
+  </button>
+  <button
+    *ngSwitchCase="'with-icon'"
+    mat-stroked-button
+    [color]="color"
+    [type]="buttonType"
+    [disabled]="disabled"
+    (click)="clicked.emit($event)"
+    class="w-100"
+  >
+    <div
+      class="d-flex align-items-center"
+      [class.flex-row-reverse]="iconPosition === 'end'"
+    >
+      <mat-icon>{{ iconName }}</mat-icon>
+      <span> {{ buttonText }}</span>
+    </div>
   </button>
 </ng-container>
