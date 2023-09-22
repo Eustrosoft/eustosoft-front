@@ -80,18 +80,23 @@
           <h2>No messages available</h2>
         </div>
       </ng-container>
-      <div
+      <ng-container
         *ngIf="
           selectedChat.status !== MSG_CHAT_STATUS.CLOSED;
           else inactiveChatTemplate
         "
-        class="d-flex align-items-center p-3 pe-1"
       >
-        <ng-container
-          *ngIf="!messageInEdit; else editMessageInputBarTemplate"
-          [ngTemplateOutlet]="newMessageInputBarTemplate"
-        ></ng-container>
-      </div>
+        <eustrosoft-front-chat-message-input
+          [label]="messageInEdit ? 'Edit message' : 'Message'"
+          [iconButtonName]="messageInEdit ? 'save' : 'send'"
+          [messageInEdit]="messageInEdit"
+          [selectedChat]="selectedChat"
+          (messageSent)="sendMessage($event)"
+          (messageEdited)="saveEditedMessage($event)"
+          (messageDeleted)="deleteMessage($event)"
+          class="d-flex align-items-center p-3 pe-1"
+        ></eustrosoft-front-chat-message-input>
+      </ng-container>
     </div>
   </div>
 </div>
@@ -133,35 +138,4 @@
   <div class="d-flex justify-content-center align-items-center p-3 pe-1">
     <h4>Ticket is inactive</h4>
   </div>
-</ng-template>
-
-<ng-template #newMessageInputBarTemplate>
-  <eustrosoft-front-input
-    [label]="'Message'"
-    [fieldAppearance]="'outline'"
-    [control]="control"
-    [placeholder]="'Write a message...'"
-    class="flex-grow-1"
-  ></eustrosoft-front-input>
-  <eustrosoft-front-button
-    [buttonType]="'button'"
-    [buttonStyleType]="'icon'"
-    [iconName]="'send'"
-    (clicked)="sendMessage()"
-  ></eustrosoft-front-button>
-</ng-template>
-
-<ng-template #editMessageInputBarTemplate>
-  <eustrosoft-front-input
-    [label]="'Edit message'"
-    [fieldAppearance]="'outline'"
-    [control]="control"
-    class="flex-grow-1"
-  ></eustrosoft-front-input>
-  <eustrosoft-front-button
-    [buttonType]="'button'"
-    [buttonStyleType]="'icon'"
-    [iconName]="'save'"
-    (clicked)="saveEditedMessage()"
-  ></eustrosoft-front-button>
 </ng-template>

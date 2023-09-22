@@ -11,11 +11,13 @@ import {
   EventEmitter,
   Input,
   Output,
+  ViewChild,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatFormFieldAppearance } from '@angular/material/form-field';
 import { InputTypes } from '@eustrosoft-front/core';
 import { InputErrorInterface } from './input-error.interface';
+import { MatInput } from '@angular/material/input';
 
 @Component({
   selector: 'eustrosoft-front-input',
@@ -34,4 +36,6 @@ export class InputComponent {
   @Input() errors: InputErrorInterface[] = [];
 
   @Output() blurred = new EventEmitter<FocusEvent | undefined>();
+
+  @ViewChild(MatInput) input!: MatInput;
 }

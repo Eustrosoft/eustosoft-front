@@ -28,6 +28,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MsgRequestBuilderService } from './support-chat/services/msg-request-builder.service';
 import { MsgChatStatusPipe } from './support-chat/pipes/msg-chat-status.pipe';
 import { VirtualScrollerModule } from '@iharbeck/ngx-virtual-scroller';
+import { ChatMessageInputComponent } from './support-chat/components/chat-message-input/chat-message-input.component';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import { VirtualScrollerModule } from '@iharbeck/ngx-virtual-scroller';
     LoginPageComponent,
     CreateChatDialogComponent,
     MsgChatStatusPipe,
+    ChatMessageInputComponent,
   ],
   imports: [
     BrowserModule,

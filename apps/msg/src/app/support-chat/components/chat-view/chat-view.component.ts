@@ -41,7 +41,7 @@ export class ChatViewComponent implements OnChanges, AfterViewInit {
   @Input()
   set selectedChatMessages(value: ChatMessage[]) {
     this._selectedChatMessages = value;
-    this.vScroll?.scrollToIndex(value.length - 1, true, 10000, 0);
+    this.scrollToBottom();
   }
   get selectedChatMessages(): ChatMessage[] {
     return this._selectedChatMessages;
@@ -69,42 +69,40 @@ export class ChatViewComponent implements OnChanges, AfterViewInit {
     .asObservable()
     .pipe(shareReplay(1));
 
-  editMessage(message: ChatMessage) {
-    this.messageInEdit = message;
-    this.control.setValue(message.content);
-  }
-
-  saveEditedMessage() {
-    const editedMessage: ChatMessage = {
-      ...(this.messageInEdit as ChatMessage),
-      content: this.control.value,
-    };
-    this.messageEdited.emit(editedMessage);
-    this.messageInEdit = undefined;
-    this.control.setValue('');
-  }
-
-  sendMessage(): void {
-    if (this.control.value.length === 0) {
-      return;
-    }
-    this.messageSent.emit(this.control.value);
-    this.control.reset();
-  }
-
-  deleteMessage(message: ChatMessage): void {
-    this.messageDeleted.emit(message);
-  }
-
   ngOnChanges(changes: SimpleChanges): void {
     if ('selectedChat' in changes) {
       this.messageInEdit = undefined;
-      this.control.reset();
     }
   }
 
   ngAfterViewInit(): void {
-    this.vScroll.scrollToIndex(
+    this.scrollToBottom();
+  }
+
+  editMessage(message: ChatMessage) {
+    this.messageInEdit = message;
+  }
+
+  saveEditedMessage(message: string) {
+    const editedMessage: ChatMessage = {
+      ...(this.messageInEdit as ChatMessage),
+      content: message,
+    };
+    this.messageEdited.emit(editedMessage);
+    this.messageInEdit = undefined;
+  }
+
+  sendMessage(message: string): void {
+    this.messageSent.emit(message);
+  }
+
+  deleteMessage(message: ChatMessage): void {
+    this.messageDeleted.emit(message);
+    this.messageInEdit = undefined;
+  }
+
+  scrollToBottom() {
+    this.vScroll?.scrollToIndex(
       this.selectedChatMessages.length - 1,
       true,
       10000,

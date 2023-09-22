@@ -1,0 +1,13 @@
+<eustrosoft-front-input
+  [label]="label"
+  [fieldAppearance]="'outline'"
+  [control]="control"
+  [placeholder]="'Write a message...'"
+  class="flex-grow-1"
+></eustrosoft-front-input>
+<eustrosoft-front-button
+  [buttonType]="'button'"
+  [buttonStyleType]="'icon'"
+  [iconName]="iconButtonName"
+  (clicked)="submitMessage()"
+></eustrosoft-front-button>

@@ -18,6 +18,7 @@ import {
   combineLatest,
   filter,
   ignoreElements,
+  interval,
   map,
   of,
   shareReplay,
@@ -58,6 +59,7 @@ export class SupportChatComponent implements OnInit {
 
   refreshChatsView$ = new BehaviorSubject(true);
   refreshChatMessagesView$ = new BehaviorSubject<number | undefined>(undefined);
+  chatMessagesRefreshInterval$ = interval(10000);
 
   chats$ = combineLatest([this.refreshChatsView$]).pipe(
     switchMap(() => this.msgRequestBuilderService.buildViewChatsRequest()),
@@ -79,6 +81,7 @@ export class SupportChatComponent implements OnInit {
     this.refreshChatMessagesView$.pipe(
       filter((zoid): zoid is number => typeof zoid !== 'undefined')
     ),
+    this.chatMessagesRefreshInterval$,
   ]).pipe(
     switchMap(([zoid]) =>
       this.msgRequestBuilderService.buildViewChatRequest(zoid)
@@ -172,9 +175,10 @@ export class SupportChatComponent implements OnInit {
             req
           )
         ),
+        tap(() => this.refreshChatsView$.next(true)),
         take(1)
       )
-      .subscribe(console.log);
+      .subscribe();
   }
 
   sendMessage(message: string) {

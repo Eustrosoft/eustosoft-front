@@ -93,5 +93,15 @@
     class="d-flex flex-column align-items-center justify-content-center h-inherit"
   >
     <h2>Select ticket from menu</h2>
+    <ng-container *ngIf="isXs">
+      <eustrosoft-front-button
+        [buttonStyleType]="'stroked'"
+        [iconName]="'add'"
+        [buttonType]="'button'"
+        [buttonText]="'Open menu'"
+        [title]="'Open menu'"
+        (clicked)="toggleSidebar()"
+      ></eustrosoft-front-button>
+    </ng-container>
   </div>
 </ng-template>
