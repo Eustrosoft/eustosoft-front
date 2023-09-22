@@ -5,9 +5,15 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  ViewChild,
+} from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatFormFieldAppearance } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
 
 @Component({
   selector: 'eustrosoft-front-textarea',
@@ -23,4 +29,8 @@ export class TextareaComponent {
   @Input() rows = 5;
   @Input() control!: FormControl;
   @Input() disabled = false;
+  @Input() hideResize = false;
+  @Input() enableCdkAutoResize = false;
+
+  @ViewChild(MatInput) input!: MatInput;
 }

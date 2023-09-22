@@ -15,7 +15,7 @@ import {
 } from '@angular/core';
 import { Chat, ChatMessage } from '@eustrosoft-front/core';
 import { FormControl } from '@angular/forms';
-import { InputComponent } from '@eustrosoft-front/common-ui';
+import { TextareaComponent } from '@eustrosoft-front/common-ui';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -45,8 +45,8 @@ export class ChatMessageInputComponent
   @Output() messageEdited = new EventEmitter<string>();
   @Output() messageDeleted = new EventEmitter<ChatMessage>();
 
-  @ViewChild(InputComponent)
-  messageInputComponent!: InputComponent;
+  @ViewChild(TextareaComponent)
+  messageInputComponent!: TextareaComponent;
 
   private el = inject(ElementRef);
   private destroy$ = new Subject<void>();

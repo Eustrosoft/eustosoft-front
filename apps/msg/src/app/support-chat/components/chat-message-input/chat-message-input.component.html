@@ -1,10 +1,13 @@
-<eustrosoft-front-input
+<eustrosoft-front-textarea
   [label]="label"
-  [fieldAppearance]="'outline'"
   [control]="control"
+  [rows]="1"
+  [hideResize]="true"
+  [enableCdkAutoResize]="true"
+  [fieldAppearance]="'outline'"
   [placeholder]="'Write a message...'"
   class="flex-grow-1"
-></eustrosoft-front-input>
+></eustrosoft-front-textarea>
 <eustrosoft-front-button
   [buttonType]="'button'"
   [buttonStyleType]="'icon'"

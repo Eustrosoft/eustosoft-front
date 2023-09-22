@@ -22,6 +22,7 @@ import {
   map,
   of,
   shareReplay,
+  startWith,
   switchMap,
   take,
   tap,
@@ -44,6 +45,8 @@ import {
 } from '@eustrosoft-front/core';
 import { MsgRequestBuilderService } from './services/msg-request-builder.service';
 import { DispatchService, SamService } from '@eustrosoft-front/security';
+import { HttpErrorResponse } from '@angular/common/http';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'eustrosoft-front-support-chat',
@@ -56,10 +59,11 @@ export class SupportChatComponent implements OnInit {
   private msgRequestBuilderService = inject(MsgRequestBuilderService);
   private samService = inject(SamService);
   private dialog = inject(MatDialog);
+  private snackBar = inject(MatSnackBar);
 
   refreshChatsView$ = new BehaviorSubject(true);
   refreshChatMessagesView$ = new BehaviorSubject<number | undefined>(undefined);
-  chatMessagesRefreshInterval$ = interval(10000);
+  chatMessagesRefreshInterval$ = interval(5000).pipe(startWith(-1));
 
   chats$ = combineLatest([this.refreshChatsView$]).pipe(
     switchMap(() => this.msgRequestBuilderService.buildViewChatsRequest()),
@@ -176,6 +180,10 @@ export class SupportChatComponent implements OnInit {
           )
         ),
         tap(() => this.refreshChatsView$.next(true)),
+        catchError((err: HttpErrorResponse) => {
+          this.snackBar.open(`${err.error}`, 'Close');
+          return of(false);
+        }),
         take(1)
       )
       .subscribe();
