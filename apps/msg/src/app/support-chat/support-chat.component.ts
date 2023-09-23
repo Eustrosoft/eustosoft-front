@@ -37,6 +37,7 @@ import {
   CreateChatRequest,
   CreateChatResponse,
   MessageType,
+  MsgChatStatus,
   QtisRequestResponseInterface,
   ViewChatRequest,
   ViewChatResponse,
@@ -164,16 +165,15 @@ export class SupportChatComponent implements OnInit {
           combineLatest([
             of(data),
             this.samService.getUserSlvl().pipe(map((slvl) => slvl.r[0].data)),
-            this.samService.getUserId(),
           ])
         ),
-        switchMap(([content, slvl, userId]) => {
-          console.log(userId);
-          return this.msgRequestBuilderService.buildCreateChatRequest({
-            content: content.subject,
+        switchMap(([content, slvl]) =>
+          this.msgRequestBuilderService.buildCreateChatRequest({
+            ticket: content.subject,
+            content: content.message,
             slvl: +slvl,
-          });
-        }),
+          })
+        ),
         switchMap((req) =>
           this.dispatchService.dispatch<CreateChatRequest, CreateChatResponse>(
             req
@@ -237,6 +237,23 @@ export class SupportChatComponent implements OnInit {
         tap(() =>
           this.refreshChatMessagesView$.next(this.selectedChat?.zoid as number)
         ),
+        take(1)
+      )
+      .subscribe();
+  }
+
+  closeChat(chat: Chat) {
+    this.msgRequestBuilderService
+      .buildChangeChatStatusRequest({
+        zoid: chat.zoid,
+        zrid: chat.zrid,
+        content: chat.subject,
+        reference: null,
+        status: MsgChatStatus.CLOSED,
+      })
+      .pipe(
+        switchMap((request) => this.dispatchService.dispatch(request)),
+        tap(() => (this.selectedChat = undefined)),
         take(1)
       )
       .subscribe();

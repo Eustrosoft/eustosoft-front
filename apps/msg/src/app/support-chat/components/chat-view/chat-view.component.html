@@ -32,7 +32,7 @@
           [hidden]="!selectedChat"
         ></eustrosoft-front-button>
         <mat-menu #chatActionsMenu="matMenu">
-          <button mat-menu-item>
+          <button (click)="closeChat()" mat-menu-item>
             <mat-icon>cancel</mat-icon>
             <span>Close ticket</span>
           </button>

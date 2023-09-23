@@ -29,6 +29,7 @@ import { MsgRequestBuilderService } from './support-chat/services/msg-request-bu
 import { MsgChatStatusPipe } from './support-chat/pipes/msg-chat-status.pipe';
 import { VirtualScrollerModule } from '@iharbeck/ngx-virtual-scroller';
 import { ChatMessageInputComponent } from './support-chat/components/chat-message-input/chat-message-input.component';
+import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -54,7 +55,11 @@ import { ChatMessageInputComponent } from './support-chat/components/chat-messag
     MatDialogModule,
     VirtualScrollerModule,
   ],
-  providers: [MockService, MsgRequestBuilderService],
+  providers: [
+    MockService,
+    MsgRequestBuilderService,
+    { provide: LocationStrategy, useClass: HashLocationStrategy },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

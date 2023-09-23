@@ -8,6 +8,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import {
+  ChangeChatStatusRequest,
   CreateChatRequest,
   DeleteMessageChatRequest,
   EditMessageChatRequest,
@@ -110,6 +111,22 @@ export class MsgRequestBuilderService {
         {
           s: Subsystems.MSG,
           r: MsgRequestActions.DELETE_MESSAGE,
+          l: SupportedLanguages.EN_US,
+          params,
+        },
+      ],
+      t: 0,
+    });
+  }
+
+  buildChangeChatStatusRequest(
+    params: ChangeChatStatusRequest['params']
+  ): Observable<QtisRequestResponseInterface<ChangeChatStatusRequest>> {
+    return of({
+      r: [
+        {
+          s: Subsystems.MSG,
+          r: MsgRequestActions.CHANGE_CHAT_STATUS,
           l: SupportedLanguages.EN_US,
           params,
         },

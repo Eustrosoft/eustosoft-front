@@ -9,6 +9,7 @@ import { Subsystems } from '../../constants/enums/subsystems.enum';
 import { SupportedLanguages } from '../../constants/enums/supported-languages.enum';
 import { MsgRequestActions } from '../../constants/enums/msg-actions.enum';
 import { MessageType } from '../../constants/enums/msg-edit-type.enum';
+import { MsgChatStatus } from '../../constants/enums/msg-chat-status.enum';
 
 interface BaseMsgRequest {
   s: Subsystems;
@@ -33,7 +34,8 @@ export interface CreateChatRequest extends BaseMsgRequest {
   s: Subsystems.MSG;
   r: MsgRequestActions.CREATE_CHAT;
   params: {
-    content: string;
+    ticket: string; // subject
+    content: string; // first message
     slvl: number;
   };
 }
@@ -67,5 +69,17 @@ export interface DeleteMessageChatRequest extends BaseMsgRequest {
   params: {
     zoid: number; // chatId
     zrid: number; // messageId
+  };
+}
+
+export interface ChangeChatStatusRequest extends BaseMsgRequest {
+  s: Subsystems.MSG;
+  r: MsgRequestActions.CHANGE_CHAT_STATUS;
+  params: {
+    zoid: number; // chatId
+    zrid: number; // messageId
+    content: string; // new subject
+    reference: unknown;
+    status: MsgChatStatus;
   };
 }
