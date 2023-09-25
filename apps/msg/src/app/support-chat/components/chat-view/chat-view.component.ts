@@ -41,7 +41,6 @@ export class ChatViewComponent implements OnChanges, AfterViewInit {
   @Input()
   set selectedChatMessages(value: ChatMessage[]) {
     this._selectedChatMessages = value;
-    this.scrollToBottom();
   }
   get selectedChatMessages(): ChatMessage[] {
     return this._selectedChatMessages;
@@ -73,6 +72,7 @@ export class ChatViewComponent implements OnChanges, AfterViewInit {
   ngOnChanges(changes: SimpleChanges): void {
     if ('selectedChat' in changes) {
       this.messageInEdit = undefined;
+      this.scrollToBottom();
     }
   }
 

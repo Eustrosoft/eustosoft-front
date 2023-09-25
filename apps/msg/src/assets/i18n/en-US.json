@@ -15,5 +15,31 @@
     "LOGIN_LABEL": "Your login",
     "PASSWORD_LABEL": "Your password",
     "SUBMIT_BUTTON_TEXT": "Submit"
+  },
+  "MSG": {
+    "SELECT_TICKET_CAPTION_TEXT": "Select ticket from menu",
+    "OPEN_MENU_BUTTON_TEXT": "Open menu",
+    "CREATE_NEW_CHAT_BUTTON_TEXT": "Create new chat",
+    "CLOSE_CHAT_BUTTON_TEXT": "Close ticket",
+    "TICKET_LIST_HEADER_TEXT": "Tickets",
+    "NO_MESSAGES_CAPTION_TEXT": "No messages available",
+    "NEW_MESSAGE_LABEL_TEXT": "Message",
+    "EDIT_MESSAGE_LABEL_TEXT": "Edit Message",
+    "EDIT_MESSAGE_BUTTON_TEXT": "Edit message",
+    "DELETE_MESSAGE_BUTTON_TEXT": "Delete message",
+    "MESSAGE_INPUT_PLACEHOLDER_TEXT": "Write a message...",
+    "INACTIVE_TICKET_CAPTION_TEXT": "Ticket is inactive",
+    "SEND_MESSAGE_BUTTON_TOOLTIP": "Shift+Enter: new line&#13;Ctrl+Enter: send message",
+    "CREATE_CHAT_MODAL": {
+      "TITLE_TEXT": "Create new ticket",
+      "SUBJECT_LABEL_TEXT": "Subject",
+      "MESSAGE_LABEL_TEXT": "Message",
+      "CANCEL_BUTTON_TEXT": "Cancel",
+      "SUBMIT_BUTTON_TEXT": "Create"
+    },
+    "ERRORS": {
+      "CHATS_FETCH_ERROR": "Error fetching chats",
+      "CHAT_MESSAGES_FETCH_ERROR": "Error fetching chat messages"
+    }
   }
 }

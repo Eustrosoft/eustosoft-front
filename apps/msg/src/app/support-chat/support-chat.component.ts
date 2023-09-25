@@ -7,6 +7,7 @@
 
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   HostListener,
   inject,
@@ -16,11 +17,15 @@ import {
   BehaviorSubject,
   catchError,
   combineLatest,
+  delay,
   filter,
   ignoreElements,
+  iif,
   interval,
   map,
+  Observable,
   of,
+  pairwise,
   shareReplay,
   startWith,
   switchMap,
@@ -32,6 +37,8 @@ import { CreateChatDialogComponent } from './components/create-chat-dialog/creat
 import { CreateChatDialogDataInterface } from './components/create-chat-dialog/create-chat-dialog-data.interface';
 import { CreateChatDialogReturnDataInterface } from './components/create-chat-dialog/create-chat-dialog-return-data.interface';
 import {
+  ChangeChatStatusRequest,
+  ChangeChatStatusResponse,
   Chat,
   ChatMessage,
   CreateChatRequest,
@@ -48,6 +55,7 @@ import { MsgRequestBuilderService } from './services/msg-request-builder.service
 import { DispatchService, SamService } from '@eustrosoft-front/security';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'eustrosoft-front-support-chat',
@@ -61,12 +69,16 @@ export class SupportChatComponent implements OnInit {
   private samService = inject(SamService);
   private dialog = inject(MatDialog);
   private snackBar = inject(MatSnackBar);
+  private translateService = inject(TranslateService);
+  private cd = inject(ChangeDetectorRef);
 
-  refreshChatsView$ = new BehaviorSubject(true);
-  refreshChatMessagesView$ = new BehaviorSubject<number | undefined>(undefined);
-  chatMessagesRefreshInterval$ = interval(5000).pipe(startWith(-1));
+  fetchChats$ = new BehaviorSubject(true);
+  fetchChatMessagesByChatId$ = new BehaviorSubject<number | undefined>(
+    undefined
+  );
+  chatMessagesRefreshInterval$ = interval(5000).pipe(startWith(1));
 
-  chats$ = combineLatest([this.refreshChatsView$]).pipe(
+  chats$ = combineLatest([this.fetchChats$]).pipe(
     switchMap(() => this.msgRequestBuilderService.buildViewChatsRequest()),
     switchMap((req: QtisRequestResponseInterface<ViewChatsRequest>) =>
       this.dispatchService.dispatch<ViewChatsRequest, ViewChatsResponse>(req)
@@ -79,30 +91,34 @@ export class SupportChatComponent implements OnInit {
 
   chatsError$ = this.chats$.pipe(
     ignoreElements(),
-    catchError((err) => of(err))
+    catchError((err: HttpErrorResponse) => of(err))
   );
 
-  chatMessages$ = combineLatest([
-    this.refreshChatMessagesView$.pipe(
+  chatMessages$: Observable<{
+    messages: ChatMessage[] | undefined;
+    isLoading: boolean;
+  }> = combineLatest([
+    this.fetchChatMessagesByChatId$.pipe(
       filter((zoid): zoid is number => typeof zoid !== 'undefined')
     ),
     this.chatMessagesRefreshInterval$,
   ]).pipe(
-    switchMap(([zoid]) =>
-      this.msgRequestBuilderService.buildViewChatRequest(zoid)
-    ),
-    switchMap((req: QtisRequestResponseInterface<ViewChatRequest>) =>
-      this.dispatchService.dispatch<ViewChatRequest, ViewChatResponse>(req)
-    ),
-    map((response: QtisRequestResponseInterface<ViewChatResponse>) =>
-      response.r.flatMap((r: ViewChatResponse) => r.messages)
+    startWith([1, 1]),
+    pairwise(),
+    switchMap(([first, second]) =>
+      iif(
+        // If selected chat zoid is changed - fetchWithPreloader, if interval tick happened - fetchWithoutPreloader
+        () => first[1] !== second[1] || first[0] === second[0],
+        this.fetchWithoutPreloader(second[0]),
+        this.fetchWithPreloader(second[0])
+      )
     ),
     shareReplay(1)
   );
 
   chatMessagesError$ = this.chatMessages$.pipe(
     ignoreElements(),
-    catchError((err) => of(err))
+    catchError((err: HttpErrorResponse) => of(err))
   );
 
   selectedChat: Chat | undefined = undefined;
@@ -116,6 +132,37 @@ export class SupportChatComponent implements OnInit {
 
   ngOnInit(): void {
     this.setUpSidebar();
+  }
+
+  fetchWithPreloader(
+    zoid: number
+  ): Observable<{ isLoading: boolean; messages: ChatMessage[] | undefined }> {
+    return this.msgRequestBuilderService.buildViewChatRequest(zoid).pipe(
+      switchMap((req: QtisRequestResponseInterface<ViewChatRequest>) =>
+        this.dispatchService.dispatch<ViewChatRequest, ViewChatResponse>(req)
+      ),
+      map((response: QtisRequestResponseInterface<ViewChatResponse>) =>
+        response.r.flatMap((r: ViewChatResponse) => r.messages)
+      ),
+      switchMap((messages: ChatMessage[]) =>
+        of({ isLoading: false, messages }).pipe(delay(200))
+      ),
+      startWith({ isLoading: true, messages: undefined })
+    );
+  }
+
+  fetchWithoutPreloader(
+    zoid: number
+  ): Observable<{ isLoading: boolean; messages: ChatMessage[] | undefined }> {
+    return this.msgRequestBuilderService.buildViewChatRequest(zoid).pipe(
+      switchMap((req: QtisRequestResponseInterface<ViewChatRequest>) =>
+        this.dispatchService.dispatch<ViewChatRequest, ViewChatResponse>(req)
+      ),
+      map((response: QtisRequestResponseInterface<ViewChatResponse>) =>
+        response.r.flatMap((r: ViewChatResponse) => r.messages)
+      ),
+      switchMap((messages: ChatMessage[]) => of({ isLoading: false, messages }))
+    );
   }
 
   setUpSidebar() {
@@ -134,7 +181,7 @@ export class SupportChatComponent implements OnInit {
 
   chatSelected(chat: Chat) {
     this.selectedChat = chat;
-    this.refreshChatMessagesView$.next(chat.zoid);
+    this.fetchChatMessagesByChatId$.next(chat.zoid);
   }
 
   createNewChat() {
@@ -144,11 +191,21 @@ export class SupportChatComponent implements OnInit {
       CreateChatDialogReturnDataInterface
     >(CreateChatDialogComponent, {
       data: {
-        title: 'Create new ticket',
-        subjectInputLabel: 'Subject',
-        messageInputLabel: 'Message',
-        cancelButtonText: 'Cancel',
-        submitButtonText: 'Create',
+        title: this.translateService.instant(
+          'MSG.CREATE_CHAT_MODAL.TITLE_TEXT'
+        ),
+        subjectInputLabel: this.translateService.instant(
+          'MSG.CREATE_CHAT_MODAL.SUBJECT_LABEL_TEXT'
+        ),
+        messageInputLabel: this.translateService.instant(
+          'MSG.CREATE_CHAT_MODAL.MESSAGE_LABEL_TEXT'
+        ),
+        cancelButtonText: this.translateService.instant(
+          'MSG.CREATE_CHAT_MODAL.CANCEL_BUTTON_TEXT'
+        ),
+        submitButtonText: this.translateService.instant(
+          'MSG.CREATE_CHAT_MODAL.SUBMIT_BUTTON_TEXT'
+        ),
       },
       minHeight: '25vh',
       minWidth: '50vw',
@@ -169,7 +226,7 @@ export class SupportChatComponent implements OnInit {
         ),
         switchMap(([content, slvl]) =>
           this.msgRequestBuilderService.buildCreateChatRequest({
-            ticket: content.subject,
+            subject: content.subject,
             content: content.message,
             slvl: +slvl,
           })
@@ -179,7 +236,7 @@ export class SupportChatComponent implements OnInit {
             req
           )
         ),
-        tap(() => this.refreshChatsView$.next(true)),
+        tap(() => this.fetchChats$.next(true)),
         catchError((err: HttpErrorResponse) => {
           this.snackBar.open(`${err.error}`, 'Close');
           return of(false);
@@ -200,7 +257,9 @@ export class SupportChatComponent implements OnInit {
       .pipe(
         switchMap((request) => this.dispatchService.dispatch(request)),
         tap(() =>
-          this.refreshChatMessagesView$.next(this.selectedChat?.zoid as number)
+          this.fetchChatMessagesByChatId$.next(
+            this.selectedChat?.zoid as number
+          )
         ),
         take(1)
       )
@@ -219,7 +278,9 @@ export class SupportChatComponent implements OnInit {
       .pipe(
         switchMap((request) => this.dispatchService.dispatch(request)),
         tap(() =>
-          this.refreshChatMessagesView$.next(this.selectedChat?.zoid as number)
+          this.fetchChatMessagesByChatId$.next(
+            this.selectedChat?.zoid as number
+          )
         ),
         take(1)
       )
@@ -235,7 +296,9 @@ export class SupportChatComponent implements OnInit {
       .pipe(
         switchMap((request) => this.dispatchService.dispatch(request)),
         tap(() =>
-          this.refreshChatMessagesView$.next(this.selectedChat?.zoid as number)
+          this.fetchChatMessagesByChatId$.next(
+            this.selectedChat?.zoid as number
+          )
         ),
         take(1)
       )
@@ -252,8 +315,22 @@ export class SupportChatComponent implements OnInit {
         status: MsgChatStatus.CLOSED,
       })
       .pipe(
-        switchMap((request) => this.dispatchService.dispatch(request)),
-        tap(() => (this.selectedChat = undefined)),
+        switchMap((request) =>
+          this.dispatchService.dispatch<
+            ChangeChatStatusRequest,
+            ChangeChatStatusResponse
+          >(request)
+        ),
+        map(
+          (response: QtisRequestResponseInterface<ChangeChatStatusResponse>) =>
+            response.r[0].e
+        ),
+        tap((hasError) => {
+          this.fetchChats$.next(true);
+          if (!hasError) {
+            this.chatSelected({ ...chat, status: MsgChatStatus.CLOSED });
+          }
+        }),
         take(1)
       )
       .subscribe();

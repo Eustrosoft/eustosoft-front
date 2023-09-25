@@ -23,13 +23,13 @@ import { MatListModule } from '@angular/material/list';
 import { LoginPageComponent } from './login-page/login-page.component';
 import { MatIconModule } from '@angular/material/icon';
 import { CreateChatDialogComponent } from './support-chat/components/create-chat-dialog/create-chat-dialog.component';
-import { MockService } from './support-chat/services/mock.service';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MsgRequestBuilderService } from './support-chat/services/msg-request-builder.service';
 import { MsgChatStatusPipe } from './support-chat/pipes/msg-chat-status.pipe';
 import { VirtualScrollerModule } from '@iharbeck/ngx-virtual-scroller';
 import { ChatMessageInputComponent } from './support-chat/components/chat-message-input/chat-message-input.component';
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @NgModule({
   declarations: [
@@ -54,9 +54,9 @@ import { HashLocationStrategy, LocationStrategy } from '@angular/common';
     MatIconModule,
     MatDialogModule,
     VirtualScrollerModule,
+    MatTooltipModule,
   ],
   providers: [
-    MockService,
     MsgRequestBuilderService,
     { provide: LocationStrategy, useClass: HashLocationStrategy },
   ],

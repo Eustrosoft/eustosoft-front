@@ -45,3 +45,7 @@ export interface EditMessageChatResponse extends BaseMsgResponse {
 export interface DeleteMessageChatResponse extends BaseMsgResponse {
   r: MsgRequestActions.DELETE_MESSAGE;
 }
+
+export interface ChangeChatStatusResponse extends BaseMsgResponse {
+  r: MsgRequestActions.CHANGE_CHAT_STATUS;
+}

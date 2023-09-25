@@ -35,13 +35,30 @@
               <eustrosoft-front-preloader></eustrosoft-front-preloader>
             </ng-container>
             <ng-container *ngIf="chatVm.chatsError">
-              <p>Error fetching chats</p>
+              <p>{{ 'MSG.ERRORS.CHATS_FETCH_ERROR' | translate }}</p>
             </ng-container>
           </div>
         </ng-template>
       </ng-container>
     </div>
     <div class="col-12 col-sm-8 col-md-8 col-lg-8 col-xl-8 h-inherit">
+      <ng-container *ngIf="!selectedChat">
+        <div
+          class="d-flex flex-column align-items-center justify-content-center h-inherit"
+        >
+          <h2>{{ 'MSG.SELECT_TICKET_CAPTION_TEXT' | translate }}</h2>
+          <ng-container *ngIf="isXs">
+            <eustrosoft-front-button
+              [buttonStyleType]="'stroked'"
+              [iconName]="'add'"
+              [buttonType]="'button'"
+              [buttonText]="'MSG.OPEN_MENU_BUTTON_TEXT' | translate"
+              [title]="'MSG.OPEN_MENU_BUTTON_TEXT' | translate"
+              (clicked)="toggleSidebar()"
+            ></eustrosoft-front-button>
+          </ng-container>
+        </div>
+      </ng-container>
       <ng-container
         *ngIf="{
           chatMessages: chatMessages$ | async,
@@ -49,14 +66,25 @@
         } as chatMessagesVm"
       >
         <ng-container
-          *ngIf="
-            chatMessagesVm.chatMessages as chatMessages;
-            else chatsMessagesLoading
-          "
+          *ngIf="chatMessagesVm.chatMessages?.isLoading && selectedChat"
         >
+          <div
+            class="d-flex flex-column align-items-center justify-content-center h-inherit"
+          >
+            <eustrosoft-front-preloader></eustrosoft-front-preloader>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="chatMessagesVm.chatMessagesError">
+          <div
+            class="d-flex flex-column align-items-center justify-content-center h-inherit"
+          >
+            <p>{{ 'MSG.ERRORS.CHAT_MESSAGES_FETCH_ERROR' | translate }}</p>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="chatMessagesVm.chatMessages?.messages as messages">
           <eustrosoft-front-chat-view
             [selectedChat]="selectedChat"
-            [selectedChatMessages]="chatMessages"
+            [selectedChatMessages]="messages"
             (collapseClicked)="toggleSidebar()"
             (messageSent)="sendMessage($event)"
             (messageEdited)="editMessage($event)"
@@ -65,20 +93,6 @@
             class="h-inherit"
           ></eustrosoft-front-chat-view>
         </ng-container>
-        <ng-template #chatsMessagesLoading>
-          <div
-            class="d-flex flex-column align-items-center justify-content-center h-inherit"
-          >
-            <ng-container *ngIf="selectedChat; else noSelectedTicketTemplate">
-              <ng-container *ngIf="!chatMessagesVm.chatMessagesError">
-                <eustrosoft-front-preloader></eustrosoft-front-preloader>
-              </ng-container>
-              <ng-container *ngIf="chatMessagesVm.chatMessagesError">
-                <p>Error fetching chat messages</p>
-              </ng-container>
-            </ng-container>
-          </div>
-        </ng-template>
       </ng-container>
     </div>
   </div>
@@ -88,21 +102,3 @@
   (click)="toggleSidebar()"
   [ngClass]="{ backdrop: !isCollapsed && isXs }"
 ></div>
-<!--или [hidden]="!(!isCollapsed && isXs)"-->
-<ng-template #noSelectedTicketTemplate>
-  <div
-    class="d-flex flex-column align-items-center justify-content-center h-inherit"
-  >
-    <h2>Select ticket from menu</h2>
-    <ng-container *ngIf="isXs">
-      <eustrosoft-front-button
-        [buttonStyleType]="'stroked'"
-        [iconName]="'add'"
-        [buttonType]="'button'"
-        [buttonText]="'Open menu'"
-        [title]="'Open menu'"
-        (clicked)="toggleSidebar()"
-      ></eustrosoft-front-button>
-    </ng-container>
-  </div>
-</ng-template>

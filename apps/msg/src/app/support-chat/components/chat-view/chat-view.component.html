@@ -34,7 +34,7 @@
         <mat-menu #chatActionsMenu="matMenu">
           <button (click)="closeChat()" mat-menu-item>
             <mat-icon>cancel</mat-icon>
-            <span>Close ticket</span>
+            <span>{{ 'MSG.CLOSE_CHAT_BUTTON_TEXT' | translate }}</span>
           </button>
         </mat-menu>
       </div>
@@ -77,7 +77,7 @@
         <div
           class="d-flex flex-column align-items-center justify-content-center h-inherit"
         >
-          <h2>No messages available</h2>
+          <h2>{{ 'MSG.NO_MESSAGES_CAPTION_TEXT' | translate }}</h2>
         </div>
       </ng-container>
       <ng-container
@@ -87,7 +87,11 @@
         "
       >
         <eustrosoft-front-chat-message-input
-          [label]="messageInEdit ? 'Edit message' : 'Message'"
+          [label]="
+            messageInEdit
+              ? ('MSG.EDIT_MESSAGE_LABEL_TEXT' | translate)
+              : ('MSG.NEW_MESSAGE_LABEL_TEXT' | translate)
+          "
           [iconButtonName]="messageInEdit ? 'save' : 'send'"
           [messageInEdit]="messageInEdit"
           [selectedChat]="selectedChat"
@@ -120,11 +124,11 @@
             <mat-menu #messageActionsMenu="matMenu">
               <button (click)="editMessage(msg)" mat-menu-item>
                 <mat-icon>edit</mat-icon>
-                <span>Edit message</span>
+                <span>{{ 'MSG.EDIT_MESSAGE_BUTTON_TEXT' | translate }}</span>
               </button>
               <button (click)="deleteMessage(msg)" mat-menu-item>
                 <mat-icon>delete</mat-icon>
-                <span>Delete message</span>
+                <span>{{ 'MSG.DELETE_MESSAGE_BUTTON_TEXT' | translate }}</span>
               </button>
             </mat-menu>
           </ng-container>
@@ -136,6 +140,6 @@
 
 <ng-template #inactiveChatTemplate>
   <div class="d-flex justify-content-center align-items-center p-3 pe-1">
-    <h4>Ticket is inactive</h4>
+    <h4>{{ 'MSG.INACTIVE_TICKET_CAPTION_TEXT' | translate }}</h4>
   </div>
 </ng-template>

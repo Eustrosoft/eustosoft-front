@@ -34,7 +34,7 @@ export interface CreateChatRequest extends BaseMsgRequest {
   s: Subsystems.MSG;
   r: MsgRequestActions.CREATE_CHAT;
   params: {
-    ticket: string; // subject
+    subject: string;
     content: string; // first message
     slvl: number;
   };

@@ -15,5 +15,31 @@
     "LOGIN_LABEL": "Логин",
     "PASSWORD_LABEL": "Пароль",
     "SUBMIT_BUTTON_TEXT": "Войти"
+  },
+  "MSG": {
+    "SELECT_TICKET_CAPTION_TEXT": "Выберите чат из меню",
+    "OPEN_MENU_BUTTON_TEXT": "Открыть меню",
+    "CREATE_NEW_CHAT_BUTTON_TEXT": "Создать новый чат",
+    "CLOSE_CHAT_BUTTON_TEXT": "Закрыть чат",
+    "TICKET_LIST_HEADER_TEXT": "Чаты",
+    "NO_MESSAGES_CAPTION_TEXT": "Сообщения отсутствуют",
+    "NEW_MESSAGE_LABEL_TEXT": "Сообщение",
+    "EDIT_MESSAGE_LABEL_TEXT": "Редактировать сообщение",
+    "EDIT_MESSAGE_BUTTON_TEXT": "Редактировать сообщение",
+    "DELETE_MESSAGE_BUTTON_TEXT": "Удалить сообщение",
+    "MESSAGE_INPUT_PLACEHOLDER_TEXT": "Введите сообщение...",
+    "INACTIVE_TICKET_CAPTION_TEXT": "Чат неактивен",
+    "SEND_MESSAGE_BUTTON_TOOLTIP": "Shift+Enter: новая строка\nCtrl+Enter: отправить сообщение",
+    "CREATE_CHAT_MODAL": {
+      "TITLE_TEXT": "Создать новый чат",
+      "SUBJECT_LABEL_TEXT": "Тема",
+      "MESSAGE_LABEL_TEXT": "Сообщение",
+      "CANCEL_BUTTON_TEXT": "Отмена",
+      "SUBMIT_BUTTON_TEXT": "Создать"
+    },
+    "ERRORS": {
+      "CHATS_FETCH_ERROR": "Ошибка при попытке получения чатов",
+      "CHAT_MESSAGES_FETCH_ERROR": "Ошибка при попытке получения сообщений"
+    }
   }
 }
