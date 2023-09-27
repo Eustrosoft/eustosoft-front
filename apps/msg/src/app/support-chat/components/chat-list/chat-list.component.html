@@ -76,13 +76,14 @@
 
 <ng-template #noChatsTemplate>
   <div
-    class="d-flex flex-column align-items-center justify-content-center h-inherit"
+    class="d-flex flex-column align-items-center justify-content-center text-center h-inherit"
   >
     <h2>{{ 'MSG.CREATE_NEW_CHAT_BUTTON_TEXT' | translate }}</h2>
     <eustrosoft-front-button
       [buttonType]="'button'"
       [buttonStyleType]="'icon'"
       [iconName]="'add'"
+      (clicked)="createNewChat()"
     ></eustrosoft-front-button>
   </div>
 </ng-template>
