@@ -72,7 +72,6 @@ export class ChatViewComponent implements OnChanges, AfterViewInit {
   ngOnChanges(changes: SimpleChanges): void {
     if ('selectedChat' in changes) {
       this.messageInEdit = undefined;
-      this.scrollToBottom();
     }
   }
 
@@ -113,5 +112,9 @@ export class ChatViewComponent implements OnChanges, AfterViewInit {
 
   closeChat(): void {
     this.closeChatClicked.emit(this.selectedChat);
+  }
+
+  editCanceled() {
+    this.messageInEdit = undefined;
   }
 }

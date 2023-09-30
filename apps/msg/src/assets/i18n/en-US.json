@@ -29,7 +29,8 @@
     "DELETE_MESSAGE_BUTTON_TEXT": "Delete message",
     "MESSAGE_INPUT_PLACEHOLDER_TEXT": "Write a message...",
     "INACTIVE_TICKET_CAPTION_TEXT": "Ticket is inactive",
-    "SEND_MESSAGE_BUTTON_TOOLTIP": "Shift+Enter: new line&#13;Ctrl+Enter: send message",
+    "SEND_MESSAGE_BUTTON_TOOLTIP": "Shift+Enter: new line\nCtrl+Enter: send message",
+    "CANCEL_MESSAGE_EDIT_BUTTON_TOOLTIP": "Cancel editing",
     "CREATE_CHAT_MODAL": {
       "TITLE_TEXT": "Create new ticket",
       "SUBJECT_LABEL_TEXT": "Subject",

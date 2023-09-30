@@ -12,7 +12,7 @@
         "outputPath": "dist/apps/msg",
         "index": "apps/msg/src/index.html",
         "main": "apps/msg/src/main.ts",
-        "baseHref": "./",
+        "baseHref": "/msg/",
         "polyfills": ["zone.js"],
         "tsConfig": "apps/msg/tsconfig.app.json",
         "stylePreprocessorOptions": {
@@ -95,7 +95,6 @@
     "serve": {
       "executor": "@angular-devkit/build-angular:dev-server",
       "options": {
-        "servePath": "",
         "port": 4203
       },
       "configurations": {

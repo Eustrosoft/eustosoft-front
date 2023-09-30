@@ -51,6 +51,7 @@ export class ChatMessageInputComponent
   @Output() messageSent = new EventEmitter<string>();
   @Output() messageEdited = new EventEmitter<string>();
   @Output() messageDeleted = new EventEmitter<ChatMessage>();
+  @Output() messageEditCanceled = new EventEmitter<void>();
 
   @ViewChild(TextareaComponent)
   messageInputComponent!: TextareaComponent;
@@ -111,6 +112,10 @@ export class ChatMessageInputComponent
     }
     this.messageSent.emit(this.control.value);
     this.control.setValue('');
+  }
+
+  cancelEdit(): void {
+    this.messageEditCanceled.emit();
   }
 
   focusOnInput(): void {

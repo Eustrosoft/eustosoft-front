@@ -30,6 +30,7 @@
     "MESSAGE_INPUT_PLACEHOLDER_TEXT": "Введите сообщение...",
     "INACTIVE_TICKET_CAPTION_TEXT": "Чат неактивен",
     "SEND_MESSAGE_BUTTON_TOOLTIP": "Shift+Enter: новая строка\nCtrl+Enter: отправить сообщение",
+    "CANCEL_MESSAGE_EDIT_BUTTON_TOOLTIP": "Отменить редактирование",
     "CREATE_CHAT_MODAL": {
       "TITLE_TEXT": "Создать новый чат",
       "SUBJECT_LABEL_TEXT": "Тема",

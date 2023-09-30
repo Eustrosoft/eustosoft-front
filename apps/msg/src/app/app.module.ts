@@ -12,7 +12,7 @@ import { AppComponent } from './app.component';
 import { RouterModule } from '@angular/router';
 import { appRoutes } from './app.routes';
 import { CommonUiModule } from '@eustrosoft-front/common-ui';
-import { CoreModule } from '@eustrosoft-front/core';
+import { CoreModule, CustomLocationStrategy } from '@eustrosoft-front/core';
 import { MatMenuModule } from '@angular/material/menu';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SecurityModule } from '@eustrosoft-front/security';
@@ -28,8 +28,9 @@ import { MsgRequestBuilderService } from './support-chat/services/msg-request-bu
 import { MsgChatStatusPipe } from './support-chat/pipes/msg-chat-status.pipe';
 import { VirtualScrollerModule } from '@iharbeck/ngx-virtual-scroller';
 import { ChatMessageInputComponent } from './support-chat/components/chat-message-input/chat-message-input.component';
-import { HashLocationStrategy, LocationStrategy } from '@angular/common';
+import { LocationStrategy } from '@angular/common';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { NewLineToBrPipe } from './support-chat/pipes/new-line-to-br.pipe';
 
 @NgModule({
   declarations: [
@@ -41,6 +42,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     CreateChatDialogComponent,
     MsgChatStatusPipe,
     ChatMessageInputComponent,
+    NewLineToBrPipe,
   ],
   imports: [
     BrowserModule,
@@ -58,7 +60,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   ],
   providers: [
     MsgRequestBuilderService,
-    { provide: LocationStrategy, useClass: HashLocationStrategy },
+    { provide: LocationStrategy, useClass: CustomLocationStrategy },
   ],
   bootstrap: [AppComponent],
 })

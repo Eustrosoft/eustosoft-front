@@ -47,6 +47,7 @@
     >
       <virtual-scroller
         #scroll
+        [bufferAmount]="5"
         [items]="selectedChatMessages"
         [class.h-100]="selectedChatMessages.length > 0"
       >
@@ -96,6 +97,7 @@
           [messageInEdit]="messageInEdit"
           [selectedChat]="selectedChat"
           (messageSent)="sendMessage($event)"
+          (messageEditCanceled)="editCanceled()"
           (messageEdited)="saveEditedMessage($event)"
           (messageDeleted)="deleteMessage($event)"
           class="d-flex align-items-center p-3 pe-1"
@@ -108,7 +110,7 @@
   <ng-container *ngIf="userInfo$ | async as info">
     <div class="d-flex flex-column mw-45">
       <div class="p-2 bg-light rounded-1">
-        <span class="text-break">{{ msg.content }}</span>
+        <div class="text-break" [innerHTML]="msg.content | newLineToBr"></div>
         <div class="d-flex align-items-center justify-content-between">
           <span class="fw-light fst-italic me-2">
             {{ msg.user.id === info.userId ? 'me' : msg.user.fullName }}

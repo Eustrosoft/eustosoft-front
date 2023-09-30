@@ -54,3 +54,4 @@ export * from './lib/functions/number-to-hex.function';
 export * from './lib/functions/crc32.function';
 export * from './lib/functions/track-by-zrid.function';
 export * from './lib/di/preconfigured-translate-service.token';
+export * from './lib/classes/custom-location-strategy.class';
