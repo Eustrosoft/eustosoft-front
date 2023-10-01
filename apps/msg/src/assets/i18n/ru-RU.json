@@ -21,7 +21,11 @@
     "OPEN_MENU_BUTTON_TEXT": "Открыть меню",
     "CREATE_NEW_CHAT_BUTTON_TEXT": "Создать новый чат",
     "CLOSE_CHAT_BUTTON_TEXT": "Закрыть чат",
+    "OPEN_CHAT_BUTTON_TEXT": "Переоткрыть чат",
+    "RENAME_CHAT_BUTTON_TEXT": "Переименовать чат",
+    "DELETE_CHAT_BUTTON_TEXT": "Удалить чат",
     "TICKET_LIST_HEADER_TEXT": "Чаты",
+    "REFRESH_TICKET_LIST_BUTTON_TOOLTIP": "Обновить список",
     "NO_MESSAGES_CAPTION_TEXT": "Сообщения отсутствуют",
     "NEW_MESSAGE_LABEL_TEXT": "Сообщение",
     "EDIT_MESSAGE_LABEL_TEXT": "Редактировать сообщение",
@@ -32,11 +36,23 @@
     "SEND_MESSAGE_BUTTON_TOOLTIP": "Shift+Enter: новая строка\nCtrl+Enter: отправить сообщение",
     "CANCEL_MESSAGE_EDIT_BUTTON_TOOLTIP": "Отменить редактирование",
     "CREATE_CHAT_MODAL": {
-      "TITLE_TEXT": "Создать новый чат",
+      "TITLE_TEXT": "Создание нового чата",
       "SUBJECT_LABEL_TEXT": "Тема",
       "MESSAGE_LABEL_TEXT": "Сообщение",
       "CANCEL_BUTTON_TEXT": "Отмена",
       "SUBMIT_BUTTON_TEXT": "Создать"
+    },
+    "RENAME_CHAT_MODAL": {
+      "TITLE_TEXT": "Переименование чата",
+      "SUBJECT_LABEL_TEXT": "Тема",
+      "CANCEL_BUTTON_TEXT": "Отмена",
+      "SUBMIT_BUTTON_TEXT": "Переименовать"
+    },
+    "DELETE_CHAT_MODAL": {
+      "TITLE": "Подтверждение удаления",
+      "TEXT": "Чат \"{{subject}}\" будет удалён. Продолжить?",
+      "CANCEL_BUTTON_TEXT": "Нет",
+      "SUBMIT_BUTTON_TEXT": "Да"
     },
     "ERRORS": {
       "CHATS_FETCH_ERROR": "Ошибка при попытке получения чатов",

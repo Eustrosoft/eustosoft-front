@@ -22,12 +22,15 @@ import { Chat, trackByZridFunction } from '@eustrosoft-front/core';
 })
 export class ChatListComponent {
   @Input() chats!: Chat[];
+  @Input() selectedChat: Chat | undefined = undefined;
   @Input() removeBorderRadius!: boolean;
   @Output() chatSelected = new EventEmitter<Chat>();
+  @Output() renameChatClicked = new EventEmitter<Chat>();
+  @Output() deleteChatClicked = new EventEmitter<Chat>();
   @Output() collapseClicked = new EventEmitter<void>();
   @Output() newChatCreateClicked = new EventEmitter<void>();
+  @Output() refreshChatsClicked = new EventEmitter<void>();
 
-  selectedChat: Chat | undefined = undefined;
   trackByFn = trackByZridFunction;
 
   selectChat(chat: Chat) {
@@ -37,5 +40,17 @@ export class ChatListComponent {
 
   createNewChat() {
     this.newChatCreateClicked.emit();
+  }
+
+  renameChat(chat: Chat) {
+    this.renameChatClicked.emit(chat);
+  }
+
+  deleteChat(chat: Chat) {
+    this.deleteChatClicked.emit(chat);
+  }
+
+  refreshChats() {
+    this.refreshChatsClicked.emit();
   }
 }

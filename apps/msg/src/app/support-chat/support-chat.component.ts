@@ -7,7 +7,6 @@
 
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   HostListener,
   inject,
@@ -56,6 +55,13 @@ import { DispatchService, SamService } from '@eustrosoft-front/security';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslateService } from '@ngx-translate/core';
+import {
+  PromptDialogComponent,
+  PromptDialogDataInterface,
+} from '@eustrosoft-front/common-ui';
+import { RenameChatDialogComponent } from './components/rename-chat-dialog/rename-chat-dialog.component';
+import { RenameChatDialogDataInterface } from './components/rename-chat-dialog/rename-chat-dialog-data.interface';
+import { RenameChatDialogReturnDataInterface } from './components/rename-chat-dialog/rename-chat-dialog-return-data.interface';
 
 @Component({
   selector: 'eustrosoft-front-support-chat',
@@ -70,7 +76,6 @@ export class SupportChatComponent implements OnInit {
   private dialog = inject(MatDialog);
   private snackBar = inject(MatSnackBar);
   private translateService = inject(TranslateService);
-  private cd = inject(ChangeDetectorRef);
 
   fetchChats$ = new BehaviorSubject(true);
   fetchChatMessagesByChatId$ = new BehaviorSubject<number | undefined>(
@@ -78,13 +83,25 @@ export class SupportChatComponent implements OnInit {
   );
   chatMessagesRefreshInterval$ = interval(5000).pipe(startWith(1));
 
-  chats$ = combineLatest([this.fetchChats$]).pipe(
-    switchMap(() => this.msgRequestBuilderService.buildViewChatsRequest()),
-    switchMap((req: QtisRequestResponseInterface<ViewChatsRequest>) =>
-      this.dispatchService.dispatch<ViewChatsRequest, ViewChatsResponse>(req)
-    ),
-    map((response: QtisRequestResponseInterface<ViewChatsResponse>) =>
-      response.r.flatMap((r: ViewChatsResponse) => r.chats)
+  chats$: Observable<{
+    chats: Chat[] | undefined;
+    isLoading: boolean;
+  }> = combineLatest([this.fetchChats$]).pipe(
+    switchMap(() =>
+      this.msgRequestBuilderService.buildViewChatsRequest().pipe(
+        switchMap((req: QtisRequestResponseInterface<ViewChatsRequest>) =>
+          this.dispatchService.dispatch<ViewChatsRequest, ViewChatsResponse>(
+            req
+          )
+        ),
+        map((response: QtisRequestResponseInterface<ViewChatsResponse>) =>
+          response.r.flatMap((r: ViewChatsResponse) => r.chats)
+        ),
+        switchMap((chats: Chat[]) =>
+          of({ isLoading: false, chats }).pipe(delay(200))
+        ),
+        startWith({ isLoading: true, chats: undefined })
+      )
     ),
     shareReplay(1)
   );
@@ -165,7 +182,7 @@ export class SupportChatComponent implements OnInit {
     );
   }
 
-  setUpSidebar() {
+  setUpSidebar(): void {
     if (window.innerWidth <= 576) {
       this.isCollapsed = true;
       this.isXs = true;
@@ -175,16 +192,23 @@ export class SupportChatComponent implements OnInit {
     }
   }
 
-  toggleSidebar() {
+  toggleSidebar(): void {
     this.isCollapsed = !this.isCollapsed;
   }
 
-  chatSelected(chat: Chat) {
+  chatSelected(chat: Chat): void {
     this.selectedChat = chat;
     this.fetchChatMessagesByChatId$.next(chat.zoid);
+    if (this.isXs) {
+      this.toggleSidebar();
+    }
   }
 
-  createNewChat() {
+  refreshChats(): void {
+    this.fetchChats$.next(true);
+  }
+
+  createNewChat(): void {
     const dialogRef = this.dialog.open<
       CreateChatDialogComponent,
       CreateChatDialogDataInterface,
@@ -208,7 +232,7 @@ export class SupportChatComponent implements OnInit {
         ),
       },
       minHeight: '25vh',
-      minWidth: '50vw',
+      minWidth: '40vw',
     });
 
     dialogRef
@@ -246,7 +270,7 @@ export class SupportChatComponent implements OnInit {
       .subscribe();
   }
 
-  sendMessage(message: string) {
+  sendMessage(message: string): void {
     this.msgRequestBuilderService
       .buildSendMessageToChatRequest({
         zoid: <number>this.selectedChat?.zoid,
@@ -266,7 +290,7 @@ export class SupportChatComponent implements OnInit {
       .subscribe();
   }
 
-  editMessage(message: ChatMessage) {
+  editMessage(message: ChatMessage): void {
     this.msgRequestBuilderService
       .buildEditMessageRequest({
         zoid: <number>this.selectedChat?.zoid,
@@ -287,7 +311,7 @@ export class SupportChatComponent implements OnInit {
       .subscribe();
   }
 
-  deleteMessage(message: ChatMessage) {
+  deleteMessage(message: ChatMessage): void {
     this.msgRequestBuilderService
       .buildDeleteMessageToChatRequest({
         zoid: <number>this.selectedChat?.zoid,
@@ -305,7 +329,7 @@ export class SupportChatComponent implements OnInit {
       .subscribe();
   }
 
-  closeChat(chat: Chat) {
+  closeChat(chat: Chat): void {
     this.msgRequestBuilderService
       .buildChangeChatStatusRequest({
         zoid: chat.zoid,
@@ -331,6 +355,125 @@ export class SupportChatComponent implements OnInit {
             this.chatSelected({ ...chat, status: MsgChatStatus.CLOSED });
           }
         }),
+        take(1)
+      )
+      .subscribe();
+  }
+
+  reopenChat(chat: Chat): void {
+    this.msgRequestBuilderService
+      .buildChangeChatStatusRequest({
+        zoid: chat.zoid,
+        zrid: chat.zrid,
+        content: chat.subject,
+        reference: null,
+        status: MsgChatStatus.WIP,
+      })
+      .pipe(
+        switchMap((request) =>
+          this.dispatchService.dispatch<
+            ChangeChatStatusRequest,
+            ChangeChatStatusResponse
+          >(request)
+        ),
+        map(
+          (response: QtisRequestResponseInterface<ChangeChatStatusResponse>) =>
+            response.r[0].e
+        ),
+        tap((hasError) => {
+          this.fetchChats$.next(true);
+          if (!hasError) {
+            this.chatSelected({ ...chat, status: MsgChatStatus.WIP });
+          }
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
+
+  renameChat(chat: Chat) {
+    const dialogRef = this.dialog.open<
+      RenameChatDialogComponent,
+      RenameChatDialogDataInterface,
+      RenameChatDialogReturnDataInterface
+    >(RenameChatDialogComponent, {
+      data: {
+        title: this.translateService.instant(
+          'MSG.RENAME_CHAT_MODAL.TITLE_TEXT'
+        ),
+        subjectInputLabel: this.translateService.instant(
+          'MSG.RENAME_CHAT_MODAL.SUBJECT_LABEL_TEXT'
+        ),
+        currentChatSubject: chat.subject,
+        cancelButtonText: this.translateService.instant(
+          'MSG.RENAME_CHAT_MODAL.CANCEL_BUTTON_TEXT'
+        ),
+        submitButtonText: this.translateService.instant(
+          'MSG.RENAME_CHAT_MODAL.SUBMIT_BUTTON_TEXT'
+        ),
+      },
+      minHeight: '20vh',
+      minWidth: '40vw',
+    });
+
+    dialogRef
+      .afterClosed()
+      .pipe(
+        filter(
+          (data): data is RenameChatDialogReturnDataInterface =>
+            typeof data !== 'undefined'
+        ),
+        switchMap((data) =>
+          this.msgRequestBuilderService.buildChangeChatStatusRequest({
+            zoid: chat.zoid,
+            zrid: chat.zrid,
+            content: data.subject,
+            reference: null,
+            status: chat.status,
+          })
+        ),
+        switchMap((req) =>
+          this.dispatchService.dispatch<
+            ChangeChatStatusRequest,
+            ChangeChatStatusResponse
+          >(req)
+        ),
+        tap(() => this.fetchChats$.next(true)),
+        catchError((err: HttpErrorResponse) => {
+          this.snackBar.open(`${err.error}`, 'Close');
+          return of(false);
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
+
+  deleteChat(chat: Chat) {
+    console.log('deleteChat()', chat);
+    const dialogRef = this.dialog.open<
+      PromptDialogComponent,
+      PromptDialogDataInterface,
+      boolean
+    >(PromptDialogComponent, {
+      data: {
+        title: this.translateService.instant('MSG.DELETE_CHAT_MODAL.TITLE'),
+        text: this.translateService.instant('MSG.DELETE_CHAT_MODAL.TEXT', {
+          subject: chat.subject,
+        }),
+        cancelButtonText: this.translateService.instant(
+          'MSG.DELETE_CHAT_MODAL.CANCEL_BUTTON_TEXT'
+        ),
+        submitButtonText: this.translateService.instant(
+          'MSG.DELETE_CHAT_MODAL.SUBMIT_BUTTON_TEXT'
+        ),
+      },
+    });
+
+    dialogRef
+      .afterClosed()
+      .pipe(
+        filter((v) => Boolean(v)),
+        tap(console.warn),
         take(1)
       )
       .subscribe();

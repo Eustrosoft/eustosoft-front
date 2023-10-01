@@ -31,6 +31,7 @@ import { ChatMessageInputComponent } from './support-chat/components/chat-messag
 import { LocationStrategy } from '@angular/common';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { NewLineToBrPipe } from './support-chat/pipes/new-line-to-br.pipe';
+import { RenameChatDialogComponent } from './support-chat/components/rename-chat-dialog/rename-chat-dialog.component';
 
 @NgModule({
   declarations: [
@@ -40,6 +41,7 @@ import { NewLineToBrPipe } from './support-chat/pipes/new-line-to-br.pipe';
     ChatViewComponent,
     LoginPageComponent,
     CreateChatDialogComponent,
+    RenameChatDialogComponent,
     MsgChatStatusPipe,
     ChatMessageInputComponent,
     NewLineToBrPipe,

@@ -13,25 +13,26 @@ import {
 } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, Validators } from '@angular/forms';
-import { CreateChatDialogFormInterface } from './create-chat-dialog-form.interface';
-import { CreateChatDialogDataInterface } from './create-chat-dialog-data.interface';
+import { RenameChatDialogFormInterface } from './rename-chat-dialog-form.interface';
+import { RenameChatDialogDataInterface } from './rename-chat-dialog-data.interface';
 
 @Component({
   selector: 'eustrosoft-front-create-chat-dialog',
-  templateUrl: './create-chat-dialog.component.html',
-  styleUrls: ['./create-chat-dialog.component.scss'],
+  templateUrl: './rename-chat-dialog.component.html',
+  styleUrls: ['./rename-chat-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CreateChatDialogComponent {
-  private dialogRef: MatDialogRef<CreateChatDialogComponent> = inject(
-    MatDialogRef<CreateChatDialogComponent>
+export class RenameChatDialogComponent {
+  private dialogRef: MatDialogRef<RenameChatDialogComponent> = inject(
+    MatDialogRef<RenameChatDialogComponent>
   );
-  public data: CreateChatDialogDataInterface = inject(MAT_DIALOG_DATA);
+  public data: RenameChatDialogDataInterface = inject(MAT_DIALOG_DATA);
   private fb = inject(FormBuilder);
 
-  form = this.fb.nonNullable.group<CreateChatDialogFormInterface>({
-    subject: this.fb.nonNullable.control('', [Validators.required]),
-    message: this.fb.nonNullable.control(''),
+  form = this.fb.nonNullable.group<RenameChatDialogFormInterface>({
+    subject: this.fb.nonNullable.control(this.data.currentChatSubject, [
+      Validators.required,
+    ]),
   });
 
   @HostListener('keydown.enter', ['$event'])

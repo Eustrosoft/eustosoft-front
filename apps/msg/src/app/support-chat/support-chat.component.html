@@ -17,28 +17,34 @@
           chatsError: chatsError$ | async
         } as chatVm"
       >
-        <ng-container *ngIf="chatVm.chats as chats; else chatsLoading">
+        <ng-container *ngIf="chatVm.chats?.isLoading">
+          <div
+            class="d-flex flex-column align-items-center justify-content-center h-inherit"
+          >
+            <eustrosoft-front-preloader></eustrosoft-front-preloader>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="chatVm.chatsError">
+          <div
+            class="d-flex flex-column align-items-center justify-content-center h-inherit"
+          >
+            <p>{{ 'MSG.ERRORS.CHATS_FETCH_ERROR' | translate }}</p>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="chatVm.chats?.chats as chats">
           <eustrosoft-front-chat-list
             [chats]="chats"
+            [selectedChat]="selectedChat"
             [removeBorderRadius]="isXs"
             (chatSelected)="chatSelected($event)"
             (collapseClicked)="toggleSidebar()"
             (newChatCreateClicked)="createNewChat()"
+            (renameChatClicked)="renameChat($event)"
+            (deleteChatClicked)="deleteChat($event)"
+            (refreshChatsClicked)="refreshChats()"
             class="h-inherit"
           ></eustrosoft-front-chat-list>
         </ng-container>
-        <ng-template #chatsLoading>
-          <div
-            class="d-flex flex-column align-items-center justify-content-center h-inherit"
-          >
-            <ng-container *ngIf="!chatVm.chatsError">
-              <eustrosoft-front-preloader></eustrosoft-front-preloader>
-            </ng-container>
-            <ng-container *ngIf="chatVm.chatsError">
-              <p>{{ 'MSG.ERRORS.CHATS_FETCH_ERROR' | translate }}</p>
-            </ng-container>
-          </div>
-        </ng-template>
       </ng-container>
     </div>
     <div class="col-12 col-sm-8 col-md-8 col-lg-8 col-xl-8 h-inherit">
@@ -90,6 +96,7 @@
             (messageEdited)="editMessage($event)"
             (messageDeleted)="deleteMessage($event)"
             (closeChatClicked)="closeChat($event)"
+            (reopenChatClicked)="reopenChat($event)"
             class="h-inherit"
           ></eustrosoft-front-chat-view>
         </ng-container>

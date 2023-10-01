@@ -32,7 +32,23 @@
           [hidden]="!selectedChat"
         ></eustrosoft-front-button>
         <mat-menu #chatActionsMenu="matMenu">
-          <button (click)="closeChat()" mat-menu-item>
+          <button
+            *ngIf="selectedChat?.status === MSG_CHAT_STATUS.CLOSED"
+            (click)="reopenChat()"
+            mat-menu-item
+          >
+            <mat-icon>replay</mat-icon>
+            <span>{{ 'MSG.OPEN_CHAT_BUTTON_TEXT' | translate }}</span>
+          </button>
+          <button
+            *ngIf="
+              selectedChat?.status === MSG_CHAT_STATUS.NEW ||
+              selectedChat?.status === MSG_CHAT_STATUS.INTERNAL ||
+              selectedChat?.status === MSG_CHAT_STATUS.WIP
+            "
+            (click)="closeChat()"
+            mat-menu-item
+          >
             <mat-icon>cancel</mat-icon>
             <span>{{ 'MSG.CLOSE_CHAT_BUTTON_TEXT' | translate }}</span>
           </button>

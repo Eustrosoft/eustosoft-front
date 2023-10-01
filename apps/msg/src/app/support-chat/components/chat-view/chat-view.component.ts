@@ -50,6 +50,7 @@ export class ChatViewComponent implements OnChanges, AfterViewInit {
   @Output() messageEdited = new EventEmitter<ChatMessage>();
   @Output() messageDeleted = new EventEmitter<ChatMessage>();
   @Output() closeChatClicked = new EventEmitter<Chat>();
+  @Output() reopenChatClicked = new EventEmitter<Chat>();
 
   @ViewChild('messagesVirtualScrollViewport')
   messagesVirtualScrollViewport!: CdkVirtualScrollViewport;
@@ -116,5 +117,9 @@ export class ChatViewComponent implements OnChanges, AfterViewInit {
 
   editCanceled() {
     this.messageInEdit = undefined;
+  }
+
+  reopenChat() {
+    this.reopenChatClicked.emit(this.selectedChat);
   }
 }

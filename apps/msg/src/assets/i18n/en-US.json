@@ -21,7 +21,11 @@
     "OPEN_MENU_BUTTON_TEXT": "Open menu",
     "CREATE_NEW_CHAT_BUTTON_TEXT": "Create new chat",
     "CLOSE_CHAT_BUTTON_TEXT": "Close ticket",
+    "OPEN_CHAT_BUTTON_TEXT": "Reopen ticket",
+    "RENAME_CHAT_BUTTON_TEXT": "Rename ticket",
+    "DELETE_CHAT_BUTTON_TEXT": "Delete ticket",
     "TICKET_LIST_HEADER_TEXT": "Tickets",
+    "REFRESH_TICKET_LIST_BUTTON_TOOLTIP": "Refresh list",
     "NO_MESSAGES_CAPTION_TEXT": "No messages available",
     "NEW_MESSAGE_LABEL_TEXT": "Message",
     "EDIT_MESSAGE_LABEL_TEXT": "Edit Message",
@@ -37,6 +41,18 @@
       "MESSAGE_LABEL_TEXT": "Message",
       "CANCEL_BUTTON_TEXT": "Cancel",
       "SUBMIT_BUTTON_TEXT": "Create"
+    },
+    "RENAME_CHAT_MODAL": {
+      "TITLE_TEXT": "Rename ticket",
+      "SUBJECT_LABEL_TEXT": "Subject",
+      "CANCEL_BUTTON_TEXT": "Cancel",
+      "SUBMIT_BUTTON_TEXT": "Rename"
+    },
+    "DELETE_CHAT_MODAL": {
+      "TITLE": "Delete confirmation",
+      "TEXT": "Ticket \"{{subject}}\" will be deleted. Proceed?",
+      "CANCEL_BUTTON_TEXT": "No",
+      "SUBMIT_BUTTON_TEXT": "Yes"
     },
     "ERRORS": {
       "CHATS_FETCH_ERROR": "Error fetching chats",
