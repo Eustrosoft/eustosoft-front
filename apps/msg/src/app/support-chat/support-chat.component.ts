@@ -49,6 +49,7 @@ import {
   ViewChatResponse,
   ViewChatsRequest,
   ViewChatsResponse,
+  XS_SCREEN_RESOLUTION,
 } from '@eustrosoft-front/core';
 import { MsgRequestBuilderService } from './services/msg-request-builder.service';
 import { DispatchService, SamService } from '@eustrosoft-front/security';
@@ -76,6 +77,7 @@ export class SupportChatComponent implements OnInit {
   private dialog = inject(MatDialog);
   private snackBar = inject(MatSnackBar);
   private translateService = inject(TranslateService);
+  private xsScreenRes = inject(XS_SCREEN_RESOLUTION);
 
   fetchChats$ = new BehaviorSubject(true);
   fetchChatMessagesByChatId$ = new BehaviorSubject<number | undefined>(
@@ -183,7 +185,7 @@ export class SupportChatComponent implements OnInit {
   }
 
   setUpSidebar(): void {
-    if (window.innerWidth <= 576) {
+    if (window.innerWidth <= this.xsScreenRes) {
       this.isCollapsed = true;
       this.isXs = true;
     } else {
@@ -334,7 +336,7 @@ export class SupportChatComponent implements OnInit {
       .buildChangeChatStatusRequest({
         zoid: chat.zoid,
         zrid: chat.zrid,
-        content: chat.subject,
+        subject: chat.subject,
         reference: null,
         status: MsgChatStatus.CLOSED,
       })
@@ -365,7 +367,7 @@ export class SupportChatComponent implements OnInit {
       .buildChangeChatStatusRequest({
         zoid: chat.zoid,
         zrid: chat.zrid,
-        content: chat.subject,
+        subject: chat.subject,
         reference: null,
         status: MsgChatStatus.WIP,
       })
@@ -427,7 +429,7 @@ export class SupportChatComponent implements OnInit {
           this.msgRequestBuilderService.buildChangeChatStatusRequest({
             zoid: chat.zoid,
             zrid: chat.zrid,
-            content: data.subject,
+            subject: data.subject,
             reference: null,
             status: chat.status,
           })

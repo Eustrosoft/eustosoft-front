@@ -78,7 +78,7 @@ export interface ChangeChatStatusRequest extends BaseMsgRequest {
   params: {
     zoid: number; // chatId
     zrid: number; // messageId
-    content: string; // new subject
+    subject: string; // new subject
     reference: unknown;
     status: MsgChatStatus;
   };

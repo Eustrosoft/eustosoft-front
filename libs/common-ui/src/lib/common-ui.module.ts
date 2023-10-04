@@ -47,6 +47,8 @@ import { LoginDialogComponent } from './components/login-dialog/login-dialog.com
 import { LoginComponent } from './components/login-page/login.component';
 import { CoreModule } from '@eustrosoft-front/core';
 import { MatListModule } from '@angular/material/list';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { SidenavComponent } from './components/sidenav/sidenav.component';
 
 @NgModule({
   imports: [
@@ -69,6 +71,7 @@ import { MatListModule } from '@angular/material/list';
     CoreModule,
     MatListModule,
     CdkVirtualForOf,
+    MatSidenavModule,
   ],
   declarations: [
     HeaderComponent,
@@ -87,6 +90,7 @@ import { MatListModule } from '@angular/material/list';
     PromptDialogComponent,
     LoginDialogComponent,
     LoginComponent,
+    SidenavComponent,
   ],
   exports: [
     HeaderComponent,
@@ -103,6 +107,7 @@ import { MatListModule } from '@angular/material/list';
     ProgressBarComponent,
     HoverCursorDirective,
     LoginComponent,
+    SidenavComponent,
   ],
   providers: [
     {

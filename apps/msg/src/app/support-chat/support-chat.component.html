@@ -6,10 +6,10 @@
   -->
 
 <div class="container-fluid mt-3">
-  <div class="row h-inherit">
+  <div class="row h-100">
     <div
       [ngClass]="{ sidebar: isXs, collapsed: isCollapsed }"
-      class="col-6 col-sm-4 col-md-4 col-lg-4 col-xl-4 pe-0 h-inherit"
+      class="col-6 col-sm-4 col-md-4 col-lg-4 col-xl-4 pe-0 h-100"
     >
       <ng-container
         *ngIf="{
@@ -19,14 +19,14 @@
       >
         <ng-container *ngIf="chatVm.chats?.isLoading">
           <div
-            class="d-flex flex-column align-items-center justify-content-center h-inherit"
+            class="d-flex flex-column align-items-center justify-content-center h-100"
           >
             <eustrosoft-front-preloader></eustrosoft-front-preloader>
           </div>
         </ng-container>
         <ng-container *ngIf="chatVm.chatsError">
           <div
-            class="d-flex flex-column align-items-center justify-content-center h-inherit"
+            class="d-flex flex-column align-items-center justify-content-center h-100"
           >
             <p>{{ 'MSG.ERRORS.CHATS_FETCH_ERROR' | translate }}</p>
           </div>
@@ -42,15 +42,15 @@
             (renameChatClicked)="renameChat($event)"
             (deleteChatClicked)="deleteChat($event)"
             (refreshChatsClicked)="refreshChats()"
-            class="h-inherit"
+            class="h-100"
           ></eustrosoft-front-chat-list>
         </ng-container>
       </ng-container>
     </div>
-    <div class="col-12 col-sm-8 col-md-8 col-lg-8 col-xl-8 h-inherit">
+    <div class="col-12 col-sm-8 col-md-8 col-lg-8 col-xl-8 h-100">
       <ng-container *ngIf="!selectedChat">
         <div
-          class="d-flex flex-column align-items-center justify-content-center h-inherit"
+          class="d-flex flex-column align-items-center justify-content-center h-100"
         >
           <h2>{{ 'MSG.SELECT_TICKET_CAPTION_TEXT' | translate }}</h2>
           <ng-container *ngIf="isXs">
@@ -75,14 +75,14 @@
           *ngIf="chatMessagesVm.chatMessages?.isLoading && selectedChat"
         >
           <div
-            class="d-flex flex-column align-items-center justify-content-center h-inherit"
+            class="d-flex flex-column align-items-center justify-content-center h-100"
           >
             <eustrosoft-front-preloader></eustrosoft-front-preloader>
           </div>
         </ng-container>
         <ng-container *ngIf="chatMessagesVm.chatMessagesError">
           <div
-            class="d-flex flex-column align-items-center justify-content-center h-inherit"
+            class="d-flex flex-column align-items-center justify-content-center h-100"
           >
             <p>{{ 'MSG.ERRORS.CHAT_MESSAGES_FETCH_ERROR' | translate }}</p>
           </div>
@@ -97,7 +97,7 @@
             (messageDeleted)="deleteMessage($event)"
             (closeChatClicked)="closeChat($event)"
             (reopenChatClicked)="reopenChat($event)"
-            class="h-inherit"
+            class="h-100"
           ></eustrosoft-front-chat-view>
         </ng-container>
       </ng-container>

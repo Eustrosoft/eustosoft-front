@@ -7,9 +7,9 @@
 @import 'variables';
 
 :host {
-  .container-fluid {
-    height: calc($main-container-height - 1rem);
-  }
+  display: flex;
+  flex: 1 1 auto;
+  height: 100%;
 
   ::ng-deep {
     .mdc-icon-button {

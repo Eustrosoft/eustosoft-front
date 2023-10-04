@@ -24,6 +24,7 @@ import { SupportedLanguages } from './constants/enums/supported-languages.enum';
 import { PRECONFIGURED_TRANSLATE_SERVICE } from './di/preconfigured-translate-service.token';
 import { BytesToSizePipe } from './pipes/bytes-to-size.pipe';
 import { initializeLocales } from './functions/locale-initializer.function';
+import { XS_SCREEN_RESOLUTION } from './di/extra-small-screen-resolution.token';
 
 @NgModule({
   declarations: [FormControlPipe, FormArrayPipe, ToNumberPipe, BytesToSizePipe],
@@ -92,6 +93,10 @@ import { initializeLocales } from './functions/locale-initializer.function';
       provide: HTTP_INTERCEPTORS,
       useClass: HttpErrorsInterceptorInterceptor,
       multi: true,
+    },
+    {
+      provide: XS_SCREEN_RESOLUTION,
+      useValue: 576,
     },
   ],
   exports: [

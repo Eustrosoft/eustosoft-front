@@ -7,6 +7,7 @@
 
 export * from './lib/common-ui.module';
 export * from './lib/components/header/header.component';
+export * from './lib/components/sidenav/sidenav.component';
 export * from './lib/components/login-dialog/login-dialog.component';
 export * from './lib/components/login-dialog/login-dialog-data.interface';
 export * from './lib/components/login-page/login.component';

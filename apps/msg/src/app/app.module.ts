@@ -32,6 +32,7 @@ import { LocationStrategy } from '@angular/common';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { NewLineToBrPipe } from './support-chat/pipes/new-line-to-br.pipe';
 import { RenameChatDialogComponent } from './support-chat/components/rename-chat-dialog/rename-chat-dialog.component';
+import { MatSidenavModule } from '@angular/material/sidenav';
 
 @NgModule({
   declarations: [
@@ -59,6 +60,7 @@ import { RenameChatDialogComponent } from './support-chat/components/rename-chat
     MatDialogModule,
     VirtualScrollerModule,
     MatTooltipModule,
+    MatSidenavModule,
   ],
   providers: [
     MsgRequestBuilderService,
