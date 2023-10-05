@@ -10,11 +10,12 @@ import { Observable, of } from 'rxjs';
 import {
   ChangeChatStatusRequest,
   CreateChatRequest,
-  DeleteMessageChatRequest,
-  EditMessageChatRequest,
+  DeleteChatMessageRequest,
+  DeleteChatRequest,
+  EditChatMessageRequest,
   MsgRequestActions,
   QtisRequestResponseInterface,
-  SendMessageChatRequest,
+  SendChatMessageRequest,
   Subsystems,
   SupportedLanguages,
   ViewChatRequest,
@@ -23,15 +24,16 @@ import {
 
 @Injectable()
 export class MsgRequestBuilderService {
-  buildViewChatsRequest(): Observable<
-    QtisRequestResponseInterface<ViewChatsRequest>
-  > {
+  buildViewChatsRequest(
+    params: ViewChatsRequest['params']
+  ): Observable<QtisRequestResponseInterface<ViewChatsRequest>> {
     return of({
       r: [
         {
           s: Subsystems.MSG,
           r: MsgRequestActions.VIEW_CHATS,
           l: SupportedLanguages.EN_US,
+          params,
         },
       ],
       t: 0,
@@ -72,8 +74,8 @@ export class MsgRequestBuilderService {
   }
 
   buildSendMessageToChatRequest(
-    params: SendMessageChatRequest['params']
-  ): Observable<QtisRequestResponseInterface<SendMessageChatRequest>> {
+    params: SendChatMessageRequest['params']
+  ): Observable<QtisRequestResponseInterface<SendChatMessageRequest>> {
     return of({
       r: [
         {
@@ -88,8 +90,8 @@ export class MsgRequestBuilderService {
   }
 
   buildEditMessageRequest(
-    params: EditMessageChatRequest['params']
-  ): Observable<QtisRequestResponseInterface<EditMessageChatRequest>> {
+    params: EditChatMessageRequest['params']
+  ): Observable<QtisRequestResponseInterface<EditChatMessageRequest>> {
     return of({
       r: [
         {
@@ -103,14 +105,30 @@ export class MsgRequestBuilderService {
     });
   }
 
-  buildDeleteMessageToChatRequest(
-    params: DeleteMessageChatRequest['params']
-  ): Observable<QtisRequestResponseInterface<DeleteMessageChatRequest>> {
+  buildDeleteChatMessageRequest(
+    params: DeleteChatMessageRequest['params']
+  ): Observable<QtisRequestResponseInterface<DeleteChatMessageRequest>> {
     return of({
       r: [
         {
           s: Subsystems.MSG,
           r: MsgRequestActions.DELETE_MESSAGE,
+          l: SupportedLanguages.EN_US,
+          params,
+        },
+      ],
+      t: 0,
+    });
+  }
+
+  buildDeleteChatRequest(
+    params: DeleteChatRequest['params']
+  ): Observable<QtisRequestResponseInterface<DeleteChatRequest>> {
+    return of({
+      r: [
+        {
+          s: Subsystems.MSG,
+          r: MsgRequestActions.DELETE_CHAT,
           l: SupportedLanguages.EN_US,
           params,
         },

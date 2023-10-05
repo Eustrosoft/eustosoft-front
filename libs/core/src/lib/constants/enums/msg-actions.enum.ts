@@ -12,5 +12,6 @@ export enum MsgRequestActions {
   SEND_MESSAGE = 'send',
   EDIT_MESSAGE = 'edit',
   DELETE_MESSAGE = 'delete',
+  DELETE_CHAT = 'delete_ch',
   CHANGE_CHAT_STATUS = 'change',
 }

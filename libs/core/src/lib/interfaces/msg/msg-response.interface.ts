@@ -34,18 +34,22 @@ export interface CreateChatResponse extends BaseMsgResponse {
   id: number;
 }
 
-export interface SendMessageChatResponse extends BaseMsgResponse {
+export interface SendChatMessageResponse extends BaseMsgResponse {
   r: MsgRequestActions.SEND_MESSAGE;
 }
 
-export interface EditMessageChatResponse extends BaseMsgResponse {
+export interface EditChatMessageResponse extends BaseMsgResponse {
   r: MsgRequestActions.EDIT_MESSAGE;
 }
 
-export interface DeleteMessageChatResponse extends BaseMsgResponse {
+export interface DeleteChatMessageResponse extends BaseMsgResponse {
   r: MsgRequestActions.DELETE_MESSAGE;
 }
 
 export interface ChangeChatStatusResponse extends BaseMsgResponse {
   r: MsgRequestActions.CHANGE_CHAT_STATUS;
+}
+
+export interface DeleteChatResponse extends BaseMsgResponse {
+  r: MsgRequestActions.DELETE_CHAT;
 }

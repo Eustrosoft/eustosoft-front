@@ -20,6 +20,9 @@ interface BaseMsgRequest {
 export interface ViewChatsRequest extends BaseMsgRequest {
   s: Subsystems.MSG;
   r: MsgRequestActions.VIEW_CHATS;
+  params: {
+    statuses: MsgChatStatus[];
+  };
 }
 
 export interface ViewChatRequest extends BaseMsgRequest {
@@ -40,7 +43,7 @@ export interface CreateChatRequest extends BaseMsgRequest {
   };
 }
 
-export interface SendMessageChatRequest extends BaseMsgRequest {
+export interface SendChatMessageRequest extends BaseMsgRequest {
   s: Subsystems.MSG;
   r: MsgRequestActions.SEND_MESSAGE;
   params: {
@@ -51,7 +54,7 @@ export interface SendMessageChatRequest extends BaseMsgRequest {
   };
 }
 
-export interface EditMessageChatRequest extends BaseMsgRequest {
+export interface EditChatMessageRequest extends BaseMsgRequest {
   s: Subsystems.MSG;
   r: MsgRequestActions.EDIT_MESSAGE;
   params: {
@@ -63,7 +66,7 @@ export interface EditMessageChatRequest extends BaseMsgRequest {
   };
 }
 
-export interface DeleteMessageChatRequest extends BaseMsgRequest {
+export interface DeleteChatMessageRequest extends BaseMsgRequest {
   s: Subsystems.MSG;
   r: MsgRequestActions.DELETE_MESSAGE;
   params: {
@@ -81,5 +84,14 @@ export interface ChangeChatStatusRequest extends BaseMsgRequest {
     subject: string; // new subject
     reference: unknown;
     status: MsgChatStatus;
+  };
+}
+
+export interface DeleteChatRequest extends BaseMsgRequest {
+  s: Subsystems.MSG;
+  r: MsgRequestActions.DELETE_CHAT;
+  params: {
+    zoid: number;
+    zver: number;
   };
 }

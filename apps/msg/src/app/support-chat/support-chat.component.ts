@@ -17,6 +17,7 @@ import {
   catchError,
   combineLatest,
   delay,
+  EMPTY,
   filter,
   ignoreElements,
   iif,
@@ -42,9 +43,17 @@ import {
   ChatMessage,
   CreateChatRequest,
   CreateChatResponse,
+  DeleteChatMessageRequest,
+  DeleteChatMessageResponse,
+  DeleteChatRequest,
+  DeleteChatResponse,
+  EditChatMessageRequest,
+  EditChatMessageResponse,
   MessageType,
   MsgChatStatus,
   QtisRequestResponseInterface,
+  SendChatMessageRequest,
+  SendChatMessageResponse,
   ViewChatRequest,
   ViewChatResponse,
   ViewChatsRequest,
@@ -90,20 +99,28 @@ export class SupportChatComponent implements OnInit {
     isLoading: boolean;
   }> = combineLatest([this.fetchChats$]).pipe(
     switchMap(() =>
-      this.msgRequestBuilderService.buildViewChatsRequest().pipe(
-        switchMap((req: QtisRequestResponseInterface<ViewChatsRequest>) =>
-          this.dispatchService.dispatch<ViewChatsRequest, ViewChatsResponse>(
-            req
-          )
-        ),
-        map((response: QtisRequestResponseInterface<ViewChatsResponse>) =>
-          response.r.flatMap((r: ViewChatsResponse) => r.chats)
-        ),
-        switchMap((chats: Chat[]) =>
-          of({ isLoading: false, chats }).pipe(delay(200))
-        ),
-        startWith({ isLoading: true, chats: undefined })
-      )
+      this.msgRequestBuilderService
+        .buildViewChatsRequest({
+          statuses: [
+            MsgChatStatus.WIP,
+            MsgChatStatus.NEW,
+            MsgChatStatus.INTERNAL,
+          ],
+        })
+        .pipe(
+          switchMap((req: QtisRequestResponseInterface<ViewChatsRequest>) =>
+            this.dispatchService.dispatch<ViewChatsRequest, ViewChatsResponse>(
+              req
+            )
+          ),
+          map((response: QtisRequestResponseInterface<ViewChatsResponse>) =>
+            response.r.flatMap((r: ViewChatsResponse) => r.chats)
+          ),
+          switchMap((chats: Chat[]) =>
+            of({ isLoading: false, chats }).pipe(delay(200))
+          ),
+          startWith({ isLoading: true, chats: undefined })
+        )
     ),
     shareReplay(1)
   );
@@ -281,12 +298,21 @@ export class SupportChatComponent implements OnInit {
         type: MessageType.MESSAGE,
       })
       .pipe(
-        switchMap((request) => this.dispatchService.dispatch(request)),
+        switchMap((request) =>
+          this.dispatchService.dispatch<
+            SendChatMessageRequest,
+            SendChatMessageResponse
+          >(request)
+        ),
         tap(() =>
           this.fetchChatMessagesByChatId$.next(
             this.selectedChat?.zoid as number
           )
         ),
+        catchError((err: HttpErrorResponse) => {
+          this.snackBar.open(`${err.error}`, 'Close');
+          return EMPTY;
+        }),
         take(1)
       )
       .subscribe();
@@ -302,12 +328,21 @@ export class SupportChatComponent implements OnInit {
         type: MessageType.MESSAGE,
       })
       .pipe(
-        switchMap((request) => this.dispatchService.dispatch(request)),
+        switchMap((request) =>
+          this.dispatchService.dispatch<
+            EditChatMessageRequest,
+            EditChatMessageResponse
+          >(request)
+        ),
         tap(() =>
           this.fetchChatMessagesByChatId$.next(
             this.selectedChat?.zoid as number
           )
         ),
+        catchError((err: HttpErrorResponse) => {
+          this.snackBar.open(`${err.error}`, 'Close');
+          return EMPTY;
+        }),
         take(1)
       )
       .subscribe();
@@ -315,17 +350,26 @@ export class SupportChatComponent implements OnInit {
 
   deleteMessage(message: ChatMessage): void {
     this.msgRequestBuilderService
-      .buildDeleteMessageToChatRequest({
+      .buildDeleteChatMessageRequest({
         zoid: <number>this.selectedChat?.zoid,
         zrid: message.zrid,
       })
       .pipe(
-        switchMap((request) => this.dispatchService.dispatch(request)),
+        switchMap((request) =>
+          this.dispatchService.dispatch<
+            DeleteChatMessageRequest,
+            DeleteChatMessageResponse
+          >(request)
+        ),
         tap(() =>
           this.fetchChatMessagesByChatId$.next(
             this.selectedChat?.zoid as number
           )
         ),
+        catchError((err: HttpErrorResponse) => {
+          this.snackBar.open(`${err.error}`, 'Close');
+          return EMPTY;
+        }),
         take(1)
       )
       .subscribe();
@@ -356,6 +400,10 @@ export class SupportChatComponent implements OnInit {
           if (!hasError) {
             this.chatSelected({ ...chat, status: MsgChatStatus.CLOSED });
           }
+        }),
+        catchError((err: HttpErrorResponse) => {
+          this.snackBar.open(`${err.error}`, 'Close');
+          return EMPTY;
         }),
         take(1)
       )
@@ -443,7 +491,7 @@ export class SupportChatComponent implements OnInit {
         tap(() => this.fetchChats$.next(true)),
         catchError((err: HttpErrorResponse) => {
           this.snackBar.open(`${err.error}`, 'Close');
-          return of(false);
+          return EMPTY;
         }),
         take(1)
       )
@@ -451,7 +499,6 @@ export class SupportChatComponent implements OnInit {
   }
 
   deleteChat(chat: Chat) {
-    console.log('deleteChat()', chat);
     const dialogRef = this.dialog.open<
       PromptDialogComponent,
       PromptDialogDataInterface,
@@ -475,7 +522,21 @@ export class SupportChatComponent implements OnInit {
       .afterClosed()
       .pipe(
         filter((v) => Boolean(v)),
-        tap(console.warn),
+        switchMap(() =>
+          this.msgRequestBuilderService.buildDeleteChatRequest({
+            zoid: chat.zoid,
+            zver: chat.zver,
+          })
+        ),
+        switchMap((req) =>
+          this.dispatchService.dispatch<DeleteChatRequest, DeleteChatResponse>(
+            req
+          )
+        ),
+        catchError((err: HttpErrorResponse) => {
+          this.snackBar.open(`${err.error}`, 'Close');
+          return EMPTY;
+        }),
         take(1)
       )
       .subscribe();
