@@ -5,7 +5,7 @@
   ~ See the LICENSE file at the project root for licensing information.
   -->
 
-<div class="d-flex flex-column h-inherit">
+<div class="d-flex flex-column h-100">
   <div class="flex-grow-0 flex-shrink-0 bg-secondary bg-opacity-25 rounded-top">
     <div
       class="d-flex align-items-center justify-content-between"
@@ -56,19 +56,14 @@
       </div>
     </div>
   </div>
-  <div class="flex-grow-1 h-100 bg-secondary bg-opacity-10">
+  <div class="flex-grow-1 h-100 overflow-auto bg-secondary bg-opacity-10">
     <div
       *ngIf="selectedChat"
-      class="d-flex flex-column justify-content-between h-inherit"
+      class="d-flex flex-column justify-content-between h-100"
     >
-      <virtual-scroller
-        #scroll
-        [bufferAmount]="5"
-        [items]="selectedChatMessages"
-        [class.h-100]="selectedChatMessages.length > 0"
-      >
+      <div class="overflow-auto" #messagesScrollableBlock>
         <ng-container
-          *ngFor="let msg of scroll.viewPortItems; trackBy: trackByFn"
+          *ngFor="let msg of selectedChatMessages; trackBy: trackByFn"
         >
           <ng-container *ngIf="userInfo$ | async as info">
             <ng-container *ngIf="+info.userId === msg.user.id">
@@ -89,10 +84,10 @@
             </ng-container>
           </ng-container>
         </ng-container>
-      </virtual-scroller>
+      </div>
       <ng-container *ngIf="!(selectedChatMessages.length > 0)">
         <div
-          class="d-flex flex-column align-items-center justify-content-center h-inherit"
+          class="d-flex flex-column align-items-center justify-content-center h-100"
         >
           <h2>{{ 'MSG.NO_MESSAGES_CAPTION_TEXT' | translate }}</h2>
         </div>

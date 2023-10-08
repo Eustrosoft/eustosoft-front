@@ -9,6 +9,7 @@ import {
   AfterViewInit,
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   EventEmitter,
   inject,
   Input,
@@ -17,8 +18,6 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import {
   Chat,
   ChatMessage,
@@ -27,7 +26,6 @@ import {
 } from '@eustrosoft-front/core';
 import { AuthenticationService } from '@eustrosoft-front/security';
 import { shareReplay } from 'rxjs';
-import { VirtualScrollerComponent } from '@iharbeck/ngx-virtual-scroller';
 
 @Component({
   selector: 'eustrosoft-front-chat-view',
@@ -52,16 +50,11 @@ export class ChatViewComponent implements OnChanges, AfterViewInit {
   @Output() closeChatClicked = new EventEmitter<Chat>();
   @Output() reopenChatClicked = new EventEmitter<Chat>();
 
-  @ViewChild('messagesVirtualScrollViewport')
-  messagesVirtualScrollViewport!: CdkVirtualScrollViewport;
-
-  @ViewChild(VirtualScrollerComponent) vScroll!: VirtualScrollerComponent;
+  @ViewChild('messagesScrollableBlock')
+  messagesScrollableBlock!: ElementRef<HTMLDivElement>;
 
   private authenticationService = inject(AuthenticationService);
 
-  control = new FormControl('', {
-    nonNullable: true,
-  });
   messageInEdit: ChatMessage | undefined = undefined;
   MSG_CHAT_STATUS = MsgChatStatus;
   trackByFn = trackByZridFunction;
@@ -74,10 +67,43 @@ export class ChatViewComponent implements OnChanges, AfterViewInit {
     if ('selectedChat' in changes) {
       this.messageInEdit = undefined;
     }
+
+    // Если скролл внизу и сообщения добавились, то скролл промотает вниз к последнему сообщению
+    if (
+      'selectedChatMessages' in changes &&
+      !changes['selectedChatMessages'].isFirstChange() &&
+      changes['selectedChatMessages'].previousValue.length <
+        changes['selectedChatMessages'].currentValue.length &&
+      this.scrollAtBottom()
+    ) {
+      console.log('ngOnChanges()', 'Executes scrollToBottom()');
+      this.scrollToBottom();
+    }
   }
 
   ngAfterViewInit(): void {
     this.scrollToBottom();
+  }
+
+  scrollToBottom() {
+    // Эта хуета не работает без setTimeout. detectChanges() и прочее из ChangeDetectorRef - не помогает
+    setTimeout(() => {
+      this.messagesScrollableBlock.nativeElement.scrollTop =
+        this.messagesScrollableBlock.nativeElement.scrollHeight;
+    }, 0);
+  }
+
+  scrollAtBottom(): boolean {
+    if (!this.messagesScrollableBlock) {
+      return false;
+    }
+    return (
+      Math.abs(
+        this.messagesScrollableBlock.nativeElement.scrollHeight -
+          this.messagesScrollableBlock.nativeElement.scrollTop -
+          this.messagesScrollableBlock.nativeElement.clientHeight
+      ) < 1
+    );
   }
 
   editMessage(message: ChatMessage) {
@@ -95,20 +121,12 @@ export class ChatViewComponent implements OnChanges, AfterViewInit {
 
   sendMessage(message: string): void {
     this.messageSent.emit(message);
+    this.scrollToBottom();
   }
 
   deleteMessage(message: ChatMessage): void {
     this.messageDeleted.emit(message);
     this.messageInEdit = undefined;
-  }
-
-  scrollToBottom(): void {
-    this.vScroll?.scrollToIndex(
-      this.selectedChatMessages.length - 1,
-      true,
-      10000,
-      0
-    );
   }
 
   closeChat(): void {

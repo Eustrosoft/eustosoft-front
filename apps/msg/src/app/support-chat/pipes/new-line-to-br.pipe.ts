@@ -20,6 +20,6 @@ export class NewLineToBrPipe implements PipeTransform {
     value = value.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
     // Replace newline characters with <br> tags
-    return value.replace(/\n/g, '<br>');
+    return value.replace(/\n/g, '<br />');
   }
 }
