@@ -76,7 +76,6 @@ export class ChatViewComponent implements OnChanges, AfterViewInit {
         changes['selectedChatMessages'].currentValue.length &&
       this.scrollAtBottom()
     ) {
-      console.log('ngOnChanges()', 'Executes scrollToBottom()');
       this.scrollToBottom();
     }
   }

@@ -14,10 +14,11 @@
       <ng-container
         *ngIf="{
           chats: chats$ | async,
-          chatsError: chatsError$ | async
+          chatsError: chatsError$ | async,
+          chatsStatusFilterOptions: chatFilterOptions$ | async
         } as chatVm"
       >
-        <ng-container *ngIf="chatVm.chats?.isLoading">
+        <ng-container *ngIf="chatVm.chats?.isLoading && !chatVm.chatsError">
           <div
             class="d-flex flex-column align-items-center justify-content-center h-100"
           >
@@ -36,12 +37,14 @@
             [chats]="chats"
             [selectedChat]="selectedChat"
             [removeBorderRadius]="isXs"
+            [chatStatusFilterOptions]="chatVm.chatsStatusFilterOptions || []"
             (chatSelected)="chatSelected($event)"
             (collapseClicked)="toggleSidebar()"
             (newChatCreateClicked)="createNewChat()"
             (renameChatClicked)="renameChat($event)"
             (deleteChatClicked)="deleteChat($event)"
             (refreshChatsClicked)="refreshChats()"
+            (statusFilterChanged)="statusFilterChanged($event)"
             class="h-100"
           ></eustrosoft-front-chat-list>
         </ng-container>
@@ -72,7 +75,11 @@
         } as chatMessagesVm"
       >
         <ng-container
-          *ngIf="chatMessagesVm.chatMessages?.isLoading && selectedChat"
+          *ngIf="
+            chatMessagesVm.chatMessages?.isLoading &&
+            selectedChat &&
+            !chatMessagesVm.chatMessagesError
+          "
         >
           <div
             class="d-flex flex-column align-items-center justify-content-center h-100"

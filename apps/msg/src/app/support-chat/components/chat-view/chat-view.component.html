@@ -126,6 +126,9 @@
           <span class="fw-light fst-italic me-2">
             {{ msg.user.id === info.userId ? 'me' : msg.user.fullName }}
           </span>
+          <span class="fw-light fst-italic me-1">
+            {{ msg.created | date : 'short' }}
+          </span>
           <ng-container *ngIf="msg.user.id === info.userId">
             <eustrosoft-front-button
               [buttonType]="'button'"

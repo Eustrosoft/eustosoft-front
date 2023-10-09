@@ -19,7 +19,6 @@ export class NewLineToBrPipe implements PipeTransform {
     // Escape < and > characters to prevent HTML interpretation
     value = value.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-    // Replace newline characters with <br> tags
     return value.replace(/\n/g, '<br />');
   }
 }

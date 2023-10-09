@@ -13,3 +13,10 @@
   white-space: pre-line;
 }
 
+.msg-chat-status-filter-menu {
+  .mdc-list {
+    display: flex;
+    flex-direction: column;
+    padding: 0.5rem;
+  }
+}

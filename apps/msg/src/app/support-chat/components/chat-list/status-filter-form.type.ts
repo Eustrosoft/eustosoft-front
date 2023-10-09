@@ -5,13 +5,8 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-export enum Subsystems {
-  CMS = 'cms',
-  SQL = 'sql',
-  PING = 'ping',
-  FILE = 'file',
-  LOGIN = 'login',
-  MSG = 'msg',
-  SAM = 'sam',
-  DIC = 'dic',
-}
+import { FormArray, FormControl } from '@angular/forms';
+
+export type StatusFilterForm = {
+  checkboxes: FormArray<FormControl<boolean>>;
+};

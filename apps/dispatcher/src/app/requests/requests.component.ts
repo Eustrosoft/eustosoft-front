@@ -124,7 +124,7 @@ export class RequestsComponent implements OnInit {
         catchError((err: HttpErrorResponse) => {
           this.form.get('submit')?.enable();
           this.isResultLoading.next(false);
-          this.snackBar.open(err.error, 'Close');
+          this.snackBar.open(err.error, '🞩');
           this.cd.detectChanges();
           return of(null);
         })

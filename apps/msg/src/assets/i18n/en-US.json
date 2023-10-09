@@ -19,7 +19,8 @@
   "MSG": {
     "SELECT_TICKET_CAPTION_TEXT": "Select ticket from menu",
     "OPEN_MENU_BUTTON_TEXT": "Open menu",
-    "CREATE_NEW_CHAT_BUTTON_TEXT": "Create new chat",
+    "CHAT_FILTERS_BUTTON_TEXT": "Filters",
+    "CREATE_NEW_CHAT_BUTTON_TEXT": "Create new chat or change selected filters",
     "CLOSE_CHAT_BUTTON_TEXT": "Close ticket",
     "OPEN_CHAT_BUTTON_TEXT": "Reopen ticket",
     "RENAME_CHAT_BUTTON_TEXT": "Rename ticket",
@@ -56,7 +57,8 @@
     },
     "ERRORS": {
       "CHATS_FETCH_ERROR": "Error fetching chats",
-      "CHAT_MESSAGES_FETCH_ERROR": "Error fetching chat messages"
+      "CHAT_MESSAGES_FETCH_ERROR": "Error fetching chat messages",
+      "CHAT_STATUS_FILTERS_FETCH_ERROR": "Error fetching chat status filters"
     }
   }
 }

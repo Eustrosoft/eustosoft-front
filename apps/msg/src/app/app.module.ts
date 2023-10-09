@@ -33,6 +33,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { NewLineToBrPipe } from './support-chat/pipes/new-line-to-br.pipe';
 import { RenameChatDialogComponent } from './support-chat/components/rename-chat-dialog/rename-chat-dialog.component';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { DicModule } from '@eustrosoft-front/dic';
+import { MsgDictionaryService } from './support-chat/services/msg-dictionary.service';
 
 @NgModule({
   declarations: [
@@ -54,6 +57,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
     CoreModule,
     CommonUiModule,
     SecurityModule,
+    DicModule,
     MatMenuModule,
     MatListModule,
     MatIconModule,
@@ -61,9 +65,11 @@ import { MatSidenavModule } from '@angular/material/sidenav';
     VirtualScrollerModule,
     MatTooltipModule,
     MatSidenavModule,
+    MatCheckboxModule,
   ],
   providers: [
     MsgRequestBuilderService,
+    MsgDictionaryService,
     { provide: LocationStrategy, useClass: CustomLocationStrategy },
   ],
   bootstrap: [AppComponent],

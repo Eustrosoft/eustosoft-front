@@ -27,6 +27,31 @@
         <eustrosoft-front-button
           [buttonType]="'button'"
           [buttonStyleType]="'icon'"
+          [iconName]="'filter_alt'"
+          [matTooltip]="'MSG.CHAT_FILTERS_BUTTON_TEXT' | translate"
+          [matTooltipShowDelay]="300"
+          [matMenuTriggerFor]="chatFiltersMenu"
+        ></eustrosoft-front-button>
+        <mat-menu
+          #chatFiltersMenu="matMenu"
+          class="msg-chat-status-filter-menu"
+        >
+          <ng-container
+            *ngFor="let filter of chatStatusFilterOptions; let i = index"
+          >
+            <mat-checkbox
+              class="mat-menu-item"
+              [value]="filter.code"
+              (change)="filterChange($event, filter.code)"
+              (click)="$event.stopPropagation()"
+            >
+              {{ filter.value }}
+            </mat-checkbox>
+          </ng-container>
+        </mat-menu>
+        <eustrosoft-front-button
+          [buttonType]="'button'"
+          [buttonStyleType]="'icon'"
           [iconName]="'add'"
           [matTooltip]="'MSG.CREATE_NEW_CHAT_BUTTON_TEXT' | translate"
           [matTooltipShowDelay]="300"

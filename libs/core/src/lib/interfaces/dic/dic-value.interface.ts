@@ -5,13 +5,10 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-export enum Subsystems {
-  CMS = 'cms',
-  SQL = 'sql',
-  PING = 'ping',
-  FILE = 'file',
-  LOGIN = 'login',
-  MSG = 'msg',
-  SAM = 'sam',
-  DIC = 'dic',
+import { MsgChatStatus } from '../../constants/enums/msg-chat-status.enum';
+
+export interface DicValue {
+  dic: string;
+  code: MsgChatStatus;
+  value: string;
 }

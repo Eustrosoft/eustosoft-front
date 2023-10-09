@@ -106,7 +106,7 @@ export class LoginComponent implements OnInit, OnDestroy, AfterViewInit {
         },
         error: (err: HttpErrorResponse) => {
           this.form.get('submit')?.enable();
-          this.snackBar.open(err.error, 'Close');
+          this.snackBar.open(err.error, '🞩');
           this.cd.markForCheck();
         },
       });

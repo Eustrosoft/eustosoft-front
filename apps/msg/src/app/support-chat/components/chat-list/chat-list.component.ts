@@ -10,9 +10,16 @@ import {
   Component,
   EventEmitter,
   Input,
+  OnInit,
   Output,
 } from '@angular/core';
-import { Chat, trackByZridFunction } from '@eustrosoft-front/core';
+import {
+  Chat,
+  DicValue,
+  MsgChatStatus,
+  trackByZridFunction,
+} from '@eustrosoft-front/core';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 
 @Component({
   selector: 'eustrosoft-front-chat-list',
@@ -20,18 +27,27 @@ import { Chat, trackByZridFunction } from '@eustrosoft-front/core';
   styleUrls: ['./chat-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ChatListComponent {
+export class ChatListComponent implements OnInit {
   @Input() chats!: Chat[];
   @Input() selectedChat: Chat | undefined = undefined;
   @Input() removeBorderRadius!: boolean;
+  @Input() chatStatusFilterOptions!: DicValue[];
   @Output() chatSelected = new EventEmitter<Chat>();
   @Output() renameChatClicked = new EventEmitter<Chat>();
   @Output() deleteChatClicked = new EventEmitter<Chat>();
   @Output() collapseClicked = new EventEmitter<void>();
   @Output() newChatCreateClicked = new EventEmitter<void>();
   @Output() refreshChatsClicked = new EventEmitter<void>();
+  @Output() statusFilterChanged = new EventEmitter<MsgChatStatus[]>();
 
   trackByFn = trackByZridFunction;
+  checkedStatuses: { [key: string]: boolean } = {};
+
+  ngOnInit(): void {
+    this.chatStatusFilterOptions.forEach((option) => {
+      this.checkedStatuses[option.code] = false;
+    });
+  }
 
   selectChat(chat: Chat) {
     this.selectedChat = chat;
@@ -52,5 +68,13 @@ export class ChatListComponent {
 
   refreshChats() {
     this.refreshChatsClicked.emit();
+  }
+
+  filterChange(event: MatCheckboxChange, value: string) {
+    this.checkedStatuses[value] = event.checked;
+    const codes = Object.keys(this.checkedStatuses).filter(
+      (optionValue) => this.checkedStatuses[optionValue]
+    ) as MsgChatStatus[];
+    this.statusFilterChanged.emit(codes);
   }
 }

@@ -19,7 +19,8 @@
   "MSG": {
     "SELECT_TICKET_CAPTION_TEXT": "Выберите чат из меню",
     "OPEN_MENU_BUTTON_TEXT": "Открыть меню",
-    "CREATE_NEW_CHAT_BUTTON_TEXT": "Создать новый чат",
+    "CHAT_FILTERS_BUTTON_TEXT": "Фильтры",
+    "CREATE_NEW_CHAT_BUTTON_TEXT": "Создайте новый чат или измените настройки фильтров",
     "CLOSE_CHAT_BUTTON_TEXT": "Закрыть чат",
     "OPEN_CHAT_BUTTON_TEXT": "Переоткрыть чат",
     "RENAME_CHAT_BUTTON_TEXT": "Переименовать чат",
@@ -56,7 +57,8 @@
     },
     "ERRORS": {
       "CHATS_FETCH_ERROR": "Ошибка при попытке получения чатов",
-      "CHAT_MESSAGES_FETCH_ERROR": "Ошибка при попытке получения сообщений"
+      "CHAT_MESSAGES_FETCH_ERROR": "Ошибка при попытке получения сообщений",
+      "CHAT_STATUS_FILTERS_FETCH_ERROR": "Ошибка при попытке получения фильтров для чатов"
     }
   }
 }

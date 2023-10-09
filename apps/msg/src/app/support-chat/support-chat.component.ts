@@ -72,6 +72,7 @@ import {
 import { RenameChatDialogComponent } from './components/rename-chat-dialog/rename-chat-dialog.component';
 import { RenameChatDialogDataInterface } from './components/rename-chat-dialog/rename-chat-dialog-data.interface';
 import { RenameChatDialogReturnDataInterface } from './components/rename-chat-dialog/rename-chat-dialog-return-data.interface';
+import { MsgDictionaryService } from './services/msg-dictionary.service';
 
 @Component({
   selector: 'eustrosoft-front-support-chat',
@@ -83,12 +84,13 @@ export class SupportChatComponent implements OnInit {
   private dispatchService = inject(DispatchService);
   private msgRequestBuilderService = inject(MsgRequestBuilderService);
   private samService = inject(SamService);
+  private msgDictionaryService = inject(MsgDictionaryService);
   private dialog = inject(MatDialog);
   private snackBar = inject(MatSnackBar);
   private translateService = inject(TranslateService);
   private xsScreenRes = inject(XS_SCREEN_RESOLUTION);
 
-  fetchChats$ = new BehaviorSubject(true);
+  fetchChats$ = new BehaviorSubject<MsgChatStatus[]>([]);
   fetchChatMessagesByChatId$ = new BehaviorSubject<number | undefined>(
     undefined
   );
@@ -97,15 +99,11 @@ export class SupportChatComponent implements OnInit {
   chats$: Observable<{
     chats: Chat[] | undefined;
     isLoading: boolean;
-  }> = combineLatest([this.fetchChats$]).pipe(
-    switchMap(() =>
+  }> = this.fetchChats$.asObservable().pipe(
+    switchMap((statuses) =>
       this.msgRequestBuilderService
         .buildViewChatsRequest({
-          statuses: [
-            MsgChatStatus.WIP,
-            MsgChatStatus.NEW,
-            MsgChatStatus.INTERNAL,
-          ],
+          statuses,
         })
         .pipe(
           switchMap((req: QtisRequestResponseInterface<ViewChatsRequest>) =>
@@ -118,8 +116,11 @@ export class SupportChatComponent implements OnInit {
           ),
           switchMap((chats: Chat[]) =>
             of({ isLoading: false, chats }).pipe(delay(200))
-          ),
-          startWith({ isLoading: true, chats: undefined })
+          )
+          // TODO сделать по аналогии с сообщениями
+          //  Отображать прелоадер при первой загрузке, если нажали обновить
+          //  Если поменяли фильтры - не показывать прелоадер
+          // startWith({ isLoading: true, chats: undefined })
         )
     ),
     shareReplay(1)
@@ -157,7 +158,20 @@ export class SupportChatComponent implements OnInit {
     catchError((err: HttpErrorResponse) => of(err))
   );
 
+  chatFilterOptions$ = this.msgDictionaryService.getStatusOptions().pipe(
+    catchError((err: HttpErrorResponse) => {
+      this.snackBar.open(
+        this.translateService.instant(
+          'MSG.ERRORS.CHAT_STATUS_FILTERS_FETCH_ERROR'
+        ),
+        '🞩'
+      );
+      return EMPTY;
+    })
+  );
+
   selectedChat: Chat | undefined = undefined;
+  selectedStatuses: MsgChatStatus[] = [];
   isCollapsed = true;
   isXs = false;
 
@@ -224,9 +238,17 @@ export class SupportChatComponent implements OnInit {
   }
 
   refreshChats(): void {
-    this.fetchChats$.next(true);
+    this.fetchChats$.next(this.selectedStatuses);
   }
 
+  /**
+   * TODO
+   * Переделать функционал создания чата.
+   * Запрос на создание чата  создается не по событию afterClosed(), а когда нажали на кнопку.
+   * Кнопка создать блокируется на время выполнения запроса.
+   * После успешного выполнения - модальное окно закрывается, иначе,
+   * отображается ошибка в snackBar и форма остается заполненной.
+   */
   createNewChat(): void {
     const dialogRef = this.dialog.open<
       CreateChatDialogComponent,
@@ -279,9 +301,9 @@ export class SupportChatComponent implements OnInit {
             req
           )
         ),
-        tap(() => this.fetchChats$.next(true)),
+        tap(() => this.fetchChats$.next(this.selectedStatuses)),
         catchError((err: HttpErrorResponse) => {
-          this.snackBar.open(`${err.error}`, 'Close');
+          this.snackBar.open(`${err.error}`, '🞩');
           return of(false);
         }),
         take(1)
@@ -289,6 +311,16 @@ export class SupportChatComponent implements OnInit {
       .subscribe();
   }
 
+  /**
+   * TODO
+   * Переделать функционал отправки сообщения.
+   * При нажатии на кнопку отправки - поле ввода сообщения не очищается сразу.
+   * Наверное надо создать subject в каком-то сервисе, который будет указывать на признак того,
+   * что сообщение было успешно отправлено.
+   * Если сообщение было успешно отправлено - то поле очищается от данных, иначе,
+   * поле сохраняет значение введенное пользователем
+   * @param message
+   */
   sendMessage(message: string): void {
     this.msgRequestBuilderService
       .buildSendMessageToChatRequest({
@@ -310,7 +342,7 @@ export class SupportChatComponent implements OnInit {
           )
         ),
         catchError((err: HttpErrorResponse) => {
-          this.snackBar.open(`${err.error}`, 'Close');
+          this.snackBar.open(`${err.error}`, '🞩');
           return EMPTY;
         }),
         take(1)
@@ -340,7 +372,7 @@ export class SupportChatComponent implements OnInit {
           )
         ),
         catchError((err: HttpErrorResponse) => {
-          this.snackBar.open(`${err.error}`, 'Close');
+          this.snackBar.open(`${err.error}`, '🞩');
           return EMPTY;
         }),
         take(1)
@@ -367,7 +399,7 @@ export class SupportChatComponent implements OnInit {
           )
         ),
         catchError((err: HttpErrorResponse) => {
-          this.snackBar.open(`${err.error}`, 'Close');
+          this.snackBar.open(`${err.error}`, '🞩');
           return EMPTY;
         }),
         take(1)
@@ -396,13 +428,13 @@ export class SupportChatComponent implements OnInit {
             response.r[0].e
         ),
         tap((hasError) => {
-          this.fetchChats$.next(true);
+          this.fetchChats$.next(this.selectedStatuses);
           if (!hasError) {
             this.chatSelected({ ...chat, status: MsgChatStatus.CLOSED });
           }
         }),
         catchError((err: HttpErrorResponse) => {
-          this.snackBar.open(`${err.error}`, 'Close');
+          this.snackBar.open(`${err.error}`, '🞩');
           return EMPTY;
         }),
         take(1)
@@ -431,7 +463,7 @@ export class SupportChatComponent implements OnInit {
             response.r[0].e
         ),
         tap((hasError) => {
-          this.fetchChats$.next(true);
+          this.fetchChats$.next(this.selectedStatuses);
           if (!hasError) {
             this.chatSelected({ ...chat, status: MsgChatStatus.WIP });
           }
@@ -488,9 +520,9 @@ export class SupportChatComponent implements OnInit {
             ChangeChatStatusResponse
           >(req)
         ),
-        tap(() => this.fetchChats$.next(true)),
+        tap(() => this.fetchChats$.next(this.selectedStatuses)),
         catchError((err: HttpErrorResponse) => {
-          this.snackBar.open(`${err.error}`, 'Close');
+          this.snackBar.open(`${err.error}`, '🞩');
           return EMPTY;
         }),
         take(1)
@@ -533,12 +565,19 @@ export class SupportChatComponent implements OnInit {
             req
           )
         ),
+        tap(() => this.fetchChats$.next(this.selectedStatuses)),
         catchError((err: HttpErrorResponse) => {
-          this.snackBar.open(`${err.error}`, 'Close');
+          this.snackBar.open(`${err.error}`, '🞩');
           return EMPTY;
         }),
         take(1)
       )
       .subscribe();
+  }
+
+  statusFilterChanged(statuses: MsgChatStatus[]) {
+    this.selectedStatuses = statuses;
+    this.selectedChat = undefined;
+    this.fetchChats$.next(statuses);
   }
 }
