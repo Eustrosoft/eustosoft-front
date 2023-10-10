@@ -42,7 +42,7 @@
         [buttonStyleType]="'flat'"
         [buttonText]="data.submitButtonText"
         [color]="'primary'"
-        [disabled]="form.invalid"
+        [disabled]="form.invalid || form.disabled"
         (clicked)="resolve()"
       >
       </eustrosoft-front-button>

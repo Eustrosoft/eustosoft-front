@@ -30,6 +30,7 @@ import {
   startWith,
   switchMap,
   take,
+  takeUntil,
   tap,
 } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
@@ -117,12 +118,9 @@ export class SupportChatComponent implements OnInit {
           switchMap((chats: Chat[]) =>
             of({ isLoading: false, chats }).pipe(delay(200))
           )
-          // TODO сделать по аналогии с сообщениями
-          //  Отображать прелоадер при первой загрузке, если нажали обновить
-          //  Если поменяли фильтры - не показывать прелоадер
-          // startWith({ isLoading: true, chats: undefined })
         )
     ),
+    startWith({ isLoading: true, chats: undefined }),
     shareReplay(1)
   );
 
@@ -241,14 +239,6 @@ export class SupportChatComponent implements OnInit {
     this.fetchChats$.next(this.selectedStatuses);
   }
 
-  /**
-   * TODO
-   * Переделать функционал создания чата.
-   * Запрос на создание чата  создается не по событию afterClosed(), а когда нажали на кнопку.
-   * Кнопка создать блокируется на время выполнения запроса.
-   * После успешного выполнения - модальное окно закрывается, иначе,
-   * отображается ошибка в snackBar и форма остается заполненной.
-   */
   createNewChat(): void {
     const dialogRef = this.dialog.open<
       CreateChatDialogComponent,
@@ -276,8 +266,9 @@ export class SupportChatComponent implements OnInit {
       minWidth: '40vw',
     });
 
-    dialogRef
-      .afterClosed()
+    const dialogClosed$ = dialogRef.afterClosed();
+
+    dialogRef.componentInstance.formSubmitted
       .pipe(
         filter(
           (data): data is CreateChatDialogReturnDataInterface =>
@@ -286,7 +277,14 @@ export class SupportChatComponent implements OnInit {
         switchMap((data) =>
           combineLatest([
             of(data),
-            this.samService.getUserSlvl().pipe(map((slvl) => slvl.r[0].data)),
+            this.samService.getUserSlvl().pipe(
+              map((slvl) => slvl.r[0].data),
+              catchError((err: HttpErrorResponse) => {
+                this.snackBar.open(`${err.error}`, '🞩');
+                dialogRef.componentInstance.form.enable();
+                return EMPTY;
+              })
+            ),
           ])
         ),
         switchMap(([content, slvl]) =>
@@ -297,16 +295,21 @@ export class SupportChatComponent implements OnInit {
           })
         ),
         switchMap((req) =>
-          this.dispatchService.dispatch<CreateChatRequest, CreateChatResponse>(
-            req
-          )
+          this.dispatchService
+            .dispatch<CreateChatRequest, CreateChatResponse>(req)
+            .pipe(
+              catchError((err: HttpErrorResponse) => {
+                this.snackBar.open(`${err.error}`, '🞩');
+                dialogRef.componentInstance.form.enable();
+                return EMPTY;
+              })
+            )
         ),
-        tap(() => this.fetchChats$.next(this.selectedStatuses)),
-        catchError((err: HttpErrorResponse) => {
-          this.snackBar.open(`${err.error}`, '🞩');
-          return of(false);
+        tap(() => {
+          this.fetchChats$.next(this.selectedStatuses);
+          dialogRef.close();
         }),
-        take(1)
+        takeUntil(dialogClosed$)
       )
       .subscribe();
   }

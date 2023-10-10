@@ -8,13 +8,16 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  EventEmitter,
   HostListener,
   inject,
+  Output,
 } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, Validators } from '@angular/forms';
 import { CreateChatDialogFormInterface } from './create-chat-dialog-form.interface';
 import { CreateChatDialogDataInterface } from './create-chat-dialog-data.interface';
+import { CreateChatDialogReturnDataInterface } from './create-chat-dialog-return-data.interface';
 
 @Component({
   selector: 'eustrosoft-front-create-chat-dialog',
@@ -23,11 +26,18 @@ import { CreateChatDialogDataInterface } from './create-chat-dialog-data.interfa
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CreateChatDialogComponent {
-  private dialogRef: MatDialogRef<CreateChatDialogComponent> = inject(
-    MatDialogRef<CreateChatDialogComponent>
+  @Output() formSubmitted = new EventEmitter<
+    ReturnType<typeof this.form.getRawValue>
+  >();
+
+  private dialogRef: MatDialogRef<
+    CreateChatDialogComponent,
+    CreateChatDialogReturnDataInterface
+  > = inject(
+    MatDialogRef<CreateChatDialogComponent, CreateChatDialogReturnDataInterface>
   );
-  public data: CreateChatDialogDataInterface = inject(MAT_DIALOG_DATA);
   private fb = inject(FormBuilder);
+  public data: CreateChatDialogDataInterface = inject(MAT_DIALOG_DATA);
 
   form = this.fb.nonNullable.group<CreateChatDialogFormInterface>({
     subject: this.fb.nonNullable.control('', [Validators.required]),
@@ -37,7 +47,7 @@ export class CreateChatDialogComponent {
   @HostListener('keydown.enter', ['$event'])
   onEnterKeydown(e: KeyboardEvent) {
     e.stopPropagation();
-    this.dialogRef.close(this.form.value);
+    this.formSubmitted.emit(this.form.getRawValue());
   }
 
   reject(): void {
@@ -45,6 +55,7 @@ export class CreateChatDialogComponent {
   }
 
   resolve(): void {
-    this.dialogRef.close(this.form.value);
+    this.form.disable();
+    this.formSubmitted.emit(this.form.getRawValue());
   }
 }
