@@ -5,10 +5,14 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
+import { Observable } from 'rxjs';
+import { Option } from '@eustrosoft-front/common-ui';
+
 export interface CreateChatDialogDataInterface {
   title: string;
   subjectInputLabel: string;
   messageInputLabel: string;
   cancelButtonText: string;
   submitButtonText: string;
+  securityLevelOptions$: Observable<Option[]>;
 }

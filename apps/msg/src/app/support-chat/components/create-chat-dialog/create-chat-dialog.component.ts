@@ -38,15 +38,18 @@ export class CreateChatDialogComponent {
   );
   private fb = inject(FormBuilder);
   public data: CreateChatDialogDataInterface = inject(MAT_DIALOG_DATA);
-
   form = this.fb.nonNullable.group<CreateChatDialogFormInterface>({
-    subject: this.fb.nonNullable.control('', [Validators.required]),
-    message: this.fb.nonNullable.control(''),
+    subject: this.fb.nonNullable.control<string>('', [Validators.required]),
+    message: this.fb.nonNullable.control<string>(''),
+    securityLevel: this.fb.nonNullable.control<string | undefined>({
+      value: undefined,
+      disabled: false,
+    }),
   });
 
   @HostListener('keydown.enter', ['$event'])
-  onEnterKeydown(e: KeyboardEvent) {
-    e.stopPropagation();
+  onEnterKeydown(event: KeyboardEvent) {
+    event.stopPropagation();
     this.formSubmitted.emit(this.form.getRawValue());
   }
 

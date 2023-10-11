@@ -8,4 +8,5 @@
 export interface CreateChatDialogReturnDataInterface {
   subject: string;
   message: string;
+  securityLevel: string | undefined;
 }

@@ -39,7 +39,7 @@ export interface CreateChatRequest extends BaseMsgRequest {
   params: {
     subject: string;
     content: string; // first message
-    slvl: number;
+    slvl?: number;
   };
 }
 

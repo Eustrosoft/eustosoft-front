@@ -23,5 +23,6 @@ export class SelectComponent {
   @Input() fieldAppearance: MatFormFieldAppearance = 'fill';
   @Input() options: Option[] = [];
   @Input() color: ThemePalette = undefined;
+  @Input() showEmptyOption = true;
   @Input() control!: FormControl;
 }

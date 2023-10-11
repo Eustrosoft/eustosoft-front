@@ -25,6 +25,42 @@
           [control]="form.controls.message"
         ></eustrosoft-front-textarea>
       </div>
+      <ng-container
+        *ngIf="{
+          securityLevelOptions: data.securityLevelOptions$ | async
+        } as vm"
+      >
+        <div class="col-12">
+          <mat-accordion>
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  {{
+                    'MSG.CREATE_CHAT_MODAL.EXTRA_OPTIONS_PANEL_TITLE'
+                      | translate
+                  }}
+                </mat-panel-title>
+                <mat-panel-description>
+                  {{
+                    'MSG.CREATE_CHAT_MODAL.EXTRA_OPTIONS_PANEL_DESCRIPTION'
+                      | translate
+                  }}
+                </mat-panel-description>
+              </mat-expansion-panel-header>
+              <eustrosoft-front-select
+                [label]="
+                  'MSG.CREATE_CHAT_MODAL.EXTRA_OPTIONS_PANEL_SECURITY_LEVEL_LABEL'
+                    | translate
+                "
+                [control]="form.controls.securityLevel"
+                [options]="vm.securityLevelOptions || []"
+                [fieldAppearance]="'fill'"
+                [color]="'primary'"
+              ></eustrosoft-front-select>
+            </mat-expansion-panel>
+          </mat-accordion>
+        </div>
+      </ng-container>
     </div>
   </div>
   <div class="row">

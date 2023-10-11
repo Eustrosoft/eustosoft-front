@@ -13,6 +13,7 @@ import {
   DicValuesResponse,
   QtisRequestResponseInterface,
 } from '@eustrosoft-front/core';
+import { Option } from '@eustrosoft-front/common-ui';
 
 @Injectable()
 export class MsgDictionaryService {
@@ -26,5 +27,20 @@ export class MsgDictionaryService {
           response.r.flatMap((r: DicValuesResponse) => r.values)
         )
       );
+  }
+
+  getSecurityLevelOptions(): Observable<Option[]> {
+    return this.dicService.getDictionaryValues(Dictionaries.SLEVEL).pipe(
+      map((response: QtisRequestResponseInterface<DicValuesResponse>) =>
+        response.r.flatMap((r: DicValuesResponse) => r.values)
+      ),
+      map((values) =>
+        values.map((value) => ({
+          value: value.code,
+          displayText: value.value,
+          disabled: false,
+        }))
+      )
+    );
   }
 }

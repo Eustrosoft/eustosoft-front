@@ -62,7 +62,7 @@ import {
   XS_SCREEN_RESOLUTION,
 } from '@eustrosoft-front/core';
 import { MsgRequestBuilderService } from './services/msg-request-builder.service';
-import { DispatchService, SamService } from '@eustrosoft-front/security';
+import { DispatchService } from '@eustrosoft-front/security';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslateService } from '@ngx-translate/core';
@@ -84,7 +84,6 @@ import { MsgDictionaryService } from './services/msg-dictionary.service';
 export class SupportChatComponent implements OnInit {
   private dispatchService = inject(DispatchService);
   private msgRequestBuilderService = inject(MsgRequestBuilderService);
-  private samService = inject(SamService);
   private msgDictionaryService = inject(MsgDictionaryService);
   private dialog = inject(MatDialog);
   private snackBar = inject(MatSnackBar);
@@ -156,6 +155,7 @@ export class SupportChatComponent implements OnInit {
     catchError((err: HttpErrorResponse) => of(err))
   );
 
+  // TODO Запрашивать справочные значения один раз при инициализации приложения
   chatFilterOptions$ = this.msgDictionaryService.getStatusOptions().pipe(
     catchError((err: HttpErrorResponse) => {
       this.snackBar.open(
@@ -167,6 +167,20 @@ export class SupportChatComponent implements OnInit {
       return EMPTY;
     })
   );
+
+  securityLevelOptions$ = this.msgDictionaryService
+    .getSecurityLevelOptions()
+    .pipe(
+      catchError((err: HttpErrorResponse) => {
+        this.snackBar.open(
+          this.translateService.instant(
+            'MSG.ERRORS.CHAT_SECURITY_LEVEL_OPTIONS_FETCH_ERROR'
+          ),
+          '🞩'
+        );
+        return EMPTY;
+      })
+    );
 
   selectedChat: Chat | undefined = undefined;
   selectedStatuses: MsgChatStatus[] = [];
@@ -261,6 +275,7 @@ export class SupportChatComponent implements OnInit {
         submitButtonText: this.translateService.instant(
           'MSG.CREATE_CHAT_MODAL.SUBMIT_BUTTON_TEXT'
         ),
+        securityLevelOptions$: this.securityLevelOptions$,
       },
       minHeight: '25vh',
       minWidth: '40vw',
@@ -274,26 +289,16 @@ export class SupportChatComponent implements OnInit {
           (data): data is CreateChatDialogReturnDataInterface =>
             typeof data !== 'undefined'
         ),
-        switchMap((data) =>
-          combineLatest([
-            of(data),
-            this.samService.getUserSlvl().pipe(
-              map((slvl) => slvl.r[0].data),
-              catchError((err: HttpErrorResponse) => {
-                this.snackBar.open(`${err.error}`, '🞩');
-                dialogRef.componentInstance.form.enable();
-                return EMPTY;
-              })
-            ),
-          ])
-        ),
-        switchMap(([content, slvl]) =>
-          this.msgRequestBuilderService.buildCreateChatRequest({
+        switchMap((content) => {
+          const params: CreateChatRequest['params'] = {
             subject: content.subject,
             content: content.message,
-            slvl: +slvl,
-          })
-        ),
+          };
+          if (content.securityLevel !== undefined) {
+            params.slvl = +content.securityLevel;
+          }
+          return this.msgRequestBuilderService.buildCreateChatRequest(params);
+        }),
         switchMap((req) =>
           this.dispatchService
             .dispatch<CreateChatRequest, CreateChatResponse>(req)

@@ -36,6 +36,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { DicModule } from '@eustrosoft-front/dic';
 import { MsgDictionaryService } from './support-chat/services/msg-dictionary.service';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 @NgModule({
   declarations: [
@@ -66,6 +67,7 @@ import { MsgDictionaryService } from './support-chat/services/msg-dictionary.ser
     MatTooltipModule,
     MatSidenavModule,
     MatCheckboxModule,
+    MatExpansionModule,
   ],
   providers: [
     MsgRequestBuilderService,
