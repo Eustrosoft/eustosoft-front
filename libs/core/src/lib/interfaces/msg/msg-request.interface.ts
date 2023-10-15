@@ -7,7 +7,7 @@
 
 import { Subsystems } from '../../constants/enums/subsystems.enum';
 import { SupportedLanguages } from '../../constants/enums/supported-languages.enum';
-import { MsgRequestActions } from '../../constants/enums/msg-actions.enum';
+import { MsgRequestActions } from '../../constants/enums/msg-request-actions.enum';
 import { MessageType } from '../../constants/enums/msg-edit-type.enum';
 import { MsgChatStatus } from '../../constants/enums/msg-chat-status.enum';
 
@@ -40,6 +40,7 @@ export interface CreateChatRequest extends BaseMsgRequest {
     subject: string;
     content: string; // first message
     slvl?: number;
+    zsid?: number;
   };
 }
 

@@ -8,6 +8,7 @@
 import { Subsystems } from '../../constants/enums/subsystems.enum';
 import { SupportedLanguages } from '../../constants/enums/supported-languages.enum';
 import { SamRequestActions } from '../../constants/enums/sam-actions.enum';
+import { Scopes } from '../../constants/enums/scopes.enum';
 
 interface BaseSamRequest {
   s: Subsystems;
@@ -38,4 +39,10 @@ export interface UserSlvlRequest extends BaseSamRequest {
 export interface UserAvailableSlvlRequest extends BaseSamRequest {
   s: Subsystems.SAM;
   r: SamRequestActions.USER_AVAILABLE_SLVL;
+}
+
+export interface UserAvailableScopesRequest extends BaseSamRequest {
+  s: Subsystems.SAM;
+  r: SamRequestActions.USER_AVAILABLE_SCOPE;
+  type: Scopes;
 }

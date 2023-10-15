@@ -1,3 +1,8 @@
-:host {
-
+.logout-icon {
+  ::ng-deep {
+    .mat-icon {
+      height: 1.7rem;
+      width: 1.7rem;
+    }
+  }
 }

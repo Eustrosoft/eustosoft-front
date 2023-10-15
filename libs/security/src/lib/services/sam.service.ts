@@ -3,8 +3,11 @@ import { DispatchService } from './dispatch.service';
 import {
   QtisRequestResponseInterface,
   SamRequestActions,
+  Scopes,
   Subsystems,
   SupportedLanguages,
+  UserAvailableScopesRequest,
+  UserAvailableScopesResponse,
   UserAvailableSlvlRequest,
   UserAvailableSlvlResponse,
   UserIdRequest,
@@ -86,6 +89,25 @@ export class SamService {
           s: Subsystems.SAM,
           r: SamRequestActions.USER_AVAILABLE_SLVL,
           l: SupportedLanguages.EN_US,
+        },
+      ],
+      t: 0,
+    });
+  }
+
+  getUserAvailableScope(
+    type: Scopes
+  ): Observable<QtisRequestResponseInterface<UserAvailableScopesResponse>> {
+    return this.dispatchService.dispatch<
+      UserAvailableScopesRequest,
+      UserAvailableScopesResponse
+    >({
+      r: [
+        {
+          s: Subsystems.SAM,
+          r: SamRequestActions.USER_AVAILABLE_SCOPE,
+          l: SupportedLanguages.EN_US,
+          type,
         },
       ],
       t: 0,

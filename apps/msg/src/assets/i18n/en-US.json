@@ -43,6 +43,7 @@
       "EXTRA_OPTIONS_PANEL_TITLE": "Extra options",
       "EXTRA_OPTIONS_PANEL_DESCRIPTION": "Security level, scope",
       "EXTRA_OPTIONS_PANEL_SECURITY_LEVEL_LABEL": "Security level",
+      "EXTRA_OPTIONS_PANEL_SCOPE_LABEL": "Scope",
       "CANCEL_BUTTON_TEXT": "Cancel",
       "SUBMIT_BUTTON_TEXT": "Create"
     },

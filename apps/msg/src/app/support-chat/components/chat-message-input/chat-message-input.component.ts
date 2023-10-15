@@ -32,6 +32,8 @@ import {
   takeUntil,
   tap,
 } from 'rxjs';
+import { MsgNotifiersService } from '../../services/msg-notifiers.service';
+import { MsgNotifiers } from '../../contants/enums/msg-actions.enum';
 
 @Component({
   selector: 'eustrosoft-front-chat-message-input',
@@ -57,6 +59,7 @@ export class ChatMessageInputComponent
   messageInputComponent!: TextareaComponent;
 
   private el = inject(ElementRef);
+  private msgNotifiersService = inject(MsgNotifiersService);
   private destroy$ = new Subject<void>();
 
   control = new FormControl('', {
@@ -73,6 +76,15 @@ export class ChatMessageInputComponent
         distinctUntilChanged(),
         tap(() => this.submitMessage()),
         takeUntil(this.destroy$)
+      )
+      .subscribe();
+
+    this.msgNotifiersService
+      .getNotifierObservable<void>(MsgNotifiers.MESSAGE_SUCCESSFULLY_SENT)
+      .pipe(
+        tap(() => {
+          this.control.setValue('');
+        })
       )
       .subscribe();
   }
@@ -111,7 +123,6 @@ export class ChatMessageInputComponent
       return;
     }
     this.messageSent.emit(this.control.value);
-    this.control.setValue('');
   }
 
   cancelEdit(): void {

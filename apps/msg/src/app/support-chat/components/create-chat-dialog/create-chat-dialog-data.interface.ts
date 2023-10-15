@@ -15,4 +15,5 @@ export interface CreateChatDialogDataInterface {
   cancelButtonText: string;
   submitButtonText: string;
   securityLevelOptions$: Observable<Option[]>;
+  scopeOptions$: Observable<Option[]>;
 }

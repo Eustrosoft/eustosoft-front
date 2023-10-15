@@ -6,6 +6,7 @@
  */
 
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
@@ -14,7 +15,9 @@ import {
   Input,
   OnInit,
   Output,
+  QueryList,
   TemplateRef,
+  ViewChildren,
 } from '@angular/core';
 import { switchMap, take, tap } from 'rxjs';
 import {
@@ -24,6 +27,8 @@ import {
 import { APP_CONFIG } from '@eustrosoft-front/config';
 import { Router } from '@angular/router';
 import { XS_SCREEN_RESOLUTION } from '@eustrosoft-front/core';
+import { MatMenu, MatMenuPanel } from '@angular/material/menu';
+import { menuItems } from '../../constants/menu-items.contant';
 
 @Component({
   selector: 'eustrosoft-front-header',
@@ -31,11 +36,12 @@ import { XS_SCREEN_RESOLUTION } from '@eustrosoft-front/core';
   styleUrls: ['./header.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, AfterViewInit {
   @Input() appsListTemplate!: TemplateRef<any>;
   @Input() texts!: { title: string; appName: string; appsButtonText: string };
   @Input() loginPath!: any[];
   @Output() sidenavToggleClicked = new EventEmitter<void>();
+  @ViewChildren(MatMenu) menus!: QueryList<MatMenu>;
 
   private loginService: LoginService = inject(LoginService);
   private authenticationService: AuthenticationService = inject(
@@ -49,6 +55,9 @@ export class HeaderComponent implements OnInit {
   public userInfo$ = this.authenticationService.userInfo$.asObservable();
   public isXs = false;
 
+  menuItems = menuItems;
+  menuTriggers: MatMenuPanel[] = [];
+
   @HostListener('window:resize', ['$event'])
   onWindowResize() {
     this.isXs = window.innerWidth <= this.xsScreenRes;
@@ -56,6 +65,12 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit(): void {
     this.isXs = window.innerWidth <= this.xsScreenRes;
+  }
+
+  ngAfterViewInit(): void {
+    this.menuTriggers = this.menus
+      .map((menu) => menu)
+      .filter((menu) => menu.backdropClass !== 'ignore');
   }
 
   logout() {

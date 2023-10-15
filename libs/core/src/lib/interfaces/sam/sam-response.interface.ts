@@ -41,3 +41,8 @@ export interface UserAvailableSlvlResponse extends BaseSamResponse {
   r: SamRequestActions.USER_AVAILABLE_SLVL;
   data: string;
 }
+
+export interface UserAvailableScopesResponse extends BaseSamResponse {
+  r: SamRequestActions.USER_AVAILABLE_SCOPE;
+  zsid: number[];
+}

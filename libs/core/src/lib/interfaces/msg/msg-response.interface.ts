@@ -7,7 +7,7 @@
 
 import { Subsystems } from '../../constants/enums/subsystems.enum';
 import { SupportedLanguages } from '../../constants/enums/supported-languages.enum';
-import { MsgRequestActions } from '../../constants/enums/msg-actions.enum';
+import { MsgRequestActions } from '../../constants/enums/msg-request-actions.enum';
 import { Chat } from './chat.interface';
 import { ChatMessage } from './chat-message.interface';
 

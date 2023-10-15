@@ -1,6 +1,6 @@
-<div class="d-flex flex-column align-items-center p-3">
+<div class="d-flex flex-column align-items-center gap-2 p-2">
   <ng-container *ngIf="userInfo$ | async as info">
-    <div class="d-flex align-items-center pb-3">
+    <div class="d-flex align-items-center pb-2">
       <h4 class="m-0 px-3" [title]="info.userFullName">
         {{ info.userFullName }}
       </h4>
@@ -9,44 +9,36 @@
         [iconName]="'logout'"
         [buttonType]="'button'"
         (click)="logout()"
+        class="logout-icon"
       >
       </eustrosoft-front-button>
     </div>
   </ng-container>
-  <eustrosoft-front-button
-    [buttonType]="'button'"
-    [buttonStyleType]="'with-icon'"
-    [buttonText]="'Личный кабинет'"
-    [iconName]="'expand_more'"
-    [iconPosition]="'end'"
-    [color]="'primary'"
-    [matMenuTriggerFor]="lkMenu"
-  >
-  </eustrosoft-front-button>
-  <mat-menu [hasBackdrop]="true" #lkMenu="matMenu">
-    <a
-      mat-menu-item
-      [href]="'https://dev37.qxyz.ru/lk/?subsys=QR'"
-      target="_blank"
+  <ng-container *ngFor="let menuItem of menuItems.dropdowns; let i = index">
+    <eustrosoft-front-button
+      [buttonType]="'button'"
+      [buttonStyleType]="'with-icon'"
+      [buttonText]="menuItem.title"
+      [iconName]="'expand_more'"
+      [iconPosition]="'end'"
+      [color]="'primary'"
+      [matMenuTriggerFor]="menuTriggers[i]"
+      class="w-100"
     >
-      Карточки QR
-    </a>
-    <a mat-menu-item [href]="'https://dev37.qxyz.ru/gen/'" target="_blank">
-      QR-Генератор
-    </a>
-    <a
-      mat-menu-item
-      [href]="'https://dev37.qxyz.ru/apps/cmsv1/explorer/'"
-      target="_blank"
-    >
-      CMS Управление Файлами
-    </a>
-    <a
-      mat-menu-item
-      [href]="'https://dev37.qxyz.ru/lk/qtis.jsp'"
-      target="_blank"
-    >
-      QTIS Администрирование Системы
-    </a>
-  </mat-menu>
+    </eustrosoft-front-button>
+    <mat-menu [hasBackdrop]="true">
+      <a
+        *ngFor="let link of menuItem.links"
+        mat-menu-item
+        [href]="link.href"
+        target="_blank"
+      >
+        {{ link.text }}
+      </a>
+    </mat-menu>
+  </ng-container>
+
+  <ng-container *ngFor="let link of menuItems.rest">
+    <a mat-menu-item [href]="link.href" target="_blank"> {{ link.text }}</a>
+  </ng-container>
 </div>

@@ -1,5 +1,14 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  QueryList,
+  ViewChildren,
+} from '@angular/core';
 import { AuthenticationService } from '@eustrosoft-front/security';
+import { menuItems } from '../../constants/menu-items.contant';
+import { MatMenu, MatMenuPanel } from '@angular/material/menu';
 
 @Component({
   selector: 'eustrosoft-front-sidenav',
@@ -7,11 +16,18 @@ import { AuthenticationService } from '@eustrosoft-front/security';
   styleUrls: ['./sidenav.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SidenavComponent {
+export class SidenavComponent implements AfterViewInit {
   private authenticationService: AuthenticationService = inject(
     AuthenticationService
   );
-  public userInfo$ = this.authenticationService.userInfo$.asObservable();
+  @ViewChildren(MatMenu) menus!: QueryList<MatMenu>;
+  userInfo$ = this.authenticationService.userInfo$.asObservable();
+  menuItems = menuItems;
+  menuTriggers: MatMenuPanel[] = [];
+
+  ngAfterViewInit(): void {
+    this.menuTriggers = this.menus.map((menu) => menu);
+  }
 
   logout() {
     console.log('logout');

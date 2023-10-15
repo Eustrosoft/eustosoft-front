@@ -45,6 +45,10 @@ export class CreateChatDialogComponent {
       value: undefined,
       disabled: false,
     }),
+    scope: this.fb.nonNullable.control<number | undefined>({
+      value: undefined,
+      disabled: false,
+    }),
   });
 
   @HostListener('keydown.enter', ['$event'])

@@ -7,7 +7,9 @@
 
 /* You can add global styles to this file, and also import other style files */
 
-@import 'override';
+@use 'material.override';
+@use 'bootstrap.override';
+@use 'global';
 
 .multiline {
   white-space: pre-line;

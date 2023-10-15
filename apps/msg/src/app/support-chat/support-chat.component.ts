@@ -10,6 +10,7 @@ import {
   Component,
   HostListener,
   inject,
+  OnDestroy,
   OnInit,
 } from '@angular/core';
 import {
@@ -74,17 +75,21 @@ import { RenameChatDialogComponent } from './components/rename-chat-dialog/renam
 import { RenameChatDialogDataInterface } from './components/rename-chat-dialog/rename-chat-dialog-data.interface';
 import { RenameChatDialogReturnDataInterface } from './components/rename-chat-dialog/rename-chat-dialog-return-data.interface';
 import { MsgDictionaryService } from './services/msg-dictionary.service';
+import { MsgNotifiersService } from './services/msg-notifiers.service';
+import { MsgNotifiers } from './contants/enums/msg-actions.enum';
 
 @Component({
   selector: 'eustrosoft-front-support-chat',
   templateUrl: './support-chat.component.html',
   styleUrls: ['./support-chat.component.scss'],
+  providers: [MsgNotifiersService],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SupportChatComponent implements OnInit {
+export class SupportChatComponent implements OnInit, OnDestroy {
   private dispatchService = inject(DispatchService);
   private msgRequestBuilderService = inject(MsgRequestBuilderService);
   private msgDictionaryService = inject(MsgDictionaryService);
+  private msgNotifiersService = inject(MsgNotifiersService);
   private dialog = inject(MatDialog);
   private snackBar = inject(MatSnackBar);
   private translateService = inject(TranslateService);
@@ -131,6 +136,7 @@ export class SupportChatComponent implements OnInit {
   chatMessages$: Observable<{
     messages: ChatMessage[] | undefined;
     isLoading: boolean;
+    isError: boolean;
   }> = combineLatest([
     this.fetchChatMessagesByChatId$.pipe(
       filter((zoid): zoid is number => typeof zoid !== 'undefined')
@@ -146,13 +152,7 @@ export class SupportChatComponent implements OnInit {
         this.fetchWithoutPreloader(second[0]),
         this.fetchWithPreloader(second[0])
       )
-    ),
-    shareReplay(1)
-  );
-
-  chatMessagesError$ = this.chatMessages$.pipe(
-    ignoreElements(),
-    catchError((err: HttpErrorResponse) => of(err))
+    )
   );
 
   // TODO Запрашивать справочные значения один раз при инициализации приложения
@@ -162,7 +162,7 @@ export class SupportChatComponent implements OnInit {
         this.translateService.instant(
           'MSG.ERRORS.CHAT_STATUS_FILTERS_FETCH_ERROR'
         ),
-        '🞩'
+        'close'
       );
       return EMPTY;
     })
@@ -176,11 +176,23 @@ export class SupportChatComponent implements OnInit {
           this.translateService.instant(
             'MSG.ERRORS.CHAT_SECURITY_LEVEL_OPTIONS_FETCH_ERROR'
           ),
-          '🞩'
+          'close'
         );
         return EMPTY;
       })
     );
+
+  scopeOptions$ = this.msgDictionaryService.getScopeOptions().pipe(
+    catchError((err: HttpErrorResponse) => {
+      this.snackBar.open(
+        this.translateService.instant(
+          'MSG.ERRORS.CHAT_SECURITY_LEVEL_OPTIONS_FETCH_ERROR'
+        ),
+        'close'
+      );
+      return EMPTY;
+    })
+  );
 
   selectedChat: Chat | undefined = undefined;
   selectedStatuses: MsgChatStatus[] = [];
@@ -194,36 +206,63 @@ export class SupportChatComponent implements OnInit {
 
   ngOnInit(): void {
     this.setUpSidebar();
-  }
-
-  fetchWithPreloader(
-    zoid: number
-  ): Observable<{ isLoading: boolean; messages: ChatMessage[] | undefined }> {
-    return this.msgRequestBuilderService.buildViewChatRequest(zoid).pipe(
-      switchMap((req: QtisRequestResponseInterface<ViewChatRequest>) =>
-        this.dispatchService.dispatch<ViewChatRequest, ViewChatResponse>(req)
-      ),
-      map((response: QtisRequestResponseInterface<ViewChatResponse>) =>
-        response.r.flatMap((r: ViewChatResponse) => r.messages)
-      ),
-      switchMap((messages: ChatMessage[]) =>
-        of({ isLoading: false, messages }).pipe(delay(200))
-      ),
-      startWith({ isLoading: true, messages: undefined })
+    this.msgNotifiersService.createNotifier<void>(
+      MsgNotifiers.MESSAGE_SUCCESSFULLY_SENT
     );
   }
 
-  fetchWithoutPreloader(
-    zoid: number
-  ): Observable<{ isLoading: boolean; messages: ChatMessage[] | undefined }> {
+  ngOnDestroy(): void {
+    this.msgNotifiersService.completeAll();
+  }
+
+  fetchWithPreloader(zoid: number): Observable<{
+    isLoading: boolean;
+    isError: boolean;
+    messages: ChatMessage[] | undefined;
+  }> {
     return this.msgRequestBuilderService.buildViewChatRequest(zoid).pipe(
       switchMap((req: QtisRequestResponseInterface<ViewChatRequest>) =>
-        this.dispatchService.dispatch<ViewChatRequest, ViewChatResponse>(req)
-      ),
-      map((response: QtisRequestResponseInterface<ViewChatResponse>) =>
-        response.r.flatMap((r: ViewChatResponse) => r.messages)
-      ),
-      switchMap((messages: ChatMessage[]) => of({ isLoading: false, messages }))
+        this.dispatchService
+          .dispatch<ViewChatRequest, ViewChatResponse>(req)
+          .pipe(
+            map((response: QtisRequestResponseInterface<ViewChatResponse>) =>
+              response.r.flatMap((r: ViewChatResponse) => r.messages)
+            ),
+            switchMap((messages: ChatMessage[]) =>
+              of({ isLoading: false, isError: false, messages }).pipe(
+                delay(200)
+              )
+            ),
+            startWith({ isLoading: true, isError: false, messages: undefined }),
+            catchError(() =>
+              of({ isLoading: false, isError: true, messages: undefined })
+            )
+          )
+      )
+    );
+  }
+
+  fetchWithoutPreloader(zoid: number): Observable<{
+    isLoading: boolean;
+    isError: boolean;
+    messages: ChatMessage[] | undefined;
+  }> {
+    return this.msgRequestBuilderService.buildViewChatRequest(zoid).pipe(
+      switchMap((req: QtisRequestResponseInterface<ViewChatRequest>) =>
+        this.dispatchService
+          .dispatch<ViewChatRequest, ViewChatResponse>(req)
+          .pipe(
+            map((response: QtisRequestResponseInterface<ViewChatResponse>) =>
+              response.r.flatMap((r: ViewChatResponse) => r.messages)
+            ),
+            switchMap((messages: ChatMessage[]) =>
+              of({ isLoading: false, isError: false, messages })
+            ),
+            catchError(() =>
+              of({ isLoading: false, isError: true, messages: undefined })
+            )
+          )
+      )
     );
   }
 
@@ -276,6 +315,7 @@ export class SupportChatComponent implements OnInit {
           'MSG.CREATE_CHAT_MODAL.SUBMIT_BUTTON_TEXT'
         ),
         securityLevelOptions$: this.securityLevelOptions$,
+        scopeOptions$: this.scopeOptions$,
       },
       minHeight: '25vh',
       minWidth: '40vw',
@@ -297,6 +337,9 @@ export class SupportChatComponent implements OnInit {
           if (content.securityLevel !== undefined) {
             params.slvl = +content.securityLevel;
           }
+          if (content.scope !== undefined) {
+            params.zsid = content.scope;
+          }
           return this.msgRequestBuilderService.buildCreateChatRequest(params);
         }),
         switchMap((req) =>
@@ -304,7 +347,7 @@ export class SupportChatComponent implements OnInit {
             .dispatch<CreateChatRequest, CreateChatResponse>(req)
             .pipe(
               catchError((err: HttpErrorResponse) => {
-                this.snackBar.open(`${err.error}`, '🞩');
+                this.snackBar.open(`${err.error}`, 'close');
                 dialogRef.componentInstance.form.enable();
                 return EMPTY;
               })
@@ -319,16 +362,6 @@ export class SupportChatComponent implements OnInit {
       .subscribe();
   }
 
-  /**
-   * TODO
-   * Переделать функционал отправки сообщения.
-   * При нажатии на кнопку отправки - поле ввода сообщения не очищается сразу.
-   * Наверное надо создать subject в каком-то сервисе, который будет указывать на признак того,
-   * что сообщение было успешно отправлено.
-   * Если сообщение было успешно отправлено - то поле очищается от данных, иначе,
-   * поле сохраняет значение введенное пользователем
-   * @param message
-   */
   sendMessage(message: string): void {
     this.msgRequestBuilderService
       .buildSendMessageToChatRequest({
@@ -344,13 +377,17 @@ export class SupportChatComponent implements OnInit {
             SendChatMessageResponse
           >(request)
         ),
-        tap(() =>
+        tap(() => {
           this.fetchChatMessagesByChatId$.next(
             this.selectedChat?.zoid as number
-          )
-        ),
+          );
+          this.msgNotifiersService.performNotification<void>(
+            MsgNotifiers.MESSAGE_SUCCESSFULLY_SENT,
+            undefined
+          );
+        }),
         catchError((err: HttpErrorResponse) => {
-          this.snackBar.open(`${err.error}`, '🞩');
+          this.snackBar.open(`${err.error}`, 'close');
           return EMPTY;
         }),
         take(1)
@@ -380,7 +417,7 @@ export class SupportChatComponent implements OnInit {
           )
         ),
         catchError((err: HttpErrorResponse) => {
-          this.snackBar.open(`${err.error}`, '🞩');
+          this.snackBar.open(`${err.error}`, 'close');
           return EMPTY;
         }),
         take(1)
@@ -407,7 +444,7 @@ export class SupportChatComponent implements OnInit {
           )
         ),
         catchError((err: HttpErrorResponse) => {
-          this.snackBar.open(`${err.error}`, '🞩');
+          this.snackBar.open(`${err.error}`, 'close');
           return EMPTY;
         }),
         take(1)
@@ -442,7 +479,7 @@ export class SupportChatComponent implements OnInit {
           }
         }),
         catchError((err: HttpErrorResponse) => {
-          this.snackBar.open(`${err.error}`, '🞩');
+          this.snackBar.open(`${err.error}`, 'close');
           return EMPTY;
         }),
         take(1)
@@ -530,7 +567,7 @@ export class SupportChatComponent implements OnInit {
         ),
         tap(() => this.fetchChats$.next(this.selectedStatuses)),
         catchError((err: HttpErrorResponse) => {
-          this.snackBar.open(`${err.error}`, '🞩');
+          this.snackBar.open(`${err.error}`, 'close');
           return EMPTY;
         }),
         take(1)
@@ -575,7 +612,7 @@ export class SupportChatComponent implements OnInit {
         ),
         tap(() => this.fetchChats$.next(this.selectedStatuses)),
         catchError((err: HttpErrorResponse) => {
-          this.snackBar.open(`${err.error}`, '🞩');
+          this.snackBar.open(`${err.error}`, 'close');
           return EMPTY;
         }),
         take(1)

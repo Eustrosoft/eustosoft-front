@@ -20,16 +20,35 @@
     <div class="d-flex d-none">
       <eustrosoft-front-button
         [buttonType]="'button'"
-        [buttonStyleType]="'stroked'"
-        [buttonText]="texts.appsButtonText"
+        [buttonStyleType]="'with-icon'"
+        [buttonText]="'Menu'"
+        [iconName]="'expand_more'"
+        [iconPosition]="'end'"
         [color]="'primary'"
-        [matMenuTriggerFor]="appsMenu"
+        [matMenuTriggerFor]="nestedMenu"
       >
       </eustrosoft-front-button>
-
-      <mat-menu #appsMenu="matMenu">
-        <ng-container [ngTemplateOutlet]="appsListTemplate"></ng-container>
+      <mat-menu [backdropClass]="'ignore'" #nestedMenu="matMenu">
+        <button
+          *ngFor="let menuItem of menuItems.dropdowns; let i = index"
+          mat-menu-item
+          [matMenuTriggerFor]="menuTriggers[i]"
+        >
+          {{ menuItem.title }}
+        </button>
       </mat-menu>
+      <ng-container *ngFor="let menuItem of menuItems.dropdowns; let i = index">
+        <mat-menu>
+          <a
+            *ngFor="let link of menuItem.links"
+            mat-menu-item
+            [href]="link.href"
+            target="_blank"
+          >
+            {{ link.text }}
+          </a>
+        </mat-menu>
+      </ng-container>
     </div>
     <span class="spacer"></span>
     <div class="col-4 d-flex align-items-center justify-content-end">
@@ -59,12 +78,3 @@
     </div>
   </ng-container>
 </mat-toolbar>
-
-<ng-template #defaultAppsListTemplate>
-  <ng-container *ngIf="config | async as cnf">
-    <a mat-menu-item [href]="cnf.loginUrl">Login</a>
-    <a mat-menu-item [href]="cnf.explorerUrl"> Explorer </a>
-    <a mat-menu-item [href]="cnf.dispatcherUrl"> Dispatcher </a>
-    <a mat-menu-item [href]="cnf.appsPageUrl"> All apps page </a>
-  </ng-container>
-</ng-template>

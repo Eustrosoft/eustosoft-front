@@ -1,9 +1,14 @@
-/*!
+/*
  * Copyright (c) 2023. IdrisovII & EustroSoft.org
  *
  * This file is part of eustrosoft-front project.
  * See the LICENSE file at the project root for licensing information.
  */
 
-/* You can add global styles to this file, and also import other style files */
-@use 'bootstrap.override';
+import { MenuItem } from './menu-item.interface';
+import { Link } from './link.interface';
+
+export interface HeaderMenuItems {
+  dropdowns: MenuItem[];
+  rest: Link[];
+}

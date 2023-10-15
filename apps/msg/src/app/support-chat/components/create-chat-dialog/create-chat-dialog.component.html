@@ -27,7 +27,8 @@
       </div>
       <ng-container
         *ngIf="{
-          securityLevelOptions: data.securityLevelOptions$ | async
+          securityLevelOptions: data.securityLevelOptions$ | async,
+          scopeOptions: data.scopeOptions$ | async
         } as vm"
       >
         <div class="col-12">
@@ -54,6 +55,16 @@
                 "
                 [control]="form.controls.securityLevel"
                 [options]="vm.securityLevelOptions || []"
+                [fieldAppearance]="'fill'"
+                [color]="'primary'"
+              ></eustrosoft-front-select>
+              <eustrosoft-front-select
+                [label]="
+                  'MSG.CREATE_CHAT_MODAL.EXTRA_OPTIONS_PANEL_SCOPE_LABEL'
+                    | translate
+                "
+                [control]="form.controls.scope"
+                [options]="vm.scopeOptions || []"
                 [fieldAppearance]="'fill'"
                 [color]="'primary'"
               ></eustrosoft-front-select>
