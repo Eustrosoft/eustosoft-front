@@ -8,6 +8,7 @@
 import { MsgChatStatus } from '../../constants/enums/msg-chat-status.enum';
 
 export interface Chat {
+  hasUpdates: boolean;
   documentId: number;
   subject: string;
   status: MsgChatStatus;

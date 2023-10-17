@@ -37,6 +37,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { DicModule } from '@eustrosoft-front/dic';
 import { MsgDictionaryService } from './support-chat/services/msg-dictionary.service';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MsgMapperService } from './support-chat/services/msg-mapper.service';
 
 @NgModule({
   declarations: [
@@ -72,6 +73,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
   providers: [
     MsgRequestBuilderService,
     MsgDictionaryService,
+    MsgMapperService,
     { provide: LocationStrategy, useClass: CustomLocationStrategy },
   ],
   bootstrap: [AppComponent],

@@ -20,14 +20,12 @@ import {
   delay,
   EMPTY,
   filter,
-  ignoreElements,
   iif,
   interval,
   map,
   Observable,
   of,
   pairwise,
-  shareReplay,
   startWith,
   switchMap,
   take,
@@ -43,6 +41,7 @@ import {
   ChangeChatStatusResponse,
   Chat,
   ChatMessage,
+  ChatVersion,
   CreateChatRequest,
   CreateChatResponse,
   DeleteChatMessageRequest,
@@ -56,8 +55,8 @@ import {
   QtisRequestResponseInterface,
   SendChatMessageRequest,
   SendChatMessageResponse,
-  ViewChatRequest,
-  ViewChatResponse,
+  UpdateChatListRequest,
+  UpdateChatListResponse,
   ViewChatsRequest,
   ViewChatsResponse,
   XS_SCREEN_RESOLUTION,
@@ -75,62 +74,124 @@ import { RenameChatDialogComponent } from './components/rename-chat-dialog/renam
 import { RenameChatDialogDataInterface } from './components/rename-chat-dialog/rename-chat-dialog-data.interface';
 import { RenameChatDialogReturnDataInterface } from './components/rename-chat-dialog/rename-chat-dialog-return-data.interface';
 import { MsgDictionaryService } from './services/msg-dictionary.service';
-import { MsgNotifiersService } from './services/msg-notifiers.service';
-import { MsgNotifiers } from './contants/enums/msg-actions.enum';
+import { MsgSubjectsService } from './services/msg-subjects.service';
+import { MsgSubjects } from './contants/enums/msg-subjects.enum';
+import { MsgMapperService } from './services/msg-mapper.service';
 
 @Component({
   selector: 'eustrosoft-front-support-chat',
   templateUrl: './support-chat.component.html',
   styleUrls: ['./support-chat.component.scss'],
-  providers: [MsgNotifiersService],
+  providers: [MsgSubjectsService],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SupportChatComponent implements OnInit, OnDestroy {
   private dispatchService = inject(DispatchService);
   private msgRequestBuilderService = inject(MsgRequestBuilderService);
   private msgDictionaryService = inject(MsgDictionaryService);
-  private msgNotifiersService = inject(MsgNotifiersService);
+  private msgSubjectsService = inject(MsgSubjectsService);
+  private msgMapperService = inject(MsgMapperService);
   private dialog = inject(MatDialog);
   private snackBar = inject(MatSnackBar);
   private translateService = inject(TranslateService);
   private xsScreenRes = inject(XS_SCREEN_RESOLUTION);
 
-  fetchChats$ = new BehaviorSubject<MsgChatStatus[]>([]);
+  fetchChatsByStatuses$ = new BehaviorSubject<MsgChatStatus[]>([]);
   fetchChatMessagesByChatId$ = new BehaviorSubject<number | undefined>(
     undefined
   );
   chatMessagesRefreshInterval$ = interval(5000).pipe(startWith(1));
+  chatListRefreshInterval$ = interval(5000).pipe(startWith(1));
 
   chats$: Observable<{
     chats: Chat[] | undefined;
     isLoading: boolean;
-  }> = this.fetchChats$.asObservable().pipe(
-    switchMap((statuses) =>
-      this.msgRequestBuilderService
-        .buildViewChatsRequest({
-          statuses,
-        })
-        .pipe(
-          switchMap((req: QtisRequestResponseInterface<ViewChatsRequest>) =>
-            this.dispatchService.dispatch<ViewChatsRequest, ViewChatsResponse>(
-              req
+    isError: boolean;
+  }> = combineLatest([
+    this.fetchChatsByStatuses$.asObservable().pipe(
+      switchMap((statuses) =>
+        this.msgRequestBuilderService
+          .buildViewChatsRequest({
+            statuses,
+          })
+          .pipe(
+            tap(() => {
+              console.log('FETCHING CHATS');
+            }),
+            switchMap((req: QtisRequestResponseInterface<ViewChatsRequest>) =>
+              this.dispatchService.dispatch<
+                ViewChatsRequest,
+                ViewChatsResponse
+              >(req)
+            ),
+            map((response: QtisRequestResponseInterface<ViewChatsResponse>) =>
+              response.r.flatMap((r: ViewChatsResponse) => r.chats)
+            ),
+            switchMap((chats: Chat[]) =>
+              of({ isLoading: false, isError: false, chats }).pipe(delay(200))
             )
+          )
+      ),
+      startWith({ isLoading: true, isError: false, chats: undefined })
+    ),
+    this.fetchChatMessagesByChatId$.asObservable().pipe(
+      switchMap(() =>
+        this.chatListRefreshInterval$.pipe(
+          switchMap(() =>
+            this.msgRequestBuilderService.buildUpdateChatListRequest({
+              statuses: this.fetchChatsByStatuses$.getValue(),
+            })
           ),
-          map((response: QtisRequestResponseInterface<ViewChatsResponse>) =>
-            response.r.flatMap((r: ViewChatsResponse) => r.chats)
+          tap(() => {
+            console.log('FETCHING CHATS UPDATES');
+          }),
+          switchMap(
+            (req: QtisRequestResponseInterface<UpdateChatListRequest>) =>
+              this.dispatchService.dispatch<
+                UpdateChatListRequest,
+                UpdateChatListResponse
+              >(req)
           ),
-          switchMap((chats: Chat[]) =>
-            of({ isLoading: false, chats }).pipe(delay(200))
+          map(
+            (response: QtisRequestResponseInterface<UpdateChatListResponse>) =>
+              response.r.flatMap((r: UpdateChatListResponse) => r.chats)
           )
         )
+      )
     ),
-    startWith({ isLoading: true, chats: undefined }),
-    shareReplay(1)
-  );
-
-  chatsError$ = this.chats$.pipe(
-    ignoreElements(),
-    catchError((err: HttpErrorResponse) => of(err))
+  ]).pipe(
+    switchMap(([objectForView, chatUpdates]) => {
+      if (!objectForView.chats) {
+        return of(structuredClone(objectForView));
+      }
+      const chatUpdatesMap = new Map(
+        chatUpdates.map((item) => [item.zoid, item.zver])
+      );
+      const chatIdsWithChangedZver = objectForView.chats
+        .filter((item) => {
+          const arrayItem = chatUpdatesMap.get(item.zoid);
+          return arrayItem && arrayItem !== item.zver;
+        })
+        .map((item) => item.zoid);
+      // const chatIdsWithChangedZver = [1552568, 1552569];
+      objectForView.chats.forEach((item) => {
+        if (chatIdsWithChangedZver.includes(item.zoid)) {
+          item.hasUpdates = true;
+        }
+        if (this.selectedChat && this.selectedChat.zoid === item.zoid) {
+          item.zver = chatUpdatesMap.get(item.zoid) as number;
+          item.hasUpdates = false;
+        }
+      });
+      if (
+        this.selectedChat &&
+        chatIdsWithChangedZver.includes(this.selectedChat.zoid)
+      ) {
+        this.fetchChatMessagesByChatId$.next(this.selectedChat.zoid);
+      }
+      console.log('zoid values with changed zver:', chatIdsWithChangedZver);
+      return of(structuredClone(objectForView));
+    })
   );
 
   chatMessages$: Observable<{
@@ -141,16 +202,18 @@ export class SupportChatComponent implements OnInit, OnDestroy {
     this.fetchChatMessagesByChatId$.pipe(
       filter((zoid): zoid is number => typeof zoid !== 'undefined')
     ),
-    this.chatMessagesRefreshInterval$,
   ]).pipe(
     startWith([1, 1]),
     pairwise(),
+    tap(() => {
+      console.log('FETCHING CHAT MESSAGES');
+    }),
     switchMap(([first, second]) =>
       iif(
-        // If selected chat zoid is changed - fetchWithPreloader, if interval tick happened - fetchWithoutPreloader
-        () => first[1] !== second[1] || first[0] === second[0],
-        this.fetchWithoutPreloader(second[0]),
-        this.fetchWithPreloader(second[0])
+        // If selected chat zoid is changed - fetchWithPreloader, if not - fetchWithoutPreloader
+        () => first[0] === second[0],
+        this.msgMapperService.fetchChatMessagesWithoutPreloader(second[0]),
+        this.msgMapperService.fetchChatMessagesWithPreloader(second[0])
       )
     )
   );
@@ -194,6 +257,8 @@ export class SupportChatComponent implements OnInit, OnDestroy {
     })
   );
 
+  userSeenChatVersions$!: Observable<ChatVersion[]>;
+
   selectedChat: Chat | undefined = undefined;
   selectedStatuses: MsgChatStatus[] = [];
   isCollapsed = true;
@@ -206,64 +271,13 @@ export class SupportChatComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.setUpSidebar();
-    this.msgNotifiersService.createNotifier<void>(
-      MsgNotifiers.MESSAGE_SUCCESSFULLY_SENT
+    this.msgSubjectsService.createSubject<void>(
+      MsgSubjects.MESSAGE_SUCCESSFULLY_SENT
     );
   }
 
   ngOnDestroy(): void {
-    this.msgNotifiersService.completeAll();
-  }
-
-  fetchWithPreloader(zoid: number): Observable<{
-    isLoading: boolean;
-    isError: boolean;
-    messages: ChatMessage[] | undefined;
-  }> {
-    return this.msgRequestBuilderService.buildViewChatRequest(zoid).pipe(
-      switchMap((req: QtisRequestResponseInterface<ViewChatRequest>) =>
-        this.dispatchService
-          .dispatch<ViewChatRequest, ViewChatResponse>(req)
-          .pipe(
-            map((response: QtisRequestResponseInterface<ViewChatResponse>) =>
-              response.r.flatMap((r: ViewChatResponse) => r.messages)
-            ),
-            switchMap((messages: ChatMessage[]) =>
-              of({ isLoading: false, isError: false, messages }).pipe(
-                delay(200)
-              )
-            ),
-            startWith({ isLoading: true, isError: false, messages: undefined }),
-            catchError(() =>
-              of({ isLoading: false, isError: true, messages: undefined })
-            )
-          )
-      )
-    );
-  }
-
-  fetchWithoutPreloader(zoid: number): Observable<{
-    isLoading: boolean;
-    isError: boolean;
-    messages: ChatMessage[] | undefined;
-  }> {
-    return this.msgRequestBuilderService.buildViewChatRequest(zoid).pipe(
-      switchMap((req: QtisRequestResponseInterface<ViewChatRequest>) =>
-        this.dispatchService
-          .dispatch<ViewChatRequest, ViewChatResponse>(req)
-          .pipe(
-            map((response: QtisRequestResponseInterface<ViewChatResponse>) =>
-              response.r.flatMap((r: ViewChatResponse) => r.messages)
-            ),
-            switchMap((messages: ChatMessage[]) =>
-              of({ isLoading: false, isError: false, messages })
-            ),
-            catchError(() =>
-              of({ isLoading: false, isError: true, messages: undefined })
-            )
-          )
-      )
-    );
+    this.msgSubjectsService.completeAll();
   }
 
   setUpSidebar(): void {
@@ -282,6 +296,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
 
   chatSelected(chat: Chat): void {
     this.selectedChat = chat;
+    this.selectedChat.hasUpdates = false;
     this.fetchChatMessagesByChatId$.next(chat.zoid);
     if (this.isXs) {
       this.toggleSidebar();
@@ -289,7 +304,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
   }
 
   refreshChats(): void {
-    this.fetchChats$.next(this.selectedStatuses);
+    this.fetchChatsByStatuses$.next(this.selectedStatuses);
   }
 
   createNewChat(): void {
@@ -354,7 +369,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
             )
         ),
         tap(() => {
-          this.fetchChats$.next(this.selectedStatuses);
+          this.fetchChatsByStatuses$.next(this.selectedStatuses);
           dialogRef.close();
         }),
         takeUntil(dialogClosed$)
@@ -381,8 +396,8 @@ export class SupportChatComponent implements OnInit, OnDestroy {
           this.fetchChatMessagesByChatId$.next(
             this.selectedChat?.zoid as number
           );
-          this.msgNotifiersService.performNotification<void>(
-            MsgNotifiers.MESSAGE_SUCCESSFULLY_SENT,
+          this.msgSubjectsService.performNext<void>(
+            MsgSubjects.MESSAGE_SUCCESSFULLY_SENT,
             undefined
           );
         }),
@@ -473,7 +488,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
             response.r[0].e
         ),
         tap((hasError) => {
-          this.fetchChats$.next(this.selectedStatuses);
+          this.fetchChatsByStatuses$.next(this.selectedStatuses);
           if (!hasError) {
             this.chatSelected({ ...chat, status: MsgChatStatus.CLOSED });
           }
@@ -508,7 +523,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
             response.r[0].e
         ),
         tap((hasError) => {
-          this.fetchChats$.next(this.selectedStatuses);
+          this.fetchChatsByStatuses$.next(this.selectedStatuses);
           if (!hasError) {
             this.chatSelected({ ...chat, status: MsgChatStatus.WIP });
           }
@@ -565,7 +580,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
             ChangeChatStatusResponse
           >(req)
         ),
-        tap(() => this.fetchChats$.next(this.selectedStatuses)),
+        tap(() => this.fetchChatsByStatuses$.next(this.selectedStatuses)),
         catchError((err: HttpErrorResponse) => {
           this.snackBar.open(`${err.error}`, 'close');
           return EMPTY;
@@ -610,7 +625,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
             req
           )
         ),
-        tap(() => this.fetchChats$.next(this.selectedStatuses)),
+        tap(() => this.fetchChatsByStatuses$.next(this.selectedStatuses)),
         catchError((err: HttpErrorResponse) => {
           this.snackBar.open(`${err.error}`, 'close');
           return EMPTY;
@@ -623,6 +638,6 @@ export class SupportChatComponent implements OnInit, OnDestroy {
   statusFilterChanged(statuses: MsgChatStatus[]) {
     this.selectedStatuses = statuses;
     this.selectedChat = undefined;
-    this.fetchChats$.next(statuses);
+    this.fetchChatsByStatuses$.next(statuses);
   }
 }

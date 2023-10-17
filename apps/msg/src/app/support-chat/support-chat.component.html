@@ -14,18 +14,18 @@
       <ng-container
         *ngIf="{
           chats: chats$ | async,
-          chatsError: chatsError$ | async,
+          userSeenChatVersions: userSeenChatVersions$ | async,
           chatsStatusFilterOptions: chatFilterOptions$ | async
         } as chatVm"
       >
-        <ng-container *ngIf="chatVm.chats?.isLoading && !chatVm.chatsError">
+        <ng-container *ngIf="chatVm.chats?.isLoading && !chatVm.chats?.isError">
           <div
             class="d-flex flex-column align-items-center justify-content-center h-100"
           >
             <eustrosoft-front-preloader></eustrosoft-front-preloader>
           </div>
         </ng-container>
-        <ng-container *ngIf="chatVm.chatsError">
+        <ng-container *ngIf="chatVm.chats?.isError">
           <div
             class="d-flex flex-column align-items-center justify-content-center h-100"
           >

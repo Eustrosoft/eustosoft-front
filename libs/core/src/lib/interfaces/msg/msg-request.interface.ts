@@ -96,3 +96,11 @@ export interface DeleteChatRequest extends BaseMsgRequest {
     zver: number;
   };
 }
+
+export interface UpdateChatListRequest extends BaseMsgRequest {
+  s: Subsystems.MSG;
+  r: MsgRequestActions.UPDATE;
+  params: {
+    statuses: MsgChatStatus[];
+  };
+}

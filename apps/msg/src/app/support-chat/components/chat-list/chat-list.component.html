@@ -85,12 +85,12 @@
             class="p-2 my-2 rounded-start"
             (click)="selectChat(chat)"
           >
-            <span matListItemTitle>{{ chat.subject }}</span>
-            <div matListItemLine>
-              <span class="fst-italic">
-                {{ chat.status | msgChatStatus }}
-              </span>
-            </div>
+            <span [class.chat-has-updates]="chat.hasUpdates" matListItemTitle>
+              {{ chat.subject }}
+            </span>
+            <span class="fst-italic" matListItemLine>
+              {{ chat.status | msgChatStatus }}
+            </span>
             <div class="d-none d-sm-block d-md-block" matListItemMeta>
               <eustrosoft-front-button
                 [buttonType]="'button'"

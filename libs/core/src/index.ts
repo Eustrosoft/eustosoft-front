@@ -49,6 +49,7 @@ export * from './lib/interfaces/dic/dic-response.interface';
 export * from './lib/interfaces/dic/dic-value.interface';
 export * from './lib/interfaces/msg/chat.interface';
 export * from './lib/interfaces/msg/chat-message.interface';
+export * from './lib/interfaces/msg/chat-version.type';
 export * from './lib/interfaces/shared/shared.interface';
 export * from './lib/types/request.types';
 export * from './lib/types/login-form.type';

@@ -5,6 +5,6 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-export enum MsgNotifiers {
-  MESSAGE_SUCCESSFULLY_SENT = 'message_successfully_sent',
-}
+import { Chat } from './chat.interface';
+
+export type ChatVersion = Pick<Chat, 'zoid' | 'zver'>;

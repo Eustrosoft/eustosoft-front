@@ -14,4 +14,5 @@ export enum MsgRequestActions {
   DELETE_MESSAGE = 'delete',
   DELETE_CHAT = 'delete_ch',
   CHANGE_CHAT_STATUS = 'change',
+  UPDATE = 'update', // check chats versions
 }

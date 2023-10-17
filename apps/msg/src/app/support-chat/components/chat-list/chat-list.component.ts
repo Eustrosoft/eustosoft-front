@@ -15,6 +15,7 @@ import {
 } from '@angular/core';
 import {
   Chat,
+  ChatVersion,
   DicValue,
   MsgChatStatus,
   trackByZridFunction,
@@ -29,6 +30,7 @@ import { MatCheckboxChange } from '@angular/material/checkbox';
 })
 export class ChatListComponent implements OnInit {
   @Input() chats!: Chat[];
+  @Input() chatVersions!: ChatVersion[];
   @Input() selectedChat: Chat | undefined = undefined;
   @Input() removeBorderRadius!: boolean;
   @Input() chatStatusFilterOptions!: DicValue[];

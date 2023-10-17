@@ -18,6 +18,7 @@ import {
   SendChatMessageRequest,
   Subsystems,
   SupportedLanguages,
+  UpdateChatListRequest,
   ViewChatRequest,
   ViewChatsRequest,
 } from '@eustrosoft-front/core';
@@ -145,6 +146,22 @@ export class MsgRequestBuilderService {
         {
           s: Subsystems.MSG,
           r: MsgRequestActions.CHANGE_CHAT_STATUS,
+          l: SupportedLanguages.EN_US,
+          params,
+        },
+      ],
+      t: 0,
+    });
+  }
+
+  buildUpdateChatListRequest(
+    params: UpdateChatListRequest['params']
+  ): Observable<QtisRequestResponseInterface<UpdateChatListRequest>> {
+    return of({
+      r: [
+        {
+          s: Subsystems.MSG,
+          r: MsgRequestActions.UPDATE,
           l: SupportedLanguages.EN_US,
           params,
         },

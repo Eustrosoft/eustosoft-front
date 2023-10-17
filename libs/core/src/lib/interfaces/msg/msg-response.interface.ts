@@ -10,6 +10,7 @@ import { SupportedLanguages } from '../../constants/enums/supported-languages.en
 import { MsgRequestActions } from '../../constants/enums/msg-request-actions.enum';
 import { Chat } from './chat.interface';
 import { ChatMessage } from './chat-message.interface';
+import { ChatVersion } from './chat-version.type';
 
 interface BaseMsgResponse {
   s: Subsystems.MSG;
@@ -52,4 +53,9 @@ export interface ChangeChatStatusResponse extends BaseMsgResponse {
 
 export interface DeleteChatResponse extends BaseMsgResponse {
   r: MsgRequestActions.DELETE_CHAT;
+}
+
+export interface UpdateChatListResponse extends BaseMsgResponse {
+  r: MsgRequestActions.UPDATE;
+  chats: ChatVersion[];
 }
