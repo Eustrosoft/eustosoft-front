@@ -48,6 +48,7 @@ import {
   DeleteChatMessageResponse,
   DeleteChatRequest,
   DeleteChatResponse,
+  DicValue,
   EditChatMessageRequest,
   EditChatMessageResponse,
   MessageType,
@@ -67,6 +68,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslateService } from '@ngx-translate/core';
 import {
+  Option,
   PromptDialogComponent,
   PromptDialogDataInterface,
 } from '@eustrosoft-front/common-ui';
@@ -100,7 +102,6 @@ export class SupportChatComponent implements OnInit, OnDestroy {
   fetchChatMessagesByChatId$ = new BehaviorSubject<number | undefined>(
     undefined
   );
-  chatMessagesRefreshInterval$ = interval(5000).pipe(startWith(1));
   chatListRefreshInterval$ = interval(5000).pipe(startWith(1));
 
   chats$: Observable<{
@@ -115,9 +116,6 @@ export class SupportChatComponent implements OnInit, OnDestroy {
             statuses,
           })
           .pipe(
-            tap(() => {
-              console.log('FETCHING CHATS');
-            }),
             switchMap((req: QtisRequestResponseInterface<ViewChatsRequest>) =>
               this.dispatchService.dispatch<
                 ViewChatsRequest,
@@ -142,9 +140,6 @@ export class SupportChatComponent implements OnInit, OnDestroy {
               statuses: this.fetchChatsByStatuses$.getValue(),
             })
           ),
-          tap(() => {
-            console.log('FETCHING CHATS UPDATES');
-          }),
           switchMap(
             (req: QtisRequestResponseInterface<UpdateChatListRequest>) =>
               this.dispatchService.dispatch<
@@ -173,7 +168,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
           return arrayItem && arrayItem !== item.zver;
         })
         .map((item) => item.zoid);
-      // const chatIdsWithChangedZver = [1552568, 1552569];
+      // set hasUpdates prop if chat version had changed
       objectForView.chats.forEach((item) => {
         if (chatIdsWithChangedZver.includes(item.zoid)) {
           item.hasUpdates = true;
@@ -183,13 +178,13 @@ export class SupportChatComponent implements OnInit, OnDestroy {
           item.hasUpdates = false;
         }
       });
+      // if selected chat contains has new version -> fetch messages
       if (
         this.selectedChat &&
         chatIdsWithChangedZver.includes(this.selectedChat.zoid)
       ) {
         this.fetchChatMessagesByChatId$.next(this.selectedChat.zoid);
       }
-      console.log('zoid values with changed zver:', chatIdsWithChangedZver);
       return of(structuredClone(objectForView));
     })
   );
@@ -205,9 +200,6 @@ export class SupportChatComponent implements OnInit, OnDestroy {
   ]).pipe(
     startWith([1, 1]),
     pairwise(),
-    tap(() => {
-      console.log('FETCHING CHAT MESSAGES');
-    }),
     switchMap(([first, second]) =>
       iif(
         // If selected chat zoid is changed - fetchWithPreloader, if not - fetchWithoutPreloader
@@ -219,19 +211,21 @@ export class SupportChatComponent implements OnInit, OnDestroy {
   );
 
   // TODO Запрашивать справочные значения один раз при инициализации приложения
-  chatFilterOptions$ = this.msgDictionaryService.getStatusOptions().pipe(
-    catchError((err: HttpErrorResponse) => {
-      this.snackBar.open(
-        this.translateService.instant(
-          'MSG.ERRORS.CHAT_STATUS_FILTERS_FETCH_ERROR'
-        ),
-        'close'
-      );
-      return EMPTY;
-    })
-  );
+  chatFilterOptions$: Observable<DicValue[]> = this.msgDictionaryService
+    .getStatusOptions()
+    .pipe(
+      catchError((err: HttpErrorResponse) => {
+        this.snackBar.open(
+          this.translateService.instant(
+            'MSG.ERRORS.CHAT_STATUS_FILTERS_FETCH_ERROR'
+          ),
+          'close'
+        );
+        return EMPTY;
+      })
+    );
 
-  securityLevelOptions$ = this.msgDictionaryService
+  securityLevelOptions$: Observable<Option[]> = this.msgDictionaryService
     .getSecurityLevelOptions()
     .pipe(
       catchError((err: HttpErrorResponse) => {
@@ -245,17 +239,19 @@ export class SupportChatComponent implements OnInit, OnDestroy {
       })
     );
 
-  scopeOptions$ = this.msgDictionaryService.getScopeOptions().pipe(
-    catchError((err: HttpErrorResponse) => {
-      this.snackBar.open(
-        this.translateService.instant(
-          'MSG.ERRORS.CHAT_SECURITY_LEVEL_OPTIONS_FETCH_ERROR'
-        ),
-        'close'
-      );
-      return EMPTY;
-    })
-  );
+  scopeOptions$: Observable<Option[]> = this.msgDictionaryService
+    .getScopeOptions()
+    .pipe(
+      catchError((err: HttpErrorResponse) => {
+        this.snackBar.open(
+          this.translateService.instant(
+            'MSG.ERRORS.CHAT_SECURITY_LEVEL_OPTIONS_FETCH_ERROR'
+          ),
+          'close'
+        );
+        return EMPTY;
+      })
+    );
 
   userSeenChatVersions$!: Observable<ChatVersion[]>;
 
