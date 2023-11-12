@@ -23,41 +23,65 @@
         "styles": [
           "@angular/material/prebuilt-themes/deeppurple-amber.css",
           "node_modules/bootstrap/scss/bootstrap.scss",
+          "libs/common-ui/src/lib/material/css/roboto.css",
+          "libs/common-ui/src/lib/material/css/material-symbols-outlined.css",
           "apps/login/src/styles.scss"
         ],
         "scripts": []
       },
       "configurations": {
         "production": {
-          "budgets": [
+          "assets": [
+            "apps/login/src/favicon.ico",
             {
-              "type": "initial",
-              "maximumWarning": "500kb",
-              "maximumError": "1mb"
+              "glob": "config.json",
+              "input": "libs/config/src/lib/configurations/prod",
+              "output": "/"
             },
             {
-              "type": "anyComponentStyle",
-              "maximumWarning": "2kb",
-              "maximumError": "4kb"
+              "glob": "*.json",
+              "input": "apps/login/src/assets/i18n",
+              "output": "/assets/i18n/"
             }
           ],
-          "fileReplacements": [
-            {
-              "replace": "src/environments/environment.ts",
-              "with": "src/environments/environment.prod.ts"
-            }
-          ],
-          "outputHashing": "all"
+          "outputHashing": "all",
+          "optimization": true,
+          "sourceMap": false,
+          "namedChunks": false,
+          "aot": true,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "buildOptimizer": true
         },
         "stage": {
-          "fileReplacements": [
+          "assets": [
+            "apps/login/src/favicon.ico",
             {
-              "replace": "src/environments/environment.ts",
-              "with": "src/environments/environment.stage.ts"
+              "glob": "config.json",
+              "input": "libs/config/src/lib/configurations/stage",
+              "output": "/"
+            },
+            {
+              "glob": "*.json",
+              "input": "apps/login/src/assets/i18n",
+              "output": "/assets/i18n/"
             }
           ]
         },
         "development": {
+          "assets": [
+            "apps/login/src/favicon.ico",
+            {
+              "glob": "config.json",
+              "input": "libs/config/src/lib/configurations/dev",
+              "output": "/"
+            },
+            {
+              "glob": "*.json",
+              "input": "apps/login/src/assets/i18n",
+              "output": "/assets/i18n/"
+            }
+          ],
           "buildOptimizer": false,
           "optimization": false,
           "vendorChunk": true,
@@ -79,7 +103,7 @@
         },
         "development": {
           "browserTarget": "login:build:development",
-          "proxyConfig": "apps/login/proxy.conf.json"
+          "proxyConfig": "proxy.conf.js"
         }
       },
       "defaultConfiguration": "development"

@@ -1,18 +1,30 @@
+<!--
+  ~ Copyright (c) 2023. IdrisovII & EustroSoft.org
+  ~
+  ~ This file is part of eustrosoft-front project.
+  ~ See the LICENSE file at the project root for licensing information.
+  -->
+
 <div class="container-fluid">
   <div class="row vh-75 align-items-center justify-content-around">
-    <div eustrosoftFrontHoverShadow class="col-4 d-flex justify-content-center">
+    <div eustrosoftFrontHover class="col-4 d-flex justify-content-center">
       <div
-        routerLink="/dispatcher"
+        [routerLink]="['/dispatcher']"
+        [skipLocationChange]="true"
         class="d-flex flex-column align-items-center"
       >
         <mat-icon class="app-icon database">database</mat-icon>
-        <h2>Request Dispatcher</h2>
+        <h2>{{ 'APPLICATIONS_PAGE.REQUEST_DISPATCHER' | translate }}</h2>
       </div>
     </div>
-    <div eustrosoftFrontHoverShadow class="col-4 d-flex justify-content-center">
-      <div routerLink="/explorer" class="d-flex flex-column align-items-center">
+    <div eustrosoftFrontHover class="col-4 d-flex justify-content-center">
+      <div
+        [routerLink]="['/explorer']"
+        [skipLocationChange]="true"
+        class="d-flex flex-column align-items-center"
+      >
         <mat-icon class="app-icon folder">folder_open</mat-icon>
-        <h2>File Explorer</h2>
+        <h2>{{ 'APPLICATIONS_PAGE.FILE_EXPLORER' | translate }}</h2>
       </div>
     </div>
   </div>

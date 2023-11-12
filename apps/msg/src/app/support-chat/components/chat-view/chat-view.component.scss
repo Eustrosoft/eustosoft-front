@@ -1,0 +1,22 @@
+/*!
+ * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ *
+ * This file is part of eustrosoft-front project.
+ * See the LICENSE file at the project root for licensing information.
+ */
+.icon {
+  ::ng-deep {
+    .mat-icon {
+      height: auto !important;
+      width: auto !important;
+      font-size: 1.05rem !important;
+    }
+    .mat-mdc-icon-button.mat-mdc-button-base {
+      height: 2rem;
+    }
+    .mdc-icon-button {
+      font-size: 1rem;
+      padding: 0.5rem;
+    }
+  }
+}

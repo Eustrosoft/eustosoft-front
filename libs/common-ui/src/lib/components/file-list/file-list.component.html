@@ -1,17 +1,27 @@
-<div
-  *ngFor="let file of files; let i = index"
-  class="d-flex align-items-center"
->
-  <ng-container *ngIf="file">
-    <span class="col-4">{{ file.name }}</span>
-    <eustrosoft-front-button
-      [buttonType]="'button'"
-      [buttonStyleType]="'icon'"
-      [iconName]="'delete'"
-      [color]="'warn'"
-      (click)="delete(i)"
-      class="w-auto"
-    >
-    </eustrosoft-front-button>
-  </ng-container>
-</div>
+<!--
+  ~ Copyright (c) 2023. IdrisovII & EustroSoft.org
+  ~
+  ~ This file is part of eustrosoft-front project.
+  ~ See the LICENSE file at the project root for licensing information.
+  -->
+
+<cdk-virtual-scroll-viewport itemSize="5" [ngClass]="classesForVirtualViewport">
+  <div
+    *ngFor="let file of files; let i = index"
+    [ngClass]="classesForList"
+    class="d-flex align-items-center"
+  >
+    <ng-container *ngIf="file">
+      <span class="col-10 text-break">{{ file.name }}</span>
+      <eustrosoft-front-button
+        [buttonType]="'button'"
+        [buttonStyleType]="'icon'"
+        [iconName]="'delete'"
+        [color]="'warn'"
+        (click)="delete(i)"
+        class="w-auto"
+      >
+      </eustrosoft-front-button>
+    </ng-container>
+  </div>
+</cdk-virtual-scroll-viewport>

@@ -1,0 +1,18 @@
+{
+  "HEADER": {
+    "TITLE": "TIS Apps",
+    "APP_NAME": "Dispatcher",
+    "APPS_BUTTON_TEXT": "Apps",
+    "APPS": {
+      "LOGIN": "Login",
+      "EXPLORER": "Explorer",
+      "ALL_APPS_PAGE": "All apps page"
+    }
+  },
+  "LOGIN_PAGE": {
+    "AUTHENTICATION_HEADING": "Authentication",
+    "LOGIN_LABEL": "Your login",
+    "PASSWORD_LABEL": "Your password",
+    "SUBMIT_BUTTON_TEXT": "Submit"
+  }
+}

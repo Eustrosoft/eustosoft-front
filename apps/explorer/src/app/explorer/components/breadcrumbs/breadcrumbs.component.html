@@ -1,0 +1,25 @@
+<!--
+  ~ Copyright (c) 2023. IdrisovII & EustroSoft.org
+  ~
+  ~ This file is part of eustrosoft-front project.
+  ~ See the LICENSE file at the project root for licensing information.
+  -->
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb mb-0">
+    <ng-container *ngIf="breadcrumbs$ | async as breadcrumbs">
+      <li
+        *ngFor="let breadcrumb of breadcrumbs; let i = index"
+        class="breadcrumb-item"
+      >
+        <a
+          (click)="breadcrumbClick(breadcrumb.href, $event)"
+          [href]="breadcrumb.href"
+          class="text-decoration-none fs-6"
+        >
+          {{ breadcrumb.text }}
+        </a>
+      </li>
+    </ng-container>
+  </ol>
+</nav>

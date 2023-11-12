@@ -1,39 +1,44 @@
-import { Injectable } from '@angular/core';
-import {
-  ActivatedRouteSnapshot,
-  CanActivate,
-  Router,
-  RouterStateSnapshot,
-  UrlTree,
-} from '@angular/router';
-import { delay, Observable, of, switchMap } from 'rxjs';
+/*
+ * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ *
+ * This file is part of eustrosoft-front project.
+ * See the LICENSE file at the project root for licensing information.
+ */
+
+import { inject } from '@angular/core';
+import { Router, UrlTree } from '@angular/router';
+import { catchError, delay, Observable, of, switchMap } from 'rxjs';
 import { AuthenticationService } from '../services/authentication.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import {
+  PingResponse,
+  QtisRequestResponseInterface,
+} from '@eustrosoft-front/core';
+import { HttpErrorResponse } from '@angular/common/http';
 
-@Injectable()
-export class AuthenticationGuard implements CanActivate {
-  constructor(
-    private authenticationService: AuthenticationService,
-    private snackBar: MatSnackBar,
-    private router: Router
-  ) {}
+export const authenticationGuard = (): Observable<UrlTree | boolean> => {
+  const authenticationService: AuthenticationService = inject(
+    AuthenticationService
+  );
+  const snackBar: MatSnackBar = inject(MatSnackBar);
+  const router: Router = inject(Router);
 
-  canActivate(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-  ):
-    | Observable<boolean | UrlTree>
-    | Promise<boolean | UrlTree>
-    | boolean
-    | UrlTree {
-    return this.authenticationService.isAuthenticated.pipe(
-      switchMap((value: boolean) => {
-        if (!value) {
-          this.snackBar.open('Authenticate to access this page', 'Close');
-          return of(this.router.createUrlTree(['login'])).pipe(delay(2000));
-        }
-        return of(true);
-      })
-    );
-  }
-}
+  // TODO локализация ошибок
+  return authenticationService.getAuthenticationInfo().pipe(
+    switchMap((pingResponse: QtisRequestResponseInterface<PingResponse>) => {
+      if (pingResponse.r[0].e !== 0) {
+        snackBar.open('Authenticate in order to access this page', 'Close');
+        return of(router.createUrlTree(['login'])).pipe(delay(2000));
+      }
+      authenticationService.isAuthenticated$.next(true);
+      return of(true);
+    }),
+    catchError((err: HttpErrorResponse) => {
+      snackBar.open(
+        `${err.status} ${err.statusText} | Error text: ${err.error}`,
+        'Close'
+      );
+      return of(false);
+    })
+  );
+};

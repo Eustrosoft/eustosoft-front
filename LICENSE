@@ -1,0 +1,115 @@
+ConcepTIS project and QTIS project
+(c) Alex V Eustrop 2009-2011
+(c) Alex V Eustrop & EustroSoft.org 2017-2023
+
+This software named as "ConcepTIS" is distributed under two similar
+licences in English and in Russian, that are mostly identical.
+However some differences are possible, therefore either of the
+two licences may be used on equal terms separately.
+Some files in this project can be obtained from other authors and
+can have separate licenses. see other *LICENCE* and *LICENSE*
+files in the same directory as this file. For list of files with
+separate licenses see *CONTRIB* files in the same directory
+as this file.
+
+This software named as "ConcepTIS" or "QTIS" is distributed
+under the following terms:
+
+Basic Artistic Licence of EustroSoft (BALES)
+see http://bales.eustrosoft.org for details
+
+You can do with this Source Code anything that you want
+while keeping the list of its authors
+until this code will be rewritten by you.
+Also you can re-license this Source Code under any other licenses
+for instance well known BSD, MIT or ISC licenses on your choice
+one of them included below:
+
+Copyright (c) 2009-2010 Evstropov Alexey Vladimirovich (also known as
+Alex V Eustrop) and its contributors.  All rights reserved.
+Postal address: Russian Federation, Moscow Aviatsionnaya street 19/15, 123182.
+Web site: http://mave.ru, http://eustrosoft.org
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+1. Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in the
+   documentation and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY AUTHOR AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED.  IN NO EVENT SHALL AUTHOR OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+SUCH DAMAGE.
+
+Данный программный продукт, именуемый "ConcepTIS", распространяется под
+двумя сходными лицензиями, одна из которых написана на английском языка,
+а вторая на русском. Обе лицензии в общем случае идентичны. Тем не менее,
+некоторые различия возможны, поэтому любая из двух лицензий может
+быть использована на равных основания, отдельно от другой.
+Некоторые файлы в этом проекте могут быть получены от других авторов, и
+могут иметь отдельные лицензии. Смотрите другие *LICENCE* и *LICENSE*
+файлы в том же каталоге, что и этот файл. Список файлов с
+отдельными лицензиями приведен файлах *CONTRIB* в том же каталоге,
+что и этот файл лицензии.
+
+Данный программный продукт, именуемый "ConcepTIS" или "QTIS",
+распространяется на следующих условиях:
+
+Базовая Артистическая Лицензия Эустрософт (БАЛЭС)
+см. http://bales.eustrosoft.org для получения более подробной информации
+
+Вы можете делать с этим Исходным Кодом все, что пожелате,
+сохраняя список его авторов,
+до тех пор, пока этот код не будет переписан вами.
+Также вы можете перелицензировать этот Исходный Код под любыми другими лицензиями,
+например - хорошо известными лицензиями BSD, MIT или ISC по вашему выбору,
+одна из которых приведена ниже:
+
+(c) 2009-2010. Авторские права принадлежат Евстропову Алексею Владимировичу,
+также известному как "Alex V Eustrop", и его поставщикам. Все права защищены.
+Почтовый адрес: Российская Федерация, 123182 г Москва, ул Авиационная 19 кв 15
+Веб-сайт: http://mave.ru, http://eustrosoft.org
+
+Использование и повторное распространение исходных текстов и исполняемых
+модулей, с изменениями или без изменений, разрешено при соблюдении следующих
+условий:
+1. При повторном распространении исходных текстов, эти уведомление об авторских
+   правах, условия использования и повторного распространения, и уведомления об
+   отказе от ответственности, должны быть сохранены.
+2. При повторном распространении в форме исполняемых модулей, эти уведомление
+   об авторских правах, условия использования и повторного распространения, и
+   уведомления об отказе от ответственности, должны быть воспроизведены в
+   документации и/или других материалах, сопровождающих дистрибутив
+   программного продукта.
+
+ДАННЫЙ ПРОГРАММНЫЙ ПРОДУКТ ПРЕДОСТАВЛЯЕТСЯ АВТОРОМ И ЕГО ПОСТАВЩИКАМИ
+"КАК ЕСТЬ", БЕЗ КАКИХ-ЛИБО ЯВНЫХ ИЛИ ПОДРАЗУМЕВАЕМЫХ ГАРАНТИЙ, ВКЛЮЧАЯ,
+НО НЕ ОГРАНИЧИВАЯСЬ ПОДРАЗУМЕВАЕМЫМИ ГАРАНТИЯМИ ТОВАРНОЙ ПРИГОДНОСТИ И
+СООТВЕТСТВИЯ КАКИМ-ЛИБО КОНКРЕТНЫМ ЦЕЛЯМ. АВТОР И ЕГО ПОСТАВЩИКИ НИ ПРИ
+КАКИХ УСЛОВИЯХ НЕ МОГУТ БЫТЬ ОТВЕТСТВЕННЫМИ ЗА КАКОЙ-ЛИБО ПРЯМОЙ, НЕПРЯМОЙ,
+СЛУЧАЙНЫЙ, НАМЕРЕННЫЙ ИЛИ КОСВЕННЫЙ УЩЕРБ, ИЛИ ШТРАФНЫЕ САНКЦИИ (ВКЛЮЧАЯ,
+НО НЕ ОГРАНИЧИВАЯСЬ, УЩЕРБОМ ОТ ПРИОБРЕТЕНИЯ ПРОДУКТОВ И УСЛУГ ДЛЯ ЗАМЕНЫ
+ДАННОГО ПРОГРАММНОГО ПРОДУКТА; УЩЕРБОМ ОТ УТРАТЫ ВОЗМОЖНОСТИ ПОЛЬЗОВАНИЯ
+ПРОДУКТОМ, ПОТЕРИ ИЛИ ИСКАЖЕНИЯ ДАННЫХ, ПОТЕРИ ПРИБЫЛИ, ПОТЕРЬ ОТ ОСТАНОВКИ
+ХОЗЯЙСТВЕННОЙ ДЕЯТЕЛЬНОСТИ) ПРОИЗОШЕДШИЕ ПО ЛЮБОЙ ПРИЧИНЕ, ВСЛЕДСТВИЕ
+ИСПОЛЬЗОВАНИЯ ИЛИ НЕИСПОЛЬЗОВАНИЯ ДАННОГО ПРОГРАММНОГО ПРОДУКТА.
+ДАННЫЙ ОТКАЗ ОТ ОТВЕТСТВЕННОСТИ РАСПРОСТРАНЯЕТСЯ НА ЛЮБЫЕ ВИДЫ ОТВЕТСТВЕННОСТИ
+ЗА УЩЕРБ ИЛИ УБЫТКИ, ТАКИЕ КАК ОТВЕТСТВЕННОСТЬ ПРЕДУСМАТРИВАЕМАЯ ЛЮБЫМИ
+ДОГОВОРАМИ, ОБЪЕКТИВНАЯ ОТВЕТСТВЕННОСТЬ, И ОТВЕТСТВЕННОСТЬ ЗА ГРАЖДАНСКИЕ
+ПРАВОНАРУШЕНИЯ (ВКЛЮЧАЯ ХАЛАТНОСТЬ И ПРОЧЕЕ), КОТОРЫЕ МОГУТ ВОЗНИКНУТЬ
+ВСЛЕДСТВИЕ ИСПОЛЬЗОВАНИЯ ИЛИ НЕИСПОЛЬЗОВАНИЯ ДАННОГО ПРОГРАММНОГО ПРОДУКТА.
+ДАННЫЙ ОТКАЗ ОТ ОТВЕТСТВЕННОСТИ ЗА ЛЮБОЙ УЩЕРБ И УБЫТКИ РАСПРОСТРАНЯЕТСЯ
+ТАКЖЕ И НА ТЕ СЛУЧАИ, КОГДА АВТОР БЫЛ ИНФОРМИРОВАН О ВОЗМОЖНОСТИ ТАКОГО
+УЩЕРБА ИЛИ УБЫТКОВ.
+
+END OF LICENSE FILE/КОНЕЦ ФАЙЛА ЛИЦЕНЗИИ

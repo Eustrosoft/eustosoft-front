@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ *
+ * This file is part of eustrosoft-front project.
+ * See the LICENSE file at the project root for licensing information.
+ */
+
 import {
   ChangeDetectionStrategy,
   Component,
@@ -5,7 +12,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { QueryTypes, SingleRequestForm } from '@eustrosoft-front/core';
-import { InputFileComponent } from '@eustrosoft-front/common-ui';
+import { InputFileComponent, Option } from '@eustrosoft-front/common-ui';
 import { FormGroup } from '@angular/forms';
 
 @Component({
@@ -17,15 +24,23 @@ import { FormGroup } from '@angular/forms';
 export class RequestComponent {
   @Input() form!: FormGroup<SingleRequestForm>;
   @Input() formNumber!: number;
-  @Input() queryTypeOptions: string[] = [...Object.values(QueryTypes)];
+  @Input() queryTypeOptions: Option[] = Object.values(QueryTypes).map(
+    (queryType) =>
+      ({
+        value: queryType,
+        displayText: queryType,
+        disabled: false,
+      } as Option)
+  );
 
   @ViewChild(InputFileComponent) inputFileComponent!: InputFileComponent;
-  QueryTypes = QueryTypes;
+  public QueryTypes = QueryTypes;
+
+  public queryTypeLabelText = `Query type`;
 
   deleteFile(index: number): void {
     const control = this.form.get('file');
     control?.value?.splice(index, 1);
     control?.patchValue(control?.value);
-    this.inputFileComponent.patchInput();
   }
 }

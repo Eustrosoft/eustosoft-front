@@ -1,23 +1,80 @@
-<header class="container-fluid my-3">
-  <div class="row">
-    <div class="col-8 d-flex align-items-center justify-content-start">
-      <h2 class="m-0">LOGO</h2>
-      <span class="px-3">|</span>
-      <h1 class="m-0">TIS Apps</h1>
-    </div>
-    <ng-container *ngIf="isAuthenticated | async as isAuth">
-      <div
-        *ngIf="isAuth"
-        class="col-4 d-flex align-items-center justify-content-end"
+<!--
+  ~ Copyright (c) 2023. IdrisovII & EustroSoft.org
+  ~
+  ~ This file is part of eustrosoft-front project.
+  ~ See the LICENSE file at the project root for licensing information.
+  -->
+<mat-toolbar class="container-fluid px-3 py-2">
+  <span class="mr-4">
+    <a
+      [href]="(config | async)?.homePageUrl || '/'"
+      class="text-decoration-none"
+    >
+      {{ texts.title }}
+    </a>
+    |
+    {{ texts.appName }}
+  </span>
+  <span class="logo-spacer"></span>
+  <ng-container *ngIf="isAuthenticated$ | async">
+    <div class="d-flex d-none">
+      <eustrosoft-front-button
+        [buttonType]="'button'"
+        [buttonStyleType]="'with-icon'"
+        [buttonText]="'Menu'"
+        [iconName]="'expand_more'"
+        [iconPosition]="'end'"
+        [color]="'primary'"
+        [matMenuTriggerFor]="nestedMenu"
       >
-        <eustrosoft-front-button
-          [buttonStyleType]="'icon'"
-          [iconName]="'logout'"
-          [buttonType]="'button'"
-          (click)="logout()"
+      </eustrosoft-front-button>
+      <mat-menu [backdropClass]="'ignore'" #nestedMenu="matMenu">
+        <button
+          *ngFor="let menuItem of menuItems.dropdowns; let i = index"
+          mat-menu-item
+          [matMenuTriggerFor]="menuTriggers[i]"
         >
-        </eustrosoft-front-button>
-      </div>
-    </ng-container>
-  </div>
-</header>
+          {{ menuItem.title }}
+        </button>
+      </mat-menu>
+      <ng-container *ngFor="let menuItem of menuItems.dropdowns; let i = index">
+        <mat-menu>
+          <a
+            *ngFor="let link of menuItem.links"
+            mat-menu-item
+            [href]="link.href"
+            target="_blank"
+          >
+            {{ link.text }}
+          </a>
+        </mat-menu>
+      </ng-container>
+    </div>
+    <span class="spacer"></span>
+    <div class="col-4 d-flex align-items-center justify-content-end">
+      <ng-container *ngIf="userInfo$ | async as info">
+        <ng-container *ngIf="!isXs">
+          <span class="px-3 text-truncate" [title]="info.userFullName">
+            {{ info.userFullName }}
+          </span>
+          <eustrosoft-front-button
+            [buttonStyleType]="'icon'"
+            [iconName]="'logout'"
+            [buttonType]="'button'"
+            (click)="logout()"
+          >
+          </eustrosoft-front-button>
+        </ng-container>
+        <ng-container *ngIf="isXs">
+          <eustrosoft-front-button
+            [buttonType]="'button'"
+            [buttonStyleType]="'icon'"
+            [iconName]="'menu'"
+            class="d-sm-none"
+            (clicked)="sidenavToggleClicked.emit()"
+          ></eustrosoft-front-button>
+        </ng-container>
+      </ng-container>
+    </div>
+  </ng-container>
+</mat-toolbar>

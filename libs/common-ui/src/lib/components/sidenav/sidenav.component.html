@@ -1,0 +1,44 @@
+<div class="d-flex flex-column align-items-center gap-2 p-2">
+  <ng-container *ngIf="userInfo$ | async as info">
+    <div class="d-flex align-items-center pb-2">
+      <h4 class="m-0 px-3" [title]="info.userFullName">
+        {{ info.userFullName }}
+      </h4>
+      <eustrosoft-front-button
+        [buttonStyleType]="'icon'"
+        [iconName]="'logout'"
+        [buttonType]="'button'"
+        (click)="logout()"
+        class="logout-icon"
+      >
+      </eustrosoft-front-button>
+    </div>
+  </ng-container>
+  <ng-container *ngFor="let menuItem of menuItems.dropdowns; let i = index">
+    <eustrosoft-front-button
+      [buttonType]="'button'"
+      [buttonStyleType]="'with-icon'"
+      [buttonText]="menuItem.title"
+      [iconName]="'expand_more'"
+      [iconPosition]="'end'"
+      [color]="'primary'"
+      [matMenuTriggerFor]="menuTriggers[i]"
+      class="w-100"
+    >
+    </eustrosoft-front-button>
+    <mat-menu [hasBackdrop]="true">
+      <a
+        *ngFor="let link of menuItem.links"
+        mat-menu-item
+        [href]="link.href"
+        target="_blank"
+      >
+        {{ link.text }}
+      </a>
+    </mat-menu>
+  </ng-container>
+
+  <ng-container *ngFor="let link of menuItems.rest">
+    <a mat-menu-item [href]="link.href" target="_blank"> {{ link.text }}</a>
+  </ng-container>
+</div>

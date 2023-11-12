@@ -1,0 +1,60 @@
+<!--
+  ~ Copyright (c) 2023. IdrisovII & EustroSoft.org
+  ~
+  ~ This file is part of eustrosoft-front project.
+  ~ See the LICENSE file at the project root for licensing information.
+  -->
+
+<div
+  class="border border-2 border-secondary border-opacity-25 rounded-2 p-2 bg-light progress-overlay"
+>
+  <div class="d-flex justify-content-end">
+    <eustrosoft-front-button
+      [buttonType]="'button'"
+      [buttonStyleType]="'icon'"
+      [iconName]="'close'"
+      (clicked)="close()"
+    >
+    </eustrosoft-front-button>
+  </div>
+
+  <cdk-virtual-scroll-viewport itemSize="5" class="vh-25">
+    <div
+      *ngFor="let item of uploadItems; let i = index"
+      class="m-2 p-2 bg-secondary bg-opacity-10 border-dark border-opacity-25 rounded-2"
+      [hidden]="item.cancelled"
+    >
+      <div class="d-flex align-items-center">
+        <span class="col-10 text-break">{{ item.file.name }}</span>
+        <eustrosoft-front-button
+          [hidden]="item.state === UploadingState.UPLOADED"
+          [buttonType]="'button'"
+          [buttonStyleType]="'icon'"
+          [iconName]="'cancel'"
+          [color]="'warn'"
+          (clicked)="remove(item)"
+          class="w-auto"
+        >
+        </eustrosoft-front-button>
+        <eustrosoft-front-button
+          [hidden]="
+            item.state === UploadingState.PENDING ||
+            item.state === UploadingState.UPLOADING
+          "
+          [buttonType]="'button'"
+          [buttonStyleType]="'icon'"
+          [iconName]="'folder'"
+          [color]="'primary'"
+          (clicked)="openFolder(item)"
+          class="w-auto"
+        >
+        </eustrosoft-front-button>
+      </div>
+      <eustrosoft-front-progress-bar
+        [mode]="'determinate'"
+        [value]="item.progress"
+        class="w-auto h-auto"
+      ></eustrosoft-front-progress-bar>
+    </div>
+  </cdk-virtual-scroll-viewport>
+</div>

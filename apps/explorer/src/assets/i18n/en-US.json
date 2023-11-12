@@ -1,0 +1,86 @@
+{
+  "HEADER": {
+    "TITLE": "TIS Apps",
+    "APP_NAME": "Explorer",
+    "APPS_BUTTON_TEXT": "Apps",
+    "APPS": {
+      "LOGIN": "Login",
+      "DISPATCHER": "Dispatcher",
+      "ALL_APPS_PAGE": "All apps page"
+    }
+  },
+  "LOGIN_PAGE": {
+    "AUTHENTICATION_HEADING": "Authentication",
+    "LOGIN_LABEL": "Your login",
+    "PASSWORD_LABEL": "Your password",
+    "SUBMIT_BUTTON_TEXT": "Submit"
+  },
+  "EXPLORER": {
+    "NEW_MENU_BUTTON_TEXT": "New",
+    "NEW_FOLDER_BUTTON_TEXT": "New folder",
+    "NEW_FILE_BUTTON_TEXT": "New file",
+    "NEW_UPLOAD_BUTTON_TEXT": "New upload",
+    "UPLOAD_TYPE_LABEL_TEXT": "Upload type",
+    "BATCH_OPERATIONS_BUTTON_TEXT": "Batch operations",
+    "COPY_BUTTON_TEXT": "Copy",
+    "MOVE_TO_BUTTON_TEXT": "Move to",
+    "DELETE_BUTTON_TEXT": "Delete",
+    "DOWNLOAD_BUTTON_TEXT": "Download",
+    "RENAME_BUTTON_TEXT": "Rename",
+    "NAME_COLUMN_TEXT": "Name",
+    "SPACE_COLUMN_TEXT": "Size",
+    "DESCRIPTION_COLUMN_TEXT": "Description",
+    "SECURITY_LEVEL_COLUMN_TEXT": "Security level",
+    "ACTIONS_COLUMN_TEXT": "Actions",
+    "FOLDER_IS_EMPTY": "No content",
+    "SIZES": {
+      "BYTES": "Bytes",
+      "KB": "KB",
+      "MB": "MB",
+      "GB": "GB",
+      "TB": "TB",
+      "PB": "PB",
+      "EB": "EB",
+      "ZB": "ZB",
+      "YB": "YB"
+    },
+    "CREATE_FOLDER_MODAL": {
+      "TITLE": "New folder",
+      "INPUT_LABEL_TEXT": "Folder name",
+      "DEFAULT_INPUT_VALUE": "Untitled folder",
+      "SUBMIT_BUTTON_TEXT": "Create"
+    },
+    "CREATE_FILE_MODAL": {
+      "TITLE": "New file",
+      "INPUT_LABEL_TEXT": "File name",
+      "DEFAULT_INPUT_VALUE": "Untitled",
+      "SUBMIT_BUTTON_TEXT": "Create"
+    },
+    "RENAME_MODAL": {
+      "TITLE": "Rename",
+      "INPUT_LABEL_TEXT": "New name",
+      "SUBMIT_BUTTON_TEXT": "Rename"
+    },
+    "MOVE_MODAL": {
+      "TITLE": "Move to",
+      "CANCEL_BUTTON_TEXT": "Cancel",
+      "SUBMIT_BUTTON_TEXT": "Move"
+    },
+    "COPY_MODAL": {
+      "TITLE": "Copy to",
+      "CANCEL_BUTTON_TEXT": "Cancel",
+      "SUBMIT_BUTTON_TEXT": "Copy"
+    },
+    "DELETE_MODAL": {
+      "TITLE": "Delete confirmation",
+      "TEXT": "{{count}} {{objectsWord}} are marked for deletion. Proceed?",
+      "CANCEL_BUTTON_TEXT": "No",
+      "SUBMIT_BUTTON_TEXT": "Yes"
+    },
+    "ERRORS": {
+      "REQUEST_ERROR_TEXT": "Error making request",
+      "NO_SELECTED_FILES_ERROR_TEXT": "Select files first",
+      "CLOSE_BUTTON_TEXT": "Close"
+    }
+  }
+}

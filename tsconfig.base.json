@@ -17,7 +17,9 @@
     "paths": {
       "@eustrosoft-front/app-config": ["libs/app-config/index.ts"],
       "@eustrosoft-front/common-ui": ["libs/common-ui/src/index.ts"],
+      "@eustrosoft-front/config": ["libs/config/src/index.ts"],
       "@eustrosoft-front/core": ["libs/core/src/index.ts"],
+      "@eustrosoft-front/dic": ["libs/dic/src/index.ts"],
       "@eustrosoft-front/security": ["libs/security/src/index.ts"]
     }
   },

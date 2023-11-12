@@ -1,0 +1,23 @@
+/*!
+ * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ *
+ * This file is part of eustrosoft-front project.
+ * See the LICENSE file at the project root for licensing information.
+ */
+@use '@angular/material' as mat;
+
+:host {
+  ::ng-deep {
+    .mat-mdc-list-item-title:before {
+      height: 1.3rem!important;
+    }
+    .mat-mdc-list-item-title:after {
+      height: 1.3rem!important;
+    }
+  }
+}
+
+.chat-has-updates {
+  font-weight: bold;
+  color: mat.get-color-from-palette(mat.$deep-purple-palette, 600);
+}

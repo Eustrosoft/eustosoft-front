@@ -1,0 +1,35 @@
+<!--
+  ~ Copyright (c) 2023. IdrisovII & EustroSoft.org
+  ~
+  ~ This file is part of eustrosoft-front project.
+  ~ See the LICENSE file at the project root for licensing information.
+  -->
+
+<eustrosoft-front-textarea
+  [label]="label"
+  [control]="control"
+  [rows]="1"
+  [hideResize]="true"
+  [enableCdkAutoResize]="true"
+  [fieldAppearance]="'outline'"
+  [placeholder]="'MSG.MESSAGE_INPUT_PLACEHOLDER_TEXT' | translate"
+  class="flex-grow-1"
+></eustrosoft-front-textarea>
+<eustrosoft-front-button
+  *ngIf="messageInEdit"
+  [buttonType]="'button'"
+  [buttonStyleType]="'icon'"
+  [iconName]="'cancel'"
+  [matTooltip]="'MSG.CANCEL_MESSAGE_EDIT_BUTTON_TOOLTIP' | translate"
+  [matTooltipShowDelay]="300"
+  (clicked)="cancelEdit()"
+></eustrosoft-front-button>
+<eustrosoft-front-button
+  [buttonType]="'button'"
+  [buttonStyleType]="'icon'"
+  [iconName]="iconButtonName"
+  [matTooltip]="'MSG.SEND_MESSAGE_BUTTON_TOOLTIP' | translate"
+  [matTooltipClass]="'multiline'"
+  [matTooltipShowDelay]="300"
+  (clicked)="submitMessage()"
+></eustrosoft-front-button>

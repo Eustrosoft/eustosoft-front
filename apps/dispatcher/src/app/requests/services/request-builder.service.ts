@@ -1,14 +1,24 @@
+/*
+ * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ *
+ * This file is part of eustrosoft-front project.
+ * See the LICENSE file at the project root for licensing information.
+ */
+
 import { Injectable } from '@angular/core';
 import {
+  DispatcherActions,
   FileReaderService,
   FileRequest,
+  QtisRequestResponseInterface,
+  QueryTypes,
+  SingleRequestForm,
   SqlRequest,
-  TisRequest,
+  Subsystems,
+  SupportedLanguages,
 } from '@eustrosoft-front/core';
 import { combineLatest, mergeMap, Observable, of } from 'rxjs';
-import { QueryTypes } from '@eustrosoft-front/core';
 import { FormArray, FormGroup } from '@angular/forms';
-import { SingleRequestForm } from '@eustrosoft-front/core';
 
 @Injectable()
 export class RequestBuilderService {
@@ -16,7 +26,7 @@ export class RequestBuilderService {
 
   buildQuery(
     forms: FormArray<FormGroup<SingleRequestForm>>
-  ): Observable<TisRequest> {
+  ): Observable<QtisRequestResponseInterface<FileRequest | SqlRequest>> {
     const requests = forms.controls.map(
       (control: FormGroup<SingleRequestForm>) => {
         switch (control.value.queryType as QueryTypes) {
@@ -31,19 +41,19 @@ export class RequestBuilderService {
     return combineLatest(requests).pipe(
       mergeMap((value: (FileRequest | SqlRequest)[]) =>
         of({
-          qtisver: 1,
-          requests: value,
-          qtisend: true,
-        } as TisRequest)
+          r: value,
+          t: 0,
+        })
       )
     );
   }
 
   private buildSqlQuery(query: string): Observable<SqlRequest> {
     return of({
-      parameters: { method: 'plain/text', query: query },
-      request: 'sql',
-      subsystem: 'sql',
+      s: Subsystems.SQL,
+      r: DispatcherActions.SQL,
+      l: SupportedLanguages.EN_US,
+      query,
     });
   }
 
@@ -51,12 +61,13 @@ export class RequestBuilderService {
     return this.fileReaderService.blobToBase64(file).pipe(
       mergeMap((base64) =>
         of({
+          s: Subsystems.SQL,
+          r: DispatcherActions.SQL,
+          l: SupportedLanguages.EN_US,
           parameters: {
-            data: {
-              file: base64 as string,
-              name: file.name,
-              ext: file.name.split('.').pop() as string,
-            },
+            file: base64 as string,
+            name: file.name,
+            ext: file.name.split('.').pop() as string,
             method: 'application/octet-stream',
           },
           request: 'upload',

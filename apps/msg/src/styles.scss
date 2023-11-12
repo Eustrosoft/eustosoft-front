@@ -1,0 +1,24 @@
+/*!
+ * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ *
+ * This file is part of eustrosoft-front project.
+ * See the LICENSE file at the project root for licensing information.
+ */
+
+/* You can add global styles to this file, and also import other style files */
+
+@use 'material.override';
+@use 'bootstrap.override';
+@use 'global';
+
+.multiline {
+  white-space: pre-line;
+}
+
+.msg-chat-status-filter-menu {
+  .mdc-list {
+    display: flex;
+    flex-direction: column;
+    padding: 0.5rem;
+  }
+}

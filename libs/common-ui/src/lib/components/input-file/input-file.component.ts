@@ -1,12 +1,23 @@
+/*
+ * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ *
+ * This file is part of eustrosoft-front project.
+ * See the LICENSE file at the project root for licensing information.
+ */
+
 import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  EventEmitter,
   Input,
   OnDestroy,
+  OnInit,
+  Output,
   ViewChild,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { Subject, takeUntil, tap } from 'rxjs';
 
 @Component({
   selector: 'eustrosoft-front-input-file',
@@ -14,38 +25,48 @@ import { FormControl } from '@angular/forms';
   styleUrls: ['./input-file.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class InputFileComponent implements OnDestroy {
-  @Input() control!: FormControl;
+export class InputFileComponent implements OnInit, OnDestroy {
+  @Input() control!: FormControl<File[]>;
   @Input() buttonText = 'Select files';
   @Input() multiple = false;
+  @Output() filesSelected = new EventEmitter<boolean>();
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+
+  private destroy$ = new Subject<void>();
+
+  ngOnInit(): void {
+    this.control.valueChanges
+      .pipe(
+        tap((files: File[]) => {
+          const dt = new DataTransfer();
+          files.forEach((file: File) => dt.items.add(file));
+          this.fileInput.nativeElement.files = dt.files;
+        }),
+        takeUntil(this.destroy$)
+      )
+      .subscribe();
+  }
 
   change(e: Event): void {
     const target = e.target as HTMLInputElement;
     if (target.files?.length === 0) {
       this.control.patchValue([]);
+      this.filesSelected.emit(true);
       return;
     }
     const filesArray = Array.from(target.files as FileList);
-    if (filesArray.length > 1) {
-      this.control.patchValue(filesArray);
-    } else {
-      this.control.patchValue([filesArray[0]]);
-    }
+    this.control.patchValue(filesArray);
+    this.filesSelected.emit(true);
   }
 
   clear(): void {
     this.fileInput.nativeElement.files = new DataTransfer().files;
   }
 
-  patchInput(): void {
-    const dt = new DataTransfer();
-    this.control.value.forEach((file: File) => dt.items.add(file));
-    this.fileInput.nativeElement.files = dt.files;
-  }
-
   ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
     this.clear();
   }
 }

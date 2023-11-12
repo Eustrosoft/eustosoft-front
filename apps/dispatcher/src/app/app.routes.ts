@@ -1,21 +1,24 @@
+/*
+ * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ *
+ * This file is part of eustrosoft-front project.
+ * See the LICENSE file at the project root for licensing information.
+ */
+
 import { Route } from '@angular/router';
 import { RequestsComponent } from './requests/requests.component';
-import { RedirectGuard } from '@eustrosoft-front/security';
-import { environment } from '../environments/environment';
-import { AppComponent } from './app.component';
+import { authenticationGuard } from '@eustrosoft-front/security';
+import { LoginPageComponent } from './login-page/login-page.component';
 
 export const appRoutes: Route[] = [
   {
     path: '',
     title: 'TIS | Dispatcher',
     component: RequestsComponent,
+    canActivate: [authenticationGuard],
   },
   {
     path: 'login',
-    canActivate: [RedirectGuard],
-    component: AppComponent,
-    data: {
-      externalUrl: environment.loginUrl,
-    },
+    component: LoginPageComponent,
   },
 ];

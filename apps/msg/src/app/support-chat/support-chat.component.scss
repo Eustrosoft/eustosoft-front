@@ -1,0 +1,56 @@
+/*!
+ * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ *
+ * This file is part of eustrosoft-front project.
+ * See the LICENSE file at the project root for licensing information.
+ */
+@import 'variables';
+
+:host {
+  display: flex;
+  flex: 1 1 auto;
+  height: 100%;
+  overflow: auto;
+
+  ::ng-deep {
+    .mdc-icon-button {
+      font-size: 22px;
+    }
+    .mdc-list-item {
+      padding-left: 0;
+      padding-right: 0;
+    }
+    .mat-mdc-form-field-subscript-wrapper {
+      display: none;
+    }
+    .mat-mdc-form-field-infix {
+      width: auto !important;
+    }
+  }
+}
+
+.sidebar {
+  position: fixed;
+  top: calc(8vh + 1rem);
+  padding: 0;
+  left: 0;
+  z-index: 1000;
+  overflow: hidden;
+  transition: width 0.3s;
+  background: white;
+}
+
+.backdrop {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: black;
+  opacity: 0.5;
+  transition: all 0.3s ease;
+}
+
+.collapsed {
+  width: 0;
+}

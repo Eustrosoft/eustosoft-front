@@ -1,0 +1,32 @@
+/*!
+ * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ *
+ * This file is part of eustrosoft-front project.
+ * See the LICENSE file at the project root for licensing information.
+ */
+
+@import 'variables';
+
+tr.table-row:hover {
+  background: whitesmoke;
+}
+
+tr.table-row {
+  height: 4em;
+}
+
+.mat-column-select {
+  width: 1em;
+}
+
+.files-over {
+  background: $light-gray;
+  transition: 0.2s background;
+}
+
+.truncate-filename {
+  max-width: 50vw;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

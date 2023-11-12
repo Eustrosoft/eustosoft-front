@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ *
+ * This file is part of eustrosoft-front project.
+ * See the LICENSE file at the project root for licensing information.
+ */
+
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from './components/header/header.component';
@@ -9,15 +16,39 @@ import { PreloaderComponent } from './components/preloader/preloader.component';
 import { SelectComponent } from './components/select/select.component';
 import { TextareaComponent } from './components/textarea/textarea.component';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
+import {
+  MAT_ICON_DEFAULT_OPTIONS,
+  MatIconDefaultOptions,
+  MatIconModule,
+} from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
-import { HoverShadowDirective } from './directives/hover-shadow.directive';
+import { HoverDirective } from './directives/hover.directive';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
-import { FilesDragAndDropDirective } from './directives/files-drag-and-drop.directive';
+import { FilesDropZoneDirective } from './directives/files-drop-zone.directive';
 import { RippleHoverDirective } from './directives/ripple-hover.directive';
+import { ProgressBarComponent } from './components/progress-bar/progress-bar.component';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import {
+  CdkFixedSizeVirtualScroll,
+  CdkVirtualForOf,
+  CdkVirtualScrollViewport,
+} from '@angular/cdk/scrolling';
+import { HoverCursorDirective } from './directives/hover-cursor.directive';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatMenuModule } from '@angular/material/menu';
+import { PromptDialogComponent } from './components/prompt-dialog/prompt-dialog.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { ConfigModule } from '@eustrosoft-front/config';
+import { A11yModule } from '@angular/cdk/a11y';
+import { LoginDialogComponent } from './components/login-dialog/login-dialog.component';
+import { LoginComponent } from './components/login-page/login.component';
+import { CoreModule } from '@eustrosoft-front/core';
+import { MatListModule } from '@angular/material/list';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { SidenavComponent } from './components/sidenav/sidenav.component';
 
 @NgModule({
   imports: [
@@ -29,6 +60,18 @@ import { RippleHoverDirective } from './directives/ripple-hover.directive';
     MatInputModule,
     MatProgressSpinnerModule,
     MatSelectModule,
+    MatProgressBarModule,
+    CdkVirtualScrollViewport,
+    CdkFixedSizeVirtualScroll,
+    MatToolbarModule,
+    MatMenuModule,
+    MatDialogModule,
+    ConfigModule,
+    A11yModule,
+    CoreModule,
+    MatListModule,
+    CdkVirtualForOf,
+    MatSidenavModule,
   ],
   declarations: [
     HeaderComponent,
@@ -39,9 +82,15 @@ import { RippleHoverDirective } from './directives/ripple-hover.directive';
     PreloaderComponent,
     SelectComponent,
     TextareaComponent,
-    HoverShadowDirective,
-    FilesDragAndDropDirective,
+    HoverDirective,
+    FilesDropZoneDirective,
     RippleHoverDirective,
+    ProgressBarComponent,
+    HoverCursorDirective,
+    PromptDialogComponent,
+    LoginDialogComponent,
+    LoginComponent,
+    SidenavComponent,
   ],
   exports: [
     HeaderComponent,
@@ -52,9 +101,21 @@ import { RippleHoverDirective } from './directives/ripple-hover.directive';
     PreloaderComponent,
     SelectComponent,
     TextareaComponent,
-    HoverShadowDirective,
-    FilesDragAndDropDirective,
+    HoverDirective,
+    FilesDropZoneDirective,
     RippleHoverDirective,
+    ProgressBarComponent,
+    HoverCursorDirective,
+    LoginComponent,
+    SidenavComponent,
+  ],
+  providers: [
+    {
+      provide: MAT_ICON_DEFAULT_OPTIONS,
+      useValue: {
+        fontSet: 'material-symbols-outlined',
+      } as MatIconDefaultOptions,
+    },
   ],
 })
 export class CommonUiModule {}

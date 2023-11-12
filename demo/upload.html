@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <input type="file" id="fileInput" multiple />
+    <span id="progress"></span>
+    <button id="uploadButton">Upload</button>
+  </body>
+  <script>
+    const Uploader = (function () {
+      const SupportedLanguages = {
+        EN_US: 'en-US',
+        RU_RU: 'ru-RU',
+      };
+
+      const ExplorerActions = {
+        UPLOAD_CHUNKS_HEX: 'upload_chunks_hex',
+      };
+
+      const Subsystems = {
+        FILE: 'file',
+      };
+
+      const HttpMethods = {
+        POST: 'POST',
+      };
+
+      /**
+       * Uploads file by chunk
+       * @param filesInput - HTML element that contains files property and multiple attribute <input type="file" multiple />. For example can be selected via document.getElementById()
+       * @param progressOutput - HTML element for outputting upload progress
+       * @param apiUrl - URL of endpoint to make http calls
+       * @param pathToUpload - Where the file will end up uploaded
+       * @param requestHeaders - Headers to attach to http request
+       * @param chunkSize - The size of the chunk into which the file source will be sliced. 1 megabyte by default
+       * @returns {Promise<void>}
+       */
+      async function startFilesUpload({
+        filesInput,
+        progressOutput,
+        apiUrl,
+        pathToUpload,
+        requestHeaders = {},
+        chunkSize = 1,
+      }) {
+        const checkArgsErrors = () => {
+          if (filesInput === null) {
+            throw new Error(`Provide valid input field`);
+          }
+          if (progressOutput === null) {
+            throw new Error(
+              `Provide valid HTML element to output upload progress`
+            );
+          }
+          if (!apiUrl || apiUrl.length === 0) {
+            throw new Error(`Provide valid apiUrl`);
+          }
+          if (!pathToUpload || pathToUpload.length === 0) {
+            throw new Error(`Provide valid upload path`);
+          }
+        };
+        const uploadFiles = async () => {
+          const files = filesInput.files;
+          if (files.length === 0) {
+            throw new Error('Select at least one file');
+          }
+
+          const chunkByteSize = chunkSize * 1024 * 1024;
+
+          for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const totalChunks = Math.ceil(file.size / chunkByteSize);
+
+            for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
+              const start = chunkIndex * chunkByteSize;
+              const end = Math.min(start + chunkByteSize, file.size);
+              const chunk = file.slice(start, end);
+
+              const hexString = await getHexString(chunk);
+
+              const data = buildChunkUploadRequest({
+                hexString,
+                name: file.name,
+                ext: file.name.split('.').pop(),
+                chunk: chunkIndex,
+                all_chunks: totalChunks,
+                hash: crc32(chunk),
+                path: pathToUpload,
+              });
+
+              progressOutput.innerText = `Uploading ${file.name} 0%`;
+
+              await sendHttpRequest(
+                apiUrl,
+                HttpMethods.POST,
+                requestHeaders,
+                data
+              ).catch((err) => {
+                console.error(err);
+                throw new Error('Error occurred in http request');
+              });
+
+              const progress = 100 * ((chunkIndex + 1) / totalChunks);
+              progressOutput.innerText = `Uploading ${file.name} ${progress}%`;
+            }
+          }
+        };
+
+        checkArgsErrors();
+        try {
+          await uploadFiles();
+          progressOutput.innerText = '';
+        } catch (error) {
+          progressOutput.innerText = 'Error occurred while file uploading';
+          console.error(error);
+        }
+      }
+
+      function bytesToHexString(bytes) {
+        return Array.from(bytes)
+          .map((byte) => ('0' + (byte & 0xff).toString(16)).slice(-2))
+          .join('');
+      }
+
+      function getHexString(fileChunk) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = function (event) {
+            const arrayBuffer = event.target.result;
+            const uint8Array = new Uint8Array(arrayBuffer);
+            const hexString = bytesToHexString(uint8Array);
+            resolve(hexString);
+          };
+          reader.onerror = function (error) {
+            reject(error);
+          };
+          reader.readAsArrayBuffer(fileChunk);
+        });
+      }
+
+      function buildChunkUploadRequest(parameters) {
+        const request = {
+          r: [
+            {
+              s: Subsystems.FILE,
+              r: ExplorerActions.UPLOAD_CHUNKS_HEX,
+              l: SupportedLanguages.EN_US,
+              parameters,
+            },
+          ],
+          t: 0,
+        };
+        return JSON.stringify(request);
+      }
+
+      async function sendHttpRequest(url, method, headers, data) {
+        return await new Promise((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.withCredentials = true;
+          xhr.open(method, url);
+
+          for (const key in headers) {
+            xhr.setRequestHeader(key, headers[key]);
+          }
+
+          xhr.onload = () => {
+            const response = JSON.parse(xhr.responseText);
+            if (
+              xhr.status >= 200 &&
+              xhr.status < 300 &&
+              (response.e === 0 || (response.r[0] && response.r[0].e === 0))
+            ) {
+              resolve(response);
+            } else {
+              reject(
+                new Error(
+                  `Request failed. Error in request response body. Code: ${
+                    response.r.e || (response.r[0] && response.r[0].e)
+                  }. Message: ${
+                    response.r.m || (response.r[0] && response.r[0].m)
+                  }.`
+                )
+              );
+            }
+          };
+
+          xhr.onerror = () => {
+            reject(new Error('Request failed'));
+          };
+
+          xhr.send(data);
+        });
+      }
+
+      function crc32(arr) {
+        if (typeof arr === 'string') {
+          arr = new TextEncoder().encode(arr);
+        }
+        let crc = -1,
+          i,
+          j,
+          l,
+          temp;
+        const poly = 0xedb88320;
+
+        for (i = 0, l = arr.length; i < l; i += 1) {
+          temp = (crc ^ arr[i]) & 0xff;
+          for (j = 0; j < 8; j += 1) {
+            if ((temp & 1) === 1) {
+              temp = (temp >>> 1) ^ poly;
+            } else {
+              temp = temp >>> 1;
+            }
+          }
+          crc = (crc >>> 8) ^ temp;
+        }
+
+        return numberToHex(crc ^ -1);
+      }
+
+      function numberToHex(n) {
+        return (n >>> 0).toString(16).padStart(8, '0');
+      }
+
+      async function login() {
+        return await sendHttpRequest(
+          'http://fudo.eustrosoft.org:8080/eustrosofthandler_war/api/dispatch',
+          'POST',
+          {
+            'Content-Type': 'application/json',
+          },
+          JSON.stringify({
+            r: [
+              {
+                s: 'login',
+                r: 'login',
+                l: 'en-US',
+                login: '',
+                password: '',
+              },
+            ],
+            t: 0,
+          })
+        );
+      }
+
+      return {
+        startFilesUpload: startFilesUpload,
+        login: login,
+      };
+    })();
+
+    const uploadButton = document.getElementById('uploadButton');
+    uploadButton.addEventListener('click', function () {
+      Uploader.login();
+      const filesInput = document.getElementById('fileInput');
+      const progress = document.getElementById('progress');
+      const params = {
+        filesInput: filesInput,
+        progressOutput: progress,
+        apiUrl:
+          'http://fudo.eustrosoft.org:8080/eustrosofthandler_war/api/dispatch',
+        pathToUpload: '/',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        chunkSize: 1,
+      };
+      Uploader.startFilesUpload(params);
+    });
+  </script>
+</html>

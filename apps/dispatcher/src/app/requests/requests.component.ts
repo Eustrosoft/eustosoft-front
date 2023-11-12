@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ *
+ * This file is part of eustrosoft-front project.
+ * See the LICENSE file at the project root for licensing information.
+ */
+
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -15,19 +22,22 @@ import {
 } from 'rxjs';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import {
+  DispatcherTableResult,
+  DisplayTypes,
+  FileRequest,
+  QtisRequestResponseInterface,
   QueryTypes,
   RequestsForm,
+  SqlRequest,
+  SqlResponse,
   Table,
-  TisRequest,
-  TisResponse,
-  TisResponseBody,
-  TisTableResult,
 } from '@eustrosoft-front/core';
-import { DisplayTypes } from '@eustrosoft-front/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { RequestBuilderService } from './services/request-builder.service';
 import { RequestFormBuilderService } from './services/request-form-builder.service';
-import { RequestService } from './services/request.service';
+import { Option } from '@eustrosoft-front/common-ui';
+import { HttpErrorResponse } from '@angular/common/http';
+import { DispatchService } from '@eustrosoft-front/security';
 
 @Component({
   selector: 'eustrosoft-front-requests',
@@ -36,22 +46,41 @@ import { RequestService } from './services/request.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RequestsComponent implements OnInit {
-  form!: FormGroup<RequestsForm>;
-  DisplayTypes = DisplayTypes;
-  displayType = new FormControl<DisplayTypes>(DisplayTypes.TEXT);
-  queryTypeOptions: string[] = [...Object.values(QueryTypes)];
-  displayTypeOptions: string[] = [...Object.values(DisplayTypes)];
+  public form!: FormGroup<RequestsForm>;
+  public DisplayTypes = DisplayTypes;
+  public displayType = new FormControl<DisplayTypes>(DisplayTypes.TEXT);
+  public queryTypeOptions: Option[] = Object.values(QueryTypes).map(
+    (queryType) =>
+      ({
+        value: queryType,
+        displayText: queryType,
+        disabled: false,
+      } as Option)
+  );
+  public displayTypeOptions: Option[] = Object.values(DisplayTypes).map(
+    (queryType) =>
+      ({
+        value: queryType,
+        displayText: queryType,
+        disabled: false,
+      } as Option)
+  );
+
+  public displayTypeLabelText = `Display as`;
+  public addFormButtonTitle = `Add request form`;
+  public removeFormButtonTitle = `Remove last request form`;
+  public submitButtonText = `Run`;
 
   tables?: Table[][];
 
-  requestResult$!: Observable<TisResponse | null>;
+  requestResult$!: Observable<QtisRequestResponseInterface<SqlResponse> | null>;
   isResultLoading = new BehaviorSubject<boolean>(false);
 
   constructor(
     private fb: FormBuilder,
     private requestBuilderService: RequestBuilderService,
     private requestFormBuilderService: RequestFormBuilderService,
-    private requestService: RequestService,
+    private dispatchService: DispatchService,
     private cd: ChangeDetectorRef,
     private snackBar: MatSnackBar
   ) {}
@@ -66,10 +95,14 @@ export class RequestsComponent implements OnInit {
     this.requestResult$ = this.requestBuilderService
       .buildQuery(this.form.controls.forms)
       .pipe(
-        mergeMap((query: TisRequest) => this.requestService.dispatch(query)),
-        map((response: TisResponse) => {
-          this.tables = response.responses.map((res: TisResponseBody) =>
-            res.result.map((result: TisTableResult) => {
+        mergeMap((query) =>
+          this.dispatchService.dispatch<SqlRequest | FileRequest, SqlResponse>(
+            query
+          )
+        ),
+        map((response: QtisRequestResponseInterface<SqlResponse>) => {
+          this.tables = response.r.map((res: SqlResponse) =>
+            res.r.map((result: DispatcherTableResult) => {
               return {
                 dataSource: result.rows.map((row) => {
                   return Object.fromEntries(
@@ -88,10 +121,10 @@ export class RequestsComponent implements OnInit {
           this.form.get('submit')?.enable();
           this.isResultLoading.next(false);
         }),
-        catchError((err: string) => {
+        catchError((err: HttpErrorResponse) => {
           this.form.get('submit')?.enable();
           this.isResultLoading.next(false);
-          this.snackBar.open(err, 'Close');
+          this.snackBar.open(err.error, 'close');
           this.cd.detectChanges();
           return of(null);
         })

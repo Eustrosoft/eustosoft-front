@@ -1,0 +1,43 @@
+<!--
+  ~ Copyright (c) 2023. IdrisovII & EustroSoft.org
+  ~
+  ~ This file is part of eustrosoft-front project.
+  ~ See the LICENSE file at the project root for licensing information.
+  -->
+<mat-drawer-container [hasBackdrop]="true">
+  <mat-drawer #drawer [mode]="'over'" [position]="'end'" class="d-flex">
+    <eustrosoft-front-sidenav class="flex-grow-1"></eustrosoft-front-sidenav>
+  </mat-drawer>
+  <mat-drawer-content>
+    <div class="wrapper">
+      <ng-container *ngIf="translatedValues | async as translate">
+        <eustrosoft-front-header
+          [appsListTemplate]="appsListTemplate"
+          [texts]="{
+            title: translate.title,
+            appName: translate.appName,
+            appsButtonText: translate.appsButtonText
+          }"
+          [loginPath]="['login']"
+          (sidenavToggleClicked)="drawer.toggle()"
+        ></eustrosoft-front-header>
+
+        <router-outlet></router-outlet>
+
+        <ng-template #appsListTemplate>
+          <ng-container *ngIf="config | async as cnf">
+            <a mat-menu-item [href]="cnf.loginUrl">
+              {{ translate.login }}
+            </a>
+            <a mat-menu-item [href]="cnf.dispatcherUrl">
+              {{ translate.dispatcher }}
+            </a>
+            <a mat-menu-item [href]="cnf.appsPageUrl">
+              {{ translate.appsPage }}
+            </a>
+          </ng-container>
+        </ng-template>
+      </ng-container>
+    </div>
+  </mat-drawer-content>
+</mat-drawer-container>

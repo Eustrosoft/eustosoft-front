@@ -1,0 +1,69 @@
+{
+  "HEADER": {
+    "TITLE": "Приложения TIS",
+    "APP_NAME": "Сообщения",
+    "APPS_BUTTON_TEXT": "Приложения",
+    "APPS": {
+      "LOGIN": "Логин",
+      "DISPATCHER": "Исполнитель запросов",
+      "EXPLORER": "Проводник",
+      "ALL_APPS_PAGE": "Все приложения"
+    }
+  },
+  "LOGIN_PAGE": {
+    "AUTHENTICATION_HEADING": "Аутентификация",
+    "LOGIN_LABEL": "Логин",
+    "PASSWORD_LABEL": "Пароль",
+    "SUBMIT_BUTTON_TEXT": "Войти"
+  },
+  "MSG": {
+    "SELECT_TICKET_CAPTION_TEXT": "Выберите чат из меню",
+    "OPEN_MENU_BUTTON_TEXT": "Открыть меню",
+    "CHAT_FILTERS_BUTTON_TEXT": "Фильтры",
+    "CREATE_NEW_CHAT_BUTTON_TEXT": "Создайте новый чат или измените настройки фильтров",
+    "CLOSE_CHAT_BUTTON_TEXT": "Закрыть чат",
+    "OPEN_CHAT_BUTTON_TEXT": "Переоткрыть чат",
+    "RENAME_CHAT_BUTTON_TEXT": "Переименовать чат",
+    "DELETE_CHAT_BUTTON_TEXT": "Удалить чат",
+    "TICKET_LIST_HEADER_TEXT": "Чаты",
+    "REFRESH_TICKET_LIST_BUTTON_TOOLTIP": "Обновить список",
+    "NO_MESSAGES_CAPTION_TEXT": "Сообщения отсутствуют",
+    "NEW_MESSAGE_LABEL_TEXT": "Сообщение",
+    "EDIT_MESSAGE_LABEL_TEXT": "Редактировать сообщение",
+    "EDIT_MESSAGE_BUTTON_TEXT": "Редактировать сообщение",
+    "DELETE_MESSAGE_BUTTON_TEXT": "Удалить сообщение",
+    "MESSAGE_INPUT_PLACEHOLDER_TEXT": "Введите сообщение...",
+    "INACTIVE_TICKET_CAPTION_TEXT": "Чат неактивен",
+    "SEND_MESSAGE_BUTTON_TOOLTIP": "Shift+Enter: новая строка\nCtrl+Enter: отправить сообщение",
+    "CANCEL_MESSAGE_EDIT_BUTTON_TOOLTIP": "Отменить редактирование",
+    "CREATE_CHAT_MODAL": {
+      "TITLE_TEXT": "Создание нового чата",
+      "SUBJECT_LABEL_TEXT": "Тема",
+      "MESSAGE_LABEL_TEXT": "Сообщение",
+      "EXTRA_OPTIONS_PANEL_TITLE": "Дополнительные опции",
+      "EXTRA_OPTIONS_PANEL_DESCRIPTION": "Установить уровень секретности, области видимости",
+      "EXTRA_OPTIONS_PANEL_SECURITY_LEVEL_LABEL": "Уровень секретности",
+      "EXTRA_OPTIONS_PANEL_SCOPE_LABEL": "Область видимости",
+      "CANCEL_BUTTON_TEXT": "Отмена",
+      "SUBMIT_BUTTON_TEXT": "Создать"
+    },
+    "RENAME_CHAT_MODAL": {
+      "TITLE_TEXT": "Переименование чата",
+      "SUBJECT_LABEL_TEXT": "Тема",
+      "CANCEL_BUTTON_TEXT": "Отмена",
+      "SUBMIT_BUTTON_TEXT": "Переименовать"
+    },
+    "DELETE_CHAT_MODAL": {
+      "TITLE": "Подтверждение удаления",
+      "TEXT": "Чат \"{{subject}}\" будет удалён. Продолжить?",
+      "CANCEL_BUTTON_TEXT": "Нет",
+      "SUBMIT_BUTTON_TEXT": "Да"
+    },
+    "ERRORS": {
+      "CHATS_FETCH_ERROR": "Ошибка при попытке получения чатов",
+      "CHAT_MESSAGES_FETCH_ERROR": "Ошибка при попытке получения сообщений",
+      "CHAT_STATUS_FILTERS_FETCH_ERROR": "Ошибка при попытке получения фильтров для чатов",
+      "CHAT_SECURITY_LEVEL_OPTIONS_FETCH_ERROR": "Ошибка при попытке получения списка уровней доступа"
+    }
+  }
+}

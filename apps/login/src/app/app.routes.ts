@@ -1,10 +1,20 @@
+/*
+ * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ *
+ * This file is part of eustrosoft-front project.
+ * See the LICENSE file at the project root for licensing information.
+ */
+
 import { Route } from '@angular/router';
 import { LoginPageComponent } from './login-page/login-page.component';
-import { AuthenticationGuard } from '@eustrosoft-front/security';
+import { authenticationGuard, redirectGuard } from '@eustrosoft-front/security';
 import { ApplicationsComponent } from './applications/applications.component';
-import { RedirectGuard } from '@eustrosoft-front/security';
-import { environment } from '../environments/environment';
 import { AppComponent } from './app.component';
+import {
+  dispatcherUrlKey,
+  explorerUrlKey,
+  loginUrlKey,
+} from '@eustrosoft-front/config';
 
 export const appRoutes: Route[] = [
   {
@@ -15,7 +25,7 @@ export const appRoutes: Route[] = [
   },
   {
     path: '',
-    canActivate: [AuthenticationGuard],
+    canActivate: [authenticationGuard],
     children: [
       {
         path: 'apps',
@@ -24,28 +34,28 @@ export const appRoutes: Route[] = [
       },
       {
         path: 'explorer',
-        canActivate: [RedirectGuard],
+        canActivate: [redirectGuard],
         component: ApplicationsComponent,
         data: {
-          externalUrl: environment.explorerUrl,
+          key: explorerUrlKey,
         },
       },
       {
         path: 'dispatcher',
-        canActivate: [RedirectGuard],
+        canActivate: [redirectGuard],
         component: ApplicationsComponent,
         data: {
-          externalUrl: environment.dispatcherUrl,
+          key: dispatcherUrlKey,
         },
       },
     ],
   },
   {
     path: 'login',
-    canActivate: [RedirectGuard],
+    canActivate: [redirectGuard],
     component: AppComponent,
     data: {
-      externalUrl: environment.loginUrl,
+      key: loginUrlKey,
     },
   },
 ];

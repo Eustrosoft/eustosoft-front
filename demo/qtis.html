@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SQL Query App</title>
+  </head>
+  <body>
+    <textarea
+      id="queryTextarea"
+      rows="6"
+      cols="50"
+      placeholder="Enter your SQL query"
+    ></textarea>
+    <button id="executeButton">Execute Query</button>
+    <pre id="resultPre"></pre>
+
+    <script>
+      const App = (function () {
+        const SupportedLanguages = {
+          EN_US: 'en-US',
+          RU_RU: 'ru-RU',
+        };
+
+        const DispatcherActions = {
+          SQL: 'sql',
+        };
+
+        const Subsystems = {
+          SQL: 'sql',
+        };
+
+        function buildSqlRequestBody(query) {
+          const request = {
+            r: [
+              {
+                s: Subsystems.SQL,
+                r: DispatcherActions.SQL,
+                l: SupportedLanguages.EN_US,
+                query: query,
+              },
+            ],
+            t: 0,
+          };
+          return JSON.stringify(request);
+        }
+
+        function sendHttpRequest(url, method, headers, data) {
+          return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.open(method, url);
+
+            for (const key in headers) {
+              xhr.setRequestHeader(key, headers[key]);
+            }
+
+            xhr.onload = () => {
+              if (xhr.status >= 200 && xhr.status < 300) {
+                const response = JSON.parse(xhr.responseText);
+                resolve(response);
+              } else {
+                reject(new Error(`Request failed with status: ${xhr.status}`));
+              }
+            };
+
+            xhr.onerror = () => {
+              reject(new Error('Request failed'));
+            };
+
+            xhr.send(data);
+          });
+        }
+
+        /**
+         * TODO
+         * CORS блокирует запросы: настроить на сервере или сделать через локальный node сервер
+         * Без аутентификации получить результат невозможно - выдает Unauthorized
+         */
+        function sendSqlRequest(query) {
+          const url =
+            'http://fudo.eustrosoft.org:8080/eustrosofthandler_war/api/dispatch';
+          const headers = {
+            'Content-Type': 'application/json',
+          };
+          const data = buildSqlRequestBody(query);
+
+          return sendHttpRequest(url, 'POST', headers, data);
+        }
+
+        return {
+          sendSqlRequest: sendSqlRequest,
+        };
+      })();
+
+      const queryTextarea = document.getElementById('queryTextarea');
+      const executeButton = document.getElementById('executeButton');
+      const resultPre = document.getElementById('resultPre');
+      queryTextarea.value = 'select * from pg_user;';
+
+      executeButton.addEventListener('click', function () {
+        const query = queryTextarea.value.trim();
+
+        if (query !== '') {
+          App.sendSqlRequest(query)
+            .then((response) => {
+              resultPre.textContent = JSON.stringify(response, null, 2);
+            })
+            .catch((error) => {
+              resultPre.textContent = 'Error: ' + error.message;
+            });
+        } else {
+          resultPre.textContent = 'Please enter a valid SQL query.';
+        }
+      });
+    </script>
+  </body>
+</html>

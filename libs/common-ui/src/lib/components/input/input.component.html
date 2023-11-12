@@ -1,3 +1,10 @@
+<!--
+  ~ Copyright (c) 2023. IdrisovII & EustroSoft.org
+  ~
+  ~ This file is part of eustrosoft-front project.
+  ~ See the LICENSE file at the project root for licensing information.
+  -->
+
 <mat-form-field [appearance]="fieldAppearance" class="w-100">
   <mat-label>{{ label }}</mat-label>
   <input
@@ -5,7 +12,16 @@
     [placeholder]="placeholder"
     [type]="inputType"
     [attr.disabled]="disabled"
+    (blur)="blurred.emit($event)"
     matInput
   />
   <mat-icon matSuffix>{{ suffixIcon }}</mat-icon>
+  <!--TODO Понять как увеличивать высоту компонента при большом количестве ошибок-->
+  <mat-error *ngIf="control.touched && control.errors">
+    <ng-container *ngFor="let error of errors">
+      <ng-container *ngIf="control.hasError(error.errorCode)">
+        <span>{{ error.message }}</span> <br />
+      </ng-container>
+    </ng-container>
+  </mat-error>
 </mat-form-field>

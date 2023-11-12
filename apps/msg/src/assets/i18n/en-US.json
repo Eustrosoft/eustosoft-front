@@ -1,0 +1,69 @@
+{
+  "HEADER": {
+    "TITLE": "TIS Apps",
+    "APP_NAME": "Msg",
+    "APPS_BUTTON_TEXT": "Apps",
+    "APPS": {
+      "LOGIN": "Login",
+      "DISPATCHER": "Dispatcher",
+      "EXPLORER": "Explorer",
+      "ALL_APPS_PAGE": "All apps page"
+    }
+  },
+  "LOGIN_PAGE": {
+    "AUTHENTICATION_HEADING": "Authentication",
+    "LOGIN_LABEL": "Your login",
+    "PASSWORD_LABEL": "Your password",
+    "SUBMIT_BUTTON_TEXT": "Submit"
+  },
+  "MSG": {
+    "SELECT_TICKET_CAPTION_TEXT": "Select ticket from menu",
+    "OPEN_MENU_BUTTON_TEXT": "Open menu",
+    "CHAT_FILTERS_BUTTON_TEXT": "Filters",
+    "CREATE_NEW_CHAT_BUTTON_TEXT": "Create new chat or change selected filters",
+    "CLOSE_CHAT_BUTTON_TEXT": "Close ticket",
+    "OPEN_CHAT_BUTTON_TEXT": "Reopen ticket",
+    "RENAME_CHAT_BUTTON_TEXT": "Rename ticket",
+    "DELETE_CHAT_BUTTON_TEXT": "Delete ticket",
+    "TICKET_LIST_HEADER_TEXT": "Tickets",
+    "REFRESH_TICKET_LIST_BUTTON_TOOLTIP": "Refresh list",
+    "NO_MESSAGES_CAPTION_TEXT": "No messages available",
+    "NEW_MESSAGE_LABEL_TEXT": "Message",
+    "EDIT_MESSAGE_LABEL_TEXT": "Edit Message",
+    "EDIT_MESSAGE_BUTTON_TEXT": "Edit message",
+    "DELETE_MESSAGE_BUTTON_TEXT": "Delete message",
+    "MESSAGE_INPUT_PLACEHOLDER_TEXT": "Write a message...",
+    "INACTIVE_TICKET_CAPTION_TEXT": "Ticket is inactive",
+    "SEND_MESSAGE_BUTTON_TOOLTIP": "Shift+Enter: new line\nCtrl+Enter: send message",
+    "CANCEL_MESSAGE_EDIT_BUTTON_TOOLTIP": "Cancel editing",
+    "CREATE_CHAT_MODAL": {
+      "TITLE_TEXT": "Create new ticket",
+      "SUBJECT_LABEL_TEXT": "Subject",
+      "MESSAGE_LABEL_TEXT": "Message",
+      "EXTRA_OPTIONS_PANEL_TITLE": "Extra options",
+      "EXTRA_OPTIONS_PANEL_DESCRIPTION": "Security level, scope",
+      "EXTRA_OPTIONS_PANEL_SECURITY_LEVEL_LABEL": "Security level",
+      "EXTRA_OPTIONS_PANEL_SCOPE_LABEL": "Scope",
+      "CANCEL_BUTTON_TEXT": "Cancel",
+      "SUBMIT_BUTTON_TEXT": "Create"
+    },
+    "RENAME_CHAT_MODAL": {
+      "TITLE_TEXT": "Rename ticket",
+      "SUBJECT_LABEL_TEXT": "Subject",
+      "CANCEL_BUTTON_TEXT": "Cancel",
+      "SUBMIT_BUTTON_TEXT": "Rename"
+    },
+    "DELETE_CHAT_MODAL": {
+      "TITLE": "Delete confirmation",
+      "TEXT": "Ticket \"{{subject}}\" will be deleted. Proceed?",
+      "CANCEL_BUTTON_TEXT": "No",
+      "SUBMIT_BUTTON_TEXT": "Yes"
+    },
+    "ERRORS": {
+      "CHATS_FETCH_ERROR": "Error fetching chats",
+      "CHAT_MESSAGES_FETCH_ERROR": "Error fetching chat messages",
+      "CHAT_STATUS_FILTERS_FETCH_ERROR": "Error fetching chat status filters",
+      "CHAT_SECURITY_LEVEL_OPTIONS_FETCH_ERROR": "Error fetching security levels for chats"
+    }
+  }
+}

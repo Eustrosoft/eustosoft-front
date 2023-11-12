@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ *
+ * This file is part of eustrosoft-front project.
+ * See the LICENSE file at the project root for licensing information.
+ */
+
 import {
   ChangeDetectionStrategy,
   Component,
@@ -14,6 +21,8 @@ import {
 })
 export class FileListComponent {
   @Input() files!: File[];
+  @Input() classesForVirtualViewport: string[] = [];
+  @Input() classesForList: string[] = [];
   @Output() deleteFile = new EventEmitter<number>();
 
   delete(index: number): void {

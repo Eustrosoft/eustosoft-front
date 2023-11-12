@@ -1,0 +1,43 @@
+<!--
+  ~ Copyright (c) 2023. IdrisovII & EustroSoft.org
+  ~
+  ~ This file is part of eustrosoft-front project.
+  ~ See the LICENSE file at the project root for licensing information.
+  -->
+
+<ng-template #loginTemplate>
+  <form
+    [formGroup]="form"
+    (ngSubmit)="submit()"
+    class="d-flex flex-column align-items-center m-3"
+  >
+    <h2>{{ texts.heading }}</h2>
+    <eustrosoft-front-input
+      [inputType]="InputTypes.TEXT"
+      [label]="texts.loginLabel"
+      [control]="form.get('login')! | formControl"
+      [fieldAppearance]="'outline'"
+      [suffixIcon]="'person'"
+      [errors]="loginErrors"
+      class="col-10"
+    >
+    </eustrosoft-front-input>
+
+    <eustrosoft-front-input
+      [inputType]="InputTypes.PASSWORD"
+      [label]="texts.passwordLabel"
+      [control]="form.get('password')! | formControl"
+      [fieldAppearance]="'outline'"
+      [suffixIcon]="'lock'"
+      [errors]="passwordErrors"
+      class="col-10"
+    >
+    </eustrosoft-front-input>
+    <eustrosoft-front-button
+      [buttonStyleType]="'stroked'"
+      [buttonText]="texts.submitButtonText"
+      [buttonType]="'submit'"
+      [disabled]="form.get('submit')!.disabled"
+    ></eustrosoft-front-button>
+  </form>
+</ng-template>

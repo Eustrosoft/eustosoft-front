@@ -1,9 +1,17 @@
+<!--
+  ~ Copyright (c) 2023. IdrisovII & EustroSoft.org
+  ~
+  ~ This file is part of eustrosoft-front project.
+  ~ See the LICENSE file at the project root for licensing information.
+  -->
+
 <ng-container [ngSwitch]="buttonStyleType">
   <button
     *ngSwitchDefault
     mat-button
     [color]="color"
     [disabled]="disabled"
+    (click)="clicked.emit($event)"
     class="w-100"
   >
     {{ buttonText }}
@@ -14,6 +22,7 @@
     [color]="color"
     [type]="buttonType"
     [disabled]="disabled"
+    (click)="clicked.emit($event)"
     class="w-100"
   >
     {{ buttonText }}
@@ -24,6 +33,7 @@
     [color]="color"
     [type]="buttonType"
     [disabled]="disabled"
+    (click)="clicked.emit($event)"
     class="w-100"
   >
     {{ buttonText }}
@@ -34,6 +44,7 @@
     [color]="color"
     [type]="buttonType"
     [disabled]="disabled"
+    (click)="clicked.emit($event)"
     class="w-100"
   >
     {{ buttonText }}
@@ -44,10 +55,10 @@
     [color]="color"
     [type]="buttonType"
     [disabled]="disabled"
+    (click)="clicked.emit($event)"
     class="w-100"
   >
     <mat-icon>{{ iconName }}</mat-icon>
-    <span> {{ buttonText }}</span>
   </button>
   <button
     *ngSwitchCase="'fab'"
@@ -55,6 +66,7 @@
     [color]="color"
     [type]="buttonType"
     [disabled]="disabled"
+    (click)="clicked.emit($event)"
     class="w-100"
   >
     {{ buttonText }}
@@ -65,8 +77,26 @@
     [color]="color"
     [type]="buttonType"
     [disabled]="disabled"
+    (click)="clicked.emit($event)"
     class="w-100"
   >
     {{ buttonText }}
+  </button>
+  <button
+    *ngSwitchCase="'with-icon'"
+    mat-stroked-button
+    [color]="color"
+    [type]="buttonType"
+    [disabled]="disabled"
+    (click)="clicked.emit($event)"
+    class="w-100"
+  >
+    <div
+      class="d-flex align-items-center"
+      [class.flex-row-reverse]="iconPosition === 'end'"
+    >
+      <mat-icon>{{ iconName }}</mat-icon>
+      <span> {{ buttonText }}</span>
+    </div>
   </button>
 </ng-container>

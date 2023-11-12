@@ -1,0 +1,128 @@
+<!--
+  ~ Copyright (c) 2023. IdrisovII & EustroSoft.org
+  ~
+  ~ This file is part of eustrosoft-front project.
+  ~ See the LICENSE file at the project root for licensing information.
+  -->
+
+<div class="container">
+  <div class="row gx-3 pt-2 align-items-center">
+    <div class="col-2 w-auto">
+      <eustrosoft-front-button
+        [buttonType]="'button'"
+        [buttonStyleType]="'icon'"
+        [iconName]="'navigate_before'"
+        (click)="navigateBack()"
+      >
+      </eustrosoft-front-button>
+    </div>
+    <div class="col-10">
+      <h1 class="m-0 p-0 d-flex align-items-center" mat-dialog-title>
+        <span>{{ data.title }}</span>
+      </h1>
+    </div>
+  </div>
+  <div class="row">
+    <div class="py-2 px-4 d-flex flex-column" mat-dialog-content>
+      <cdk-virtual-scroll-viewport itemSize="5" class="vh-25 vw-50">
+        <mat-selection-list
+          [multiple]="false"
+          [hideSingleSelectionIndicator]="true"
+          [disableRipple]="true"
+        >
+          <mat-list-option
+            *ngFor="let object of fsObjects$ | async; let i = index"
+            [value]="object"
+            [disabled]="
+              object.type === fsObjTypes.FILE || object.type === fsObjTypes.LINK
+            "
+            (click)="optionClicked(i)"
+          >
+            <ng-container [ngSwitch]="object.type">
+              <ng-container
+                *ngSwitchCase="fsObjTypes.DIRECTORY"
+                [ngTemplateOutlet]="directoryTemplate"
+                [ngTemplateOutletContext]="{
+                  object: object,
+                  forwardLinkDisabled: matSelectionList.options.get(i)?.disabled
+                }"
+              >
+              </ng-container>
+              <ng-container
+                *ngSwitchCase="fsObjTypes.LINK"
+                [ngTemplateOutlet]="linkOrFileTemplate"
+                [ngTemplateOutletContext]="{ $implicit: object }"
+              >
+              </ng-container>
+              <ng-container
+                *ngSwitchCase="fsObjTypes.FILE"
+                [ngTemplateOutlet]="linkOrFileTemplate"
+                [ngTemplateOutletContext]="{ $implicit: object }"
+              >
+              </ng-container>
+            </ng-container>
+          </mat-list-option>
+        </mat-selection-list>
+      </cdk-virtual-scroll-viewport>
+    </div>
+  </div>
+  <div class="row">
+    <div class="px-4" mat-dialog-actions>
+      <eustrosoft-front-button
+        [buttonType]="'button'"
+        [buttonStyleType]="'icon'"
+        [iconName]="'create_new_folder'"
+        [title]="createNewFolderTitleText"
+        (click)="createNewFolder()"
+      >
+      </eustrosoft-front-button>
+      <span class="left-spacer"></span>
+      <eustrosoft-front-button
+        [buttonType]="'button'"
+        [buttonStyleType]="'flat'"
+        [buttonText]="data.cancelButtonText"
+        (click)="reject()"
+      >
+      </eustrosoft-front-button>
+      <span class="buttons-spacer"></span>
+      <eustrosoft-front-button
+        [buttonStyleType]="'flat'"
+        [buttonText]="data.submitButtonText"
+        [color]="'primary'"
+        [disabled]="!!(moveButtonDisabled$ | async)"
+        [matTooltip]="moveButtonErrorText"
+        (clicked)="resolve()"
+      >
+      </eustrosoft-front-button>
+    </div>
+  </div>
+</div>
+
+<ng-template
+  #directoryTemplate
+  let-object="object"
+  let-forwardLinkDisabled="forwardLinkDisabled"
+>
+  <div class="d-flex justify-content-between">
+    <div class="d-flex align-items-center lh-1">
+      <mat-icon>folder</mat-icon>
+      <span>{{ object.fileName }}</span>
+    </div>
+    <eustrosoft-front-button
+      [buttonType]="'button'"
+      [buttonStyleType]="'icon'"
+      [iconName]="'navigate_next'"
+      [disabled]="forwardLinkDisabled"
+      (clicked)="navigateForward($event, object)"
+    >
+    </eustrosoft-front-button>
+  </div>
+</ng-template>
+<ng-template #linkOrFileTemplate let-object>
+  <div class="d-flex justify-content-between">
+    <div class="d-flex align-items-center lh-1">
+      <mat-icon>draft</mat-icon>
+      <span>{{ object.fileName }}</span>
+    </div>
+  </div>
+</ng-template>
