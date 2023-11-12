@@ -19,7 +19,7 @@ import { CommonUiModule } from '@eustrosoft-front/common-ui';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatMenuModule } from '@angular/material/menu';
-import { CoreModule } from '@eustrosoft-front/core';
+import { CoreModule, CustomLocationStrategy } from '@eustrosoft-front/core';
 import { ExplorerService } from './explorer/services/explorer.service';
 import { ExplorerRequestBuilderService } from './explorer/services/explorer-request-builder.service';
 import { SecurityModule } from '@eustrosoft-front/security';
@@ -48,6 +48,7 @@ import { UploadPageComponent } from './explorer/components/upload-page/upload-pa
 import { MatCardModule } from '@angular/material/card';
 import { UploadObjectComponent } from './explorer/components/upload-item/upload-object.component';
 import { ExplorerUploadItemFormFactoryService } from './explorer/services/explorer-upload-item-form-factory.service';
+import { LocationStrategy } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -93,6 +94,7 @@ import { ExplorerUploadItemFormFactoryService } from './explorer/services/explor
     ExplorerUploadItemsService,
     ExplorerUploadItemFormFactoryService,
     Stack,
+    { provide: LocationStrategy, useClass: CustomLocationStrategy },
   ],
   bootstrap: [AppComponent],
 })
