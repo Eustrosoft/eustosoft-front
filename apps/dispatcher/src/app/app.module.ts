@@ -18,7 +18,6 @@ import { SecurityModule } from '@eustrosoft-front/security';
 import { MatIconModule } from '@angular/material/icon';
 import { RequestsComponent } from './requests/requests.component';
 import { MatTableModule } from '@angular/material/table';
-import { RequestService } from './requests/services/request.service';
 import { RequestBuilderService } from './requests/services/request-builder.service';
 import { RequestFormBuilderService } from './requests/services/request-form-builder.service';
 import { RequestComponent } from './requests/components/request/request.component';
@@ -47,7 +46,7 @@ import { LoginPageComponent } from './login-page/login-page.component';
     MatIconModule,
     MatMenuModule,
   ],
-  providers: [RequestService, RequestBuilderService, RequestFormBuilderService],
+  providers: [RequestBuilderService, RequestFormBuilderService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

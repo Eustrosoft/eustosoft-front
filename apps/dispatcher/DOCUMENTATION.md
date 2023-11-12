@@ -10,7 +10,6 @@
   - [Компонент RequestsComponent](#компонент-requestscomponent)
   - [Компонент RequestComponent](#компонент-requestcomponent)
 - [Сервисы](#сервисы)
-  - [Сервис RequestService](#сервис-requestservice)
   - [Сервис RequestBuilderService](#сервис-requestbuilderservice)
 - [Модули](#модули)
   - [Модуль AppModule](#модуль-appmodule)
@@ -53,10 +52,6 @@
 Компонент содержащий единичную форму. На вход получает конкретную форму и её индекс, а также список возможных типов запросов.
 
 ## Сервисы
-
-### Сервис `RequestService`
-
-Предоставляет возможность взаимодействия с JSON протоколом Qtis. См. описание протокола и примеры в `README.md` , подзаголовок "Библиотека `core`"
 
 ### Сервис `RequestBuilderService`
 
