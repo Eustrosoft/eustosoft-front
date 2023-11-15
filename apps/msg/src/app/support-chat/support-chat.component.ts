@@ -210,7 +210,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
     )
   );
 
-  // TODO Запрашивать справочные значения один раз при инициализации приложения
+  // TODO Get dictionary values only once on app init
   chatFilterOptions$: Observable<DicValue[]> = this.msgDictionaryService
     .getStatusOptions()
     .pipe(

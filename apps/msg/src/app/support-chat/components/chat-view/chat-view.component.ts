@@ -8,6 +8,7 @@
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
@@ -54,6 +55,7 @@ export class ChatViewComponent implements OnChanges, AfterViewInit {
   messagesScrollableBlock!: ElementRef<HTMLDivElement>;
 
   private authenticationService = inject(AuthenticationService);
+  private cdRef = inject(ChangeDetectorRef);
 
   messageInEdit: ChatMessage | undefined = undefined;
   MSG_CHAT_STATUS = MsgChatStatus;
@@ -68,7 +70,7 @@ export class ChatViewComponent implements OnChanges, AfterViewInit {
       this.messageInEdit = undefined;
     }
 
-    // Если скролл внизу и сообщения добавились, то скролл промотает вниз к последнему сообщению
+    // If scroll is at bottom and new messages were added -> call scrollToBottom
     if (
       'selectedChatMessages' in changes &&
       !changes['selectedChatMessages'].isFirstChange() &&
@@ -84,12 +86,10 @@ export class ChatViewComponent implements OnChanges, AfterViewInit {
     this.scrollToBottom();
   }
 
-  scrollToBottom() {
-    // Эта хуета не работает без setTimeout. detectChanges() и прочее из ChangeDetectorRef - не помогает
-    setTimeout(() => {
-      this.messagesScrollableBlock.nativeElement.scrollTop =
-        this.messagesScrollableBlock.nativeElement.scrollHeight;
-    }, 0);
+  scrollToBottom(): void {
+    this.cdRef.detectChanges();
+    this.messagesScrollableBlock.nativeElement.scrollTop =
+      this.messagesScrollableBlock.nativeElement.scrollHeight;
   }
 
   scrollAtBottom(): boolean {
