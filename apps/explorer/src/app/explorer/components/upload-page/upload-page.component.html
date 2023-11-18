@@ -38,12 +38,24 @@
   </div>
 
   <div class="row gy-3">
-    <eustrosoft-front-upload-object
-      *ngFor="let uploadObjectForm of uploadObjects.controls; let i = index"
-      [uploadObjectForm]="uploadObjectForm"
-      [formIndex]="i"
-      class="col-4"
-    ></eustrosoft-front-upload-object>
+    <ng-container
+      *ngIf="{
+        securityLevel: securityLevelOptions$ | async
+      } as vm"
+    >
+      <eustrosoft-front-upload-object
+        *ngFor="
+          let uploadObjectForm of uploadObjectForms.controls;
+          let i = index
+        "
+        [uploadObjectForm]="uploadObjectForm"
+        [formIndex]="i"
+        [slvlOptions]="vm.securityLevel || []"
+        (fileDeleted)="deleteFile($event)"
+        (fileUploadCanceled)="cancelFileUpload($event)"
+        class="col-4"
+      ></eustrosoft-front-upload-object>
+    </ng-container>
   </div>
 </div>
 
@@ -54,3 +66,4 @@
 ></eustrosoft-front-input-file>
 
 <ng-container *ngIf="fileControlValueChanges$ | async"></ng-container>
+<ng-container *ngIf="upload$ | async"></ng-container>

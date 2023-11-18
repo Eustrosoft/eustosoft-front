@@ -80,7 +80,8 @@
     "ERRORS": {
       "REQUEST_ERROR_TEXT": "Error making request",
       "NO_SELECTED_FILES_ERROR_TEXT": "Select files first",
-      "CLOSE_BUTTON_TEXT": "Close"
+      "CLOSE_BUTTON_TEXT": "Close",
+      "SECURITY_LEVEL_OPTIONS_FETCH_ERROR": "Error fetching security levels"
     }
   }
 }

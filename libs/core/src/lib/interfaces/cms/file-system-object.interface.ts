@@ -8,13 +8,11 @@
 import { FileSystemObjectTypes } from '../../constants/enums/file-system-object-types.enum';
 
 export interface FileSystemObject {
+  description: string;
   fileName: string;
-  extension?: string;
-  hash?: string;
   fullPath: string;
-  links: Array<unknown>;
+  securityLevel: number;
   space: number;
-  modified: string;
-  created: string;
   type: FileSystemObjectTypes;
+  zoid: number;
 }

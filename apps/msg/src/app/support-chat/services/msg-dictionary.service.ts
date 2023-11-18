@@ -34,17 +34,9 @@ export class MsgDictionaryService {
   }
 
   getSecurityLevelOptions(): Observable<Option[]> {
-    return this.dicService.getDictionaryValues(Dictionaries.SLEVEL).pipe(
-      map((response: QtisRequestResponseInterface<DicValuesResponse>) =>
-        response.r.flatMap((r: DicValuesResponse) => r.values)
-      ),
-      map((values) =>
-        values.map((value) => ({
-          value: value.code,
-          displayText: value.value,
-          disabled: false,
-        }))
-      )
+    return this.dicService.getOptionsFromDictionary<Option>(
+      Dictionaries.SLEVEL,
+      this.dicService.toOption
     );
   }
 

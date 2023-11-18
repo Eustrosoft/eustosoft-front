@@ -49,6 +49,8 @@ import { MatCardModule } from '@angular/material/card';
 import { UploadObjectComponent } from './explorer/components/upload-item/upload-object.component';
 import { ExplorerUploadItemFormFactoryService } from './explorer/services/explorer-upload-item-form-factory.service';
 import { LocationStrategy } from '@angular/common';
+import { ExplorerDictionaryService } from './explorer/services/explorer-dictionary.service';
+import { DicModule } from '@eustrosoft-front/dic';
 
 @NgModule({
   declarations: [
@@ -85,6 +87,7 @@ import { LocationStrategy } from '@angular/common';
     MatTooltipModule,
     A11yModule,
     MatCardModule,
+    DicModule,
   ],
   providers: [
     ExplorerService,
@@ -93,6 +96,7 @@ import { LocationStrategy } from '@angular/common';
     ExplorerUploadService,
     ExplorerUploadItemsService,
     ExplorerUploadItemFormFactoryService,
+    ExplorerDictionaryService,
     Stack,
     { provide: LocationStrategy, useClass: CustomLocationStrategy },
   ],

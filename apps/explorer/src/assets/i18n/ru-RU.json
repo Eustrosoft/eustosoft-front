@@ -80,7 +80,8 @@
     "ERRORS": {
       "REQUEST_ERROR_TEXT": "Возникла ошибка при исполнении запроса",
       "NO_SELECTED_FILES_ERROR_TEXT": "Сначала выберите файлы",
-      "CLOSE_BUTTON_TEXT": "Закрыть"
+      "CLOSE_BUTTON_TEXT": "Закрыть",
+      "SECURITY_LEVEL_OPTIONS_FETCH_ERROR": "Ошибка при попытке получения списка уровней доступа"
     }
   }
 }

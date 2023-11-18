@@ -5,7 +5,13 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+} from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { UploadObjectForm } from '@eustrosoft-front/core';
 import { Option } from '@eustrosoft-front/common-ui';
@@ -20,11 +26,9 @@ import { UploadingState } from '../../constants/enums/uploading-state.enum';
 export class UploadObjectComponent {
   @Input() uploadObjectForm!: FormGroup<UploadObjectForm>;
   @Input() formIndex!: number;
-  @Input() accessLevelOptions: Option[] = [
-    { value: 1, displayText: 'First', disabled: false },
-    { value: 2, displayText: 'Second', disabled: false },
-    { value: 3, displayText: 'Third', disabled: false },
-  ];
+  @Input() slvlOptions: Option[] = [];
+  @Output() fileDeleted = new EventEmitter<number>();
+  @Output() fileUploadCanceled = new EventEmitter<number>();
 
   UploadingState = UploadingState;
 }
