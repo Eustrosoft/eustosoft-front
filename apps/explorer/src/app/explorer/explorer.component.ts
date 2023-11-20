@@ -228,30 +228,30 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
         this.explorerUploadItemsService.uploadItems$.next(uniqueArray);
         return of(uniqueArray);
       }),
-      switchMap((items) => {
-        switch (this.uploadTypeControl.value) {
-          case 'binary':
-            return this.explorerUploadService.uploadBinary(
-              items,
-              this.path$.getValue()
-            );
-          case 'hex':
-            return this.explorerUploadService.uploadHexString(
-              items,
-              this.path$.getValue()
-            );
-          case 'base64':
-            return this.explorerUploadService.uploadBase64(
-              items,
-              this.path$.getValue()
-            );
-          default:
-            return this.explorerUploadService.uploadBinary(
-              items,
-              this.path$.getValue()
-            );
-        }
-      }),
+      // switchMap((items) => {
+      //   switch (this.uploadTypeControl.value) {
+      //     case 'binary':
+      //       return this.explorerUploadService.uploadBinary(
+      //         items,
+      //         this.path$.getValue()
+      //       );
+      //     case 'hex':
+      //       return this.explorerUploadService.uploadHexString(
+      //         items,
+      //         this.path$.getValue()
+      //       );
+      //     case 'base64':
+      //       return this.explorerUploadService.uploadBase64(
+      //         items,
+      //         this.path$.getValue()
+      //       );
+      //     default:
+      //       return this.explorerUploadService.uploadBinary(
+      //         items,
+      //         this.path$.getValue()
+      //       );
+      //   }
+      // }),
       // emit buffer after every file upload completion
       tap(() => {
         this.emitBuffer$.next();

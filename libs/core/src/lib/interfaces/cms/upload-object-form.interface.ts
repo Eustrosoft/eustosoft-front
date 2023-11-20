@@ -10,6 +10,6 @@ import { UploadObject } from './upload-object.interface';
 
 export interface UploadObjectForm {
   uploadItem: FormControl<UploadObject['uploadItem']>;
-  note: FormControl<UploadObject['note']>;
-  accessLevel: FormControl<UploadObject['accessLevel']>;
+  description: FormControl<UploadObject['description']>;
+  securityLevel: FormControl<UploadObject['securityLevel']>;
 }

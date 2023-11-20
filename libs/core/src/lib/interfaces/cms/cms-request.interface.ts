@@ -47,6 +47,8 @@ export interface UploadHexRequest extends BaseCmsRequest {
     all_chunks: number;
     hash: string;
     path: string;
+    securityLevel?: number;
+    description?: string;
   };
 }
 

@@ -116,7 +116,6 @@ export class FileReaderService {
                 byteaStr += h[v >> 4] + h[v & 15];
               });
 
-              console.log('Chunk like Byte String:', byteaStr);
               chunks.push(byteaStr);
               startPointer = newStartPointer;
             }

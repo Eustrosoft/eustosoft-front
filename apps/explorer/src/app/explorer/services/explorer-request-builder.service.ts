@@ -88,23 +88,33 @@ export class ExplorerRequestBuilderService {
     chunk: string,
     chunkIndex: number,
     totalChunks: number,
+    securityLevel?: number,
+    description?: string,
     path: string = '/'
   ): QtisRequestResponseInterface<UploadHexRequest> {
+    const params: UploadHexRequest['parameters'] = {
+      hexString: chunk,
+      name: file.name,
+      ext: file.name.split('.').pop() as string,
+      chunk: chunkIndex,
+      all_chunks: totalChunks,
+      hash: crc32(chunk),
+      path,
+    };
+    if (securityLevel !== undefined) {
+      params.securityLevel = securityLevel;
+    }
+
+    if (description !== undefined) {
+      params.description = description;
+    }
     return {
       r: [
         {
           s: Subsystems.FILE,
           r: CmsRequestActions.UPLOAD_CHUNKS_HEX,
           l: SupportedLanguages.EN_US,
-          parameters: {
-            hexString: chunk,
-            name: file.name,
-            ext: file.name.split('.').pop() as string,
-            chunk: chunkIndex,
-            all_chunks: totalChunks,
-            hash: crc32(chunk),
-            path,
-          },
+          parameters: params,
         },
       ],
       t: 0,

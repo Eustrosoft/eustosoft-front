@@ -7,6 +7,7 @@
 
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   inject,
   OnDestroy,
@@ -28,11 +29,7 @@ import {
   zip,
 } from 'rxjs';
 import { InputFileComponent, Option } from '@eustrosoft-front/common-ui';
-import {
-  UploadItem,
-  UploadObject,
-  UploadObjectForm,
-} from '@eustrosoft-front/core';
+import { UploadObject, UploadObjectForm } from '@eustrosoft-front/core';
 import { ExplorerUploadService } from '../../services/explorer-upload.service';
 import { ExplorerUploadItemsService } from '../../services/explorer-upload-items.service';
 import { UploadingState } from '../../constants/enums/uploading-state.enum';
@@ -51,6 +48,7 @@ import { TranslateService } from '@ngx-translate/core';
 export class UploadPageComponent implements OnInit, OnDestroy {
   @ViewChild(InputFileComponent) inputFileComponent!: InputFileComponent;
   private snackBar = inject(MatSnackBar);
+  private cdRef = inject(ChangeDetectorRef);
   private translateService = inject(TranslateService);
   private explorerUploadService = inject(ExplorerUploadService);
   private explorerDictionaryService = inject(ExplorerDictionaryService);
@@ -76,8 +74,6 @@ export class UploadPageComponent implements OnInit, OnDestroy {
             state: UploadingState.PENDING,
             cancelled: false,
           },
-          note: '',
-          accessLevel: 0,
         }))
       ),
       tap((uploadObjects) => {
@@ -98,30 +94,52 @@ export class UploadPageComponent implements OnInit, OnDestroy {
       console.log('upload$', awf);
     }),
     switchMap((files) =>
-      zip([of(files), this.explorerUploadItemsService.uploadItems$])
+      zip([
+        of(files),
+        this.explorerUploadItemsService.uploadObjects$.pipe(
+          tap((objects) => {
+            this.uploadObjectForms.patchValue(objects, { emitEvent: true });
+            // this.cdRef.markForCheck();
+          })
+        ),
+      ])
     ),
-    // TODO Needed specification for description & slvl fields
-    switchMap(([items, uploadItems]) => {
-      const uniqueArray = uploadItems
-        .concat(items)
+    switchMap(([objects, uploadObjects]) => {
+      const uniqueArray = uploadObjects
+        .concat(objects)
         .filter(
           (obj, index, self) =>
-            index === self.findIndex((t) => t.file.name === obj.file.name)
+            index ===
+            self.findIndex(
+              (t) => t.uploadItem.file.name === obj.uploadItem.file.name
+            )
         )
-        .filter((item: UploadItem) => !item.cancelled);
-      this.explorerUploadItemsService.uploadItems$.next(uniqueArray);
+        .filter((obj) => !obj.uploadItem.cancelled);
+      this.explorerUploadItemsService.uploadObjects$.next(uniqueArray);
       return of(uniqueArray);
     }),
-    switchMap((items) => {
+    switchMap((objects) => {
       switch (this.uploadTypeControl.value) {
         case 'binary':
-          return this.explorerUploadService.uploadBinary(items, '/');
+          return this.explorerUploadService.uploadHexString(
+            objects,
+            '/LOCAL/RootYadzuka/My Movies'
+          );
         case 'hex':
-          return this.explorerUploadService.uploadHexString(items, '/');
+          return this.explorerUploadService.uploadHexString(
+            objects,
+            '/LOCAL/RootYadzuka/My Movies'
+          );
         case 'base64':
-          return this.explorerUploadService.uploadBase64(items, '/');
+          return this.explorerUploadService.uploadHexString(
+            objects,
+            '/LOCAL/RootYadzuka/My Movies'
+          );
         default:
-          return this.explorerUploadService.uploadBinary(items, '/');
+          return this.explorerUploadService.uploadHexString(
+            objects,
+            '/LOCAL/RootYadzuka/My Movies'
+          );
       }
     }),
     // emit buffer after every file upload completion
@@ -173,6 +191,13 @@ export class UploadPageComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     console.log('init');
+    this.uploadObjectForms.valueChanges
+      .pipe(
+        tap((val) => {
+          console.log('Form Change', val);
+        })
+      )
+      .subscribe();
     // this.upload$ = this.startUpload$.asObservable().pipe(
     //   switchMap(() => this.objectsToUpload$.pipe(tap(console.log)))
     // buffer(this.emitBuffer$.pipe(takeUntil(this.destroy$))),

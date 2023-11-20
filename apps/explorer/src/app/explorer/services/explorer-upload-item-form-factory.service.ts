@@ -17,8 +17,8 @@ export class ExplorerUploadItemFormFactoryService {
   ): FormGroup<UploadObjectForm> {
     return this.fb.group<UploadObjectForm>({
       uploadItem: this.fb.nonNullable.control(uploadObject.uploadItem),
-      note: this.fb.nonNullable.control(uploadObject.note),
-      accessLevel: this.fb.nonNullable.control(uploadObject.accessLevel),
+      description: this.fb.nonNullable.control(uploadObject.description),
+      securityLevel: this.fb.nonNullable.control(uploadObject.securityLevel),
     });
   }
 }
