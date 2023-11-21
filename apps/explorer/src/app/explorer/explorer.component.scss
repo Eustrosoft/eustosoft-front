@@ -5,7 +5,7 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-@import 'variables';
+@use 'variables';
 
 :host {
   display: flex;
@@ -29,5 +29,27 @@
         }
       }
     }
+  }
+}
+
+.explorer {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  gap: 1rem;
+  &-actions {
+    display: flex;
+    margin: 1rem 1rem 0 1rem;
+    gap: 1rem;
+  }
+  &-path {
+    display: flex;
+    margin: 0 1rem;
+  }
+  &-table{
+    display: flex;
+    flex: 0 1 auto;
+    margin: 0 1rem;
+    overflow: auto;
   }
 }

@@ -5,10 +5,15 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-@import 'variables';
+@use 'variables' as vars;
+
+:host {
+  display: flex;
+  flex: 1 1 auto;
+}
 
 tr.table-row:hover {
-  background: whitesmoke;
+  background: vars.$light-gray;
 }
 
 tr.table-row {
@@ -20,7 +25,7 @@ tr.table-row {
 }
 
 .files-over {
-  background: $light-gray;
+  background: vars.$light-gray;
   transition: 0.2s background;
 }
 
@@ -29,4 +34,11 @@ tr.table-row {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.no-content {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: center;
 }

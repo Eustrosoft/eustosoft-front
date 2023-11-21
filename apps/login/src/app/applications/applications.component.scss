@@ -5,7 +5,7 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-@import 'variables';
+@use 'variables' as vars;
 
 :host {
   .app-icon {
@@ -16,10 +16,10 @@
   }
 
   .database {
-    color: $gray;
+    color: vars.$gray;
   }
 
   .folder {
-    color: $gray;
+    color: vars.$gray;
   }
 }

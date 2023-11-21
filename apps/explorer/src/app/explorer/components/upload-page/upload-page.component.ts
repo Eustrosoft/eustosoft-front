@@ -15,24 +15,11 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
-import {
-  catchError,
-  EMPTY,
-  map,
-  Observable,
-  of,
-  repeat,
-  shareReplay,
-  Subject,
-  switchMap,
-  tap,
-  zip,
-} from 'rxjs';
+import { catchError, EMPTY, Observable, shareReplay, Subject, tap } from 'rxjs';
 import { InputFileComponent, Option } from '@eustrosoft-front/common-ui';
-import { UploadObject, UploadObjectForm } from '@eustrosoft-front/core';
+import { UploadObjectForm } from '@eustrosoft-front/core';
 import { ExplorerUploadService } from '../../services/explorer-upload.service';
 import { ExplorerUploadItemsService } from '../../services/explorer-upload-items.service';
-import { UploadingState } from '../../constants/enums/uploading-state.enum';
 import { ExplorerUploadItemFormFactoryService } from '../../services/explorer-upload-item-form-factory.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ExplorerDictionaryService } from '../../services/explorer-dictionary.service';
@@ -64,94 +51,94 @@ export class UploadPageComponent implements OnInit, OnDestroy {
   fileControl = new FormControl<File[]>([], { nonNullable: true });
   uploadObjectForms = new FormArray<FormGroup<UploadObjectForm>>([]);
 
-  fileControlValueChanges$: Observable<UploadObject[]> =
-    this.fileControl.valueChanges.pipe(
-      map((files) =>
-        files.map<UploadObject>((file) => ({
-          uploadItem: {
-            file,
-            progress: 0,
-            state: UploadingState.PENDING,
-            cancelled: false,
-          },
-        }))
-      ),
-      tap((uploadObjects) => {
-        const forms = uploadObjects.map((uploadObject) =>
-          this.explorerUploadItemFormFactoryService.makeNewUploadObjectForm(
-            uploadObject
-          )
-        );
-        forms.forEach((form) => this.uploadObjectForms.push(form));
-        console.log('this.uploadObjectForms', this.uploadObjectForms);
-      }),
-      shareReplay(1)
-    );
-
-  upload$ = this.startUpload$.asObservable().pipe(
-    switchMap(() => of(this.uploadObjectForms.getRawValue() as UploadObject[])),
-    tap((awf) => {
-      console.log('upload$', awf);
-    }),
-    switchMap((files) =>
-      zip([
-        of(files),
-        this.explorerUploadItemsService.uploadObjects$.pipe(
-          tap((objects) => {
-            this.uploadObjectForms.patchValue(objects, { emitEvent: true });
-            // this.cdRef.markForCheck();
-          })
-        ),
-      ])
-    ),
-    switchMap(([objects, uploadObjects]) => {
-      const uniqueArray = uploadObjects
-        .concat(objects)
-        .filter(
-          (obj, index, self) =>
-            index ===
-            self.findIndex(
-              (t) => t.uploadItem.file.name === obj.uploadItem.file.name
-            )
-        )
-        .filter((obj) => !obj.uploadItem.cancelled);
-      this.explorerUploadItemsService.uploadObjects$.next(uniqueArray);
-      return of(uniqueArray);
-    }),
-    switchMap((objects) => {
-      switch (this.uploadTypeControl.value) {
-        case 'binary':
-          return this.explorerUploadService.uploadHexString(
-            objects,
-            '/LOCAL/RootYadzuka/My Movies'
-          );
-        case 'hex':
-          return this.explorerUploadService.uploadHexString(
-            objects,
-            '/LOCAL/RootYadzuka/My Movies'
-          );
-        case 'base64':
-          return this.explorerUploadService.uploadHexString(
-            objects,
-            '/LOCAL/RootYadzuka/My Movies'
-          );
-        default:
-          return this.explorerUploadService.uploadHexString(
-            objects,
-            '/LOCAL/RootYadzuka/My Movies'
-          );
-      }
-    }),
-    // emit buffer after every file upload completion
-    tap(() => {
-      this.emitBuffer$.next();
-    }),
-    catchError((err) => {
-      console.error(err);
-      return EMPTY;
-    }),
-    repeat()
-  );
+  // fileControlValueChanges$: Observable<UploadObject[]> =
+  //   this.fileControl.valueChanges.pipe(
+  //     map((files) =>
+  //       files.map<UploadObject>((file) => ({
+  //         uploadItem: {
+  //           file,
+  //           progress: 0,
+  //           state: UploadingState.PENDING,
+  //           cancelled: false,
+  //         },
+  //       }))
+  //     ),
+  //     tap((uploadObjects) => {
+  //       const forms = uploadObjects.map((uploadObject) =>
+  //         this.explorerUploadItemFormFactoryService.makeNewUploadObjectForm(
+  //           uploadObject
+  //         )
+  //       );
+  //       forms.forEach((form) => this.uploadObjectForms.push(form));
+  //       console.log('this.uploadObjectForms', this.uploadObjectForms);
+  //     }),
+  //     shareReplay(1)
+  //   );
+  //
+  // upload$ = this.startUpload$.asObservable().pipe(
+  //   switchMap(() => of(this.uploadObjectForms.getRawValue() as UploadObject[])),
+  //   tap((awf) => {
+  //     console.log('upload$', awf);
+  //   }),
+  //   switchMap((files) =>
+  //     zip([
+  //       of(files),
+  //       this.explorerUploadItemsService.uploadObjects$.pipe(
+  //         tap((objects) => {
+  //           this.uploadObjectForms.patchValue(objects, { emitEvent: true });
+  //           // this.cdRef.markForCheck();
+  //         })
+  //       ),
+  //     ])
+  //   ),
+  //   switchMap(([objects, uploadObjects]) => {
+  //     const uniqueArray = uploadObjects
+  //       .concat(objects)
+  //       .filter(
+  //         (obj, index, self) =>
+  //           index ===
+  //           self.findIndex(
+  //             (t) => t.uploadItem.file.name === obj.uploadItem.file.name
+  //           )
+  //       )
+  //       .filter((obj) => !obj.uploadItem.cancelled);
+  //     this.explorerUploadItemsService.uploadObjects$.next(uniqueArray);
+  //     return of(uniqueArray);
+  //   }),
+  // switchMap((objects) => {
+  //   switch (this.uploadTypeControl.value) {
+  //     case 'binary':
+  //       return this.explorerUploadService.uploadHexString(
+  //         objects,
+  //         '/LOCAL/RootYadzuka/My Movies'
+  //       );
+  //     case 'hex':
+  //       return this.explorerUploadService.uploadHexString(
+  //         objects,
+  //         '/LOCAL/RootYadzuka/My Movies'
+  //       );
+  //     case 'base64':
+  //       return this.explorerUploadService.uploadHexString(
+  //         objects,
+  //         '/LOCAL/RootYadzuka/My Movies'
+  //       );
+  //     default:
+  //       return this.explorerUploadService.uploadHexString(
+  //         objects,
+  //         '/LOCAL/RootYadzuka/My Movies'
+  //       );
+  //   }
+  // }),
+  // emit buffer after every file upload completion
+  //   tap(() => {
+  //     this.emitBuffer$.next();
+  //   }),
+  //   catchError((err) => {
+  //     console.error(err);
+  //     return EMPTY;
+  //   }),
+  //   repeat()
+  // );
 
   uploadTypeControl = new FormControl<string>('hex', {
     nonNullable: true,

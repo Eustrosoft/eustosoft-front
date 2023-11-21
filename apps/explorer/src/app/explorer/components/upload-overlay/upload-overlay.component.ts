@@ -24,13 +24,15 @@ import { UploadingState } from '../../constants/enums/uploading-state.enum';
 export class UploadOverlayComponent {
   @Input() uploadItems!: UploadItem[];
 
+  @Output() startUpload = new EventEmitter<void>();
   @Output() removeItem = new EventEmitter<UploadItem>();
   @Output() closeOverlay = new EventEmitter<UploadItem[]>();
+  @Output() openFileFolder = new EventEmitter<string>();
 
   UploadingState = UploadingState;
 
   openFolder(item: UploadItem): void {
-    console.log(item);
+    this.openFileFolder.emit(item.uploadPath);
   }
 
   remove(item: UploadItem): void {

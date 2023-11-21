@@ -101,8 +101,9 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
     localStorage.getItem('qtis-explorer-last-path') || '/'
   );
 
-  content$!: Observable<FileSystemObject[]>;
   upload$!: Observable<any>;
+  fileControlChanges$!: Observable<UploadItem[]>;
+  content$!: Observable<FileSystemObject[]>;
   selected$!: Observable<FileSystemObject[]>;
 
   fileControl = new FormControl<File[]>([], { nonNullable: true });
@@ -133,6 +134,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
   private destroy$ = new Subject<void>();
   private emitBuffer$ = new Subject<void>();
   private fileSystemTableRendered$ = new Subject<void>();
+  private startUpload$ = new Subject<void>();
 
   constructor(
     private fileReaderService: FileReaderService,
@@ -200,19 +202,19 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
       })
     );
 
-    this.upload$ = this.fileControl.valueChanges.pipe(
+    this.fileControlChanges$ = this.fileControl.valueChanges.pipe(
       buffer(this.emitBuffer$.pipe(takeUntil(this.destroy$))),
       mergeMap((files: File[][]) => files),
       map((files: File[]) => {
         console.log('Buffer', files);
         this.overlayHidden = false;
-        const uploadItems = files.map<UploadItem>((file) => ({
+        return files.map<UploadItem>((file) => ({
           file,
           progress: 0,
           state: UploadingState.PENDING,
           cancelled: false,
+          uploadPath: this.path$.getValue(),
         }));
-        return uploadItems;
       }),
       switchMap((files) =>
         zip([of(files), this.explorerUploadItemsService.uploadItems$])
@@ -227,31 +229,38 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
           .filter((item: UploadItem) => !item.cancelled);
         this.explorerUploadItemsService.uploadItems$.next(uniqueArray);
         return of(uniqueArray);
+      })
+    );
+
+    this.upload$ = combineLatest([
+      this.fileControlChanges$,
+      this.startUpload$,
+    ]).pipe(
+      switchMap(([items]) => {
+        console.log(items);
+        switch (this.uploadTypeControl.value) {
+          case 'binary':
+            return this.explorerUploadService.uploadBinary(
+              items,
+              this.path$.getValue()
+            );
+          case 'hex':
+            return this.explorerUploadService.uploadHexString(
+              items,
+              this.path$.getValue()
+            );
+          case 'base64':
+            return this.explorerUploadService.uploadBase64(
+              items,
+              this.path$.getValue()
+            );
+          default:
+            return this.explorerUploadService.uploadBinary(
+              items,
+              this.path$.getValue()
+            );
+        }
       }),
-      // switchMap((items) => {
-      //   switch (this.uploadTypeControl.value) {
-      //     case 'binary':
-      //       return this.explorerUploadService.uploadBinary(
-      //         items,
-      //         this.path$.getValue()
-      //       );
-      //     case 'hex':
-      //       return this.explorerUploadService.uploadHexString(
-      //         items,
-      //         this.path$.getValue()
-      //       );
-      //     case 'base64':
-      //       return this.explorerUploadService.uploadBase64(
-      //         items,
-      //         this.path$.getValue()
-      //       );
-      //     default:
-      //       return this.explorerUploadService.uploadBinary(
-      //         items,
-      //         this.path$.getValue()
-      //       );
-      //   }
-      // }),
       // emit buffer after every file upload completion
       tap(() => {
         this.emitBuffer$.next();
@@ -339,6 +348,10 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   startUpload(): void {
+    this.startUpload$.next();
+  }
+
+  filesSelected(): void {
     this.emitBuffer$.next();
   }
 

@@ -14,7 +14,6 @@ import {
   OnChanges,
   OnDestroy,
   Output,
-  SimpleChanges,
   ViewChild,
 } from '@angular/core';
 import {
@@ -69,7 +68,7 @@ export class FilesystemTableComponent
     this.dataSource.sort = this.sort;
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(): void {
     this.dataSource.data = this.content;
   }
 

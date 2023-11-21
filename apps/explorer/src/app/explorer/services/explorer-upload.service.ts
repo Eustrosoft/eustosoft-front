@@ -17,11 +17,7 @@ import {
   throwError,
   toArray,
 } from 'rxjs';
-import {
-  FileReaderService,
-  UploadItem,
-  UploadObject,
-} from '@eustrosoft-front/core';
+import { FileReaderService, UploadItem } from '@eustrosoft-front/core';
 import { ExplorerRequestBuilderService } from './explorer-request-builder.service';
 import { ExplorerService } from './explorer.service';
 import { UploadingState } from '../constants/enums/uploading-state.enum';
@@ -138,52 +134,46 @@ export class ExplorerUploadService {
     );
   }
 
-  uploadHexString(items: UploadObject[], path: string = '/') {
+  uploadHexString(items: UploadItem[], path: string = '/') {
     return from(items).pipe(
-      filter((item) => item.uploadItem.state !== UploadingState.UPLOADED),
+      filter((item) => item.state !== UploadingState.UPLOADED),
+      concatMap((item) => this.fileReaderService.splitOneToHexString(item)),
       concatMap((item) =>
-        combineLatest([
-          of(item),
-          this.fileReaderService.splitOneToHexString(item.uploadItem),
-        ])
-      ),
-      concatMap(([object, itemWithChunks]) =>
-        from(itemWithChunks.chunks).pipe(
+        from(item.chunks).pipe(
           concatMap((chunk: string, currentChunk: number) => {
             const request =
               this.explorerRequestBuilderService.buildHexChunkRequest(
-                itemWithChunks.file,
+                item.file,
                 chunk,
                 currentChunk,
-                itemWithChunks.chunks.length,
-                object.securityLevel,
-                object.description,
+                item.chunks.length,
+                item.securityLevel,
+                item.description,
                 path
               );
 
             return combineLatest([
               this.explorerService.uploadHexChunks(request, {}),
               of(items),
-              of(itemWithChunks.file),
-              of(itemWithChunks.chunks),
+              of(item.file),
+              of(item.chunks),
               of(currentChunk),
             ]);
           }),
-          tap(([response, objects, file, chunks, currentChunk]) => {
+          tap(([response, items, file, chunks, currentChunk]) => {
             console.log(file.name, 100 * ((currentChunk + 1) / chunks.length));
-            const uploadObjects = objects.map((obj) => {
-              if (obj.uploadItem.file.name === file.name) {
-                obj.uploadItem.progress =
-                  100 * ((currentChunk + 1) / chunks.length);
-                if (obj.uploadItem.progress === 100) {
-                  obj.uploadItem.state = UploadingState.UPLOADED;
+            const uploadItems = items.map((item) => {
+              if (item.file.name === file.name) {
+                item.progress = 100 * ((currentChunk + 1) / chunks.length);
+                if (item.progress === 100) {
+                  item.state = UploadingState.UPLOADED;
                 } else {
-                  obj.uploadItem.state = UploadingState.UPLOADING;
+                  item.state = UploadingState.UPLOADING;
                 }
               }
-              return obj;
+              return item;
             });
-            this.explorerUploadItemsService.uploadObjects$.next(uploadObjects);
+            this.explorerUploadItemsService.uploadItems$.next(uploadItems);
           }),
           toArray()
         )

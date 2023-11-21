@@ -10,4 +10,7 @@ export interface UploadItem {
   progress: number;
   state: string;
   cancelled: boolean;
+  uploadPath: string;
+  securityLevel?: number;
+  description?: string;
 }
