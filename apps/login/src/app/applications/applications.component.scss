@@ -5,7 +5,7 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-@use 'variables' as vars;
+@use 'libs/common-ui/src/lib/styles/variables' as vars;
 
 :host {
   .app-icon {
@@ -16,10 +16,10 @@
   }
 
   .database {
-    color: vars.$gray;
+    color: map-get(vars.$grey-palette, 200);
   }
 
   .folder {
-    color: vars.$gray;
+    color: map-get(vars.$grey-palette, 200);
   }
 }

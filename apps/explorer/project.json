@@ -15,9 +15,6 @@
         "baseHref": "/explorer/",
         "polyfills": ["zone.js"],
         "tsConfig": "apps/explorer/tsconfig.app.json",
-        "stylePreprocessorOptions": {
-          "includePaths": ["libs/common-ui/src/lib/styles"]
-        },
         "inlineStyleLanguage": "scss",
         "assets": ["apps/explorer/src/favicon.ico", "apps/explorer/src/assets"],
         "styles": [

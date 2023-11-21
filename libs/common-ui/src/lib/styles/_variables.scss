@@ -4,7 +4,7 @@
  * This file is part of eustrosoft-front project.
  * See the LICENSE file at the project root for licensing information.
  */
+@use '@angular/material' as mat;
 
-$blue: #004b87;
-$gray: #c0c0c0;
-$light-gray: #efefef;
+$main-palette: mat.$deep-purple-palette;
+$grey-palette: mat.$grey-palette;

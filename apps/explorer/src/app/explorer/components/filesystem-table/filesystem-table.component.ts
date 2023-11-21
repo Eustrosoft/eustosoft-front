@@ -35,7 +35,6 @@ export class FilesystemTableComponent
   implements OnChanges, AfterViewInit, OnDestroy
 {
   @Input() content!: FileSystemObject[];
-
   @Output() openClicked = new EventEmitter<FileSystemObject>();
   @Output() downloadClicked = new EventEmitter<FileSystemObject[]>();
   @Output() renameClicked = new EventEmitter<FileSystemObject>();

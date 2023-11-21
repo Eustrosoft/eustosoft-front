@@ -5,15 +5,14 @@
   ~ See the LICENSE file at the project root for licensing information.
   -->
 
-<div
-  class="border border-2 border-secondary border-opacity-25 rounded-2 p-2 bg-light progress-overlay"
->
-  <div class="d-flex align-items-center justify-content-between">
+<div class="upload-overlay">
+  <div class="upload-overlay-controls">
     <eustrosoft-front-button
       [buttonType]="'button'"
-      [buttonStyleType]="'raised'"
+      [buttonStyleType]="'stroked'"
       [buttonText]="'Start upload'"
-      (clicked)="startUpload.emit()"
+      [color]="'primary'"
+      (clicked)="runUpload()"
     >
     </eustrosoft-front-button>
     <eustrosoft-front-button
@@ -24,15 +23,26 @@
     >
     </eustrosoft-front-button>
   </div>
-
-  <cdk-virtual-scroll-viewport itemSize="5" class="vh-25">
+  <cdk-virtual-scroll-viewport itemSize="5" class="upload-overlay-items">
     <div
       *ngFor="let item of uploadItems; let i = index"
-      class="mt-2 p-2 bg-secondary bg-opacity-10 border-dark border-opacity-25 rounded-2"
+      class="upload-overlay-items-wrapper"
       [hidden]="item.cancelled"
     >
-      <div class="d-flex align-items-center">
-        <span class="col-10 text-break">{{ item.file.name }}</span>
+      <div class="upload-overlay-items-wrapper-item">
+        <span class="upload-overlay-items-wrapper-item-filename">
+          {{ item.file.name }}
+        </span>
+        <eustrosoft-front-select
+          [label]="'Security level'"
+          [options]="(securityLevelOptions$ | async) || []"
+          [fieldAppearance]="'outline'"
+        ></eustrosoft-front-select>
+        <eustrosoft-front-input
+          [label]="'Note'"
+          [placeholder]="'Some additional info'"
+          [fieldAppearance]="'outline'"
+        ></eustrosoft-front-input>
         <eustrosoft-front-button
           [hidden]="item.state === UploadingState.UPLOADED"
           [buttonType]="'button'"
@@ -40,7 +50,7 @@
           [iconName]="'cancel'"
           [color]="'warn'"
           (clicked)="remove(item)"
-          class="w-auto"
+          class="upload-overlay-items-wrapper-item-cancel-button"
         >
         </eustrosoft-front-button>
         <eustrosoft-front-button
@@ -53,14 +63,14 @@
           [iconName]="'folder'"
           [color]="'primary'"
           (clicked)="openFolder(item)"
-          class="w-auto"
+          class="upload-overlay-items-wrapper-item-open-folder-button"
         >
         </eustrosoft-front-button>
       </div>
       <eustrosoft-front-progress-bar
         [mode]="'determinate'"
         [value]="item.progress"
-        class="w-auto h-auto"
+        class="upload-overlay-items-wrapper-progress"
       ></eustrosoft-front-progress-bar>
     </div>
   </cdk-virtual-scroll-viewport>

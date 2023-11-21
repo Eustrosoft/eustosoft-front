@@ -208,6 +208,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
       map((files: File[]) => {
         console.log('Buffer', files);
         this.overlayHidden = false;
+        // TODO Переделать на FormArray
         return files.map<UploadItem>((file) => ({
           file,
           progress: 0,
@@ -234,7 +235,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.upload$ = combineLatest([
       this.fileControlChanges$,
-      this.startUpload$,
+      this.startUpload$.asObservable(),
     ]).pipe(
       switchMap(([items]) => {
         console.log(items);
@@ -327,9 +328,9 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
     );
     this.fileControl.value.splice(index, 1);
     this.fileControl.patchValue(this.fileControl.value);
-    if (item.state === UploadingState.UPLOADING) {
-      this.emitBuffer$.next();
-    }
+    // if (item.state === UploadingState.UPLOADING) {
+    this.emitBuffer$.next();
+    // }
     if (this.explorerUploadItemsService.uploadItems$.value.length === 0) {
       this.uploadOverlayComponent.closeOverlay.emit([]);
     }
