@@ -10,6 +10,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  inject,
   OnDestroy,
   OnInit,
   ViewChild,
@@ -51,7 +52,6 @@ import {
   DeleteResponse,
   DownloadTicketRequest,
   DownloadTicketResponse,
-  FileReaderService,
   FileSystemObject,
   FileSystemObjectTypes,
   MoveCopyRequest,
@@ -59,11 +59,11 @@ import {
   QtisRequestResponseInterface,
   Subsystems,
   SupportedLanguages,
-  UploadItem,
+  UploadItemForm,
   ViewRequest,
   ViewResponse,
 } from '@eustrosoft-front/core';
-import { FormControl } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ExplorerRequestBuilderService } from './services/explorer-request-builder.service';
 import { ExplorerService } from './services/explorer.service';
@@ -77,11 +77,12 @@ import { MoveCopyDialogComponent } from './components/move-copy-dialog/move-copy
 import { MoveCopyDialogDataInterface } from './components/move-copy-dialog/move-copy-dialog-data.interface';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ExplorerUploadService } from './services/explorer-upload.service';
-import { UploadingState } from './constants/enums/uploading-state.enum';
 import { TranslateService } from '@ngx-translate/core';
 import { ExplorerUploadItemsService } from './services/explorer-upload-items.service';
 import { UploadOverlayComponent } from './components/upload-overlay/upload-overlay.component';
 import { DispatchService } from '@eustrosoft-front/security';
+import { ExplorerUploadItemFormFactoryService } from './services/explorer-upload-item-form-factory.service';
+import { UploadingState } from './constants/enums/uploading-state.enum';
 
 @Component({
   selector: 'eustrosoft-front-explorer',
@@ -96,13 +97,35 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(UploadOverlayComponent)
   uploadOverlayComponent!: UploadOverlayComponent;
 
+  private dispatchService = inject(DispatchService);
+  private explorerRequestBuilderService = inject(ExplorerRequestBuilderService);
+  private explorerService = inject(ExplorerService);
+  private explorerPathService = inject(ExplorerPathService);
+  private explorerUploadService = inject(ExplorerUploadService);
+  private explorerUploadItemsService = inject(ExplorerUploadItemsService);
+  private snackBar = inject(MatSnackBar);
+  private cd = inject(ChangeDetectorRef);
+  private router = inject(Router);
+  private dialog = inject(MatDialog);
+  private translateService = inject(TranslateService);
+  private activatedRoute = inject(ActivatedRoute);
+  private fb = inject(FormBuilder);
+  private explorerUploadItemFormFactoryService = inject(
+    ExplorerUploadItemFormFactoryService
+  );
+
+  private destroy$ = new Subject<void>();
+  private emitBuffer$ = new Subject<void>();
+  private fileSystemTableRendered$ = new Subject<void>();
+  private startUpload$ = new Subject<void>();
+
   refreshFolders$ = new BehaviorSubject<boolean>(true);
   path$ = new BehaviorSubject<string>(
     localStorage.getItem('qtis-explorer-last-path') || '/'
   );
 
   upload$!: Observable<any>;
-  fileControlChanges$!: Observable<UploadItem[]>;
+  fileControlChanges$!: Observable<FormArray<FormGroup<UploadItemForm>>>;
   content$!: Observable<FileSystemObject[]>;
   selected$!: Observable<FileSystemObject[]>;
 
@@ -128,29 +151,9 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
     },
   ];
   uploadItems$ = this.explorerUploadItemsService.uploadItems$.asObservable();
+  emptyItems = this.fb.array<FormGroup<UploadItemForm>>([]);
 
-  overlayHidden = true;
-
-  private destroy$ = new Subject<void>();
-  private emitBuffer$ = new Subject<void>();
-  private fileSystemTableRendered$ = new Subject<void>();
-  private startUpload$ = new Subject<void>();
-
-  constructor(
-    private fileReaderService: FileReaderService,
-    private dispatchService: DispatchService,
-    private explorerRequestBuilderService: ExplorerRequestBuilderService,
-    private explorerService: ExplorerService,
-    private explorerPathService: ExplorerPathService,
-    private explorerUploadService: ExplorerUploadService,
-    private explorerUploadItemsService: ExplorerUploadItemsService,
-    private snackBar: MatSnackBar,
-    private cd: ChangeDetectorRef,
-    private router: Router,
-    private dialog: MatDialog,
-    private translateService: TranslateService,
-    private activatedRoute: ActivatedRoute
-  ) {}
+  overlayHidden = false;
 
   ngOnInit(): void {
     this.content$ = combineLatest([this.path$, this.refreshFolders$]).pipe(
@@ -205,31 +208,30 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
     this.fileControlChanges$ = this.fileControl.valueChanges.pipe(
       buffer(this.emitBuffer$.pipe(takeUntil(this.destroy$))),
       mergeMap((files: File[][]) => files),
-      map((files: File[]) => {
-        console.log('Buffer', files);
-        this.overlayHidden = false;
-        // TODO Переделать на FormArray
-        return files.map<UploadItem>((file) => ({
-          file,
-          progress: 0,
-          state: UploadingState.PENDING,
-          cancelled: false,
-          uploadPath: this.path$.getValue(),
-        }));
-      }),
+      map((files) =>
+        this.explorerUploadItemFormFactoryService.makeUploadItemsForm(
+          files,
+          this.path$.getValue()
+        )
+      ),
       switchMap((files) =>
         zip([of(files), this.explorerUploadItemsService.uploadItems$])
       ),
       switchMap(([items, uploadItems]) => {
-        const uniqueArray = uploadItems
-          .concat(items)
+        const uniqueArray = [...items.controls, ...uploadItems.controls]
           .filter(
             (obj, index, self) =>
-              index === self.findIndex((t) => t.file.name === obj.file.name)
+              index ===
+              self.findIndex(
+                (t) =>
+                  t.controls.uploadItem.value.file.name ===
+                  obj.controls.uploadItem.value.file.name
+              )
           )
-          .filter((item: UploadItem) => !item.cancelled);
-        this.explorerUploadItemsService.uploadItems$.next(uniqueArray);
-        return of(uniqueArray);
+          .filter((item) => !item.controls.uploadItem.value.cancelled);
+        const formArray = this.fb.array<FormGroup<UploadItemForm>>(uniqueArray);
+        this.explorerUploadItemsService.uploadItems$.next(formArray);
+        return of(formArray);
       })
     );
 
@@ -239,28 +241,32 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
     ]).pipe(
       switchMap(([items]) => {
         console.log(items);
-        switch (this.uploadTypeControl.value) {
-          case 'binary':
-            return this.explorerUploadService.uploadBinary(
-              items,
-              this.path$.getValue()
-            );
-          case 'hex':
-            return this.explorerUploadService.uploadHexString(
-              items,
-              this.path$.getValue()
-            );
-          case 'base64':
-            return this.explorerUploadService.uploadBase64(
-              items,
-              this.path$.getValue()
-            );
-          default:
-            return this.explorerUploadService.uploadBinary(
-              items,
-              this.path$.getValue()
-            );
-        }
+        return this.explorerUploadService.uploadHexString(
+          items,
+          this.path$.getValue()
+        );
+        // switch (this.uploadTypeControl.value) {
+        // case 'binary':
+        //   return this.explorerUploadService.uploadBinary(
+        //     items,
+        //     this.path$.getValue()
+        //   );
+        // case 'hex':
+        //   return this.explorerUploadService.uploadHexString(
+        //     items,
+        //     this.path$.getValue()
+        //   );
+        // case 'base64':
+        //   return this.explorerUploadService.uploadBase64(
+        //     items,
+        //     this.path$.getValue()
+        //   );
+        // default:
+        //   return this.explorerUploadService.uploadBinary(
+        //     items,
+        //     this.path$.getValue()
+        //   );
+        // }
       }),
       // emit buffer after every file upload completion
       tap(() => {
@@ -273,7 +279,9 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
           this.translateService.instant('EXPLORER.ERRORS.REQUEST_ERROR_TEXT'),
           this.translateService.instant('EXPLORER.ERRORS.CLOSE_BUTTON_TEXT')
         );
-        this.closeOverlay(this.explorerUploadItemsService.uploadItems$.value);
+        this.closeOverlay(
+          this.explorerUploadItemsService.uploadItems$.getValue()
+        );
         this.cd.markForCheck();
         return EMPTY;
       }),
@@ -322,29 +330,41 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
     this.emitBuffer$.next();
   }
 
-  removeItemFromUploadList(item: UploadItem): void {
-    const index = this.fileControl.value.findIndex(
-      (file) => file.name === item.file.name
-    );
-    this.fileControl.value.splice(index, 1);
-    this.fileControl.patchValue(this.fileControl.value);
-    // if (item.state === UploadingState.UPLOADING) {
-    this.emitBuffer$.next();
-    // }
-    if (this.explorerUploadItemsService.uploadItems$.value.length === 0) {
-      this.uploadOverlayComponent.closeOverlay.emit([]);
+  removeItemFromUploadList(data: {
+    item: FormGroup<UploadItemForm>;
+    index: number;
+  }): void {
+    const formArray = this.explorerUploadItemsService.uploadItems$.getValue();
+    formArray.removeAt(data.index);
+    this.explorerUploadItemsService.uploadItems$.next(formArray);
+    // const index = this.fileControl.value.findIndex(
+    //   (file) => file.name === item.file.name
+    // );
+    // this.fileControl.value.splice(index, 1);
+    // this.fileControl.patchValue(this.fileControl.value);
+    if (
+      data.item.controls.uploadItem.value.state === UploadingState.UPLOADING
+    ) {
+      this.emitBuffer$.next();
+    }
+    if (formArray.length === 0) {
+      this.uploadOverlayComponent.closeOverlay.emit(
+        this.fb.array<FormGroup<UploadItemForm>>([])
+      );
     }
   }
 
-  closeOverlay(items: UploadItem[]): void {
-    this.explorerUploadItemsService.uploadItems$.next(
-      items.map((item) => ({
-        ...item,
-        cancelled: true,
-      }))
-    );
+  closeOverlay(items: FormArray<FormGroup<UploadItemForm>>): void {
+    const cancelled = items.getRawValue().map((item) => ({
+      ...item,
+      cancelled: true,
+    }));
+    items.patchValue(cancelled);
+    this.explorerUploadItemsService.uploadItems$.next(items);
     this.emitBuffer$.next();
-    this.explorerUploadItemsService.uploadItems$.next([]);
+    this.explorerUploadItemsService.uploadItems$.next(
+      this.fb.array<FormGroup<UploadItemForm>>([])
+    );
     this.overlayHidden = true;
   }
 

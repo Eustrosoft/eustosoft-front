@@ -6,19 +6,34 @@
  */
 
 import { inject, Injectable } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { UploadObject, UploadObjectForm } from '@eustrosoft-front/core';
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { UploadItemForm } from '@eustrosoft-front/core';
+import { UploadingState } from '../constants/enums/uploading-state.enum';
 
 @Injectable()
 export class ExplorerUploadItemFormFactoryService {
   private fb: FormBuilder = inject(FormBuilder);
-  makeNewUploadObjectForm(
-    uploadObject: UploadObject
-  ): FormGroup<UploadObjectForm> {
-    return this.fb.group<UploadObjectForm>({
-      uploadItem: this.fb.nonNullable.control(uploadObject.uploadItem),
-      description: this.fb.nonNullable.control(uploadObject.description),
-      securityLevel: this.fb.nonNullable.control(uploadObject.securityLevel),
-    });
+  makeUploadItemsForm(
+    files: File[],
+    uploadPath: string
+  ): FormArray<FormGroup<UploadItemForm>> {
+    return this.fb.array(
+      files.map((file) =>
+        this.fb.nonNullable.group<UploadItemForm>({
+          uploadItem: this.fb.nonNullable.control({
+            file,
+            progress: 0,
+            state: UploadingState.PENDING,
+            cancelled: false,
+            uploadPath,
+          }),
+          description: this.fb.nonNullable.control(''),
+          securityLevel: this.fb.nonNullable.control({
+            value: undefined,
+            disabled: false,
+          }),
+        })
+      )
+    );
   }
 }

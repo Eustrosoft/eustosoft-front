@@ -25,38 +25,42 @@
   </div>
   <cdk-virtual-scroll-viewport itemSize="5" class="upload-overlay-items">
     <div
-      *ngFor="let item of uploadItems; let i = index"
+      *ngFor="let item of uploadItems.controls; let i = index"
       class="upload-overlay-items-wrapper"
-      [hidden]="item.cancelled"
+      [hidden]="item.controls.uploadItem.value.cancelled"
     >
       <div class="upload-overlay-items-wrapper-item">
         <span class="upload-overlay-items-wrapper-item-filename">
-          {{ item.file.name }}
+          {{ item.controls.uploadItem.value.file.name }}
         </span>
         <eustrosoft-front-select
           [label]="'Security level'"
+          [control]="item.controls.securityLevel"
           [options]="(securityLevelOptions$ | async) || []"
           [fieldAppearance]="'outline'"
         ></eustrosoft-front-select>
         <eustrosoft-front-input
           [label]="'Note'"
+          [control]="item.controls.description"
           [placeholder]="'Some additional info'"
           [fieldAppearance]="'outline'"
         ></eustrosoft-front-input>
         <eustrosoft-front-button
-          [hidden]="item.state === UploadingState.UPLOADED"
+          [hidden]="
+            item.controls.uploadItem.value.state === UploadingState.UPLOADED
+          "
           [buttonType]="'button'"
           [buttonStyleType]="'icon'"
           [iconName]="'cancel'"
           [color]="'warn'"
-          (clicked)="remove(item)"
+          (clicked)="remove(item, i)"
           class="upload-overlay-items-wrapper-item-cancel-button"
         >
         </eustrosoft-front-button>
         <eustrosoft-front-button
           [hidden]="
-            item.state === UploadingState.PENDING ||
-            item.state === UploadingState.UPLOADING
+            item.controls.uploadItem.value.state === UploadingState.PENDING ||
+            item.controls.uploadItem.value.state === UploadingState.UPLOADING
           "
           [buttonType]="'button'"
           [buttonStyleType]="'icon'"
@@ -69,7 +73,7 @@
       </div>
       <eustrosoft-front-progress-bar
         [mode]="'determinate'"
-        [value]="item.progress"
+        [value]="item.controls.uploadItem.value.progress"
         class="upload-overlay-items-wrapper-progress"
       ></eustrosoft-front-progress-bar>
     </div>

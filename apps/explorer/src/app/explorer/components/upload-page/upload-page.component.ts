@@ -17,7 +17,7 @@ import {
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { catchError, EMPTY, Observable, shareReplay, Subject, tap } from 'rxjs';
 import { InputFileComponent, Option } from '@eustrosoft-front/common-ui';
-import { UploadObjectForm } from '@eustrosoft-front/core';
+import { UploadItemForm } from '@eustrosoft-front/core';
 import { ExplorerUploadService } from '../../services/explorer-upload.service';
 import { ExplorerUploadItemsService } from '../../services/explorer-upload-items.service';
 import { ExplorerUploadItemFormFactoryService } from '../../services/explorer-upload-item-form-factory.service';
@@ -49,7 +49,7 @@ export class UploadPageComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   fileControl = new FormControl<File[]>([], { nonNullable: true });
-  uploadObjectForms = new FormArray<FormGroup<UploadObjectForm>>([]);
+  uploadObjectForms = new FormArray<FormGroup<UploadItemForm>>([]);
 
   // fileControlValueChanges$: Observable<UploadObject[]> =
   //   this.fileControl.valueChanges.pipe(

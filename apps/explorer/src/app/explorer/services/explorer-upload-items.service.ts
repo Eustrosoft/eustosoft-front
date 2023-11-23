@@ -5,12 +5,15 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { UploadItem, UploadObject } from '@eustrosoft-front/core';
+import { UploadItemForm } from '@eustrosoft-front/core';
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 
 @Injectable()
 export class ExplorerUploadItemsService {
-  uploadItems$ = new BehaviorSubject<UploadItem[]>([]);
-  uploadObjects$ = new BehaviorSubject<UploadObject[]>([]);
+  private fb = inject(FormBuilder);
+  uploadItems$ = new BehaviorSubject<FormArray<FormGroup<UploadItemForm>>>(
+    this.fb.array<FormGroup<UploadItemForm>>([])
+  );
 }

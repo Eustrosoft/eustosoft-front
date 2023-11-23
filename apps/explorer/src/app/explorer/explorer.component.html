@@ -116,7 +116,7 @@
 
 <eustrosoft-front-upload-overlay
   [hidden]="overlayHidden"
-  [uploadItems]="(uploadItems$ | async) || []"
+  [uploadItems]="(uploadItems$ | async) ?? emptyItems"
   (startUpload)="startUpload()"
   (openFileFolder)="openByPath($event)"
   (removeItem)="removeItemFromUploadList($event)"

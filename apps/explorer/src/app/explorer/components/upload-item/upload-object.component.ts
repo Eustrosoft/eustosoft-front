@@ -13,7 +13,7 @@ import {
   Output,
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { UploadObjectForm } from '@eustrosoft-front/core';
+import { UploadItemForm } from '@eustrosoft-front/core';
 import { Option } from '@eustrosoft-front/common-ui';
 import { UploadingState } from '../../constants/enums/uploading-state.enum';
 
@@ -24,7 +24,7 @@ import { UploadingState } from '../../constants/enums/uploading-state.enum';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UploadObjectComponent {
-  @Input() uploadObjectForm!: FormGroup<UploadObjectForm>;
+  @Input() uploadObjectForm!: FormGroup<UploadItemForm>;
   @Input() formIndex!: number;
   @Input() slvlOptions: Option[] = [];
   @Output() fileDeleted = new EventEmitter<number>();

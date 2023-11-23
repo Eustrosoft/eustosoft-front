@@ -13,7 +13,7 @@ import {
   Input,
   Output,
 } from '@angular/core';
-import { UploadItem } from '@eustrosoft-front/core';
+import { UploadItemForm } from '@eustrosoft-front/core';
 import { UploadingState } from '../../constants/enums/uploading-state.enum';
 import { catchError, EMPTY, Observable, shareReplay } from 'rxjs';
 import { Option } from '@eustrosoft-front/common-ui';
@@ -21,6 +21,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslateService } from '@ngx-translate/core';
 import { ExplorerDictionaryService } from '../../services/explorer-dictionary.service';
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'eustrosoft-front-upload-overlay',
@@ -29,15 +30,23 @@ import { ExplorerDictionaryService } from '../../services/explorer-dictionary.se
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UploadOverlayComponent {
-  @Input() uploadItems!: UploadItem[];
-  @Output() startUpload = new EventEmitter<void>();
-  @Output() removeItem = new EventEmitter<UploadItem>();
-  @Output() closeOverlay = new EventEmitter<UploadItem[]>();
-  @Output() openFileFolder = new EventEmitter<string>();
-
   private snackBar = inject(MatSnackBar);
   private translateService = inject(TranslateService);
   private explorerDictionaryService = inject(ExplorerDictionaryService);
+  private fb = inject(FormBuilder);
+
+  @Input() uploadItems: FormArray<FormGroup<UploadItemForm>> = this.fb.array<
+    FormGroup<UploadItemForm>
+  >([]);
+  @Output() startUpload = new EventEmitter<void>();
+  @Output() removeItem = new EventEmitter<{
+    item: FormGroup<UploadItemForm>;
+    index: number;
+  }>();
+  @Output() closeOverlay = new EventEmitter<
+    FormArray<FormGroup<UploadItemForm>>
+  >();
+  @Output() openFileFolder = new EventEmitter<string>();
 
   UploadingState = UploadingState;
   securityLevelOptions$: Observable<Option[]> = this.explorerDictionaryService
@@ -55,13 +64,16 @@ export class UploadOverlayComponent {
       })
     );
 
-  openFolder(item: UploadItem): void {
-    this.openFileFolder.emit(item.uploadPath);
+  openFolder(item: FormGroup<UploadItemForm>): void {
+    this.openFileFolder.emit(item.controls.uploadItem.value.uploadPath);
   }
 
-  remove(item: UploadItem): void {
-    item.cancelled = true;
-    this.removeItem.emit(item);
+  remove(item: FormGroup<UploadItemForm>, index: number): void {
+    item.controls.uploadItem.setValue({
+      ...item.controls.uploadItem.value,
+      cancelled: true,
+    });
+    this.removeItem.emit({ item, index });
   }
 
   close(): void {
