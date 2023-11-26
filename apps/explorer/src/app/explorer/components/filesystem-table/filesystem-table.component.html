@@ -39,7 +39,7 @@
       {{ 'EXPLORER.NAME_COLUMN_TEXT' | translate }}
     </th>
     <td mat-cell *matCellDef="let element">
-      <div class="d-flex align-items-center">
+      <div class="flex align-items-center">
         <ng-container [ngSwitch]="element.type">
           <ng-container *ngSwitchCase="fsObjTypes.DIRECTORY">
             <mat-icon>folder</mat-icon>
@@ -48,7 +48,7 @@
             <mat-icon>draft</mat-icon>
           </ng-container>
         </ng-container>
-        <div class="lh-18 truncate-filename" [title]="element.fileName">
+        <div class="truncate-filename" [title]="element.fileName">
           {{ element.fileName }}
         </div>
       </div>
@@ -91,7 +91,7 @@
       {{ 'EXPLORER.ACTIONS_COLUMN_TEXT' | translate }}
     </th>
     <td mat-cell *matCellDef="let element; let i = index">
-      <div class="d-flex">
+      <div class="flex">
         <eustrosoft-front-button
           [buttonType]="'button'"
           [buttonStyleType]="'icon'"
@@ -142,7 +142,10 @@
 </table>
 
 <ng-template #noContent>
-  <div *ngIf="content.length === 0" class="no-content">
+  <div
+    *ngIf="content.length === 0"
+    class="flex flex-auto align-items-center justify-content-center"
+  >
     <p class="fs-4">{{ 'EXPLORER.FOLDER_IS_EMPTY' | translate }}</p>
   </div>
 </ng-template>

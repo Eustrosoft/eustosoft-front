@@ -8,3 +8,38 @@
 
 $main-palette: mat.$deep-purple-palette;
 $grey-palette: mat.$grey-palette;
+$blue-palette: mat.$blue-palette;
+$light-blue-palette: mat.$light-blue-palette;
+
+$common-sizes: (
+  0: 0,
+  1: 0.25rem,
+  2: 0.5rem,
+  3: 1rem,
+  4: 1.5rem,
+  5: 3rem,
+);
+
+$percent-sizes: (
+  0: 0,
+  5: 5%,
+  10: 10%,
+  15: 15%,
+  20: 20%,
+  25: 25%,
+  30: 30%,
+  35: 35%,
+  40: 40%,
+  45: 45%,
+  50: 50%,
+  55: 55%,
+  60: 60%,
+  65: 65%,
+  70: 70%,
+  75: 75%,
+  80: 80%,
+  85: 85%,
+  90: 90%,
+  95: 95%,
+  100: 100%,
+);

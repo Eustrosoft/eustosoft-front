@@ -1,0 +1,266 @@
+@use 'variables' as vars;
+@use 'mixins' as mixins;
+
+@each $size, $value in vars.$common-sizes {
+  // padding
+  .p-#{$size} {
+    padding: $value !important;
+  }
+  .pt-#{$size} {
+    padding-top: $value !important;
+  }
+  .pe-#{$size} {
+    padding-right: $value !important;
+  }
+  .pb-#{$size} {
+    padding-bottom: $value !important;
+  }
+  .ps-#{$size} {
+    padding-left: $value !important;
+  }
+  .px-#{$size} {
+    padding-left: $value !important;
+    padding-right: $value !important;
+  }
+  .py-#{$size} {
+    padding-top: $value !important;
+    padding-bottom: $value !important;
+  }
+  // margin
+  .m-#{$size} {
+    margin: $value !important;
+  }
+  .mt-#{$size} {
+    margin-top: $value !important;
+  }
+  .me-#{$size} {
+    margin-right: $value !important;
+  }
+  .mb-#{$size} {
+    margin-bottom: $value !important;
+  }
+  .ms-#{$size} {
+    margin-left: $value !important;
+  }
+  .mx-#{$size} {
+    margin-left: $value !important;
+    margin-right: $value !important;
+  }
+  .my-#{$size} {
+    margin-top: $value !important;
+    margin-bottom: $value !important;
+  }
+  // gap
+  .g-#{$size} {
+    gap: $value !important;
+  }
+  // border radius
+  .br-#{$size} {
+    border-radius: $value !important;
+  }
+  // font-size
+  .fs-#{$size} {
+    font-size: $value !important;
+  }
+}
+
+@each $size, $value in vars.$percent-sizes {
+  .w-#{$size} {
+    width: $value !important;
+  }
+  .h-#{$size} {
+    height: $value !important;
+  }
+}
+
+$flex-options: (
+  flex: (
+    display: flex,
+  ),
+  flex-auto: (
+    flex: auto,
+  ),
+  flex-row: (
+    flex-direction: row,
+  ),
+  flex-column: (
+    flex-direction: column,
+  ),
+  justify-content-start: (
+    justify-content: flex-start,
+  ),
+  justify-content-end: (
+    justify-content: flex-end,
+  ),
+  justify-content-center: (
+    justify-content: center,
+  ),
+  justify-content-space-between: (
+    justify-content: space-between,
+  ),
+  align-items-start: (
+    align-items: flex-start,
+  ),
+  align-items-end: (
+    align-items: flex-end,
+  ),
+  align-items-center: (
+    align-items: center,
+  ),
+  flex-wrap: (
+    flex-wrap: wrap,
+  ),
+  flex-wrap-nowrap: (
+    flex-wrap: nowrap,
+  ),
+  flex-wrap-wrap-reverse: (
+    flex-wrap: wrap-reverse,
+  ),
+);
+
+@include mixins.generate-utility-classes($flex-options);
+
+$flex-basis-options: (
+  auto: (
+    flex-basis: auto,
+  ),
+);
+
+@for $i from 1 through 100 {
+  $value: $i * 1%; // Convert to percentage
+  $class: flex-basis-#{$i};
+
+  $flex-basis-options: map-merge(
+    $flex-basis-options,
+    (
+      #{$class}:
+        (
+          flex-basis: $value,
+        )
+    )
+  );
+}
+
+@include mixins.generate-utility-classes($flex-basis-options);
+
+$overflow-options: (
+  overflow-visible: (
+    overflow: visible,
+  ),
+  overflow-hidden: (
+    overflow: hidden,
+  ),
+  overflow-scroll: (
+    overflow: scroll,
+  ),
+  overflow-auto: (
+    overflow: auto,
+  ),
+);
+
+@include mixins.generate-utility-classes($overflow-options);
+
+$overflow-x-options: (
+  overflow-x-visible: (
+    overflow-x: visible,
+  ),
+  overflow-x-hidden: (
+    overflow-x: hidden,
+  ),
+  overflow-x-scroll: (
+    overflow-x: scroll,
+  ),
+  overflow-x-auto: (
+    overflow-x: auto,
+  ),
+);
+
+@include mixins.generate-utility-classes($overflow-x-options);
+
+$overflow-y-options: (
+  overflow-y-visible: (
+    overflow-y: visible,
+  ),
+  overflow-y-hidden: (
+    overflow-y: hidden,
+  ),
+  overflow-y-scroll: (
+    overflow-y: scroll,
+  ),
+  overflow-y-auto: (
+    overflow-y: auto,
+  ),
+);
+
+@include mixins.generate-utility-classes($overflow-y-options);
+
+$position-options: (
+  position-static: (
+    position: static,
+  ),
+  position-relative: (
+    position: relative,
+  ),
+  position-absolute: (
+    position: absolute,
+  ),
+  position-fixed: (
+    position: fixed,
+  ),
+  position-sticky: (
+    position: sticky,
+  ),
+);
+
+@include mixins.generate-utility-classes($position-options);
+
+$white-space-options: (
+  whitespace-nowrap: (
+    white-space: nowrap,
+  ),
+  whitespace-pre: (
+    white-space: pre,
+  ),
+  whitespace-pre-line: (
+    white-space: pre-line,
+  ),
+  whitespace-pre-wrap: (
+    white-space: pre-wrap,
+  ),
+  whitespace-normal: (
+    white-space: normal,
+  ),
+);
+
+@include mixins.generate-utility-classes($white-space-options);
+
+$text-overflow-options: (
+  text-overflow-ellipsis: (
+    text-overflow: ellipsis,
+  ),
+  text-overflow-clip: (
+    text-overflow: clip,
+  ),
+);
+
+@include mixins.generate-utility-classes($text-overflow-options);
+
+$list-style-options: (
+  list-style-none: (
+    list-style: none,
+  ),
+);
+
+@include mixins.generate-utility-classes($list-style-options);
+
+$text-decoration-options: (
+  text-decoration-none: (
+    text-decoration: none,
+  ),
+);
+
+@include mixins.generate-utility-classes($text-decoration-options);
+
+.text-truncate {
+  @extend .whitespace-nowrap, .overflow-hidden, .text-overflow-ellipsis;
+}

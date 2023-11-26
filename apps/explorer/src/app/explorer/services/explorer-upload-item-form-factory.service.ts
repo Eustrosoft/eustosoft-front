@@ -8,7 +8,7 @@
 import { inject, Injectable } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { UploadItemForm } from '@eustrosoft-front/core';
-import { UploadingState } from '../constants/enums/uploading-state.enum';
+import { UploadItemState } from '../constants/enums/uploading-state.enum';
 
 @Injectable()
 export class ExplorerUploadItemFormFactoryService {
@@ -23,7 +23,7 @@ export class ExplorerUploadItemFormFactoryService {
           uploadItem: this.fb.nonNullable.control({
             file,
             progress: 0,
-            state: UploadingState.PENDING,
+            state: UploadItemState.PENDING,
             cancelled: false,
             uploadPath,
           }),

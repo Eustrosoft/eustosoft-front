@@ -77,6 +77,13 @@
       "CANCEL_BUTTON_TEXT": "Нет",
       "SUBMIT_BUTTON_TEXT": "Да"
     },
+    "UPLOAD_OVERLAY": {
+      "EXTRA_OPTIONS_PANEL_TITLE": "Дополнительные опции",
+      "EXTRA_OPTIONS_PANEL_DESCRIPTION": "Установить уровень секретности, примечание",
+      "EXTRA_OPTIONS_PANEL_SECURITY_LEVEL_LABEL": "Уровень секретности",
+      "EXTRA_OPTIONS_PANEL_DESCRIPTION_LABEL": "Примечание",
+      "OPEN_FOLDER_BUTTON_TOOLTIP": "Открыть папку с файлом"
+    },
     "ERRORS": {
       "REQUEST_ERROR_TEXT": "Возникла ошибка при исполнении запроса",
       "NO_SELECTED_FILES_ERROR_TEXT": "Сначала выберите файлы",

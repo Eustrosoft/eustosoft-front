@@ -4,20 +4,19 @@
   ~ This file is part of eustrosoft-front project.
   ~ See the LICENSE file at the project root for licensing information.
   -->
-<mat-toolbar class="container-fluid px-3 py-2">
-  <span class="mr-4">
+<mat-toolbar class="flex justify-content-space-between px-3 py-2">
+  <div class="mr-4">
     <a
       [href]="(config | async)?.homePageUrl || '/'"
-      class="text-decoration-none"
+      class="text-decoration-none link"
     >
       {{ texts.title }}
     </a>
     |
     {{ texts.appName }}
-  </span>
-  <span class="logo-spacer"></span>
+  </div>
   <ng-container *ngIf="isAuthenticated$ | async">
-    <div class="d-flex d-none">
+    <div hidden="hidden">
       <eustrosoft-front-button
         [buttonType]="'button'"
         [buttonStyleType]="'with-icon'"
@@ -50,8 +49,7 @@
         </mat-menu>
       </ng-container>
     </div>
-    <span class="spacer"></span>
-    <div class="col-4 d-flex align-items-center justify-content-end">
+    <div class="flex align-items-center justify-content-end">
       <ng-container *ngIf="userInfo$ | async as info">
         <ng-container *ngIf="!isXs">
           <span class="px-3 text-truncate" [title]="info.userFullName">
@@ -70,7 +68,6 @@
             [buttonType]="'button'"
             [buttonStyleType]="'icon'"
             [iconName]="'menu'"
-            class="d-sm-none"
             (clicked)="sidenavToggleClicked.emit()"
           ></eustrosoft-front-button>
         </ng-container>

@@ -51,6 +51,7 @@ import { ExplorerUploadItemFormFactoryService } from './explorer/services/explor
 import { LocationStrategy } from '@angular/common';
 import { ExplorerDictionaryService } from './explorer/services/explorer-dictionary.service';
 import { DicModule } from '@eustrosoft-front/dic';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 @NgModule({
   declarations: [
@@ -88,6 +89,7 @@ import { DicModule } from '@eustrosoft-front/dic';
     A11yModule,
     MatCardModule,
     DicModule,
+    MatExpansionModule,
   ],
   providers: [
     ExplorerService,

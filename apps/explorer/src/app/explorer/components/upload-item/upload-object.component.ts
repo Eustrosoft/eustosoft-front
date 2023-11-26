@@ -15,7 +15,7 @@ import {
 import { FormGroup } from '@angular/forms';
 import { UploadItemForm } from '@eustrosoft-front/core';
 import { Option } from '@eustrosoft-front/common-ui';
-import { UploadingState } from '../../constants/enums/uploading-state.enum';
+import { UploadItemState } from '../../constants/enums/uploading-state.enum';
 
 @Component({
   selector: 'eustrosoft-front-upload-object',
@@ -30,5 +30,5 @@ export class UploadObjectComponent {
   @Output() fileDeleted = new EventEmitter<number>();
   @Output() fileUploadCanceled = new EventEmitter<number>();
 
-  UploadingState = UploadingState;
+  UploadingState = UploadItemState;
 }

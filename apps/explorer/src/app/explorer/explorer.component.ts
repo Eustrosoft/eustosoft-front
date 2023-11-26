@@ -24,24 +24,22 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   BehaviorSubject,
-  buffer,
   catchError,
   combineLatest,
   EMPTY,
   filter,
   iif,
   map,
-  mergeMap,
   Observable,
   of,
   repeat,
   share,
+  startWith,
   Subject,
   switchMap,
   take,
   takeUntil,
   tap,
-  zip,
 } from 'rxjs';
 import {
   CmsDownloadParams,
@@ -82,7 +80,7 @@ import { ExplorerUploadItemsService } from './services/explorer-upload-items.ser
 import { UploadOverlayComponent } from './components/upload-overlay/upload-overlay.component';
 import { DispatchService } from '@eustrosoft-front/security';
 import { ExplorerUploadItemFormFactoryService } from './services/explorer-upload-item-form-factory.service';
-import { UploadingState } from './constants/enums/uploading-state.enum';
+import { UploadItemState } from './constants/enums/uploading-state.enum';
 
 @Component({
   selector: 'eustrosoft-front-explorer',
@@ -115,9 +113,9 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
   );
 
   private destroy$ = new Subject<void>();
-  private emitBuffer$ = new Subject<void>();
   private fileSystemTableRendered$ = new Subject<void>();
   private startUpload$ = new Subject<void>();
+  private uploadCancelled$ = new Subject<void>();
 
   refreshFolders$ = new BehaviorSubject<boolean>(true);
   path$ = new BehaviorSubject<string>(
@@ -206,71 +204,36 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
     );
 
     this.fileControlChanges$ = this.fileControl.valueChanges.pipe(
-      buffer(this.emitBuffer$.pipe(takeUntil(this.destroy$))),
-      mergeMap((files: File[][]) => files),
-      map((files) =>
-        this.explorerUploadItemFormFactoryService.makeUploadItemsForm(
-          files,
-          this.path$.getValue()
-        )
-      ),
-      switchMap((files) =>
-        zip([of(files), this.explorerUploadItemsService.uploadItems$])
-      ),
-      switchMap(([items, uploadItems]) => {
-        const uniqueArray = [...items.controls, ...uploadItems.controls]
-          .filter(
-            (obj, index, self) =>
-              index ===
-              self.findIndex(
-                (t) =>
-                  t.controls.uploadItem.value.file.name ===
-                  obj.controls.uploadItem.value.file.name
-              )
-          )
-          .filter((item) => !item.controls.uploadItem.value.cancelled);
-        const formArray = this.fb.array<FormGroup<UploadItemForm>>(uniqueArray);
+      map((files) => {
+        const formArray =
+          this.explorerUploadItemFormFactoryService.makeUploadItemsForm(
+            files,
+            this.path$.getValue()
+          );
         this.explorerUploadItemsService.uploadItems$.next(formArray);
-        return of(formArray);
+        this.overlayHidden = false;
+        return formArray;
       })
     );
 
     this.upload$ = combineLatest([
-      this.fileControlChanges$,
+      this.uploadCancelled$.asObservable().pipe(startWith(undefined)),
       this.startUpload$.asObservable(),
     ]).pipe(
-      switchMap(([items]) => {
-        console.log(items);
+      switchMap(() =>
+        this.explorerUploadItemsService.uploadItems$
+          .asObservable()
+          .pipe(take(1))
+      ),
+      switchMap((items) => {
+        console.log(items.value.map((it) => it.uploadItem));
         return this.explorerUploadService.uploadHexString(
           items,
           this.path$.getValue()
         );
-        // switch (this.uploadTypeControl.value) {
-        // case 'binary':
-        //   return this.explorerUploadService.uploadBinary(
-        //     items,
-        //     this.path$.getValue()
-        //   );
-        // case 'hex':
-        //   return this.explorerUploadService.uploadHexString(
-        //     items,
-        //     this.path$.getValue()
-        //   );
-        // case 'base64':
-        //   return this.explorerUploadService.uploadBase64(
-        //     items,
-        //     this.path$.getValue()
-        //   );
-        // default:
-        //   return this.explorerUploadService.uploadBinary(
-        //     items,
-        //     this.path$.getValue()
-        //   );
-        // }
       }),
       // emit buffer after every file upload completion
       tap(() => {
-        this.emitBuffer$.next();
         this.refreshFolders$.next(true);
       }),
       catchError((err) => {
@@ -327,7 +290,6 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
     fsObj: FileSystemObject;
   }): void {
     this.fileControl.patchValue(event.files);
-    this.emitBuffer$.next();
   }
 
   removeItemFromUploadList(data: {
@@ -337,15 +299,10 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
     const formArray = this.explorerUploadItemsService.uploadItems$.getValue();
     formArray.removeAt(data.index);
     this.explorerUploadItemsService.uploadItems$.next(formArray);
-    // const index = this.fileControl.value.findIndex(
-    //   (file) => file.name === item.file.name
-    // );
-    // this.fileControl.value.splice(index, 1);
-    // this.fileControl.patchValue(this.fileControl.value);
     if (
-      data.item.controls.uploadItem.value.state === UploadingState.UPLOADING
+      data.item.controls.uploadItem.value.state === UploadItemState.UPLOADING
     ) {
-      this.emitBuffer$.next();
+      this.uploadCancelled$.next();
     }
     if (formArray.length === 0) {
       this.uploadOverlayComponent.closeOverlay.emit(
@@ -355,25 +312,15 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   closeOverlay(items: FormArray<FormGroup<UploadItemForm>>): void {
-    const cancelled = items.getRawValue().map((item) => ({
-      ...item,
-      cancelled: true,
-    }));
-    items.patchValue(cancelled);
-    this.explorerUploadItemsService.uploadItems$.next(items);
-    this.emitBuffer$.next();
     this.explorerUploadItemsService.uploadItems$.next(
       this.fb.array<FormGroup<UploadItemForm>>([])
     );
+    this.uploadCancelled$.next();
     this.overlayHidden = true;
   }
 
   startUpload(): void {
     this.startUpload$.next();
-  }
-
-  filesSelected(): void {
-    this.emitBuffer$.next();
   }
 
   createFolder(): void {

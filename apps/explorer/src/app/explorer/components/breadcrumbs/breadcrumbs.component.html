@@ -5,21 +5,23 @@
   ~ See the LICENSE file at the project root for licensing information.
   -->
 
-<nav aria-label="breadcrumb">
-  <ol class="breadcrumb mb-0">
+<nav class="nav">
+  <ol class="flex flex-wrap list-style-none p-0 m-0">
     <ng-container *ngIf="breadcrumbs$ | async as breadcrumbs">
-      <li
-        *ngFor="let breadcrumb of breadcrumbs; let i = index"
-        class="breadcrumb-item"
-      >
-        <a
-          (click)="breadcrumbClick(breadcrumb.href, $event)"
-          [href]="breadcrumb.href"
-          class="text-decoration-none fs-6"
-        >
-          {{ breadcrumb.text }}
-        </a>
-      </li>
+      <ng-container *ngFor="let breadcrumb of breadcrumbs; let i = index">
+        <li>
+          <a
+            (click)="breadcrumbClick(breadcrumb.href, $event)"
+            [href]="breadcrumb.href"
+            class="text-decoration-none fs-3 link"
+          >
+            {{ breadcrumb.text }}
+          </a>
+        </li>
+        <li>
+          <span *ngIf="i !== breadcrumbs.length - 1" class="px-2">/</span>
+        </li>
+      </ng-container>
     </ng-container>
   </ol>
 </nav>

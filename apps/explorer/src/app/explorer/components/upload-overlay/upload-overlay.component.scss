@@ -6,42 +6,30 @@
  */
 
 @use 'libs/common-ui/src/lib/styles/variables' as vars;
+@use 'libs/common-ui/src/lib/styles/utilities' as utils;
+
+:host {
+  ::ng-deep {
+    .cdk-virtual-scroll-content-wrapper {
+      position: unset;
+      @extend .flex, .flex-column, .g-2;
+    }
+  }
+}
 
 .upload-overlay {
   border: 2px solid map-get(vars.$grey-palette, 200);
-  border-radius: 0.5rem;
   background-color: map-get(vars.$grey-palette, 100);
-  padding: 0.5rem;
-  position: fixed;
   bottom: 0;
-  right: 1em;
+  right: map-get(vars.$common-sizes, 3);
   left: 50%;
-
-  &-controls {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
 
   &-items {
     height: 25vh;
     &-wrapper {
-      margin-top: 0.5rem;
-      padding: 0.25rem 0.5rem;
       background-color: map-get(vars.$grey-palette, 200);
       border: 2px solid map-get(vars.$grey-palette, 200);
       border-radius: 0.5rem;
-      &-item {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        &-filename {
-          white-space: nowrap;
-          max-width: 5rem;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-      }
     }
   }
 }

@@ -9,7 +9,7 @@
   <form
     [formGroup]="form"
     (ngSubmit)="submit()"
-    class="d-flex flex-column align-items-center m-3"
+    class="flex flex-column align-items-center m-2 gap-1"
   >
     <h2>{{ texts.heading }}</h2>
     <eustrosoft-front-input
@@ -19,10 +19,9 @@
       [fieldAppearance]="'outline'"
       [suffixIcon]="'person'"
       [errors]="loginErrors"
-      class="col-10"
+      class="w-80"
     >
     </eustrosoft-front-input>
-
     <eustrosoft-front-input
       [inputType]="InputTypes.PASSWORD"
       [label]="texts.passwordLabel"
@@ -30,7 +29,7 @@
       [fieldAppearance]="'outline'"
       [suffixIcon]="'lock'"
       [errors]="passwordErrors"
-      class="col-10"
+      class="w-80"
     >
     </eustrosoft-front-input>
     <eustrosoft-front-button

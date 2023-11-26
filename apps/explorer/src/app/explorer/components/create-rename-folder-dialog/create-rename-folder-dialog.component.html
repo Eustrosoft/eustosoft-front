@@ -5,11 +5,11 @@
   ~ See the LICENSE file at the project root for licensing information.
   -->
 
-<div class="container">
-  <div class="row">
-    <h1 class="col-12 m-0" mat-dialog-title>{{ data.title }}</h1>
+<div>
+  <div>
+    <h1 class="m-0" mat-dialog-title>{{ data.title }}</h1>
   </div>
-  <div class="row">
+  <div>
     <div class="py-2" mat-dialog-content>
       <eustrosoft-front-input
         [label]="data.inputLabel"
@@ -18,8 +18,8 @@
       ></eustrosoft-front-input>
     </div>
   </div>
-  <div class="row">
-    <div [align]="'end'" mat-dialog-actions>
+  <div>
+    <div class="flex g-2" [align]="'end'" mat-dialog-actions>
       <eustrosoft-front-button
         [buttonType]="'button'"
         [buttonStyleType]="'flat'"
@@ -27,7 +27,6 @@
         (clicked)="reject()"
       >
       </eustrosoft-front-button>
-      <span class="buttons-spacer"></span>
       <eustrosoft-front-button
         [buttonType]="'button'"
         [buttonStyleType]="'flat'"

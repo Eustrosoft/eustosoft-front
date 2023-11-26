@@ -11,6 +11,4 @@ export interface UploadItem {
   state: string;
   cancelled: boolean;
   uploadPath: string;
-  securityLevel?: number;
-  description?: string;
 }

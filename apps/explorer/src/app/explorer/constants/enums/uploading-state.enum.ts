@@ -5,7 +5,7 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-export enum UploadingState {
+export enum UploadItemState {
   PENDING = 'pending',
   UPLOADING = 'uploading',
   UPLOADED = 'uploaded',

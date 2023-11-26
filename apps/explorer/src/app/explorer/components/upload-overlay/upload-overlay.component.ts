@@ -14,7 +14,7 @@ import {
   Output,
 } from '@angular/core';
 import { UploadItemForm } from '@eustrosoft-front/core';
-import { UploadingState } from '../../constants/enums/uploading-state.enum';
+import { UploadItemState } from '../../constants/enums/uploading-state.enum';
 import { catchError, EMPTY, Observable, shareReplay } from 'rxjs';
 import { Option } from '@eustrosoft-front/common-ui';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -48,7 +48,7 @@ export class UploadOverlayComponent {
   >();
   @Output() openFileFolder = new EventEmitter<string>();
 
-  UploadingState = UploadingState;
+  UploadingState = UploadItemState;
   securityLevelOptions$: Observable<Option[]> = this.explorerDictionaryService
     .getSecurityLevelOptions()
     .pipe(

@@ -13,6 +13,7 @@ import {
   Observable,
   of,
   Subscriber,
+  switchMap,
 } from 'rxjs';
 import { UploadItem } from '../interfaces/cms/upload-item.interface';
 
@@ -98,18 +99,20 @@ export class FileReaderService {
       chunks: string[];
     }
   > {
+    console.log('SPLITTING:', item.file.name);
     return of(item).pipe(
       concatMap((item) => {
         const buffer = this.blobToArrayBuffer(item.file);
         return combineLatest([of(item), buffer]).pipe(
-          mergeMap(([item, buff]) => {
+          switchMap(([item, buffer]) => {
             let startPointer = 0;
-            const endPointer = buff.byteLength;
-            const chunks = [];
+            const endPointer = buffer.byteLength;
+            const chunks: string[] = [];
             while (startPointer < endPointer) {
               const newStartPointer = startPointer + chunkSize;
-              const chunk = buff.slice(startPointer, newStartPointer);
+              const chunk = buffer.slice(startPointer, newStartPointer);
 
+              // TODO executes ~ 150 ms - move to web worker
               let byteaStr = '';
               const h = '0123456789ABCDEF';
               new Uint8Array(chunk).forEach((v) => {

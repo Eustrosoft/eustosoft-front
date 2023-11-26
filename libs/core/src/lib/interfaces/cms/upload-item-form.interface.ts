@@ -10,6 +10,6 @@ import { UploadItem } from './upload-item.interface';
 
 export interface UploadItemForm {
   uploadItem: FormControl<UploadItem>;
-  description: FormControl<UploadItem['description']>;
-  securityLevel: FormControl<UploadItem['securityLevel']>;
+  description: FormControl<string | undefined>;
+  securityLevel: FormControl<number | undefined>;
 }

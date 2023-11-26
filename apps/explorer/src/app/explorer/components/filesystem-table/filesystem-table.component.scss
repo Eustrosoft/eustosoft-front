@@ -6,6 +6,7 @@
  */
 
 @use 'libs/common-ui/src/lib/styles/variables' as vars;
+@use 'libs/common-ui/src/lib/styles/utilities' as utils;
 
 :host {
   display: flex;
@@ -17,11 +18,11 @@ tr.table-row:hover {
 }
 
 tr.table-row {
-  height: 4em;
+  height: 4rem;
 }
 
 .mat-column-select {
-  width: 1em;
+  width: 1rem;
 }
 
 .files-over {
@@ -31,14 +32,5 @@ tr.table-row {
 
 .truncate-filename {
   max-width: 50vw;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.no-content {
-  display: flex;
-  flex: 1 1 auto;
-  align-items: center;
-  justify-content: center;
+  @extend .text-truncate;
 }

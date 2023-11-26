@@ -21,7 +21,7 @@
           <mat-icon>create_new_folder</mat-icon>
           <span>{{ 'EXPLORER.NEW_FOLDER_BUTTON_TEXT' | translate }}</span>
         </button>
-        <button (click)="createFile()" hidden mat-menu-item>
+        <button *ngIf="false" (click)="createFile()" mat-menu-item>
           <mat-icon>note_add</mat-icon>
           <span>{{ 'EXPLORER.NEW_FILE_BUTTON_TEXT' | translate }}</span>
         </button>
@@ -32,7 +32,7 @@
           <mat-icon>upload</mat-icon>
           <span>{{ 'EXPLORER.NEW_UPLOAD_BUTTON_TEXT' | translate }}</span>
         </button>
-        <button [routerLink]="'upload'" mat-menu-item>
+        <button *ngIf="false" [routerLink]="'upload'" mat-menu-item>
           <mat-icon>publish</mat-icon>
           <span>Custom upload</span>
         </button>
@@ -62,16 +62,16 @@
 
         <mat-menu #batchOperationsMenu="matMenu">
           <button
+            *ngIf="false"
             (click)="copy(filesystemTableComponent.selection.selected)"
-            hidden
             mat-menu-item
           >
             <mat-icon>content_copy</mat-icon>
             <span>{{ 'EXPLORER.COPY_BUTTON_TEXT' | translate }}</span>
           </button>
           <button
+            *ngIf="false"
             (click)="move(filesystemTableComponent.selection.selected)"
-            hidden
             mat-menu-item
           >
             <mat-icon>drive_file_move</mat-icon>
@@ -91,7 +91,6 @@
       [control]="fileControl"
       [multiple]="true"
       [hidden]="true"
-      (filesSelected)="filesSelected()"
     ></eustrosoft-front-input-file>
   </div>
   <div class="explorer-path">

@@ -77,6 +77,13 @@
       "CANCEL_BUTTON_TEXT": "No",
       "SUBMIT_BUTTON_TEXT": "Yes"
     },
+    "UPLOAD_OVERLAY": {
+      "EXTRA_OPTIONS_PANEL_TITLE": "Extra options",
+      "EXTRA_OPTIONS_PANEL_DESCRIPTION": "Security level, description",
+      "EXTRA_OPTIONS_PANEL_SECURITY_LEVEL_LABEL": "Security level",
+      "EXTRA_OPTIONS_PANEL_DESCRIPTION_LABEL": "Description",
+      "OPEN_FOLDER_BUTTON_TOOLTIP": "Open file folder"
+    },
     "ERRORS": {
       "REQUEST_ERROR_TEXT": "Error making request",
       "NO_SELECTED_FILES_ERROR_TEXT": "Select files first",

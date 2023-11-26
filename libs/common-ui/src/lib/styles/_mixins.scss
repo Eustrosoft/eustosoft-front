@@ -1,0 +1,33 @@
+/*!
+ * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ *
+ * This file is part of eustrosoft-front project.
+ * See the LICENSE file at the project root for licensing information.
+ */
+
+@mixin generate-utility-classes($options) {
+  @each $class, $properties in $options {
+    .#{$class} {
+      @each $property, $value in $properties {
+        #{$property}: $value !important;
+      }
+    }
+  }
+}
+
+@mixin link($default-color, $visited-color, $hover-color, $active-color) {
+  color: $default-color;
+  text-decoration: none; // Remove underline by default
+
+  &:visited {
+    color: $visited-color;
+  }
+
+  &:hover {
+    color: $hover-color;
+  }
+
+  &:active {
+    color: $active-color;
+  }
+}
