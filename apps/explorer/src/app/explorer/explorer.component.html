@@ -114,12 +114,11 @@
 </div>
 
 <eustrosoft-front-upload-overlay
-  [hidden]="overlayHidden"
-  [uploadItems]="(uploadItems$ | async) ?? emptyItems"
+  *ngIf="!overlayHidden"
   (startUpload)="startUpload()"
   (openFileFolder)="openByPath($event)"
   (removeItem)="removeItemFromUploadList($event)"
-  (closeOverlay)="closeOverlay($event)"
+  (closeOverlay)="closeOverlay()"
 ></eustrosoft-front-upload-overlay>
 
 <ng-container *ngIf="upload$ | async"></ng-container>

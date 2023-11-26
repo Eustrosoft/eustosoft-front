@@ -177,7 +177,6 @@ export class UploadPageComponent implements OnInit, OnDestroy {
     );
 
   ngOnInit(): void {
-    console.log('init');
     this.uploadObjectForms.valueChanges
       .pipe(
         tap((val) => {

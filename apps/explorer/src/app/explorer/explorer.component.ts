@@ -115,7 +115,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
   private destroy$ = new Subject<void>();
   private fileSystemTableRendered$ = new Subject<void>();
   private startUpload$ = new Subject<void>();
-  private uploadCancelled$ = new Subject<void>();
+  private fileUploadCancelled$ = new Subject<void>();
 
   refreshFolders$ = new BehaviorSubject<boolean>(true);
   path$ = new BehaviorSubject<string>(
@@ -148,10 +148,8 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
       disabled: false,
     },
   ];
-  uploadItems$ = this.explorerUploadItemsService.uploadItems$.asObservable();
-  emptyItems = this.fb.array<FormGroup<UploadItemForm>>([]);
 
-  overlayHidden = false;
+  overlayHidden = true;
 
   ngOnInit(): void {
     this.content$ = combineLatest([this.path$, this.refreshFolders$]).pipe(
@@ -217,22 +215,14 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
     );
 
     this.upload$ = combineLatest([
-      this.uploadCancelled$.asObservable().pipe(startWith(undefined)),
+      this.fileUploadCancelled$.asObservable().pipe(startWith(undefined)),
       this.startUpload$.asObservable(),
     ]).pipe(
       switchMap(() =>
-        this.explorerUploadItemsService.uploadItems$
-          .asObservable()
-          .pipe(take(1))
+        this.explorerUploadService
+          .uploadHexString(this.path$.getValue())
+          .pipe(takeUntil(this.explorerUploadService.teardownUpload$))
       ),
-      switchMap((items) => {
-        console.log(items.value.map((it) => it.uploadItem));
-        return this.explorerUploadService.uploadHexString(
-          items,
-          this.path$.getValue()
-        );
-      }),
-      // emit buffer after every file upload completion
       tap(() => {
         this.refreshFolders$.next(true);
       }),
@@ -242,9 +232,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
           this.translateService.instant('EXPLORER.ERRORS.REQUEST_ERROR_TEXT'),
           this.translateService.instant('EXPLORER.ERRORS.CLOSE_BUTTON_TEXT')
         );
-        this.closeOverlay(
-          this.explorerUploadItemsService.uploadItems$.getValue()
-        );
+        this.closeOverlay();
         this.cd.markForCheck();
         return EMPTY;
       }),
@@ -302,20 +290,18 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
     if (
       data.item.controls.uploadItem.value.state === UploadItemState.UPLOADING
     ) {
-      this.uploadCancelled$.next();
+      this.fileUploadCancelled$.next();
     }
     if (formArray.length === 0) {
-      this.uploadOverlayComponent.closeOverlay.emit(
-        this.fb.array<FormGroup<UploadItemForm>>([])
-      );
+      this.closeOverlay();
     }
   }
 
-  closeOverlay(items: FormArray<FormGroup<UploadItemForm>>): void {
+  closeOverlay(): void {
     this.explorerUploadItemsService.uploadItems$.next(
       this.fb.array<FormGroup<UploadItemForm>>([])
     );
-    this.uploadCancelled$.next();
+    this.explorerUploadService.teardownUpload$.next();
     this.overlayHidden = true;
   }
 

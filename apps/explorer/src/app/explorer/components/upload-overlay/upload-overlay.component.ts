@@ -10,18 +10,18 @@ import {
   Component,
   EventEmitter,
   inject,
-  Input,
   Output,
 } from '@angular/core';
 import { UploadItemForm } from '@eustrosoft-front/core';
 import { UploadItemState } from '../../constants/enums/uploading-state.enum';
-import { catchError, EMPTY, Observable, shareReplay } from 'rxjs';
+import { catchError, EMPTY, Observable, shareReplay, tap } from 'rxjs';
 import { Option } from '@eustrosoft-front/common-ui';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslateService } from '@ngx-translate/core';
 import { ExplorerDictionaryService } from '../../services/explorer-dictionary.service';
-import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { FormArray, FormGroup } from '@angular/forms';
+import { ExplorerUploadItemsService } from '../../services/explorer-upload-items.service';
 
 @Component({
   selector: 'eustrosoft-front-upload-overlay',
@@ -33,22 +33,39 @@ export class UploadOverlayComponent {
   private snackBar = inject(MatSnackBar);
   private translateService = inject(TranslateService);
   private explorerDictionaryService = inject(ExplorerDictionaryService);
-  private fb = inject(FormBuilder);
+  private explorerUploadItemsService = inject(ExplorerUploadItemsService);
 
-  @Input() uploadItems: FormArray<FormGroup<UploadItemForm>> = this.fb.array<
-    FormGroup<UploadItemForm>
-  >([]);
   @Output() startUpload = new EventEmitter<void>();
   @Output() removeItem = new EventEmitter<{
     item: FormGroup<UploadItemForm>;
     index: number;
   }>();
-  @Output() closeOverlay = new EventEmitter<
-    FormArray<FormGroup<UploadItemForm>>
-  >();
+  @Output() closeOverlay = new EventEmitter<void>();
   @Output() openFileFolder = new EventEmitter<string>();
 
-  UploadingState = UploadItemState;
+  readonly UploadingState = UploadItemState;
+  startUploadButtonText = 'EXPLORER.UPLOAD_OVERLAY.START_UPLOAD_BUTTON_TEXT';
+  startUploadButtonDisabled = false;
+
+  uploadItems$: Observable<FormArray<FormGroup<UploadItemForm>>> =
+    this.explorerUploadItemsService.uploadItems$.asObservable().pipe(
+      tap((forms) => {
+        const isUploading = forms.controls.some(
+          (form) =>
+            form.controls.uploadItem.value.state === UploadItemState.UPLOADING
+        );
+        console.log('isUploading: ', isUploading);
+        if (isUploading) {
+          this.modifyUploadingView(isUploading);
+        } else {
+          this.modifyUploadingView(
+            false,
+            'EXPLORER.UPLOAD_OVERLAY.START_UPLOAD_BUTTON_TEXT'
+          );
+        }
+      })
+    );
+
   securityLevelOptions$: Observable<Option[]> = this.explorerDictionaryService
     .getSecurityLevelOptions()
     .pipe(
@@ -77,10 +94,19 @@ export class UploadOverlayComponent {
   }
 
   close(): void {
-    this.closeOverlay.emit(this.uploadItems);
+    this.closeOverlay.emit();
   }
 
   runUpload(): void {
     this.startUpload.emit();
+    this.modifyUploadingView(true);
+  }
+
+  modifyUploadingView(
+    isUploading: boolean,
+    startUploadButtonText = 'EXPLORER.UPLOAD_OVERLAY.START_UPLOAD_BUTTON_TEXT_UPLOADING_STATE'
+  ): void {
+    this.startUploadButtonDisabled = isUploading;
+    this.startUploadButtonText = startUploadButtonText;
   }
 }

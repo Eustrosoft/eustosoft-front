@@ -78,6 +78,8 @@
       "SUBMIT_BUTTON_TEXT": "Yes"
     },
     "UPLOAD_OVERLAY": {
+      "START_UPLOAD_BUTTON_TEXT": "Start upload",
+      "START_UPLOAD_BUTTON_TEXT_UPLOADING_STATE": "Files being uploaded",
       "EXTRA_OPTIONS_PANEL_TITLE": "Extra options",
       "EXTRA_OPTIONS_PANEL_DESCRIPTION": "Security level, description",
       "EXTRA_OPTIONS_PANEL_SECURITY_LEVEL_LABEL": "Security level",
