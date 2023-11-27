@@ -13,7 +13,6 @@ import {
   filter,
   from,
   of,
-  Subject,
   switchMap,
   tap,
   throwError,
@@ -33,8 +32,6 @@ export class ExplorerUploadService {
   private explorerService = inject(ExplorerService);
   private explorerUploadItemsService = inject(ExplorerUploadItemsService);
   private fb = inject(FormBuilder);
-
-  teardownUpload$ = new Subject<void>();
 
   uploadHexString(path: string = '/') {
     return this.explorerUploadItemsService.uploadItems$.asObservable().pipe(
@@ -108,10 +105,6 @@ export class ExplorerUploadService {
             )
           )
       ),
-      tap(() => {
-        console.log('teardownUpload$ call');
-        this.teardownUpload$.next();
-      }),
       catchError((err) => throwError(() => err))
     );
   }

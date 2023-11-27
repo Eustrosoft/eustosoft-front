@@ -116,6 +116,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
   private fileSystemTableRendered$ = new Subject<void>();
   private startUpload$ = new Subject<void>();
   private fileUploadCancelled$ = new Subject<void>();
+  private teardownUpload$ = new Subject<void>();
 
   refreshFolders$ = new BehaviorSubject<boolean>(true);
   path$ = new BehaviorSubject<string>(
@@ -221,9 +222,11 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
       switchMap(() =>
         this.explorerUploadService
           .uploadHexString(this.path$.getValue())
-          .pipe(takeUntil(this.explorerUploadService.teardownUpload$))
+          .pipe(takeUntil(this.teardownUpload$))
       ),
       tap(() => {
+        console.log('teardownUpload$ call');
+        this.teardownUpload$.next();
         this.refreshFolders$.next(true);
       }),
       catchError((err) => {
@@ -232,8 +235,10 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
           this.translateService.instant('EXPLORER.ERRORS.REQUEST_ERROR_TEXT'),
           this.translateService.instant('EXPLORER.ERRORS.CLOSE_BUTTON_TEXT')
         );
+        this.inputFileComponent.clear();
         this.closeOverlay();
         this.cd.markForCheck();
+
         return EMPTY;
       }),
       repeat()
@@ -301,7 +306,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
     this.explorerUploadItemsService.uploadItems$.next(
       this.fb.array<FormGroup<UploadItemForm>>([])
     );
-    this.explorerUploadService.teardownUpload$.next();
+    this.teardownUpload$.next();
     this.overlayHidden = true;
   }
 

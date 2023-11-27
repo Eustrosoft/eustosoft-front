@@ -54,6 +54,10 @@ export class UploadOverlayComponent {
           (form) =>
             form.controls.uploadItem.value.state === UploadItemState.UPLOADING
         );
+        const uploadComplete = forms.controls.every(
+          (form) =>
+            form.controls.uploadItem.value.state === UploadItemState.UPLOADED
+        );
         console.log('isUploading: ', isUploading);
         if (isUploading) {
           this.modifyUploadingView(isUploading);
@@ -61,6 +65,12 @@ export class UploadOverlayComponent {
           this.modifyUploadingView(
             false,
             'EXPLORER.UPLOAD_OVERLAY.START_UPLOAD_BUTTON_TEXT'
+          );
+        }
+        if (uploadComplete) {
+          this.modifyUploadingView(
+            true,
+            'EXPLORER.UPLOAD_OVERLAY.START_UPLOAD_BUTTON_TEXT_UPLOADING_COMPLETE_STATE'
           );
         }
       })
@@ -103,10 +113,10 @@ export class UploadOverlayComponent {
   }
 
   modifyUploadingView(
-    isUploading: boolean,
+    uploadButtonDisabled: boolean,
     startUploadButtonText = 'EXPLORER.UPLOAD_OVERLAY.START_UPLOAD_BUTTON_TEXT_UPLOADING_STATE'
   ): void {
-    this.startUploadButtonDisabled = isUploading;
+    this.startUploadButtonDisabled = uploadButtonDisabled;
     this.startUploadButtonText = startUploadButtonText;
   }
 }
