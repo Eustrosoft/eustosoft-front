@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
-import { DispatchService } from './dispatch.service';
 import {
+  DispatchService,
   QtisRequestResponseInterface,
   SamRequestActions,
   Scopes,

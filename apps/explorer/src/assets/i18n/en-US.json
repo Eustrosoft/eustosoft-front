@@ -44,38 +44,52 @@
       "ZB": "ZB",
       "YB": "YB"
     },
-    "CREATE_FOLDER_MODAL": {
+    "CREATE_FOLDER_DIALOG": {
       "TITLE": "New folder",
       "INPUT_LABEL_TEXT": "Folder name",
       "DEFAULT_INPUT_VALUE": "Untitled folder",
       "SUBMIT_BUTTON_TEXT": "Create"
     },
-    "CREATE_FILE_MODAL": {
+    "CREATE_FILE_DIALOG": {
       "TITLE": "New file",
       "INPUT_LABEL_TEXT": "File name",
       "DEFAULT_INPUT_VALUE": "Untitled",
       "SUBMIT_BUTTON_TEXT": "Create"
     },
-    "RENAME_MODAL": {
+    "RENAME_DIALOG": {
       "TITLE": "Rename",
       "INPUT_LABEL_TEXT": "New name",
       "SUBMIT_BUTTON_TEXT": "Rename"
     },
-    "MOVE_MODAL": {
+    "MOVE_DIALOG": {
       "TITLE": "Move to",
       "CANCEL_BUTTON_TEXT": "Cancel",
       "SUBMIT_BUTTON_TEXT": "Move"
     },
-    "COPY_MODAL": {
+    "COPY_DIALOG": {
       "TITLE": "Copy to",
       "CANCEL_BUTTON_TEXT": "Cancel",
       "SUBMIT_BUTTON_TEXT": "Copy"
     },
-    "DELETE_MODAL": {
+    "DELETE_DIALOG": {
       "TITLE": "Delete confirmation",
       "TEXT": "{{count}} {{objectsWord}} are marked for deletion. Proceed?",
       "CANCEL_BUTTON_TEXT": "No",
       "SUBMIT_BUTTON_TEXT": "Yes"
+    },
+    "UPLOAD_DIALOG": {
+      "TITLE": "Upload a file",
+      "SELECT_FILE_BUTTON_TEXT": "Select file",
+      "CANCEL_BUTTON_TEXT": "Cancel",
+      "START_UPLOAD_BUTTON_TEXT": "Start upload",
+      "START_UPLOAD_BUTTON_TEXT_UPLOADING_STATE": "Files being uploaded",
+      "UPLOAD_COMPLETE_TEXT": "Upload completed",
+      "PROCEED_AFTER_SUGGESTION_TEXT": "Proceed",
+      "SUGGESTIONS": {
+        "FILL_DESCRIPTION_TEXT": "It is recommended to fill out the description field. You can also leave it blank",
+        "SELECT_NEW_FILES": "Select new file to upload",
+        "SECURITY_LVL_WARNING": "All files whose security level is lower than or equal to 2F will be publicly viewable"
+      }
     },
     "UPLOAD_OVERLAY": {
       "START_UPLOAD_BUTTON_TEXT": "Start upload",
@@ -91,7 +105,8 @@
       "REQUEST_ERROR_TEXT": "Error making request",
       "NO_SELECTED_FILES_ERROR_TEXT": "Select files first",
       "CLOSE_BUTTON_TEXT": "Close",
-      "SECURITY_LEVEL_OPTIONS_FETCH_ERROR": "Error fetching security levels"
+      "SECURITY_LEVEL_OPTIONS_FETCH_ERROR": "Error fetching security levels",
+      "FILESYSTEM_OBJECTS_FETCH_ERROR": "Error fetching filesystem contents"
     }
   }
 }

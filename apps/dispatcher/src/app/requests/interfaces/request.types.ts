@@ -6,7 +6,7 @@
  */
 
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
-import { QueryTypes } from '../constants/enums/query-types.enum';
+import { DispatcherQueryTypes } from '@eustrosoft-front/core';
 
 export type RequestsForm = {
   forms: FormArray<FormGroup<SingleRequestForm>>;
@@ -16,5 +16,5 @@ export type RequestsForm = {
 export type SingleRequestForm = {
   request: FormControl<string | null>;
   file: FormControl<File[] | null>;
-  queryType: FormControl<QueryTypes | null>;
+  queryType: FormControl<DispatcherQueryTypes | null>;
 };

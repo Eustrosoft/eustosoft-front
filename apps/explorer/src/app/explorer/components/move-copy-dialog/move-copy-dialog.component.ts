@@ -26,18 +26,12 @@ import {
   switchMap,
   tap,
 } from 'rxjs';
-import {
-  FileSystemObject,
-  FileSystemObjectTypes,
-  QtisRequestResponseInterface,
-  ViewRequest,
-  ViewResponse,
-} from '@eustrosoft-front/core';
+import { FileSystemObjectTypes } from '@eustrosoft-front/core';
 import { MatListOption, MatSelectionList } from '@angular/material/list';
 import { Stack } from '../../classes/Stack';
-import { ExplorerRequestBuilderService } from '../../services/explorer-request-builder.service';
 import { MoveCopyDialogDataInterface } from './move-copy-dialog-data.interface';
-import { DispatchService } from '@eustrosoft-front/security';
+import { FileSystemObject } from '../../models/file-system-object.interface';
+import { ExplorerService } from '../../services/explorer.service';
 
 @Component({
   selector: 'eustrosoft-front-move-folder-dialog',
@@ -49,8 +43,6 @@ export class MoveCopyDialogComponent
   implements OnInit, AfterViewInit, OnDestroy
 {
   currentSelectedOptionIndex: number | undefined = undefined;
-
-  fsObjects$!: Observable<FileSystemObject[]>;
   moveButtonDisabled$!: Observable<boolean>;
   path$ = new BehaviorSubject<string>('/');
   private matSelectionListRendered$ = new Subject<void>();
@@ -66,12 +58,13 @@ export class MoveCopyDialogComponent
   private dialogRef: MatDialogRef<MoveCopyDialogComponent> = inject(
     MatDialogRef<MoveCopyDialogComponent>
   );
-  private dispatchService: DispatchService = inject(DispatchService);
-  private explorerRequestBuilderService: ExplorerRequestBuilderService = inject(
-    ExplorerRequestBuilderService
-  );
-  private cd: ChangeDetectorRef = inject(ChangeDetectorRef);
+  private explorerService = inject(ExplorerService);
+  private cdRef = inject(ChangeDetectorRef);
   private navigationHistoryStack: Stack<string> = inject(Stack);
+
+  fsObjects$ = this.path$
+    .asObservable()
+    .pipe(switchMap((path) => this.explorerService.getContents(path)));
 
   @HostListener('keydown.enter', ['$event'])
   onEnterKeydown(e: KeyboardEvent) {
@@ -80,18 +73,6 @@ export class MoveCopyDialogComponent
   }
 
   ngOnInit(): void {
-    this.fsObjects$ = this.path$.asObservable().pipe(
-      switchMap((path: string) =>
-        this.explorerRequestBuilderService.buildViewRequest(path)
-      ),
-      switchMap((body) =>
-        this.dispatchService.dispatch<ViewRequest, ViewResponse>(body)
-      ),
-      map((response: QtisRequestResponseInterface<ViewResponse>) =>
-        response.r.flatMap((r: ViewResponse) => r.content)
-      )
-    );
-
     this.moveButtonDisabled$ = this.matSelectionListRendered$.pipe(
       switchMap(() =>
         merge(
@@ -150,7 +131,7 @@ export class MoveCopyDialogComponent
       }),
       tap(() => {
         setTimeout(() => {
-          this.cd.detectChanges();
+          this.cdRef.detectChanges();
         }, 0);
       })
     );

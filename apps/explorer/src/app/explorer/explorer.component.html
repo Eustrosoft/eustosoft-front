@@ -26,29 +26,20 @@
           <span>{{ 'EXPLORER.NEW_FILE_BUTTON_TEXT' | translate }}</span>
         </button>
         <button
+          *ngIf="false"
           (click)="inputFileComponent.fileInput.nativeElement.click()"
           mat-menu-item
         >
           <mat-icon>upload</mat-icon>
           <span>{{ 'EXPLORER.NEW_UPLOAD_BUTTON_TEXT' | translate }}</span>
         </button>
-        <button *ngIf="false" [routerLink]="'upload'" mat-menu-item>
-          <mat-icon>publish</mat-icon>
-          <span>Custom upload</span>
+        <button (click)="openUploadDialog()" mat-menu-item>
+          <mat-icon>upload</mat-icon>
+          <span>{{ 'EXPLORER.NEW_UPLOAD_BUTTON_TEXT' | translate }}</span>
         </button>
       </mat-menu>
     </div>
-    <div hidden>
-      <eustrosoft-front-select
-        [label]="'EXPLORER.UPLOAD_TYPE_LABEL_TEXT' | translate"
-        [control]="uploadTypeControl | formControl"
-        [options]="uploadTypeOptions"
-        [fieldAppearance]="'outline'"
-        [color]="'primary'"
-        class="uploadType"
-      ></eustrosoft-front-select>
-    </div>
-    <ng-container *ngIf="selected$ | async as selected">
+    <ng-container *ngIf="selectedRows$ | async as selected">
       <div>
         <eustrosoft-front-button
           [hidden]="selected.length === 0"
@@ -89,7 +80,7 @@
     </ng-container>
     <eustrosoft-front-input-file
       [control]="fileControl"
-      [multiple]="true"
+      [multiple]="false"
       [hidden]="true"
     ></eustrosoft-front-input-file>
   </div>
@@ -100,16 +91,30 @@
     ></eustrosoft-front-breadcrumbs>
   </div>
   <div class="explorer-table">
-    <eustrosoft-front-filesystem-table
-      [content]="(content$ | async) || []"
-      (openClicked)="open($event)"
-      (downloadClicked)="downloadViaPath($event)"
-      (renameClicked)="rename($event)"
-      (moveClicked)="move($event)"
-      (copyClicked)="copy($event)"
-      (deleteClicked)="delete($event)"
-      (filesDroppedOnFolder)="filesDroppedOnFolder($event)"
-    ></eustrosoft-front-filesystem-table>
+    <ng-container *ngIf="{ content: content$ | async } as vm">
+      <ng-container *ngIf="vm.content?.isLoading && !vm.content?.isError">
+        <eustrosoft-front-preloader
+          class="flex justify-content-center"
+        ></eustrosoft-front-preloader>
+      </ng-container>
+      <ng-container *ngIf="vm.content?.isError">
+        <p>
+          {{ 'EXPLORER.ERRORS.FILESYSTEM_OBJECTS_FETCH_ERROR' | translate }}
+        </p>
+      </ng-container>
+      <ng-container *ngIf="vm.content?.content as content">
+        <eustrosoft-front-filesystem-table
+          [content]="content"
+          (openClicked)="open($event)"
+          (downloadClicked)="downloadViaPath($event)"
+          (renameClicked)="rename($event)"
+          (moveClicked)="move($event)"
+          (copyClicked)="copy($event)"
+          (deleteClicked)="delete($event)"
+          (filesDroppedOnFolder)="filesDroppedOnFolder($event)"
+        ></eustrosoft-front-filesystem-table>
+      </ng-container>
+    </ng-container>
   </div>
 </div>
 

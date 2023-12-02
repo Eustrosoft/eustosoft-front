@@ -40,8 +40,8 @@ export class UploadOverlayComponent {
     item: FormGroup<UploadItemForm>;
     index: number;
   }>();
-  @Output() closeOverlay = new EventEmitter<void>();
   @Output() openFileFolder = new EventEmitter<string>();
+  @Output() closeOverlay = new EventEmitter<void>();
 
   readonly UploadingState = UploadItemState;
   startUploadButtonText = 'EXPLORER.UPLOAD_OVERLAY.START_UPLOAD_BUTTON_TEXT';

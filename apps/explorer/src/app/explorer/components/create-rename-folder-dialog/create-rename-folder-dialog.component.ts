@@ -22,9 +22,9 @@ import { CreateRenameDialogDataInterface } from './create-rename-dialog-data.int
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CreateRenameFolderDialogComponent {
-  private dialogRef: MatDialogRef<CreateRenameFolderDialogComponent> = inject(
-    MatDialogRef<CreateRenameFolderDialogComponent>
-  );
+  private dialogRef = inject<
+    MatDialogRef<CreateRenameFolderDialogComponent, string>
+  >(MatDialogRef<CreateRenameFolderDialogComponent>);
   public data: CreateRenameDialogDataInterface = inject(MAT_DIALOG_DATA);
   public cancelButtonText = `Cancel`;
 

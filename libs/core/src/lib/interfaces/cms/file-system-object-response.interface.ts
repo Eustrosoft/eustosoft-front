@@ -7,7 +7,7 @@
 
 import { FileSystemObjectTypes } from '../../constants/enums/file-system-object-types.enum';
 
-export interface FileSystemObject {
+export interface FileSystemObjectResponse {
   description: string;
   fileName: string;
   fullPath: string;

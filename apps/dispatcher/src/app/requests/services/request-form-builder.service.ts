@@ -7,11 +7,8 @@
 
 import { Injectable } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import {
-  QueryTypes,
-  RequestsForm,
-  SingleRequestForm,
-} from '@eustrosoft-front/core';
+import { DispatcherQueryTypes } from '@eustrosoft-front/core';
+import { RequestsForm, SingleRequestForm } from '../interfaces/request.types';
 
 @Injectable()
 export class RequestFormBuilderService {
@@ -25,14 +22,14 @@ export class RequestFormBuilderService {
             'select * from tis.samusers;select * from tis.files;'
           ),
           file: this.fb.control([]),
-          queryType: this.fb.control(QueryTypes.SQL),
+          queryType: this.fb.control(DispatcherQueryTypes.SQL),
         }),
         this.fb.group<SingleRequestForm>({
           request: this.fb.control(
             'select * from tis.samacl;select * from tis.comments;'
           ),
           file: this.fb.control([]),
-          queryType: this.fb.control(QueryTypes.SQL),
+          queryType: this.fb.control(DispatcherQueryTypes.SQL),
         }),
       ]),
       submit: this.fb.control(false),
@@ -43,7 +40,7 @@ export class RequestFormBuilderService {
     return this.fb.group<SingleRequestForm>({
       request: this.fb.control(''),
       file: this.fb.control([]),
-      queryType: this.fb.control(QueryTypes.SQL),
+      queryType: this.fb.control(DispatcherQueryTypes.SQL),
     });
   }
 }

@@ -6,7 +6,6 @@
  */
 
 import { inject, Injectable } from '@angular/core';
-import { DispatchService } from '@eustrosoft-front/security';
 import {
   DicRequestActions,
   DicsRequest,
@@ -14,12 +13,12 @@ import {
   DicValue,
   DicValuesRequest,
   DicValuesResponse,
+  DispatchService,
   QtisRequestResponseInterface,
   Subsystems,
   SupportedLanguages,
 } from '@eustrosoft-front/core';
 import { map, Observable } from 'rxjs';
-import { Option } from '@eustrosoft-front/common-ui';
 import { Dictionaries } from '../contants/enums/dictionaries.enum';
 
 @Injectable()
@@ -39,7 +38,7 @@ export class DicService {
     });
   }
 
-  getDictionaryValues(
+  getDicValues(
     dic: Dictionaries
   ): Observable<QtisRequestResponseInterface<DicValuesResponse>> {
     return this.dispatchService.dispatch<DicValuesRequest, DicValuesResponse>({
@@ -55,22 +54,14 @@ export class DicService {
     });
   }
 
-  getOptionsFromDictionary<T>(
+  getMappedDicValues<T>(
     dic: Dictionaries,
     mapFunc: (value: DicValue) => T
   ): Observable<T[]> {
-    return this.getDictionaryValues(dic).pipe(
+    return this.getDicValues(dic).pipe(
       map((response: QtisRequestResponseInterface<DicValuesResponse>) =>
         response.r.flatMap((r: DicValuesResponse) => r.values).map(mapFunc)
       )
     );
-  }
-
-  toOption(value: DicValue): Option {
-    return {
-      value: value.code,
-      displayText: value.value,
-      disabled: false,
-    };
   }
 }

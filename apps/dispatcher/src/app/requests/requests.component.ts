@@ -22,12 +22,12 @@ import {
 } from 'rxjs';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import {
+  DispatcherQueryTypes,
   DispatcherTableResult,
+  DispatchService,
   DisplayTypes,
   FileRequest,
   QtisRequestResponseInterface,
-  QueryTypes,
-  RequestsForm,
   SqlRequest,
   SqlResponse,
   Table,
@@ -37,7 +37,7 @@ import { RequestBuilderService } from './services/request-builder.service';
 import { RequestFormBuilderService } from './services/request-form-builder.service';
 import { Option } from '@eustrosoft-front/common-ui';
 import { HttpErrorResponse } from '@angular/common/http';
-import { DispatchService } from '@eustrosoft-front/security';
+import { RequestsForm } from './interfaces/request.types';
 
 @Component({
   selector: 'eustrosoft-front-requests',
@@ -49,7 +49,7 @@ export class RequestsComponent implements OnInit {
   public form!: FormGroup<RequestsForm>;
   public DisplayTypes = DisplayTypes;
   public displayType = new FormControl<DisplayTypes>(DisplayTypes.TEXT);
-  public queryTypeOptions: Option[] = Object.values(QueryTypes).map(
+  public queryTypeOptions: Option[] = Object.values(DispatcherQueryTypes).map(
     (queryType) =>
       ({
         value: queryType,

@@ -5,96 +5,111 @@
   ~ See the LICENSE file at the project root for licensing information.
   -->
 
-<div class="container">
-  <div class="row gx-3 pt-2 align-items-center">
-    <div class="col-2 w-auto">
-      <eustrosoft-front-button
-        [buttonType]="'button'"
-        [buttonStyleType]="'icon'"
-        [iconName]="'navigate_before'"
-        (click)="navigateBack()"
-      >
-      </eustrosoft-front-button>
-    </div>
-    <div class="col-10">
-      <h1 class="m-0 p-0 d-flex align-items-center" mat-dialog-title>
-        <span>{{ data.title }}</span>
-      </h1>
-    </div>
+<div class="flex g-3 pt-2 align-items-center">
+  <div class="w-auto">
+    <eustrosoft-front-button
+      [buttonType]="'button'"
+      [buttonStyleType]="'icon'"
+      [iconName]="'navigate_before'"
+      (click)="navigateBack()"
+    >
+    </eustrosoft-front-button>
   </div>
-  <div class="row">
-    <div class="py-2 px-4 d-flex flex-column" mat-dialog-content>
-      <cdk-virtual-scroll-viewport itemSize="5" class="vh-25 vw-50">
-        <mat-selection-list
-          [multiple]="false"
-          [hideSingleSelectionIndicator]="true"
-          [disableRipple]="true"
-        >
-          <mat-list-option
-            *ngFor="let object of fsObjects$ | async; let i = index"
-            [value]="object"
-            [disabled]="
-              object.type === fsObjTypes.FILE || object.type === fsObjTypes.LINK
-            "
-            (click)="optionClicked(i)"
+  <h1 class="m-0 p-0 flex align-items-center" mat-dialog-title>
+    <span>{{ data.title }}</span>
+  </h1>
+</div>
+<div class="row">
+  <div class="py-2 px-4 flex flex-column" mat-dialog-content>
+    <cdk-virtual-scroll-viewport itemSize="5" class="vh-25 vw-50">
+      <mat-selection-list
+        [multiple]="false"
+        [hideSingleSelectionIndicator]="true"
+        [disableRipple]="true"
+      >
+        <ng-container *ngIf="{ fsObjects: fsObjects$ | async } as vm">
+          <ng-container
+            *ngIf="vm.fsObjects?.isLoading && !vm.fsObjects?.isError"
           >
-            <ng-container [ngSwitch]="object.type">
-              <ng-container
-                *ngSwitchCase="fsObjTypes.DIRECTORY"
-                [ngTemplateOutlet]="directoryTemplate"
-                [ngTemplateOutletContext]="{
-                  object: object,
-                  forwardLinkDisabled: matSelectionList.options.get(i)?.disabled
-                }"
-              >
+            <eustrosoft-front-preloader></eustrosoft-front-preloader>
+          </ng-container>
+          <ng-container *ngIf="vm.fsObjects?.isError">
+            <p>
+              {{ 'EXPLORER.ERRORS.FILESYSTEM_OBJECTS_FETCH_ERROR' | translate }}
+            </p>
+          </ng-container>
+          <ng-container *ngIf="vm.fsObjects?.content as content">
+            <ng-container
+              *ngIf="content.length > 0; else noContent"
+            ></ng-container>
+            <mat-list-option
+              *ngFor="let object of content; let i = index"
+              [value]="object"
+              [disabled]="
+                object.type === fsObjTypes.FILE ||
+                object.type === fsObjTypes.LINK
+              "
+              (click)="optionClicked(i)"
+            >
+              <ng-container [ngSwitch]="object.type">
+                <ng-container
+                  *ngSwitchCase="fsObjTypes.DIRECTORY"
+                  [ngTemplateOutlet]="directoryTemplate"
+                  [ngTemplateOutletContext]="{
+                    object: object,
+                    forwardLinkDisabled:
+                      matSelectionList.options.get(i)?.disabled
+                  }"
+                >
+                </ng-container>
+                <ng-container
+                  *ngSwitchCase="fsObjTypes.LINK"
+                  [ngTemplateOutlet]="linkOrFileTemplate"
+                  [ngTemplateOutletContext]="{ $implicit: object }"
+                >
+                </ng-container>
+                <ng-container
+                  *ngSwitchCase="fsObjTypes.FILE"
+                  [ngTemplateOutlet]="linkOrFileTemplate"
+                  [ngTemplateOutletContext]="{ $implicit: object }"
+                >
+                </ng-container>
               </ng-container>
-              <ng-container
-                *ngSwitchCase="fsObjTypes.LINK"
-                [ngTemplateOutlet]="linkOrFileTemplate"
-                [ngTemplateOutletContext]="{ $implicit: object }"
-              >
-              </ng-container>
-              <ng-container
-                *ngSwitchCase="fsObjTypes.FILE"
-                [ngTemplateOutlet]="linkOrFileTemplate"
-                [ngTemplateOutletContext]="{ $implicit: object }"
-              >
-              </ng-container>
-            </ng-container>
-          </mat-list-option>
-        </mat-selection-list>
-      </cdk-virtual-scroll-viewport>
-    </div>
+            </mat-list-option>
+          </ng-container>
+        </ng-container>
+      </mat-selection-list>
+    </cdk-virtual-scroll-viewport>
   </div>
-  <div class="row">
-    <div class="px-4" mat-dialog-actions>
-      <eustrosoft-front-button
-        [buttonType]="'button'"
-        [buttonStyleType]="'icon'"
-        [iconName]="'create_new_folder'"
-        [title]="createNewFolderTitleText"
-        (click)="createNewFolder()"
-      >
-      </eustrosoft-front-button>
-      <span class="left-spacer"></span>
-      <eustrosoft-front-button
-        [buttonType]="'button'"
-        [buttonStyleType]="'flat'"
-        [buttonText]="data.cancelButtonText"
-        (click)="reject()"
-      >
-      </eustrosoft-front-button>
-      <span class="buttons-spacer"></span>
-      <eustrosoft-front-button
-        [buttonStyleType]="'flat'"
-        [buttonText]="data.submitButtonText"
-        [color]="'primary'"
-        [disabled]="!!(moveButtonDisabled$ | async)"
-        [matTooltip]="moveButtonErrorText"
-        (clicked)="resolve()"
-      >
-      </eustrosoft-front-button>
-    </div>
+</div>
+<div class="row">
+  <div class="px-4" mat-dialog-actions>
+    <eustrosoft-front-button
+      [buttonType]="'button'"
+      [buttonStyleType]="'icon'"
+      [iconName]="'create_new_folder'"
+      [title]="createNewFolderTitleText"
+      (click)="createNewFolder()"
+    >
+    </eustrosoft-front-button>
+    <span class="left-spacer"></span>
+    <eustrosoft-front-button
+      [buttonType]="'button'"
+      [buttonStyleType]="'flat'"
+      [buttonText]="data.cancelButtonText"
+      (click)="reject()"
+    >
+    </eustrosoft-front-button>
+    <span class="buttons-spacer"></span>
+    <eustrosoft-front-button
+      [buttonStyleType]="'flat'"
+      [buttonText]="data.submitButtonText"
+      [color]="'primary'"
+      [disabled]="!!(moveButtonDisabled$ | async)"
+      [matTooltip]="moveButtonErrorText"
+      (clicked)="resolve()"
+    >
+    </eustrosoft-front-button>
   </div>
 </div>
 
@@ -103,8 +118,8 @@
   let-object="object"
   let-forwardLinkDisabled="forwardLinkDisabled"
 >
-  <div class="d-flex justify-content-between">
-    <div class="d-flex align-items-center lh-1">
+  <div class="flex justify-content-space-between">
+    <div class="flex align-items-center lh-1">
       <mat-icon>folder</mat-icon>
       <span>{{ object.fileName }}</span>
     </div>
@@ -119,10 +134,15 @@
   </div>
 </ng-template>
 <ng-template #linkOrFileTemplate let-object>
-  <div class="d-flex justify-content-between">
-    <div class="d-flex align-items-center lh-1">
+  <div class="flex justify-content-space-between">
+    <div class="flex align-items-center lh-1">
       <mat-icon>draft</mat-icon>
       <span>{{ object.fileName }}</span>
     </div>
+  </div>
+</ng-template>
+<ng-template #noContent>
+  <div class="flex justify-content-center">
+    <p class="fs-4">{{ 'EXPLORER.FOLDER_IS_EMPTY' | translate }}</p>
   </div>
 </ng-template>

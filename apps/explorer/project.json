@@ -19,14 +19,13 @@
         "assets": ["apps/explorer/src/favicon.ico", "apps/explorer/src/assets"],
         "styles": [
           "@angular/material/prebuilt-themes/deeppurple-amber.css",
-          "libs/common-ui/src/lib/material/css/roboto.css",
-          "libs/common-ui/src/lib/material/css/material-symbols-outlined.css",
           "apps/explorer/src/styles.scss"
         ],
         "scripts": []
       },
       "configurations": {
         "production": {
+          "baseHref": "./",
           "assets": [
             "apps/explorer/src/favicon.ico",
             {
@@ -50,6 +49,7 @@
           "buildOptimizer": true
         },
         "stage": {
+          "baseHref": "./",
           "assets": [
             "apps/explorer/src/favicon.ico",
             {

@@ -8,17 +8,17 @@
 import { Injectable } from '@angular/core';
 import {
   DispatcherActions,
+  DispatcherQueryTypes,
   FileReaderService,
   FileRequest,
   QtisRequestResponseInterface,
-  QueryTypes,
-  SingleRequestForm,
   SqlRequest,
   Subsystems,
   SupportedLanguages,
 } from '@eustrosoft-front/core';
 import { combineLatest, mergeMap, Observable, of } from 'rxjs';
 import { FormArray, FormGroup } from '@angular/forms';
+import { SingleRequestForm } from '../interfaces/request.types';
 
 @Injectable()
 export class RequestBuilderService {
@@ -29,10 +29,10 @@ export class RequestBuilderService {
   ): Observable<QtisRequestResponseInterface<FileRequest | SqlRequest>> {
     const requests = forms.controls.map(
       (control: FormGroup<SingleRequestForm>) => {
-        switch (control.value.queryType as QueryTypes) {
-          case QueryTypes.FILE:
+        switch (control.value.queryType as DispatcherQueryTypes) {
+          case DispatcherQueryTypes.FILE:
             return this.buildFileQuery(control.value.file?.pop() as File);
-          case QueryTypes.SQL:
+          case DispatcherQueryTypes.SQL:
             return this.buildSqlQuery(control.value.request as string);
         }
       }

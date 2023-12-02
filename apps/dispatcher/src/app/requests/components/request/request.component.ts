@@ -11,9 +11,10 @@ import {
   Input,
   ViewChild,
 } from '@angular/core';
-import { QueryTypes, SingleRequestForm } from '@eustrosoft-front/core';
+import { DispatcherQueryTypes } from '@eustrosoft-front/core';
 import { InputFileComponent, Option } from '@eustrosoft-front/common-ui';
 import { FormGroup } from '@angular/forms';
+import { SingleRequestForm } from '../../interfaces/request.types';
 
 @Component({
   selector: 'eustrosoft-front-request',
@@ -24,7 +25,7 @@ import { FormGroup } from '@angular/forms';
 export class RequestComponent {
   @Input() form!: FormGroup<SingleRequestForm>;
   @Input() formNumber!: number;
-  @Input() queryTypeOptions: Option[] = Object.values(QueryTypes).map(
+  @Input() queryTypeOptions: Option[] = Object.values(DispatcherQueryTypes).map(
     (queryType) =>
       ({
         value: queryType,
@@ -34,7 +35,7 @@ export class RequestComponent {
   );
 
   @ViewChild(InputFileComponent) inputFileComponent!: InputFileComponent;
-  public QueryTypes = QueryTypes;
+  public QueryTypes = DispatcherQueryTypes;
 
   public queryTypeLabelText = `Query type`;
 

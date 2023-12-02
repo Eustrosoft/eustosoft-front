@@ -20,13 +20,13 @@ import {
 import { HttpErrorResponse } from '@angular/common/http';
 import {
   AuthenticatedUserInterface,
+  DispatchService,
   PingRequest,
   PingResponse,
   QtisRequestResponseInterface,
   Subsystems,
   SupportedLanguages,
 } from '@eustrosoft-front/core';
-import { DispatchService } from './dispatch.service';
 import { SamService } from './sam.service';
 
 @Injectable()

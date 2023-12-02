@@ -16,14 +16,12 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import {
-  FileSystemObject,
-  FileSystemObjectTypes,
-} from '@eustrosoft-front/core';
+import { FileSystemObjectTypes } from '@eustrosoft-front/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Subject } from 'rxjs';
 import { MatSort } from '@angular/material/sort';
+import { FileSystemObject } from '../../models/file-system-object.interface';
 
 @Component({
   selector: 'eustrosoft-front-filesystem-table',

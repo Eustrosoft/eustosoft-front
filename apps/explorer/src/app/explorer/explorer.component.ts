@@ -17,7 +17,6 @@ import {
 } from '@angular/core';
 import {
   InputFileComponent,
-  Option,
   PromptDialogComponent,
   PromptDialogDataInterface,
 } from '@eustrosoft-front/common-ui';
@@ -26,14 +25,16 @@ import {
   BehaviorSubject,
   catchError,
   combineLatest,
+  delay,
   EMPTY,
   filter,
   iif,
   map,
+  merge,
   Observable,
   of,
   repeat,
-  share,
+  shareReplay,
   startWith,
   Subject,
   switchMap,
@@ -48,18 +49,14 @@ import {
   CreateResponse,
   DeleteRequest,
   DeleteResponse,
+  DispatchService,
   DownloadTicketRequest,
   DownloadTicketResponse,
-  FileSystemObject,
   FileSystemObjectTypes,
   MoveCopyRequest,
   MoveCopyResponse,
   QtisRequestResponseInterface,
-  Subsystems,
-  SupportedLanguages,
   UploadItemForm,
-  ViewRequest,
-  ViewResponse,
 } from '@eustrosoft-front/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -78,9 +75,11 @@ import { ExplorerUploadService } from './services/explorer-upload.service';
 import { TranslateService } from '@ngx-translate/core';
 import { ExplorerUploadItemsService } from './services/explorer-upload-items.service';
 import { UploadOverlayComponent } from './components/upload-overlay/upload-overlay.component';
-import { DispatchService } from '@eustrosoft-front/security';
 import { ExplorerUploadItemFormFactoryService } from './services/explorer-upload-item-form-factory.service';
 import { UploadItemState } from './constants/enums/uploading-state.enum';
+import { UploadDialogComponent } from './components/upload-dialog/upload-dialog.component';
+import { UploadDialogDataInterface } from './components/upload-dialog/upload-dialog-data.interface';
+import { FileSystemObject } from './models/file-system-object.interface';
 
 @Component({
   selector: 'eustrosoft-front-explorer',
@@ -125,30 +124,14 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   upload$!: Observable<any>;
   fileControlChanges$!: Observable<FormArray<FormGroup<UploadItemForm>>>;
-  content$!: Observable<FileSystemObject[]>;
-  selected$!: Observable<FileSystemObject[]>;
+  content$!: Observable<{
+    isLoading: boolean;
+    isError: boolean;
+    content: FileSystemObject[] | undefined;
+  }>;
+  selectedRows$!: Observable<FileSystemObject[]>;
 
   fileControl = new FormControl<File[]>([], { nonNullable: true });
-  uploadTypeControl = new FormControl<string>('hex', {
-    nonNullable: true,
-  });
-  uploadTypeOptions: Option[] = [
-    {
-      value: 'binary',
-      displayText: 'binary',
-      disabled: false,
-    },
-    {
-      value: 'base64',
-      displayText: 'base64',
-      disabled: false,
-    },
-    {
-      value: 'hex',
-      displayText: 'hex',
-      disabled: false,
-    },
-  ];
 
   overlayHidden = true;
 
@@ -166,39 +149,21 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
       ),
       switchMap((path) => {
         this.explorerPathService.updateLastPathState(path);
-        return this.explorerRequestBuilderService.buildViewRequest(path);
+        return this.explorerService
+          .getContents(path)
+          .pipe
+          // startWith({ isLoading: true, isError: false, content: undefined })
+          ();
       }),
-      switchMap((request: QtisRequestResponseInterface<ViewRequest>) =>
-        this.dispatchService.dispatch<ViewRequest, ViewResponse>(request).pipe(
-          catchError((err: HttpErrorResponse) => {
-            this.snackBar.open(
-              err.error,
-              this.translateService.instant('EXPLORER.ERRORS.CLOSE_BUTTON_TEXT')
-            );
-
-            return of<QtisRequestResponseInterface<ViewResponse>>({
-              r: [
-                {
-                  s: Subsystems.CMS,
-                  e: 0,
-                  m: '',
-                  l: SupportedLanguages.EN_US,
-                  content: [],
-                },
-              ],
-              t: 0,
-            });
-          })
-        )
-      ),
-      map((response: QtisRequestResponseInterface<ViewResponse>) =>
-        response.r.flatMap((r: ViewResponse) => r.content)
-      ),
-      tap(() => this.filesystemTableComponent.selection.clear()),
-      share(),
-      catchError((err) => {
+      startWith({ isLoading: true, isError: false, content: undefined }),
+      shareReplay(1),
+      catchError((err: HttpErrorResponse) => {
         console.error(err);
-        return of<FileSystemObject[]>([]);
+        this.snackBar.open(
+          err.error,
+          this.translateService.instant('EXPLORER.ERRORS.CLOSE_BUTTON_TEXT')
+        );
+        return of({ isLoading: true, isError: true, content: undefined });
       })
     );
 
@@ -210,7 +175,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
             this.path$.getValue()
           );
         this.explorerUploadItemsService.uploadItems$.next(formArray);
-        this.overlayHidden = false;
+        // this.overlayHidden = false;
         return formArray;
       })
     );
@@ -243,21 +208,18 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
       }),
       repeat()
     );
+  }
 
-    this.selected$ = combineLatest([
-      this.fileSystemTableRendered$,
-      this.content$,
-    ]).pipe(
+  ngAfterViewInit(): void {
+    this.fileSystemTableRendered$.next();
+    this.selectedRows$ = this.content$.pipe(
+      delay(1),
       switchMap(() => this.filesystemTableComponent.selection.changed),
       map(
         (selection: SelectionChange<FileSystemObject>) =>
           selection.source.selected
       )
     );
-  }
-
-  ngAfterViewInit(): void {
-    this.fileSystemTableRendered$.next();
   }
 
   ngOnDestroy(): void {
@@ -270,6 +232,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
     this.clearQueryParams();
+    this.filesystemTableComponent.selection.clear();
     this.path$.next(fsElem.fullPath);
   }
 
@@ -308,6 +271,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
     );
     this.teardownUpload$.next();
     this.overlayHidden = true;
+    this.inputFileComponent.clear();
   }
 
   startUpload(): void {
@@ -321,16 +285,16 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
     >(CreateRenameFolderDialogComponent, {
       data: {
         title: this.translateService.instant(
-          'EXPLORER.CREATE_FOLDER_MODAL.TITLE'
+          'EXPLORER.CREATE_FOLDER_DIALOG.TITLE'
         ),
         inputLabel: this.translateService.instant(
-          'EXPLORER.CREATE_FOLDER_MODAL.INPUT_LABEL_TEXT'
+          'EXPLORER.CREATE_FOLDER_DIALOG.INPUT_LABEL_TEXT'
         ),
         defaultInputValue: this.translateService.instant(
-          'EXPLORER.CREATE_FOLDER_MODAL.DEFAULT_INPUT_VALUE'
+          'EXPLORER.CREATE_FOLDER_DIALOG.DEFAULT_INPUT_VALUE'
         ),
         submitButtonText: this.translateService.instant(
-          'EXPLORER.CREATE_FOLDER_MODAL.SUBMIT_BUTTON_TEXT'
+          'EXPLORER.CREATE_FOLDER_DIALOG.SUBMIT_BUTTON_TEXT'
         ),
       },
     });
@@ -365,16 +329,16 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
     >(CreateRenameFolderDialogComponent, {
       data: {
         title: this.translateService.instant(
-          'EXPLORER.CREATE_FILE_MODAL.TITLE'
+          'EXPLORER.CREATE_FILE_DIALOG.TITLE'
         ),
         inputLabel: this.translateService.instant(
-          'EXPLORER.CREATE_FILE_MODAL.INPUT_LABEL_TEXT'
+          'EXPLORER.CREATE_FILE_DIALOG.INPUT_LABEL_TEXT'
         ),
         defaultInputValue: this.translateService.instant(
-          'EXPLORER.CREATE_FILE_MODAL.DEFAULT_INPUT_VALUE'
+          'EXPLORER.CREATE_FILE_DIALOG.DEFAULT_INPUT_VALUE'
         ),
         submitButtonText: this.translateService.instant(
-          'EXPLORER.CREATE_FILE_MODAL.SUBMIT_BUTTON_TEXT'
+          'EXPLORER.CREATE_FILE_DIALOG.SUBMIT_BUTTON_TEXT'
         ),
       },
     });
@@ -409,13 +373,13 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
       string
     >(CreateRenameFolderDialogComponent, {
       data: {
-        title: this.translateService.instant('EXPLORER.RENAME_MODAL.TITLE'),
+        title: this.translateService.instant('EXPLORER.RENAME_DIALOG.TITLE'),
         inputLabel: this.translateService.instant(
-          'EXPLORER.RENAME_MODAL.INPUT_LABEL_TEXT'
+          'EXPLORER.RENAME_DIALOG.INPUT_LABEL_TEXT'
         ),
         defaultInputValue: row.fileName,
         submitButtonText: this.translateService.instant(
-          'EXPLORER.RENAME_MODAL.SUBMIT_BUTTON_TEXT'
+          'EXPLORER.RENAME_DIALOG.SUBMIT_BUTTON_TEXT'
         ),
       },
     });
@@ -454,12 +418,12 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
       string[]
     >(MoveCopyDialogComponent, {
       data: {
-        title: this.translateService.instant('EXPLORER.MOVE_MODAL.TITLE'),
+        title: this.translateService.instant('EXPLORER.MOVE_DIALOG.TITLE'),
         cancelButtonText: this.translateService.instant(
-          'EXPLORER.MOVE_MODAL.CANCEL_BUTTON_TEXT'
+          'EXPLORER.MOVE_DIALOG.CANCEL_BUTTON_TEXT'
         ),
         submitButtonText: this.translateService.instant(
-          'EXPLORER.MOVE_MODAL.SUBMIT_BUTTON_TEXT'
+          'EXPLORER.MOVE_DIALOG.SUBMIT_BUTTON_TEXT'
         ),
         fsObjects: rows,
       },
@@ -506,12 +470,12 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
       string[]
     >(MoveCopyDialogComponent, {
       data: {
-        title: this.translateService.instant('EXPLORER.COPY_MODAL.TITLE'),
+        title: this.translateService.instant('EXPLORER.COPY_DIALOG.TITLE'),
         cancelButtonText: this.translateService.instant(
-          'EXPLORER.COPY_MODAL.CANCEL_BUTTON_TEXT'
+          'EXPLORER.COPY_DIALOG.CANCEL_BUTTON_TEXT'
         ),
         submitButtonText: this.translateService.instant(
-          'EXPLORER.COPY_MODAL.SUBMIT_BUTTON_TEXT'
+          'EXPLORER.COPY_DIALOG.SUBMIT_BUTTON_TEXT'
         ),
         fsObjects: rows,
       },
@@ -558,16 +522,16 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
       boolean
     >(PromptDialogComponent, {
       data: {
-        title: this.translateService.instant('EXPLORER.DELETE_MODAL.TITLE'),
-        text: this.translateService.instant('EXPLORER.DELETE_MODAL.TEXT', {
+        title: this.translateService.instant('EXPLORER.DELETE_DIALOG.TITLE'),
+        text: this.translateService.instant('EXPLORER.DELETE_DIALOG.TEXT', {
           count: rows.length,
           objectsWord: rows.length > 1 ? 'objects' : 'object',
         }),
         cancelButtonText: this.translateService.instant(
-          'EXPLORER.DELETE_MODAL.CANCEL_BUTTON_TEXT'
+          'EXPLORER.DELETE_DIALOG.CANCEL_BUTTON_TEXT'
         ),
         submitButtonText: this.translateService.instant(
-          'EXPLORER.DELETE_MODAL.SUBMIT_BUTTON_TEXT'
+          'EXPLORER.DELETE_DIALOG.SUBMIT_BUTTON_TEXT'
         ),
       },
     });
@@ -640,5 +604,59 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
       this.translateService.instant('EXPLORER.ERRORS.CLOSE_BUTTON_TEXT')
     );
     return EMPTY;
+  }
+
+  openUploadDialog(): void {
+    const dialogRef = this.dialog.open<
+      UploadDialogComponent,
+      UploadDialogDataInterface,
+      void
+    >(UploadDialogComponent, {
+      data: {
+        title: 'EXPLORER.UPLOAD_DIALOG.TITLE',
+        selectFileButtonText: 'EXPLORER.UPLOAD_DIALOG.SELECT_FILE_BUTTON_TEXT',
+        cancelButtonText: 'EXPLORER.UPLOAD_DIALOG.CANCEL_BUTTON_TEXT',
+        startUploadButtonText:
+          'EXPLORER.UPLOAD_DIALOG.START_UPLOAD_BUTTON_TEXT',
+        uploadCompleteText: 'EXPLORER.UPLOAD_DIALOG.UPLOAD_COMPLETE_TEXT',
+        securityLevelNoteText:
+          'EXPLORER.UPLOAD_DIALOG.SUGGESTIONS.SECURITY_LVL_WARNING',
+      },
+      width: '50vw',
+    });
+
+    const dialogClosed$ = dialogRef.afterClosed();
+
+    dialogRef.componentInstance.fileSelectClicked
+      .pipe(
+        tap(() => {
+          this.inputFileComponent.fileInput.nativeElement.click();
+        }),
+        takeUntil(dialogClosed$)
+      )
+      .subscribe();
+
+    dialogRef.componentInstance.startUploadClicked
+      .pipe(
+        tap(() => {
+          this.startUpload$.next();
+        }),
+        takeUntil(dialogClosed$)
+      )
+      .subscribe();
+
+    merge(
+      dialogRef.componentInstance.cancelUploadClicked,
+      dialogRef.componentInstance.removeItem,
+      dialogRef.backdropClick()
+    )
+      .pipe(
+        tap(() => {
+          this.closeOverlay();
+          dialogRef.close();
+        }),
+        takeUntil(dialogClosed$)
+      )
+      .subscribe();
   }
 }

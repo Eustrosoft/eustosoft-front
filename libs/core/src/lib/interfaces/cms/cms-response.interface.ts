@@ -5,9 +5,9 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-import { FileSystemObject } from './file-system-object.interface';
 import { Subsystems } from '../../constants/enums/subsystems.enum';
 import { SupportedLanguages } from '../../constants/enums/supported-languages.enum';
+import { FileSystemObjectResponse } from './file-system-object-response.interface';
 
 interface BaseCmsResponse {
   s: Subsystems;
@@ -15,7 +15,7 @@ interface BaseCmsResponse {
 }
 
 export interface ViewResponse extends BaseCmsResponse {
-  content: FileSystemObject[];
+  content: FileSystemObjectResponse[];
   e: number;
   m: string;
 }

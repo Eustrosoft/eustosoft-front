@@ -15,16 +15,6 @@
       .mat-mdc-form-field-subscript-wrapper {
         display: none;
       }
-      //.mat-mdc-text-field-wrapper {
-      //  padding-bottom: 0 !important;
-      //  margin: 0 !important;
-      //  height: 2.3em;
-      //  .mat-mdc-form-field-flex {
-      //    .mat-mdc-form-field-infix {
-      //      padding: 0.5em 0 !important;
-      //    }
-      //  }
-      //}
   }
 }
 
@@ -44,6 +34,7 @@
   }
   &-table{
     display: flex;
+    flex-direction: column;
     flex: 0 1 auto;
     margin: 0 1rem;
     overflow: auto;

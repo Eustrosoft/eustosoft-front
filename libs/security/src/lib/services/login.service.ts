@@ -9,6 +9,7 @@ import { inject, Injectable } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { AuthenticationService } from './authentication.service';
 import {
+  DispatchService,
   LoginActions,
   LoginLogoutResponse,
   LoginRequest,
@@ -17,7 +18,6 @@ import {
   Subsystems,
   SupportedLanguages,
 } from '@eustrosoft-front/core';
-import { DispatchService } from './dispatch.service';
 
 @Injectable()
 export class LoginService {

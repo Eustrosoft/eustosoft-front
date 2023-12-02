@@ -261,6 +261,15 @@ $text-decoration-options: (
 
 @include mixins.generate-utility-classes($text-decoration-options);
 
+$font-weight-options: (
+  fw-normal: (font-weight: normal),
+  fw-bold: (font-weight: bold),
+  fw-bolder: (font-weight: bolder),
+  fw-lighter: (font-weight: lighter),
+);
+
+@include mixins.generate-utility-classes($font-weight-options);
+
 .text-truncate {
   @extend .whitespace-nowrap, .overflow-hidden, .text-overflow-ellipsis;
 }

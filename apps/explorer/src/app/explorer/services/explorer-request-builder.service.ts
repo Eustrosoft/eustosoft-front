@@ -12,7 +12,6 @@ import {
   CreateRequest,
   DeleteRequest,
   DownloadTicketRequest,
-  FileSystemObject,
   FileSystemObjectTypes,
   MoveCopyRequest,
   QtisRequestResponseInterface,
@@ -23,6 +22,7 @@ import {
   ViewRequest,
 } from '@eustrosoft-front/core';
 import { Observable, of } from 'rxjs';
+import { FileSystemObject } from '../models/file-system-object.interface';
 
 @Injectable()
 export class ExplorerRequestBuilderService {
@@ -88,7 +88,7 @@ export class ExplorerRequestBuilderService {
     chunk: string,
     chunkIndex: number,
     totalChunks: number,
-    securityLevel?: number,
+    securityLevel?: string,
     description?: string,
     path: string = '/'
   ): QtisRequestResponseInterface<UploadHexRequest> {
@@ -102,7 +102,7 @@ export class ExplorerRequestBuilderService {
       path,
     };
     if (securityLevel !== undefined) {
-      params.securityLevel = securityLevel;
+      params.securityLevel = +securityLevel;
     }
 
     if (description !== undefined) {

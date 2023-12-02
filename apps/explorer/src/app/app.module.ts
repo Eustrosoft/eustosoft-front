@@ -52,6 +52,7 @@ import { LocationStrategy } from '@angular/common';
 import { ExplorerDictionaryService } from './explorer/services/explorer-dictionary.service';
 import { DicModule } from '@eustrosoft-front/dic';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { UploadDialogComponent } from './explorer/components/upload-dialog/upload-dialog.component';
 
 @NgModule({
   declarations: [
@@ -65,6 +66,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
     LoginPageComponent,
     UploadPageComponent,
     UploadObjectComponent,
+    UploadDialogComponent,
   ],
   imports: [
     BrowserModule,

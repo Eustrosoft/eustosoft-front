@@ -5,7 +5,8 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-export enum QueryTypes {
-  SQL = 'sql',
-  FILE = 'file',
-}
+import { FormControl } from '@angular/forms';
+
+export type FormControls<T> = {
+  [K in keyof T]: FormControl<T[K]>;
+};

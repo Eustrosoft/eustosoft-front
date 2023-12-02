@@ -5,11 +5,11 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-import { FileSystemObject } from '../../models/file-system-object.interface';
-
-export interface MoveCopyDialogDataInterface {
+export interface UploadDialogDataInterface {
   title: string;
-  submitButtonText: string;
+  selectFileButtonText: string;
+  startUploadButtonText: string;
   cancelButtonText: string;
-  fsObjects: FileSystemObject[];
+  uploadCompleteText: string;
+  securityLevelNoteText: string;
 }

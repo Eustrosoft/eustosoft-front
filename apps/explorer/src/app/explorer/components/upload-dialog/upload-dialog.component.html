@@ -1,0 +1,126 @@
+<!--
+  ~ Copyright (c) 2023. IdrisovII & EustroSoft.org
+  ~
+  ~ This file is part of eustrosoft-front project.
+  ~ See the LICENSE file at the project root for licensing information.
+  -->
+
+<div class="flex flex-column g-4">
+  <ng-container *ngIf="{ items: uploadItems$ | async } as vm">
+    <h1 class="m-0 px-4" mat-dialog-title>{{ data.title | translate }}</h1>
+    <div class="flex flex-column g-2 px-4 py-0" mat-dialog-content>
+      <div class="flex">
+        <eustrosoft-front-button
+          [buttonType]="'button'"
+          [buttonStyleType]="'stroked'"
+          [buttonText]="data.selectFileButtonText | translate"
+          (clicked)="selectFile()"
+          class="px-0 py-0"
+        >
+        </eustrosoft-front-button>
+      </div>
+
+      <cdk-virtual-scroll-viewport *ngIf="vm.items" itemSize="160">
+        <div
+          *ngFor="let item of vm.items.controls; let i = index"
+          class="upload-items-wrapper flex flex-column g-2 p-2"
+          [hidden]="item.controls.uploadItem.value.cancelled"
+        >
+          <div
+            class="flex align-items-center justify-content-space-between g-2 flex-wrap-nowrap overflow-hidden"
+          >
+            <div
+              class="flex overflow-hidden flex-basis-20"
+              [title]="item.controls.uploadItem.value.file.name"
+            >
+              <span
+                class="filename text-truncate"
+                [title]="item.controls.uploadItem.value.file.name"
+              >
+                {{ item.controls.uploadItem.value.file.name }}
+              </span>
+            </div>
+            <div class="flex flex-auto flex-column g-2">
+              <eustrosoft-front-select
+                [label]="
+                  'EXPLORER.UPLOAD_OVERLAY.EXTRA_OPTIONS_PANEL_SECURITY_LEVEL_LABEL'
+                    | translate
+                "
+                [control]="item.controls.securityLevel"
+                [options]="(securityLevelOptions$ | async) || []"
+                [fieldAppearance]="'outline'"
+                class="mt-1 upload-control"
+              ></eustrosoft-front-select>
+              <eustrosoft-front-input
+                [label]="
+                  'EXPLORER.UPLOAD_OVERLAY.EXTRA_OPTIONS_PANEL_DESCRIPTION_LABEL'
+                    | translate
+                "
+                [control]="item.controls.description"
+                [fieldAppearance]="'outline'"
+                class="mt-1 upload-control"
+              ></eustrosoft-front-input>
+            </div>
+            <eustrosoft-front-button
+              [hidden]="
+                item.controls.uploadItem.value.state === UploadingState.UPLOADED
+              "
+              [buttonType]="'button'"
+              [buttonStyleType]="'icon'"
+              [iconName]="'cancel'"
+              [color]="'warn'"
+              (clicked)="remove(item, i)"
+            >
+            </eustrosoft-front-button>
+            <eustrosoft-front-button
+              [hidden]="
+                item.controls.uploadItem.value.state ===
+                  UploadingState.PENDING ||
+                item.controls.uploadItem.value.state ===
+                  UploadingState.UPLOADING
+              "
+              [buttonType]="'button'"
+              [buttonStyleType]="'icon'"
+              [iconName]="'folder'"
+              [color]="'primary'"
+              (clicked)="openFolder(item)"
+              [matTooltip]="
+                'EXPLORER.UPLOAD_OVERLAY.OPEN_FOLDER_BUTTON_TOOLTIP' | translate
+              "
+              [matTooltipShowDelay]="100"
+            >
+            </eustrosoft-front-button>
+          </div>
+          <eustrosoft-front-progress-bar
+            [mode]="'determinate'"
+            [value]="item.controls.uploadItem.value.progress"
+          ></eustrosoft-front-progress-bar>
+        </div>
+        <span>{{ data.securityLevelNoteText | translate }}</span>
+      </cdk-virtual-scroll-viewport>
+    </div>
+    <div class="flex g-2 px-4 pb-4 pt-0" [align]="'end'" mat-dialog-actions>
+      <span class="fw-bold">
+        {{ suggestionText | translate }}
+      </span>
+      <eustrosoft-front-button
+        [buttonType]="'button'"
+        [buttonStyleType]="'flat'"
+        [buttonText]="data.cancelButtonText | translate"
+        (clicked)="cancelUpload()"
+      >
+      </eustrosoft-front-button>
+      <eustrosoft-front-button
+        [buttonType]="'button'"
+        [buttonStyleType]="'flat'"
+        [buttonText]="startUploadButtonText | translate"
+        [color]="'primary'"
+        [disabled]="startUploadButtonDisabled"
+        (clicked)="startUpload(vm.items)"
+      >
+      </eustrosoft-front-button>
+    </div>
+  </ng-container>
+</div>
+<ng-container *ngIf="isUploading$ | async"></ng-container>
+<ng-container *ngIf="uploadCompleted$ | async"></ng-container>

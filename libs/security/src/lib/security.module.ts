@@ -15,7 +15,6 @@ import { ConfigModule } from '@eustrosoft-front/config';
 import { UnauthenticatedInterceptor } from './interceptors/unauthenticated.interceptor';
 import { WithCredentialsInterceptor } from './interceptors/with-credentials.interceptor';
 import { SamService } from './services/sam.service';
-import { DispatchService } from './services/dispatch.service';
 
 @NgModule({
   imports: [CommonModule, HttpClientModule, MatSnackBarModule, ConfigModule],
@@ -23,7 +22,6 @@ import { DispatchService } from './services/dispatch.service';
     LoginService,
     AuthenticationService,
     SamService,
-    DispatchService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: UnauthenticatedInterceptor,

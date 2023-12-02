@@ -6,7 +6,11 @@
  */
 
 import { inject, Injectable } from '@angular/core';
-import { DicService, Dictionaries } from '@eustrosoft-front/dic';
+import {
+  DicMapperService,
+  DicService,
+  Dictionaries,
+} from '@eustrosoft-front/dic';
 import { map, Observable } from 'rxjs';
 import {
   DicValue,
@@ -22,10 +26,11 @@ import { SamService } from '@eustrosoft-front/security';
 export class MsgDictionaryService {
   private dicService = inject(DicService);
   private samService = inject(SamService);
+  private dicMapperService = inject(DicMapperService);
 
   getStatusOptions(): Observable<DicValue[]> {
     return this.dicService
-      .getDictionaryValues(Dictionaries.MSG_CHANNEL_STATUS)
+      .getDicValues(Dictionaries.MSG_CHANNEL_STATUS)
       .pipe(
         map((response: QtisRequestResponseInterface<DicValuesResponse>) =>
           response.r.flatMap((r: DicValuesResponse) => r.values)
@@ -34,9 +39,9 @@ export class MsgDictionaryService {
   }
 
   getSecurityLevelOptions(): Observable<Option[]> {
-    return this.dicService.getOptionsFromDictionary<Option>(
+    return this.dicService.getMappedDicValues<Option>(
       Dictionaries.SLEVEL,
-      this.dicService.toOption
+      this.dicMapperService.toOption
     );
   }
 
