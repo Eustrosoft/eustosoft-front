@@ -17,11 +17,11 @@ import {
 } from 'rxjs';
 import {
   ChatMessage,
+  DispatchService,
   QtisRequestResponseInterface,
   ViewChatRequest,
   ViewChatResponse,
 } from '@eustrosoft-front/core';
-import { DispatchService } from '@eustrosoft-front/security';
 import { MsgRequestBuilderService } from './msg-request-builder.service';
 
 @Injectable()

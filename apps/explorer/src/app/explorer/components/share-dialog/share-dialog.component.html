@@ -1,0 +1,48 @@
+<!--
+  ~ Copyright (c) 2023. IdrisovII & EustroSoft.org
+  ~
+  ~ This file is part of eustrosoft-front project.
+  ~ See the LICENSE file at the project root for licensing information.
+  -->
+
+<div class="flex flex-column g-3">
+  <h1 class="m-0 px-3 pb-0" mat-dialog-title>{{ data.title | translate }}</h1>
+  <ng-container *ngIf="{ link: data.linkObs$ | async } as vm">
+    <ng-container *ngIf="vm.link?.isLoading && !vm.link?.isError">
+      <eustrosoft-front-preloader></eustrosoft-front-preloader>
+    </ng-container>
+    <ng-container *ngIf="vm.link?.isError">
+      <p>
+        {{ 'EXPLORER.ERRORS.FILESYSTEM_OBJECTS_FETCH_ERROR' | translate }}
+      </p>
+    </ng-container>
+    <ng-container *ngIf="vm.link?.link as link">
+      <div class="flex flex-column g-2 px-3 py-0">
+        <eustrosoft-front-input
+          [label]="data.inputLabel | translate"
+          [fieldAppearance]="'outline'"
+          [control]="control"
+          [value]="link"
+          [hideSubscriptWrapper]="true"
+        ></eustrosoft-front-input>
+      </div>
+    </ng-container>
+  </ng-container>
+  <div class="flex g-2 px-3 pb-3 pt-0" [align]="'end'" mat-dialog-actions>
+    <eustrosoft-front-button
+      [buttonType]="'button'"
+      [buttonStyleType]="'flat'"
+      [buttonText]="data.cancelButtonText | translate"
+      (clicked)="reject()"
+    >
+    </eustrosoft-front-button>
+    <eustrosoft-front-button
+      [buttonType]="'button'"
+      [buttonStyleType]="'flat'"
+      [buttonText]="data.submitButtonText | translate"
+      [color]="'primary'"
+      (clicked)="resolve()"
+    >
+    </eustrosoft-front-button>
+  </div>
+</div>

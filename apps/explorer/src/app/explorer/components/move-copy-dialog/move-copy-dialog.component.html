@@ -4,9 +4,8 @@
   ~ This file is part of eustrosoft-front project.
   ~ See the LICENSE file at the project root for licensing information.
   -->
-
-<div class="flex g-3 pt-2 align-items-center">
-  <div class="w-auto">
+<div class="flex flex-column g-3">
+  <div class="flex g-3 pt-2 px-3 align-items-center">
     <eustrosoft-front-button
       [buttonType]="'button'"
       [buttonStyleType]="'icon'"
@@ -14,18 +13,18 @@
       (click)="navigateBack()"
     >
     </eustrosoft-front-button>
+    <h1 class="m-0 p-0 flex align-items-center" mat-dialog-title>
+      <span>{{ data.title }}</span>
+    </h1>
   </div>
-  <h1 class="m-0 p-0 flex align-items-center" mat-dialog-title>
-    <span>{{ data.title }}</span>
-  </h1>
-</div>
-<div class="row">
-  <div class="py-2 px-4 flex flex-column" mat-dialog-content>
+
+  <div class="flex flex-column g-2 px-3 py-0" mat-dialog-content>
     <cdk-virtual-scroll-viewport itemSize="5" class="vh-25 vw-50">
       <mat-selection-list
         [multiple]="false"
         [hideSingleSelectionIndicator]="true"
         [disableRipple]="true"
+        class="py-0"
       >
         <ng-container *ngIf="{ fsObjects: fsObjects$ | async } as vm">
           <ng-container
@@ -81,10 +80,10 @@
       </mat-selection-list>
     </cdk-virtual-scroll-viewport>
   </div>
-</div>
-<div class="row">
-  <div class="px-4" mat-dialog-actions>
+
+  <div class="flex g-2 px-3 pb-3 pt-0" [align]="'end'" mat-dialog-actions>
     <eustrosoft-front-button
+      *ngIf="false"
       [buttonType]="'button'"
       [buttonStyleType]="'icon'"
       [iconName]="'create_new_folder'"
@@ -92,7 +91,6 @@
       (click)="createNewFolder()"
     >
     </eustrosoft-front-button>
-    <span class="left-spacer"></span>
     <eustrosoft-front-button
       [buttonType]="'button'"
       [buttonStyleType]="'flat'"
@@ -100,7 +98,6 @@
       (click)="reject()"
     >
     </eustrosoft-front-button>
-    <span class="buttons-spacer"></span>
     <eustrosoft-front-button
       [buttonStyleType]="'flat'"
       [buttonText]="data.submitButtonText"
@@ -111,38 +108,38 @@
     >
     </eustrosoft-front-button>
   </div>
-</div>
 
-<ng-template
-  #directoryTemplate
-  let-object="object"
-  let-forwardLinkDisabled="forwardLinkDisabled"
->
-  <div class="flex justify-content-space-between">
-    <div class="flex align-items-center lh-1">
-      <mat-icon>folder</mat-icon>
-      <span>{{ object.fileName }}</span>
+  <ng-template
+    #directoryTemplate
+    let-object="object"
+    let-forwardLinkDisabled="forwardLinkDisabled"
+  >
+    <div class="flex justify-content-space-between">
+      <div class="flex align-items-center lh-1">
+        <mat-icon>folder</mat-icon>
+        <span>{{ object.fileName }}</span>
+      </div>
+      <eustrosoft-front-button
+        [buttonType]="'button'"
+        [buttonStyleType]="'icon'"
+        [iconName]="'navigate_next'"
+        [disabled]="forwardLinkDisabled"
+        (clicked)="navigateForward($event, object)"
+      >
+      </eustrosoft-front-button>
     </div>
-    <eustrosoft-front-button
-      [buttonType]="'button'"
-      [buttonStyleType]="'icon'"
-      [iconName]="'navigate_next'"
-      [disabled]="forwardLinkDisabled"
-      (clicked)="navigateForward($event, object)"
-    >
-    </eustrosoft-front-button>
-  </div>
-</ng-template>
-<ng-template #linkOrFileTemplate let-object>
-  <div class="flex justify-content-space-between">
-    <div class="flex align-items-center lh-1">
-      <mat-icon>draft</mat-icon>
-      <span>{{ object.fileName }}</span>
+  </ng-template>
+  <ng-template #linkOrFileTemplate let-object>
+    <div class="flex justify-content-space-between">
+      <div class="flex align-items-center lh-1">
+        <mat-icon>draft</mat-icon>
+        <span>{{ object.fileName }}</span>
+      </div>
     </div>
-  </div>
-</ng-template>
-<ng-template #noContent>
-  <div class="flex justify-content-center">
-    <p class="fs-4">{{ 'EXPLORER.FOLDER_IS_EMPTY' | translate }}</p>
-  </div>
-</ng-template>
+  </ng-template>
+  <ng-template #noContent>
+    <div class="flex justify-content-center">
+      <p class="fs-4">{{ 'EXPLORER.FOLDER_IS_EMPTY' | translate }}</p>
+    </div>
+  </ng-template>
+</div>

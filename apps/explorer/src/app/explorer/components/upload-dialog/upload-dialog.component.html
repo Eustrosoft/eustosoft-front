@@ -5,10 +5,10 @@
   ~ See the LICENSE file at the project root for licensing information.
   -->
 
-<div class="flex flex-column g-4">
+<div class="flex flex-column g-3">
   <ng-container *ngIf="{ items: uploadItems$ | async } as vm">
-    <h1 class="m-0 px-4" mat-dialog-title>{{ data.title | translate }}</h1>
-    <div class="flex flex-column g-2 px-4 py-0" mat-dialog-content>
+    <h1 class="m-0 px-3 pb-0" mat-dialog-title>{{ data.title | translate }}</h1>
+    <div class="flex flex-column g-2 px-3 py-0" mat-dialog-content>
       <div class="flex">
         <eustrosoft-front-button
           [buttonType]="'button'"
@@ -99,7 +99,7 @@
         <span>{{ data.securityLevelNoteText | translate }}</span>
       </cdk-virtual-scroll-viewport>
     </div>
-    <div class="flex g-2 px-4 pb-4 pt-0" [align]="'end'" mat-dialog-actions>
+    <div class="flex g-2 px-3 pb-3 pt-0" [align]="'end'" mat-dialog-actions>
       <span class="fw-bold">
         {{ suggestionText | translate }}
       </span>

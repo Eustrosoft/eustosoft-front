@@ -26,6 +26,7 @@
     "MOVE_TO_BUTTON_TEXT": "Move to",
     "DELETE_BUTTON_TEXT": "Delete",
     "DOWNLOAD_BUTTON_TEXT": "Download",
+    "SHARE_BUTTON_TEXT": "Share",
     "RENAME_BUTTON_TEXT": "Rename",
     "NAME_COLUMN_TEXT": "Name",
     "SPACE_COLUMN_TEXT": "Size",
@@ -33,6 +34,7 @@
     "SECURITY_LEVEL_COLUMN_TEXT": "Security level",
     "ACTIONS_COLUMN_TEXT": "Actions",
     "FOLDER_IS_EMPTY": "No content",
+    "LINK_COPIED_TO_CLIPBOARD": "Link copied to clipboard",
     "SIZES": {
       "BYTES": "Bytes",
       "KB": "KB",
@@ -90,6 +92,12 @@
         "SELECT_NEW_FILES": "Select new file to upload",
         "SECURITY_LVL_WARNING": "All files whose security level is lower than or equal to 2F will be publicly viewable"
       }
+    },
+    "SHARE_DIALOG": {
+      "TITLE": "Share",
+      "INPUT_LABEL_TEXT": "Link",
+      "CANCEL_BUTTON_TEXT": "Cancel",
+      "SUBMIT_BUTTON_TEXT": "Copy"
     },
     "UPLOAD_OVERLAY": {
       "START_UPLOAD_BUTTON_TEXT": "Start upload",

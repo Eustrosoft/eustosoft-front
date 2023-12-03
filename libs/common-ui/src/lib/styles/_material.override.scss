@@ -12,3 +12,9 @@
   letter-spacing: normal;
   text-transform: none;
 }
+
+.hide-subscript-wrapper {
+  .mat-mdc-form-field-subscript-wrapper {
+    display: none;
+  }
+}

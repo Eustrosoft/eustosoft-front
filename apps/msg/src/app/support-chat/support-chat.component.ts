@@ -49,6 +49,7 @@ import {
   DeleteChatRequest,
   DeleteChatResponse,
   DicValue,
+  DispatchService,
   EditChatMessageRequest,
   EditChatMessageResponse,
   MessageType,
@@ -63,7 +64,6 @@ import {
   XS_SCREEN_RESOLUTION,
 } from '@eustrosoft-front/core';
 import { MsgRequestBuilderService } from './services/msg-request-builder.service';
-import { DispatchService } from '@eustrosoft-front/security';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslateService } from '@ngx-translate/core';

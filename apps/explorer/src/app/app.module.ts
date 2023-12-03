@@ -53,6 +53,7 @@ import { ExplorerDictionaryService } from './explorer/services/explorer-dictiona
 import { DicModule } from '@eustrosoft-front/dic';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { UploadDialogComponent } from './explorer/components/upload-dialog/upload-dialog.component';
+import { ShareDialogComponent } from './explorer/components/share-dialog/share-dialog.component';
 
 @NgModule({
   declarations: [
@@ -67,6 +68,7 @@ import { UploadDialogComponent } from './explorer/components/upload-dialog/uploa
     UploadPageComponent,
     UploadObjectComponent,
     UploadDialogComponent,
+    ShareDialogComponent,
   ],
   imports: [
     BrowserModule,

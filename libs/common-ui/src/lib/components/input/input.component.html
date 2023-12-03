@@ -5,13 +5,18 @@
   ~ See the LICENSE file at the project root for licensing information.
   -->
 
-<mat-form-field [appearance]="fieldAppearance" class="w-100">
+<mat-form-field
+  [appearance]="fieldAppearance"
+  [class.hide-subscript-wrapper]="hideSubscriptWrapper"
+  class="w-100"
+>
   <mat-label>{{ label }}</mat-label>
   <input
     [formControl]="control"
     [placeholder]="placeholder"
     [type]="inputType"
     [attr.disabled]="disabled"
+    [value]="control.value"
     (blur)="blurred.emit($event)"
     matInput
   />

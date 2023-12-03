@@ -25,6 +25,7 @@
     "COPY_BUTTON_TEXT": "Копировать",
     "MOVE_TO_BUTTON_TEXT": "Переместить",
     "DELETE_BUTTON_TEXT": "Удалить",
+    "SHARE_BUTTON_TEXT": "Поделиться",
     "DOWNLOAD_BUTTON_TEXT": "Скачать",
     "RENAME_BUTTON_TEXT": "Переименовать",
     "NAME_COLUMN_TEXT": "Наименование",
@@ -33,6 +34,7 @@
     "SECURITY_LEVEL_COLUMN_TEXT": "Уровень секретности",
     "ACTIONS_COLUMN_TEXT": "Действия",
     "FOLDER_IS_EMPTY": "Пусто",
+    "LINK_COPIED_TO_CLIPBOARD": "Ссылка скопирована",
     "SIZES": {
       "BYTES": "Байт",
       "KB": "КБ",

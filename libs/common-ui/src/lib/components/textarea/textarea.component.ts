@@ -30,6 +30,7 @@ export class TextareaComponent {
   @Input() control!: FormControl;
   @Input() disabled = false;
   @Input() hideResize = false;
+  @Input() hideSubscriptWrapper = false;
   @Input() enableCdkAutoResize = false;
 
   @ViewChild(MatInput) input!: MatInput;

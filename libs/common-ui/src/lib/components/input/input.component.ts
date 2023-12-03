@@ -25,15 +25,23 @@ import { MatInput } from '@angular/material/input';
   styleUrls: ['./input.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class InputComponent {
+export class InputComponent<T extends string> {
   @Input() label = '';
   @Input() placeholder = '';
   @Input() fieldAppearance: MatFormFieldAppearance = 'fill';
-  @Input() control!: FormControl;
+  @Input() control!: FormControl<T>;
   @Input() inputType: InputTypes = InputTypes.TEXT;
   @Input() suffixIcon = '';
   @Input() disabled = false;
+  @Input() hideSubscriptWrapper = false;
   @Input() errors: InputErrorInterface[] = [];
+  @Input()
+  set value(value: T) {
+    this.control.setValue(value);
+  }
+  get value(): T {
+    return this.control.value;
+  }
 
   @Output() blurred = new EventEmitter<FocusEvent | undefined>();
 

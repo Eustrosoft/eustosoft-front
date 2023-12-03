@@ -50,8 +50,6 @@ import {
   DeleteRequest,
   DeleteResponse,
   DispatchService,
-  DownloadTicketRequest,
-  DownloadTicketResponse,
   FileSystemObjectTypes,
   MoveCopyRequest,
   MoveCopyResponse,
@@ -80,6 +78,10 @@ import { UploadItemState } from './constants/enums/uploading-state.enum';
 import { UploadDialogComponent } from './components/upload-dialog/upload-dialog.component';
 import { UploadDialogDataInterface } from './components/upload-dialog/upload-dialog-data.interface';
 import { FileSystemObject } from './models/file-system-object.interface';
+import { Clipboard } from '@angular/cdk/clipboard';
+import { DOCUMENT } from '@angular/common';
+import { ShareDialogComponent } from './components/share-dialog/share-dialog.component';
+import { ShareDialogDataInterface } from './components/share-dialog/share-dialog-data.interface';
 
 @Component({
   selector: 'eustrosoft-front-explorer',
@@ -107,6 +109,8 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
   private translateService = inject(TranslateService);
   private activatedRoute = inject(ActivatedRoute);
   private fb = inject(FormBuilder);
+  private clipboard = inject(Clipboard);
+  private document = inject(DOCUMENT);
   private explorerUploadItemFormFactoryService = inject(
     ExplorerUploadItemFormFactoryService
   );
@@ -553,37 +557,12 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe();
   }
 
-  downloadViaTicket(rows: FileSystemObject[]): void {
-    this.explorerRequestBuilderService
-      .buildDownloadTicketRequests(rows)
-      .pipe(
-        switchMap((body) =>
-          this.dispatchService.dispatch<
-            DownloadTicketRequest,
-            DownloadTicketResponse
-          >(body)
-        ),
-        map((response: QtisRequestResponseInterface<DownloadTicketResponse>) =>
-          response.r.map((res) => res.m)
-        ),
-        switchMap((tickets: string[]) =>
-          this.explorerService.download(tickets[0])
-        ),
-        tap((url: string) => {
-          window.location.href = url;
-        }),
-        catchError((err) => this.handleError(err)),
-        takeUntil(this.destroy$)
-      )
-      .subscribe();
-  }
-
   downloadViaPath(rows: FileSystemObject[]): void {
     this.explorerService
-      .download(rows[0].fullPath, CmsDownloadParams.PATH)
+      .makeDownloadLink(rows[0].fullPath, CmsDownloadParams.PATH)
       .pipe(
         tap((url: string) => {
-          window.location.href = url;
+          this.document.location.href = url;
         }),
         catchError((err) => this.handleError(err)),
         takeUntil(this.destroy$)
@@ -591,19 +570,51 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe();
   }
 
-  clearQueryParams(): void {
-    this.router.navigate([], {
-      queryParams: null,
-      queryParamsHandling: null,
-    });
-  }
+  shareLink(rows: FileSystemObject[]) {
+    const linkObs$ = this.explorerService
+      .makeDownloadLink(rows[0].fullPath, CmsDownloadParams.PATH)
+      .pipe(
+        map((url) => ({
+          isLoading: false,
+          isError: false,
+          link: this.document.location.origin + url,
+        })),
+        startWith({ isLoading: true, isError: false, link: undefined }),
+        catchError(() =>
+          of({ isLoading: false, isError: true, link: undefined })
+        )
+      );
 
-  handleError(err: HttpErrorResponse): Observable<never> {
-    this.snackBar.open(
-      err.error,
-      this.translateService.instant('EXPLORER.ERRORS.CLOSE_BUTTON_TEXT')
-    );
-    return EMPTY;
+    const dialogRef = this.dialog.open<
+      ShareDialogComponent,
+      ShareDialogDataInterface,
+      string
+    >(ShareDialogComponent, {
+      data: {
+        title: 'EXPLORER.SHARE_DIALOG.TITLE',
+        inputLabel: 'EXPLORER.SHARE_DIALOG.INPUT_LABEL_TEXT',
+        cancelButtonText: 'EXPLORER.SHARE_DIALOG.CANCEL_BUTTON_TEXT',
+        submitButtonText: 'EXPLORER.SHARE_DIALOG.SUBMIT_BUTTON_TEXT',
+        linkObs$,
+      },
+      width: '50vw',
+    });
+
+    dialogRef
+      .afterClosed()
+      .pipe(
+        filter((url) => typeof url !== 'undefined'),
+        tap((url) => {
+          this.clipboard.copy(url as string);
+          this.snackBar.open(
+            this.translateService.instant('EXPLORER.LINK_COPIED_TO_CLIPBOARD'),
+            'close',
+            { duration: 2000 }
+          );
+        }),
+        take(1)
+      )
+      .subscribe();
   }
 
   openUploadDialog(): void {
@@ -658,5 +669,20 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
         takeUntil(dialogClosed$)
       )
       .subscribe();
+  }
+
+  clearQueryParams(): void {
+    this.router.navigate([], {
+      queryParams: null,
+      queryParamsHandling: null,
+    });
+  }
+
+  handleError(err: HttpErrorResponse): Observable<never> {
+    this.snackBar.open(
+      err.error,
+      this.translateService.instant('EXPLORER.ERRORS.CLOSE_BUTTON_TEXT')
+    );
+    return EMPTY;
   }
 }

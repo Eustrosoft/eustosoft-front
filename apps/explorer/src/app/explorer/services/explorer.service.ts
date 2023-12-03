@@ -42,7 +42,7 @@ export class ExplorerService {
   private dispatchService = inject(DispatchService);
   private explorerDictionaryService = inject(ExplorerDictionaryService);
 
-  download(
+  makeDownloadLink(
     parameterValue: string,
     parameterName: CmsDownloadParams = CmsDownloadParams.TICKET
   ): Observable<string> {
