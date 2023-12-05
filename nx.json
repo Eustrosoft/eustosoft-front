@@ -52,7 +52,19 @@
     },
     "@nrwl/angular:component": {
       "style": "scss",
-      "changeDetection": "OnPush"
+      "changeDetection": "OnPush",
+      "skipTests": true
+    },
+    "@nrwl/angular:pipe": {
+      "skipTests": true,
+      "standalone": true
+    },
+    "@nrwl/angular:service": {
+      "skipTests": true
+    },
+    "@nrwl/angular:directive": {
+      "skipTests": true,
+      "standalone": true
     }
   }
 }
