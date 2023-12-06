@@ -49,6 +49,7 @@
                 [control]="item.controls.securityLevel"
                 [options]="(securityLevelOptions$ | async) || []"
                 [fieldAppearance]="'outline'"
+                [hideSubscriptWrapper]="true"
                 class="mt-1 upload-control"
               ></eustrosoft-front-select>
               <eustrosoft-front-input
@@ -58,6 +59,7 @@
                 "
                 [control]="item.controls.description"
                 [fieldAppearance]="'outline'"
+                [hideSubscriptWrapper]="true"
                 class="mt-1 upload-control"
               ></eustrosoft-front-input>
             </div>

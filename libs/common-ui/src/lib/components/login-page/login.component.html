@@ -9,9 +9,9 @@
   <form
     [formGroup]="form"
     (ngSubmit)="submit()"
-    class="flex flex-column align-items-center m-2 gap-1"
+    class="flex flex-column align-items-center m-3 g-2"
   >
-    <h2>{{ texts.heading }}</h2>
+    <h2 class="m-0 fs-4">{{ texts.heading }}</h2>
     <eustrosoft-front-input
       [inputType]="InputTypes.TEXT"
       [label]="texts.loginLabel"

@@ -21,8 +21,8 @@ import {
 
 @Injectable()
 export class LoginService {
-  private authenticationService = inject(AuthenticationService);
-  private dispatchService = inject(DispatchService);
+  private readonly authenticationService = inject(AuthenticationService);
+  private readonly dispatchService = inject(DispatchService);
 
   login(
     login: string,

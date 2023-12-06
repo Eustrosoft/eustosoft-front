@@ -13,22 +13,16 @@ import {
   HostListener,
   inject,
   Input,
-  OnInit,
   Output,
   QueryList,
   TemplateRef,
   ViewChildren,
 } from '@angular/core';
-import { switchMap, take, tap } from 'rxjs';
-import {
-  AuthenticationService,
-  LoginService,
-} from '@eustrosoft-front/security';
+import { AuthenticationService } from '@eustrosoft-front/security';
 import { APP_CONFIG } from '@eustrosoft-front/config';
-import { Router } from '@angular/router';
-import { XS_SCREEN_RESOLUTION } from '@eustrosoft-front/core';
 import { MatMenu, MatMenuPanel } from '@angular/material/menu';
 import { menuItems } from '../../constants/menu-items.contant';
+import { BreakpointsService } from '../../services/breakpoints.service';
 
 @Component({
   selector: 'eustrosoft-front-header',
@@ -36,35 +30,29 @@ import { menuItems } from '../../constants/menu-items.contant';
   styleUrls: ['./header.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HeaderComponent implements OnInit, AfterViewInit {
-  @Input() appsListTemplate!: TemplateRef<any>;
-  @Input() texts!: { title: string; appName: string; appsButtonText: string };
-  @Input() loginPath!: any[];
-  @Output() sidenavToggleClicked = new EventEmitter<void>();
+export class HeaderComponent implements AfterViewInit {
   @ViewChildren(MatMenu) menus!: QueryList<MatMenu>;
 
-  private loginService: LoginService = inject(LoginService);
-  private authenticationService: AuthenticationService = inject(
-    AuthenticationService
-  );
-  private xsScreenRes = inject(XS_SCREEN_RESOLUTION);
-  public config = inject(APP_CONFIG);
-  public router = inject(Router);
-  public isAuthenticated$ =
+  @Input() appsListTemplate!: TemplateRef<unknown>;
+  @Input() texts!: { title: string; appName: string; appsButtonText: string };
+  @Output() sidenavToggleClicked = new EventEmitter<void>();
+  @Output() logoutClicked = new EventEmitter<void>();
+
+  private readonly authenticationService = inject(AuthenticationService);
+  private readonly breakpointsService = inject(BreakpointsService);
+
+  protected readonly config = inject(APP_CONFIG);
+  protected isAuthenticated$ =
     this.authenticationService.isAuthenticated$.asObservable();
-  public userInfo$ = this.authenticationService.userInfo$.asObservable();
-  public isXs = false;
+  protected userInfo$ = this.authenticationService.userInfo$.asObservable();
+  protected isSm = this.breakpointsService.isSm();
 
   menuItems = menuItems;
   menuTriggers: MatMenuPanel[] = [];
 
   @HostListener('window:resize', ['$event'])
-  onWindowResize() {
-    this.isXs = window.innerWidth <= this.xsScreenRes;
-  }
-
-  ngOnInit(): void {
-    this.isXs = window.innerWidth <= this.xsScreenRes;
+  onWindowResize(): void {
+    this.isSm = this.breakpointsService.isSm();
   }
 
   ngAfterViewInit(): void {
@@ -73,20 +61,7 @@ export class HeaderComponent implements OnInit, AfterViewInit {
       .filter((menu) => menu.backdropClass !== 'ignore');
   }
 
-  logout() {
-    this.loginService
-      .logout()
-      .pipe(
-        switchMap(() => this.config),
-        tap((config) => {
-          if (this.loginPath) {
-            this.router.navigate(this.loginPath);
-          } else {
-            window.location.href = config.loginUrl;
-          }
-        }),
-        take(1)
-      )
-      .subscribe();
+  logout(): void {
+    this.logoutClicked.emit();
   }
 }

@@ -57,11 +57,11 @@ import {
   QtisRequestResponseInterface,
   SendChatMessageRequest,
   SendChatMessageResponse,
+  SM_SCREEN_RESOLUTION,
   UpdateChatListRequest,
   UpdateChatListResponse,
   ViewChatsRequest,
   ViewChatsResponse,
-  XS_SCREEN_RESOLUTION,
 } from '@eustrosoft-front/core';
 import { MsgRequestBuilderService } from './services/msg-request-builder.service';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -96,7 +96,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
   private dialog = inject(MatDialog);
   private snackBar = inject(MatSnackBar);
   private translateService = inject(TranslateService);
-  private xsScreenRes = inject(XS_SCREEN_RESOLUTION);
+  private smScreenRes = inject(SM_SCREEN_RESOLUTION);
 
   fetchChatsByStatuses$ = new BehaviorSubject<MsgChatStatus[]>([]);
   fetchChatMessagesByChatId$ = new BehaviorSubject<number | undefined>(
@@ -258,7 +258,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
   selectedChat: Chat | undefined = undefined;
   selectedStatuses: MsgChatStatus[] = [];
   isCollapsed = true;
-  isXs = false;
+  isSm = false;
 
   @HostListener('window:resize', ['$event'])
   onWindowResize() {
@@ -277,12 +277,12 @@ export class SupportChatComponent implements OnInit, OnDestroy {
   }
 
   setUpSidebar(): void {
-    if (window.innerWidth <= this.xsScreenRes) {
+    if (window.innerWidth <= this.smScreenRes) {
       this.isCollapsed = true;
-      this.isXs = true;
+      this.isSm = true;
     } else {
       this.isCollapsed = false;
-      this.isXs = false;
+      this.isSm = false;
     }
   }
 
@@ -294,7 +294,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
     this.selectedChat = chat;
     this.selectedChat.hasUpdates = false;
     this.fetchChatMessagesByChatId$.next(chat.zoid);
-    if (this.isXs) {
+    if (this.isSm) {
       this.toggleSidebar();
     }
   }

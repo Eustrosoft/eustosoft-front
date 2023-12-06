@@ -54,6 +54,7 @@ import { DicModule } from '@eustrosoft-front/dic';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { UploadDialogComponent } from './explorer/components/upload-dialog/upload-dialog.component';
 import { ShareDialogComponent } from './explorer/components/share-dialog/share-dialog.component';
+import { MatSidenavModule } from '@angular/material/sidenav';
 
 @NgModule({
   declarations: [
@@ -94,6 +95,7 @@ import { ShareDialogComponent } from './explorer/components/share-dialog/share-d
     MatCardModule,
     DicModule,
     MatExpansionModule,
+    MatSidenavModule,
   ],
   providers: [
     ExplorerService,

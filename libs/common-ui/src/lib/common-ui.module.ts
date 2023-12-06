@@ -49,6 +49,7 @@ import { CoreModule } from '@eustrosoft-front/core';
 import { MatListModule } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { SidenavComponent } from './components/sidenav/sidenav.component';
+import { BreakpointsService } from './services/breakpoints.service';
 
 @NgModule({
   imports: [
@@ -116,6 +117,7 @@ import { SidenavComponent } from './components/sidenav/sidenav.component';
         fontSet: 'material-symbols-outlined',
       } as MatIconDefaultOptions,
     },
+    BreakpointsService,
   ],
 })
 export class CommonUiModule {}

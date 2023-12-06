@@ -4,22 +4,27 @@
   ~ This file is part of eustrosoft-front project.
   ~ See the LICENSE file at the project root for licensing information.
   -->
-<mat-drawer-container [hasBackdrop]="true">
-  <mat-drawer #drawer [mode]="'over'" [position]="'end'">
-    <eustrosoft-front-sidenav class="flex-grow-1"></eustrosoft-front-sidenav>
-  </mat-drawer>
-  <mat-drawer-content>
-    <div class="wrapper">
-      <ng-container *ngIf="translatedValues | async as translate">
+<ng-container *ngIf="{ isAuthenticated: isAuthenticated$ | async } as vm">
+  <mat-drawer-container [hasBackdrop]="true">
+    <mat-drawer #drawer [mode]="'over'" [position]="'end'">
+      <eustrosoft-front-sidenav
+        *ngIf="vm.isAuthenticated"
+        class="flex-fill"
+        (logoutClicked)="logout()"
+      ></eustrosoft-front-sidenav>
+    </mat-drawer>
+    <mat-drawer-content>
+      <main class="wrapper">
         <eustrosoft-front-header
+          *ngIf="vm.isAuthenticated"
           [appsListTemplate]="appsListTemplate"
           [texts]="{
-            title: translate.title,
-            appName: translate.appName,
-            appsButtonText: translate.appsButtonText
+            title: 'HEADER.TITLE' | translate,
+            appName: 'HEADER.APP_NAME' | translate,
+            appsButtonText: 'HEADER.APPS_BUTTON_TEXT' | translate
           }"
-          [loginPath]="['login']"
           (sidenavToggleClicked)="drawer.toggle()"
+          (logoutClicked)="logout()"
         ></eustrosoft-front-header>
 
         <router-outlet></router-outlet>
@@ -27,17 +32,17 @@
         <ng-template #appsListTemplate>
           <ng-container *ngIf="config | async as cnf">
             <a mat-menu-item [href]="cnf.loginUrl">
-              {{ translate.login }}
+              {{ 'HEADER.APPS.LOGIN' | translate }}
             </a>
             <a mat-menu-item [href]="cnf.dispatcherUrl">
-              {{ translate.dispatcher }}
+              {{ 'HEADER.APPS.DISPATCHER' | translate }}
             </a>
             <a mat-menu-item [href]="cnf.appsPageUrl">
-              {{ translate.appsPage }}
+              {{ 'HEADER.APPS.ALL_APPS_PAGE' | translate }}
             </a>
           </ng-container>
         </ng-template>
-      </ng-container>
-    </div>
-  </mat-drawer-content>
-</mat-drawer-container>
+      </main>
+    </mat-drawer-content>
+  </mat-drawer-container>
+</ng-container>

@@ -8,7 +8,7 @@
 <div class="container-fluid mt-3">
   <div class="row h-100">
     <div
-      [ngClass]="{ sidebar: isXs, collapsed: isCollapsed }"
+      [ngClass]="{ sidebar: isSm, collapsed: isCollapsed }"
       class="col-6 col-sm-4 col-md-4 col-lg-4 col-xl-4 pe-0 h-100"
     >
       <ng-container
@@ -36,7 +36,7 @@
           <eustrosoft-front-chat-list
             [chats]="chats"
             [selectedChat]="selectedChat"
-            [removeBorderRadius]="isXs"
+            [removeBorderRadius]="isSm"
             [chatStatusFilterOptions]="chatVm.chatsStatusFilterOptions || []"
             (chatSelected)="chatSelected($event)"
             (collapseClicked)="toggleSidebar()"
@@ -56,7 +56,7 @@
           class="d-flex flex-column align-items-center justify-content-center h-100"
         >
           <h2>{{ 'MSG.SELECT_TICKET_CAPTION_TEXT' | translate }}</h2>
-          <ng-container *ngIf="isXs">
+          <ng-container *ngIf="isSm">
             <eustrosoft-front-button
               [buttonStyleType]="'stroked'"
               [iconName]="'add'"
@@ -109,5 +109,5 @@
 
 <div
   (click)="toggleSidebar()"
-  [ngClass]="{ backdrop: !isCollapsed && isXs }"
+  [ngClass]="{ backdrop: !isCollapsed && isSm }"
 ></div>

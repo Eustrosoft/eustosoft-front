@@ -1,7 +1,7 @@
-<div class="d-flex flex-column align-items-center gap-2 p-2">
+<div class="flex flex-column align-items-center g-2 p-2">
   <ng-container *ngIf="userInfo$ | async as info">
-    <div class="d-flex align-items-center pb-2">
-      <h4 class="m-0 px-3" [title]="info.userFullName">
+    <div class="flex align-items-center">
+      <h4 class="m-0 px-3 fs-4" [title]="info.userFullName">
         {{ info.userFullName }}
       </h4>
       <eustrosoft-front-button
@@ -39,6 +39,8 @@
   </ng-container>
 
   <ng-container *ngFor="let link of menuItems.rest">
-    <a mat-menu-item [href]="link.href" target="_blank"> {{ link.text }}</a>
+    <a mat-menu-item [href]="link.href" target="_blank" class="fs-3">
+      {{ link.text }}
+    </a>
   </ng-container>
 </div>

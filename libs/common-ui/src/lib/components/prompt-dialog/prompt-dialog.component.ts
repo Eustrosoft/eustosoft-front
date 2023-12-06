@@ -21,13 +21,13 @@ import { PromptDialogDataInterface } from './prompt-dialog-data.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PromptDialogComponent {
-  private dialogRef: MatDialogRef<PromptDialogComponent> = inject(
+  private readonly dialogRef: MatDialogRef<PromptDialogComponent> = inject(
     MatDialogRef<PromptDialogComponent>
   );
-  public data: PromptDialogDataInterface = inject(MAT_DIALOG_DATA);
+  protected data: PromptDialogDataInterface = inject(MAT_DIALOG_DATA);
 
   @HostListener('keydown.enter', ['$event'])
-  onEnterKeydown(e: KeyboardEvent) {
+  onEnterKeydown(e: KeyboardEvent): void {
     e.stopPropagation();
     this.resolve();
   }

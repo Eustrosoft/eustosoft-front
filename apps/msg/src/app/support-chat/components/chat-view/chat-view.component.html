@@ -122,7 +122,9 @@
     <div class="d-flex flex-column mw-45">
       <div class="p-2 bg-light rounded-1">
         <div class="text-break" [innerHTML]="msg.content | newLineToBr"></div>
-        <div class="d-flex align-items-center justify-content-between">
+        <div
+          class="d-flex align-items-center justify-content-between flex-wrap"
+        >
           <span class="fw-light fst-italic me-2">
             {{ msg.user.id === info.userId ? 'me' : msg.user.fullName }}
           </span>

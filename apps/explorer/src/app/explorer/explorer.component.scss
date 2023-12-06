@@ -10,6 +10,8 @@
   flex: 1 1 auto;
   height: 100%;
   overflow: auto;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .explorer {
@@ -17,6 +19,7 @@
   flex-direction: column;
   flex: 1 1 auto;
   gap: 1rem;
+  overflow: auto;
   &-actions {
     display: flex;
     margin: 1rem 1rem 0 1rem;

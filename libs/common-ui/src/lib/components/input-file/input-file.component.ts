@@ -33,7 +33,7 @@ export class InputFileComponent implements OnInit, OnDestroy {
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
-  private destroy$ = new Subject<void>();
+  private readonly destroy$ = new Subject<void>();
 
   ngOnInit(): void {
     this.control.valueChanges

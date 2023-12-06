@@ -9,21 +9,25 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, Observable, shareReplay, throwError } from 'rxjs';
 import { Config } from '../interfaces/config.interface';
-import { APP_BASE_HREF } from '@angular/common';
+import { APP_BASE_HREF, DOCUMENT } from '@angular/common';
 
 @Injectable()
 export class ConfigService {
-  private http: HttpClient = inject(HttpClient);
-  private appBaseHref = inject(APP_BASE_HREF);
-  private configUrl = `${window.location.origin}${
+  private readonly http: HttpClient = inject(HttpClient);
+  private readonly appBaseHref = inject(APP_BASE_HREF);
+  private readonly document = inject(DOCUMENT);
+
+  private configUrl = `${this.document.location.origin}${
     this.appBaseHref
   }config.json?${Date.now()}`;
+
   private backupConfigUrl = `${
-    window.location.origin
+    this.document.location.origin
   }/config.json?${Date.now()}`;
 
   private mainConfig = this.http.get<Config>(this.configUrl);
   private backupConfig = this.http.get<Config>(this.backupConfigUrl);
+
   getConfig(): Observable<Config> {
     return this.mainConfig.pipe(
       catchError((err: HttpErrorResponse) => {

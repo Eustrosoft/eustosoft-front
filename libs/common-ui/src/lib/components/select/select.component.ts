@@ -24,5 +24,6 @@ export class SelectComponent {
   @Input() options: Option[] = [];
   @Input() color: ThemePalette = undefined;
   @Input() showEmptyOption = true;
+  @Input() hideSubscriptWrapper = false;
   @Input() control!: FormControl;
 }

@@ -7,6 +7,6 @@
 
 import { InjectionToken } from '@angular/core';
 
-export const XS_SCREEN_RESOLUTION = new InjectionToken<number>(
-  'Extra small screen resolution in pixels'
+export const SM_SCREEN_RESOLUTION = new InjectionToken<number>(
+  'Small screen resolution in pixels'
 );

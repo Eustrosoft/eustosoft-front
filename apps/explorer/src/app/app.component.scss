@@ -5,15 +5,8 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-.route-loader {
-  top: 0;
-  left: 0;
-  right: 0;
-  position: absolute;
-}
-
 .wrapper {
-  height: 100vh;
+  height: 100svh;
   display: flex;
   flex-direction: column;
 }

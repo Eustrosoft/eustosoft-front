@@ -10,6 +10,8 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  HostListener,
+  inject,
   Input,
   OnDestroy,
   OnInit,
@@ -18,7 +20,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Subject, take } from 'rxjs';
+import { catchError, EMPTY, of, Subject, take, tap } from 'rxjs';
 import { LoginService } from '@eustrosoft-front/security';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -28,6 +30,7 @@ import { LoginDialogComponent } from '../login-dialog/login-dialog.component';
 import { LoginDialogDataInterface } from '../login-dialog/login-dialog-data.interface';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { InputTypes, LoginForm } from '@eustrosoft-front/core';
+import { BreakpointsService } from '../../services/breakpoints.service';
 
 @Component({
   selector: 'eustrosoft-front-login',
@@ -36,46 +39,57 @@ import { InputTypes, LoginForm } from '@eustrosoft-front/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginComponent implements OnInit, OnDestroy, AfterViewInit {
-  form!: FormGroup;
-  // TODO i18n для сообщений о ошибках
-  loginErrors: InputErrorInterface[] = [
-    {
-      errorCode: InputErrors.REQUIRED,
-      message: 'Required',
-    },
-  ];
-  passwordErrors: InputErrorInterface[] = [
-    {
-      errorCode: InputErrors.REQUIRED,
-      message: 'Required',
-    },
-  ];
-  InputTypes = InputTypes;
-  loginDialogRef!: MatDialogRef<LoginDialogComponent>;
-  @Input() pathAfterLogin!: any[];
+  @ViewChild('loginTemplate') loginTemplate!: TemplateRef<unknown>;
+
+  @Input() pathAfterLogin!: string[];
   @Input() texts!: {
     heading: string;
     loginLabel: string;
     passwordLabel: string;
     submitButtonText: string;
   };
-  @ViewChild('loginTemplate') loginTemplate!: TemplateRef<any>;
-  private destroyed$ = new Subject<void>();
 
-  constructor(
-    private fb: FormBuilder,
-    private loginService: LoginService,
-    private router: Router,
-    private cd: ChangeDetectorRef,
-    private snackBar: MatSnackBar,
-    private dialog: MatDialog
-  ) {}
+  private loginDialogRef!: MatDialogRef<LoginDialogComponent>;
+  private readonly fb = inject(FormBuilder);
+  private readonly loginService = inject(LoginService);
+  private readonly router = inject(Router);
+  private readonly cdRef = inject(ChangeDetectorRef);
+  private readonly snackBar = inject(MatSnackBar);
+  private readonly dialog = inject(MatDialog);
+  private readonly breakpointsService = inject(BreakpointsService);
+  private readonly destroyed$ = new Subject<void>();
+
+  protected form: FormGroup<LoginForm> = this.fb.nonNullable.group<LoginForm>({
+    login: this.fb.nonNullable.control('', [Validators.required]),
+    password: this.fb.nonNullable.control('', Validators.required),
+    submit: this.fb.nonNullable.control(false),
+  });
+  // TODO i18n для сообщений о ошибках
+  protected loginErrors: InputErrorInterface[] = [
+    {
+      errorCode: InputErrors.REQUIRED,
+      message: 'Required',
+    },
+  ];
+  protected passwordErrors: InputErrorInterface[] = [
+    {
+      errorCode: InputErrors.REQUIRED,
+      message: 'Required',
+    },
+  ];
+  protected readonly InputTypes = InputTypes;
+  protected isSm = this.breakpointsService.isSm();
+
+  @HostListener('window:resize', ['$event'])
+  onWindowResize(): void {
+    this.isSm = this.breakpointsService.isSm();
+  }
 
   ngOnInit(): void {
     this.form = this.fb.nonNullable.group<LoginForm>({
-      login: this.fb.nonNullable.control('', [Validators.required]),
-      password: this.fb.nonNullable.control('', Validators.required),
-      submit: this.fb.nonNullable.control(false),
+      login: this.fb.nonNullable.control<string>('', [Validators.required]),
+      password: this.fb.nonNullable.control<string>('', Validators.required),
+      submit: this.fb.nonNullable.control<boolean>(false),
     });
   }
 
@@ -89,27 +103,29 @@ export class LoginComponent implements OnInit, OnDestroy, AfterViewInit {
         template: this.loginTemplate,
       },
       disableClose: true,
-      width: '50em',
-      height: '20em',
+      width: this.isSm ? '100vw' : '50vw',
     });
   }
 
   submit(): void {
-    this.form.get('submit')?.disable();
+    this.form.controls.submit.disable();
+    const { login, password } = this.form.getRawValue();
     this.loginService
-      .login(this.form.value.login, this.form.value.password)
-      .pipe(take(1))
-      .subscribe({
-        next: () => {
+      .login(login, password)
+      .pipe(
+        tap(() => {
           this.loginDialogRef.close();
           this.router.navigate(this.pathAfterLogin);
-        },
-        error: (err: HttpErrorResponse) => {
-          this.form.get('submit')?.enable();
+        }),
+        catchError((err: HttpErrorResponse) => {
+          this.form.controls.submit.enable();
           this.snackBar.open(err.error, 'close');
-          this.cd.markForCheck();
-        },
-      });
+          this.cdRef.markForCheck();
+          return of(EMPTY);
+        }),
+        take(1)
+      )
+      .subscribe();
   }
 
   ngOnDestroy(): void {

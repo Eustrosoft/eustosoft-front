@@ -2,7 +2,9 @@ import {
   AfterViewInit,
   ChangeDetectionStrategy,
   Component,
+  EventEmitter,
   inject,
+  Output,
   QueryList,
   ViewChildren,
 } from '@angular/core';
@@ -17,19 +19,23 @@ import { MatMenu, MatMenuPanel } from '@angular/material/menu';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SidenavComponent implements AfterViewInit {
-  private authenticationService: AuthenticationService = inject(
+  @ViewChildren(MatMenu) menus!: QueryList<MatMenu>;
+
+  @Output() logoutClicked = new EventEmitter<void>();
+
+  private readonly authenticationService: AuthenticationService = inject(
     AuthenticationService
   );
-  @ViewChildren(MatMenu) menus!: QueryList<MatMenu>;
-  userInfo$ = this.authenticationService.userInfo$.asObservable();
-  menuItems = menuItems;
-  menuTriggers: MatMenuPanel[] = [];
+  protected readonly userInfo$ =
+    this.authenticationService.userInfo$.asObservable();
+  protected readonly menuItems = menuItems;
+  protected menuTriggers: MatMenuPanel[] = [];
 
   ngAfterViewInit(): void {
     this.menuTriggers = this.menus.map((menu) => menu);
   }
 
-  logout() {
-    console.log('logout');
+  logout(): void {
+    this.logoutClicked.emit();
   }
 }

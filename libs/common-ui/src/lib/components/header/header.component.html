@@ -51,7 +51,7 @@
     </div>
     <div class="flex align-items-center justify-content-end">
       <ng-container *ngIf="userInfo$ | async as info">
-        <ng-container *ngIf="!isXs">
+        <ng-container *ngIf="!isSm">
           <span class="px-3 text-truncate" [title]="info.userFullName">
             {{ info.userFullName }}
           </span>
@@ -63,7 +63,7 @@
           >
           </eustrosoft-front-button>
         </ng-container>
-        <ng-container *ngIf="isXs">
+        <ng-container *ngIf="isSm">
           <eustrosoft-front-button
             [buttonType]="'button'"
             [buttonStyleType]="'icon'"

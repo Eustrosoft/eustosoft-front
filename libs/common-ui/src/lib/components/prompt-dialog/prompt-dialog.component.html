@@ -5,33 +5,26 @@
   ~ See the LICENSE file at the project root for licensing information.
   -->
 
-<div class="container" cdkTrapFocus>
-  <div class="row">
-    <h1 class="col-12 m-0" mat-dialog-title>{{ data.title }}</h1>
+<div class="flex flex-column g-3">
+  <h1 class="m-0 px-3 pb-0" mat-dialog-title>{{ data.title }}</h1>
+  <div class="flex flex-column g-2 px-3 py-0" mat-dialog-content>
+    {{ data.text }}
   </div>
-  <div class="row">
-    <div class="py-2" mat-dialog-content>
-      {{ data.text }}
-    </div>
-  </div>
-  <div class="row">
-    <div [align]="'end'" mat-dialog-actions>
-      <eustrosoft-front-button
-        [buttonType]="'button'"
-        [buttonStyleType]="'flat'"
-        [buttonText]="data.cancelButtonText"
-        (clicked)="reject()"
-      >
-      </eustrosoft-front-button>
-      <span class="buttons-spacer"></span>
-      <eustrosoft-front-button
-        [buttonType]="'button'"
-        [buttonStyleType]="'flat'"
-        [buttonText]="data.submitButtonText"
-        [color]="'primary'"
-        (clicked)="resolve()"
-      >
-      </eustrosoft-front-button>
-    </div>
+  <div class="flex g-2 px-3 pb-3 pt-0" [align]="'end'" mat-dialog-actions>
+    <eustrosoft-front-button
+      [buttonType]="'button'"
+      [buttonStyleType]="'flat'"
+      [buttonText]="data.cancelButtonText"
+      (clicked)="reject()"
+    >
+    </eustrosoft-front-button>
+    <eustrosoft-front-button
+      [buttonType]="'button'"
+      [buttonStyleType]="'flat'"
+      [buttonText]="data.submitButtonText"
+      [color]="'primary'"
+      (clicked)="resolve()"
+    >
+    </eustrosoft-front-button>
   </div>
 </div>

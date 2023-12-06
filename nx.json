@@ -55,14 +55,30 @@
       "changeDetection": "OnPush",
       "skipTests": true
     },
+    "@schematics/angular:component": {
+      "style": "scss",
+      "changeDetection": "OnPush",
+      "skipTests": true
+    },
     "@nrwl/angular:pipe": {
+      "skipTests": true,
+      "standalone": true
+    },
+    "@schematics/angular:pipe": {
       "skipTests": true,
       "standalone": true
     },
     "@nrwl/angular:service": {
       "skipTests": true
     },
+    "@schematics/angular:service": {
+      "skipTests": true
+    },
     "@nrwl/angular:directive": {
+      "skipTests": true,
+      "standalone": true
+    },
+    "@schematics/angular:directive": {
       "skipTests": true,
       "standalone": true
     }
