@@ -15,12 +15,12 @@ import { ShareDialogDataInterface } from './share-dialog-data.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ShareDialogComponent {
-  private dialogRef = inject<MatDialogRef<ShareDialogComponent, string>>(
-    MatDialogRef<ShareDialogComponent>
-  );
-  public data: ShareDialogDataInterface = inject(MAT_DIALOG_DATA);
+  private readonly dialogRef = inject<
+    MatDialogRef<ShareDialogComponent, string>
+  >(MatDialogRef<ShareDialogComponent>);
+  protected data = inject<ShareDialogDataInterface>(MAT_DIALOG_DATA);
 
-  control = new FormControl('', {
+  protected control = new FormControl('', {
     nonNullable: true,
   });
 

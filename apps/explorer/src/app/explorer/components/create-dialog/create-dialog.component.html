@@ -1,0 +1,67 @@
+<!--
+  ~ Copyright (c) 2023. IdrisovII & EustroSoft.org
+  ~
+  ~ This file is part of eustrosoft-front project.
+  ~ See the LICENSE file at the project root for licensing information.
+  -->
+
+<div class="flex flex-column g-3">
+  <h1 class="m-0 px-3 pb-0" mat-dialog-title>
+    {{ 'EXPLORER.CREATE_FOLDER_DIALOG.TITLE' | translate }}
+  </h1>
+
+  <div class="flex flex-column g-3 px-3 py-0">
+    <eustrosoft-front-input
+      [label]="
+        'EXPLORER.CREATE_FOLDER_DIALOG.NAME_INPUT_LABEL_TEXT' | translate
+      "
+      [fieldAppearance]="'outline'"
+      [control]="form.controls.name"
+      [hideSubscriptWrapper]="true"
+    ></eustrosoft-front-input>
+    <eustrosoft-front-select
+      [label]="
+        'EXPLORER.CREATE_FOLDER_DIALOG.SECURITY_LEVEL_SELECT_LABEL_TEXT'
+          | translate
+      "
+      [control]="form.controls.securityLevel"
+      [options]="(securityLevelOptions$ | async) || []"
+      [fieldAppearance]="'outline'"
+      [hideSubscriptWrapper]="true"
+    ></eustrosoft-front-select>
+    <eustrosoft-front-input
+      [label]="
+        'EXPLORER.CREATE_FOLDER_DIALOG.DESCRIPTION_INPUT_LABEL_TEXT' | translate
+      "
+      [fieldAppearance]="'outline'"
+      [control]="form.controls.description"
+      [placeholder]="
+        'EXPLORER.CREATE_FOLDER_DIALOG.DESCRIPTION_INPUT_PLACEHOLDER'
+          | translate
+      "
+      [hideSubscriptWrapper]="true"
+    ></eustrosoft-front-input>
+  </div>
+  <div class="flex g-2 px-3 pb-3 pt-0" [align]="'end'" mat-dialog-actions>
+    <eustrosoft-front-button
+      [buttonType]="'button'"
+      [buttonStyleType]="'flat'"
+      [buttonText]="
+        'EXPLORER.CREATE_FOLDER_DIALOG.CANCEL_BUTTON_TEXT' | translate
+      "
+      (clicked)="reject()"
+    >
+    </eustrosoft-front-button>
+    <eustrosoft-front-button
+      [buttonType]="'button'"
+      [buttonStyleType]="'flat'"
+      [buttonText]="
+        'EXPLORER.CREATE_FOLDER_DIALOG.SUBMIT_BUTTON_TEXT' | translate
+      "
+      [color]="'primary'"
+      [disabled]="form.invalid"
+      (clicked)="resolve()"
+    >
+    </eustrosoft-front-button>
+  </div>
+</div>

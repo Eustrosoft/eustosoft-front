@@ -25,6 +25,11 @@ export interface CreateResponse extends BaseCmsResponse {
   m: string;
 }
 
+export interface MoveResponse extends BaseCmsResponse {
+  e: number;
+  m: string;
+}
+
 export interface MoveCopyResponse extends BaseCmsResponse {
   e: number;
   m: string;

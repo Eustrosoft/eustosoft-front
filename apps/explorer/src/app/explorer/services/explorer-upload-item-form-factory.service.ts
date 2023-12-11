@@ -7,7 +7,7 @@
 
 import { inject, Injectable } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
-import { UploadItemForm } from '@eustrosoft-front/core';
+import { SecurityLevels, UploadItemForm } from '@eustrosoft-front/core';
 import { UploadItemState } from '../constants/enums/uploading-state.enum';
 
 @Injectable()
@@ -15,7 +15,8 @@ export class ExplorerUploadItemFormFactoryService {
   private fb: FormBuilder = inject(FormBuilder);
   makeUploadItemsForm(
     files: File[],
-    uploadPath: string
+    uploadPath: string,
+    defaultSecurityLevel: SecurityLevels
   ): FormArray<FormGroup<UploadItemForm>> {
     return this.fb.array(
       files.map((file) =>
@@ -29,7 +30,7 @@ export class ExplorerUploadItemFormFactoryService {
           }),
           description: this.fb.nonNullable.control(''),
           securityLevel: this.fb.nonNullable.control({
-            value: undefined,
+            value: defaultSecurityLevel,
             disabled: false,
           }),
         })

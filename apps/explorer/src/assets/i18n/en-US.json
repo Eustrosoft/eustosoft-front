@@ -48,8 +48,13 @@
     },
     "CREATE_FOLDER_DIALOG": {
       "TITLE": "New folder",
-      "INPUT_LABEL_TEXT": "Folder name",
-      "DEFAULT_INPUT_VALUE": "Untitled folder",
+      "NAME_INPUT_LABEL_TEXT": "Folder name",
+      "NAME_INPUT_DEFAULT_VALUE": "Untitled folder",
+      "SECURITY_LEVEL_SELECT_LABEL_TEXT": "Security level",
+      "DESCRIPTION_INPUT_LABEL_TEXT": "Description",
+      "DESCRIPTION_INPUT_DEFAULT_VALUE": "",
+      "DESCRIPTION_INPUT_PLACEHOLDER": "Additional info",
+      "CANCEL_BUTTON_TEXT": "Cancel",
       "SUBMIT_BUTTON_TEXT": "Create"
     },
     "CREATE_FILE_DIALOG": {
@@ -60,7 +65,10 @@
     },
     "RENAME_DIALOG": {
       "TITLE": "Rename",
-      "INPUT_LABEL_TEXT": "New name",
+      "NAME_INPUT_LABEL_TEXT": "New name",
+      "DESCRIPTION_INPUT_LABEL_TEXT": "New description",
+      "DESCRIPTION_INPUT_PLACEHOLDER": "Additional info",
+      "CANCEL_BUTTON_TEXT": "Cancel",
       "SUBMIT_BUTTON_TEXT": "Rename"
     },
     "MOVE_DIALOG": {
@@ -85,11 +93,15 @@
       "CANCEL_BUTTON_TEXT": "Cancel",
       "START_UPLOAD_BUTTON_TEXT": "Start upload",
       "START_UPLOAD_BUTTON_TEXT_UPLOADING_STATE": "Files being uploaded",
+      "SECURITY_LEVEL_SELECT_LABEL": "Security level",
+      "DESCRIPTION_INPUT_LABEL": "Description",
+      "DESCRIPTION_INPUT_PLACEHOLDER": "Additional info",
+      "OPEN_FOLDER_BUTTON_TOOLTIP": "Open file folder",
       "UPLOAD_COMPLETE_TEXT": "Upload completed",
       "PROCEED_AFTER_SUGGESTION_TEXT": "Proceed",
       "SUGGESTIONS": {
         "FILL_DESCRIPTION_TEXT": "It is recommended to fill out the description field. You can also leave it blank",
-        "SELECT_NEW_FILES": "Select new file to upload",
+        "SELECT_FILES": "Select file to upload",
         "SECURITY_LVL_WARNING": "All files whose security level is lower than or equal to 2F will be publicly viewable"
       }
     },
@@ -110,11 +122,11 @@
       "OPEN_FOLDER_BUTTON_TOOLTIP": "Open file folder"
     },
     "ERRORS": {
-      "REQUEST_ERROR_TEXT": "Error making request",
       "NO_SELECTED_FILES_ERROR_TEXT": "Select files first",
-      "CLOSE_BUTTON_TEXT": "Close",
       "SECURITY_LEVEL_OPTIONS_FETCH_ERROR": "Error fetching security levels",
-      "FILESYSTEM_OBJECTS_FETCH_ERROR": "Error fetching filesystem contents"
+      "FILESYSTEM_OBJECTS_FETCH_ERROR": "Error fetching filesystem contents",
+      "MOVE_FILE_ALREADY_EXISTS_ERROR": "Selected element already exist in this folder",
+      "MOVE_SAME_NAME_ERROR": "This directory already contains folder with same name"
     }
   }
 }

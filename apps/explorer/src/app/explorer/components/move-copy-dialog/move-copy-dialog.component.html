@@ -5,21 +5,25 @@
   ~ See the LICENSE file at the project root for licensing information.
   -->
 <div class="flex flex-column g-3">
-  <div class="flex g-3 pt-2 px-3 align-items-center">
-    <eustrosoft-front-button
-      [buttonType]="'button'"
-      [buttonStyleType]="'icon'"
-      [iconName]="'navigate_before'"
-      (click)="navigateBack()"
-    >
-    </eustrosoft-front-button>
-    <h1 class="m-0 p-0 flex align-items-center" mat-dialog-title>
-      <span>{{ data.title }}</span>
-    </h1>
-  </div>
+  <h1 class="g-3 pt-3 px-3 m-0 p-0 flex align-items-center" mat-dialog-title>
+    <span>{{ 'EXPLORER.MOVE_DIALOG.TITLE' | translate }}</span>
+  </h1>
 
   <div class="flex flex-column g-2 px-3 py-0" mat-dialog-content>
-    <cdk-virtual-scroll-viewport itemSize="5" class="vh-25 vw-50">
+    <div class="flex g-2 align-items-center">
+      <eustrosoft-front-button
+        [buttonType]="'button'"
+        [buttonStyleType]="'icon'"
+        [iconName]="'navigate_before'"
+        (click)="navigateBack()"
+      >
+      </eustrosoft-front-button>
+      <eustrosoft-front-breadcrumbs
+        [path$]="path$"
+        (breadcrumbClicked)="openByPath($event)"
+      ></eustrosoft-front-breadcrumbs>
+    </div>
+    <cdk-virtual-scroll-viewport itemSize="5" style="height: 25vh; width: 50vw">
       <mat-selection-list
         [multiple]="false"
         [hideSingleSelectionIndicator]="true"
@@ -87,23 +91,23 @@
       [buttonType]="'button'"
       [buttonStyleType]="'icon'"
       [iconName]="'create_new_folder'"
-      [title]="createNewFolderTitleText"
+      [title]="'Create new folder'"
       (click)="createNewFolder()"
     >
     </eustrosoft-front-button>
     <eustrosoft-front-button
       [buttonType]="'button'"
       [buttonStyleType]="'flat'"
-      [buttonText]="data.cancelButtonText"
+      [buttonText]="'EXPLORER.MOVE_DIALOG.CANCEL_BUTTON_TEXT' | translate"
       (click)="reject()"
     >
     </eustrosoft-front-button>
     <eustrosoft-front-button
       [buttonStyleType]="'flat'"
-      [buttonText]="data.submitButtonText"
+      [buttonText]="'EXPLORER.MOVE_DIALOG.SUBMIT_BUTTON_TEXT' | translate"
       [color]="'primary'"
       [disabled]="!!(moveButtonDisabled$ | async)"
-      [matTooltip]="moveButtonErrorText"
+      [matTooltip]="moveButtonErrorText | translate"
       (clicked)="resolve()"
     >
     </eustrosoft-front-button>

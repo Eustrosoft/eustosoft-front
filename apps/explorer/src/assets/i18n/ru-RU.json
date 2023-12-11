@@ -48,8 +48,13 @@
     },
     "CREATE_FOLDER_DIALOG": {
       "TITLE": "Новая папка",
-      "INPUT_LABEL_TEXT": "Наименование папки",
-      "DEFAULT_INPUT_VALUE": "Без названия",
+      "NAME_INPUT_LABEL_TEXT": "Наименование папки",
+      "NAME_INPUT_DEFAULT_VALUE": "Без названия",
+      "SECURITY_LEVEL_SELECT_LABEL_TEXT": "Уровень доступа",
+      "DESCRIPTION_INPUT_LABEL_TEXT": "Описание",
+      "DESCRIPTION_INPUT_DEFAULT_VALUE": "",
+      "DESCRIPTION_INPUT_PLACEHOLDER": "Дополнительная информация",
+      "CANCEL_BUTTON_TEXT": "Отмена",
       "SUBMIT_BUTTON_TEXT": "Создать"
     },
     "CREATE_FILE_DIALOG": {
@@ -60,7 +65,10 @@
     },
     "RENAME_DIALOG": {
       "TITLE": "Переименовать",
-      "INPUT_LABEL_TEXT": "Новое наименование",
+      "NAME_INPUT_LABEL_TEXT": "Новое наименования",
+      "DESCRIPTION_INPUT_LABEL_TEXT": "Новое описание",
+      "DESCRIPTION_INPUT_PLACEHOLDER": "Дополнительная информация",
+      "CANCEL_BUTTON_TEXT": "Отмена",
       "SUBMIT_BUTTON_TEXT": "Переименовать"
     },
     "MOVE_DIALOG": {
@@ -85,11 +93,15 @@
       "CANCEL_BUTTON_TEXT": "Отмена",
       "START_UPLOAD_BUTTON_TEXT": "Начать загрузку",
       "START_UPLOAD_BUTTON_TEXT_UPLOADING_STATE": "Файлы загружаются",
+      "SECURITY_LEVEL_SELECT_LABEL": "Уровень доступа",
+      "DESCRIPTION_INPUT_LABEL": "Описание",
+      "DESCRIPTION_INPUT_PLACEHOLDER": "Дополнительная информация",
+      "OPEN_FOLDER_BUTTON_TOOLTIP": "Открыть папку с файлом",
       "UPLOAD_COMPLETE_TEXT": "Файлы загружены",
       "PROCEED_AFTER_SUGGESTION_TEXT": "Продолжить",
       "SUGGESTIONS": {
         "FILL_DESCRIPTION_TEXT": "Рекомендуется заполнить поле описания. Также можно оставить его пустым",
-        "SELECT_NEW_FILES": "Выберите новый файл для загрузки",
+        "SELECT_FILES": "Выберите файл для загрузки",
         "SECURITY_LVL_WARNING": "Все файлы, уровень безопасности которых ниже или равен 2F, будут общедоступны для просмотра"
       }
     },
@@ -104,11 +116,11 @@
       "OPEN_FOLDER_BUTTON_TOOLTIP": "Открыть папку с файлом"
     },
     "ERRORS": {
-      "REQUEST_ERROR_TEXT": "Возникла ошибка при исполнении запроса",
       "NO_SELECTED_FILES_ERROR_TEXT": "Сначала выберите файлы",
-      "CLOSE_BUTTON_TEXT": "Закрыть",
       "SECURITY_LEVEL_OPTIONS_FETCH_ERROR": "Ошибка при попытке получения списка уровней доступа",
-      "FILESYSTEM_OBJECTS_FETCH_ERROR": "Ошибка при попытке получения содержимого файловой системы"
+      "FILESYSTEM_OBJECTS_FETCH_ERROR": "Ошибка при попытке получения содержимого файловой системы",
+      "MOVE_FILE_ALREADY_EXISTS_ERROR": "Выбранный элемент уже существует в этой папке",
+      "MOVE_SAME_NAME_ERROR": "Эта папка содержит папку с таким же именем"
     }
   }
 }

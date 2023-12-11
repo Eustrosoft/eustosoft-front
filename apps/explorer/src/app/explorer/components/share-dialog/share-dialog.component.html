@@ -6,7 +6,9 @@
   -->
 
 <div class="flex flex-column g-3">
-  <h1 class="m-0 px-3 pb-0" mat-dialog-title>{{ data.title | translate }}</h1>
+  <h1 class="m-0 px-3 pb-0" mat-dialog-title>
+    {{ 'EXPLORER.SHARE_DIALOG.TITLE' | translate }}
+  </h1>
   <ng-container *ngIf="{ link: data.linkObs$ | async } as vm">
     <ng-container *ngIf="vm.link?.isLoading && !vm.link?.isError">
       <eustrosoft-front-preloader></eustrosoft-front-preloader>
@@ -19,7 +21,7 @@
     <ng-container *ngIf="vm.link?.link as link">
       <div class="flex flex-column g-2 px-3 py-0">
         <eustrosoft-front-input
-          [label]="data.inputLabel | translate"
+          [label]="'EXPLORER.SHARE_DIALOG.INPUT_LABEL_TEXT' | translate"
           [fieldAppearance]="'outline'"
           [control]="control"
           [value]="link"
@@ -32,14 +34,14 @@
     <eustrosoft-front-button
       [buttonType]="'button'"
       [buttonStyleType]="'flat'"
-      [buttonText]="data.cancelButtonText | translate"
+      [buttonText]="'EXPLORER.SHARE_DIALOG.CANCEL_BUTTON_TEXT' | translate"
       (clicked)="reject()"
     >
     </eustrosoft-front-button>
     <eustrosoft-front-button
       [buttonType]="'button'"
       [buttonStyleType]="'flat'"
-      [buttonText]="data.submitButtonText | translate"
+      [buttonText]="'EXPLORER.SHARE_DIALOG.SUBMIT_BUTTON_TEXT' | translate"
       [color]="'primary'"
       (clicked)="resolve()"
     >

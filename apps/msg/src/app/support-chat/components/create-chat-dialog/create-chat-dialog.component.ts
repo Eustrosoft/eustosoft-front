@@ -37,7 +37,7 @@ export class CreateChatDialogComponent {
     MatDialogRef<CreateChatDialogComponent, CreateChatDialogReturnDataInterface>
   );
   private fb = inject(FormBuilder);
-  public data: CreateChatDialogDataInterface = inject(MAT_DIALOG_DATA);
+  public data = inject<CreateChatDialogDataInterface>(MAT_DIALOG_DATA);
   form = this.fb.nonNullable.group<CreateChatDialogFormInterface>({
     subject: this.fb.nonNullable.control<string>('', [Validators.required]),
     message: this.fb.nonNullable.control<string>(''),

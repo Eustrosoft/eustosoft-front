@@ -24,6 +24,8 @@ export interface CreateRequest extends BaseCmsRequest {
   path: string;
   type: FileSystemObjectTypes;
   fileName: string;
+  description: string;
+  securityLevel?: number;
 }
 
 export interface UploadRequest extends BaseCmsRequest {
@@ -50,6 +52,12 @@ export interface UploadHexRequest extends BaseCmsRequest {
     securityLevel?: number;
     description?: string;
   };
+}
+
+export interface MoveRequest extends BaseCmsRequest {
+  from?: string;
+  to: string;
+  description?: string;
 }
 
 export interface MoveCopyRequest extends BaseCmsRequest {

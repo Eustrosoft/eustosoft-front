@@ -1,6 +1,7 @@
 {
   "production": false,
   "apiUrl": "/api",
+  "shareUrl": "https://dev37.qxyz.ru/ftpub",
   "dispatcherUrl": "http://localhost:4202/dispatcher/",
   "explorerUrl": "http://localhost:4201/explorer/",
   "loginUrl": "http://localhost:4200/login/",

@@ -10,6 +10,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
+  inject,
   Input,
   OnChanges,
   OnDestroy,
@@ -17,11 +18,10 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FileSystemObjectTypes } from '@eustrosoft-front/core';
-import { MatTableDataSource } from '@angular/material/table';
-import { SelectionModel } from '@angular/cdk/collections';
 import { Subject } from 'rxjs';
 import { MatSort } from '@angular/material/sort';
 import { FileSystemObject } from '../../models/file-system-object.interface';
+import { FilesystemTableService } from '../../services/filesystem-table.service';
 
 @Component({
   selector: 'eustrosoft-front-filesystem-table',
@@ -40,6 +40,7 @@ export class FilesystemTableComponent
   @Output() moveClicked = new EventEmitter<FileSystemObject[]>();
   @Output() copyClicked = new EventEmitter<FileSystemObject[]>();
   @Output() deleteClicked = new EventEmitter<FileSystemObject[]>();
+  @Output() selectionChanged = new EventEmitter<FileSystemObject[]>();
   @Output() filesDroppedOnFolder = new EventEmitter<{
     files: File[];
     fsObj: FileSystemObject;
@@ -47,7 +48,7 @@ export class FilesystemTableComponent
 
   @ViewChild(MatSort) sort!: MatSort;
 
-  fsObjTypes = FileSystemObjectTypes;
+  protected readonly fsObjTypes = FileSystemObjectTypes;
 
   displayedColumns: string[] = [
     'select',
@@ -57,17 +58,16 @@ export class FilesystemTableComponent
     'securityLevel',
     'actions',
   ];
-  dataSource = new MatTableDataSource<FileSystemObject>([]);
-  selection = new SelectionModel<FileSystemObject>(true, []);
 
-  private destroy$ = new Subject<void>();
+  protected readonly filesystemTableService = inject(FilesystemTableService);
+  private readonly destroy$ = new Subject<void>();
 
   ngAfterViewInit(): void {
-    this.dataSource.sort = this.sort;
+    this.filesystemTableService.dataSource.sort = this.sort;
   }
 
   ngOnChanges(): void {
-    this.dataSource.data = this.content;
+    this.filesystemTableService.dataSource.data = this.content;
   }
 
   ngOnDestroy(): void {
@@ -76,34 +76,39 @@ export class FilesystemTableComponent
   }
 
   isAllSelected(): boolean {
-    const numSelected = this.selection.selected.length;
-    const numRows = this.dataSource.data.length;
+    const numSelected = this.filesystemTableService.selection.selected.length;
+    const numRows = this.filesystemTableService.dataSource.data.length;
     return numSelected === numRows;
   }
 
   toggleAllRows(): void {
     if (this.isAllSelected()) {
-      this.selection.clear();
+      this.filesystemTableService.selection.clear();
       return;
     }
 
-    this.selection.select(...this.dataSource.data);
+    this.filesystemTableService.selection.select(
+      ...this.filesystemTableService.dataSource.data
+    );
   }
 
   selectRange(event: Event, row: FileSystemObject) {
     if (
       event instanceof KeyboardEvent &&
       event.shiftKey &&
-      this.selection.selected.length > 0
+      this.filesystemTableService.selection.selected.length > 0
     ) {
-      const lastIndex = this.dataSource.data.indexOf(row);
-      const firstIndex = this.dataSource.data.indexOf(
-        this.selection.selected[0]
+      const lastIndex =
+        this.filesystemTableService.dataSource.data.indexOf(row);
+      const firstIndex = this.filesystemTableService.dataSource.data.indexOf(
+        this.filesystemTableService.selection.selected[0]
       );
       const start = Math.min(firstIndex, lastIndex);
       const end = Math.max(firstIndex, lastIndex);
       for (let i = start + 1; i < end; i++) {
-        this.selection.select(this.dataSource.data[i]);
+        this.filesystemTableService.selection.select(
+          this.filesystemTableService.dataSource.data[i]
+        );
       }
     }
   }

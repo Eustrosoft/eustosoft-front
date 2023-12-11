@@ -7,9 +7,10 @@
 
 import { FormControl } from '@angular/forms';
 import { UploadItem } from './upload-item.interface';
+import { SecurityLevels } from '../../constants/enums/security-levels.enum';
 
 export interface UploadItemForm {
   uploadItem: FormControl<UploadItem>;
   description: FormControl<string | undefined>;
-  securityLevel: FormControl<string | undefined>;
+  securityLevel: FormControl<SecurityLevels | undefined>;
 }

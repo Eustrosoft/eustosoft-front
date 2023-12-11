@@ -23,6 +23,7 @@ export * from './lib/constants/enums/msg-edit-type.enum';
 export * from './lib/constants/enums/sam-actions.enum';
 export * from './lib/constants/enums/scopes.enum';
 export * from './lib/constants/enums/dic-actions.enum';
+export * from './lib/constants/enums/security-levels.enum';
 export * from './lib/pipes/form-array.pipe';
 export * from './lib/pipes/form-control.pipe';
 export * from './lib/pipes/to-number.pipe';

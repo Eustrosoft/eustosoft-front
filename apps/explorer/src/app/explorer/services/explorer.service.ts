@@ -13,7 +13,13 @@ import {
 } from '@angular/common/http';
 import {
   CmsDownloadParams,
+  CmsRequestActions,
+  CreateRequest,
+  CreateResponse,
   DispatchService,
+  FileSystemObjectTypes,
+  MoveRequest,
+  MoveResponse,
   QtisRequestResponseInterface,
   UploadHexRequest,
   UploadResponse,
@@ -23,24 +29,50 @@ import {
 import {
   catchError,
   combineLatest,
+  EMPTY,
+  iif,
   map,
   Observable,
   of,
   switchMap,
-  throwError,
 } from 'rxjs';
 import { APP_CONFIG } from '@eustrosoft-front/config';
 import { ExplorerRequestBuilderService } from './explorer-request-builder.service';
 import { ExplorerDictionaryService } from './explorer-dictionary.service';
 import { FileSystemObject } from '../models/file-system-object.interface';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { TranslateService } from '@ngx-translate/core';
+import { ExplorerPathService } from './explorer-path.service';
+import { RenameDialogReturnData } from '../components/rename-dialog/rename-dialog-return-data.interface';
+import { DOCUMENT } from '@angular/common';
 
 @Injectable()
 export class ExplorerService {
-  private http = inject(HttpClient);
-  private config = inject(APP_CONFIG);
-  private explorerRequestBuilderService = inject(ExplorerRequestBuilderService);
-  private dispatchService = inject(DispatchService);
-  private explorerDictionaryService = inject(ExplorerDictionaryService);
+  private readonly http = inject(HttpClient);
+  private readonly config = inject(APP_CONFIG);
+  private readonly explorerRequestBuilderService = inject(
+    ExplorerRequestBuilderService
+  );
+  private readonly dispatchService = inject(DispatchService);
+  private readonly explorerDictionaryService = inject(
+    ExplorerDictionaryService
+  );
+  private readonly snackBar = inject(MatSnackBar);
+  private readonly translateService = inject(TranslateService);
+  private readonly explorerPathService = inject(ExplorerPathService);
+  private readonly document = inject(DOCUMENT);
+
+  makeShareLink(path: string): Observable<string> {
+    return this.config.pipe(
+      switchMap((config) =>
+        iif(
+          () => !!config.shareUrl,
+          of(`${config.shareUrl}${path}`),
+          this.makeDownloadLink(path, CmsDownloadParams.PATH)
+        )
+      )
+    );
+  }
 
   makeDownloadLink(
     parameterValue: string,
@@ -64,12 +96,13 @@ export class ExplorerService {
         this.explorerRequestBuilderService.buildViewRequest(path)
       ),
       switchMap((request: QtisRequestResponseInterface<ViewRequest>) =>
-        this.dispatchService.dispatch<ViewRequest, ViewResponse>(request).pipe(
-          map((response: QtisRequestResponseInterface<ViewResponse>) =>
-            response.r.flatMap((r: ViewResponse) => r.content)
-          ),
-          catchError((err: HttpErrorResponse) => throwError(() => err))
-        )
+        this.dispatchService
+          .dispatch<ViewRequest, ViewResponse>(request)
+          .pipe(
+            map((response: QtisRequestResponseInterface<ViewResponse>) =>
+              response.r.flatMap((r: ViewResponse) => r.content)
+            )
+          )
       ),
       switchMap((contents) =>
         combineLatest([
@@ -112,5 +145,65 @@ export class ExplorerService {
         )
       )
     );
+  }
+
+  create(
+    path: string,
+    name: string,
+    type: FileSystemObjectTypes,
+    description: string = '',
+    securityLevel: string | undefined = undefined
+  ): Observable<QtisRequestResponseInterface<CreateResponse>> {
+    const params: Omit<CreateRequest, 's' | 'l' | 'r'> = {
+      path,
+      type,
+      fileName: name,
+      description,
+    };
+    if (securityLevel) {
+      params.securityLevel = +securityLevel;
+    }
+    return this.explorerRequestBuilderService.buildCreateRequest(params).pipe(
+      switchMap((body: QtisRequestResponseInterface<CreateRequest>) =>
+        this.dispatchService.dispatch<CreateRequest, CreateResponse>(body)
+      ),
+      catchError((err) => this.handleError(err))
+    );
+  }
+
+  move(
+    row: FileSystemObject,
+    data: RenameDialogReturnData
+  ): Observable<QtisRequestResponseInterface<MoveResponse>> {
+    return of(row.fullPath).pipe(
+      switchMap((fullPath) =>
+        of(this.explorerPathService.getFullPathToLastFolder(fullPath))
+      ),
+      switchMap((folder) =>
+        iif(
+          () => data.name !== row.fileName,
+          this.explorerRequestBuilderService.buildMoveRequest(
+            [row],
+            [`${folder}/${data.name}`],
+            data.description ?? ''
+          ),
+          this.explorerRequestBuilderService.buildMoveRequest(
+            [row],
+            [`${folder}/${data.name}`],
+            data.description ?? '',
+            CmsRequestActions.RENAME
+          )
+        )
+      ),
+      switchMap((body: QtisRequestResponseInterface<MoveRequest>) =>
+        this.dispatchService.dispatch<MoveRequest, MoveResponse>(body)
+      ),
+      catchError((err) => this.handleError(err))
+    );
+  }
+
+  handleError(err: HttpErrorResponse): Observable<never> {
+    this.snackBar.open(err.error, 'close');
+    return EMPTY;
   }
 }

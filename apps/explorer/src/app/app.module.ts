@@ -26,7 +26,7 @@ import { SecurityModule } from '@eustrosoft-front/security';
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { PortalModule } from '@angular/cdk/portal';
 import { MatDialogModule } from '@angular/material/dialog';
-import { CreateRenameFolderDialogComponent } from './explorer/components/create-rename-folder-dialog/create-rename-folder-dialog.component';
+import { CreateDialogComponent } from './explorer/components/create-dialog/create-dialog.component';
 import { MoveCopyDialogComponent } from './explorer/components/move-copy-dialog/move-copy-dialog.component';
 import {
   CdkFixedSizeVirtualScroll,
@@ -55,12 +55,15 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { UploadDialogComponent } from './explorer/components/upload-dialog/upload-dialog.component';
 import { ShareDialogComponent } from './explorer/components/share-dialog/share-dialog.component';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { RenameDialogComponent } from './explorer/components/rename-dialog/rename-dialog.component';
+import { FilesystemTableService } from './explorer/services/filesystem-table.service';
 
 @NgModule({
   declarations: [
     AppComponent,
     ExplorerComponent,
-    CreateRenameFolderDialogComponent,
+    CreateDialogComponent,
+    RenameDialogComponent,
     MoveCopyDialogComponent,
     BreadcrumbsComponent,
     FilesystemTableComponent,
@@ -105,6 +108,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
     ExplorerUploadItemsService,
     ExplorerUploadItemFormFactoryService,
     ExplorerDictionaryService,
+    FilesystemTableService,
     Stack,
     { provide: LocationStrategy, useClass: CustomLocationStrategy },
   ],

@@ -6,9 +6,7 @@
  */
 
 import {
-  AfterViewInit,
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   inject,
   OnDestroy,
@@ -16,6 +14,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import {
+  BreakpointsService,
   InputFileComponent,
   PromptDialogComponent,
   PromptDialogDataInterface,
@@ -25,16 +24,13 @@ import {
   BehaviorSubject,
   catchError,
   combineLatest,
-  delay,
   EMPTY,
   filter,
-  iif,
   map,
   merge,
   Observable,
   of,
   repeat,
-  shareReplay,
   startWith,
   Subject,
   switchMap,
@@ -45,8 +41,6 @@ import {
 import {
   CmsDownloadParams,
   CmsRequestActions,
-  CreateRequest,
-  CreateResponse,
   DeleteRequest,
   DeleteResponse,
   DispatchService,
@@ -54,6 +48,7 @@ import {
   MoveCopyRequest,
   MoveCopyResponse,
   QtisRequestResponseInterface,
+  SecurityLevels,
   UploadItemForm,
 } from '@eustrosoft-front/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
@@ -61,13 +56,12 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ExplorerRequestBuilderService } from './services/explorer-request-builder.service';
 import { ExplorerService } from './services/explorer.service';
 import { MatDialog } from '@angular/material/dialog';
-import { CreateRenameFolderDialogComponent } from './components/create-rename-folder-dialog/create-rename-folder-dialog.component';
-import { CreateRenameDialogDataInterface } from './components/create-rename-folder-dialog/create-rename-dialog-data.interface';
+import { CreateDialogComponent } from './components/create-dialog/create-dialog.component';
+import { CreateDialogData } from './components/create-dialog/create-dialog-data.interface';
 import { ExplorerPathService } from './services/explorer-path.service';
-import { FilesystemTableComponent } from './components/filesystem-table/filesystem-table.component';
 import { SelectionChange } from '@angular/cdk/collections';
 import { MoveCopyDialogComponent } from './components/move-copy-dialog/move-copy-dialog.component';
-import { MoveCopyDialogDataInterface } from './components/move-copy-dialog/move-copy-dialog-data.interface';
+import { MoveCopyDialogData } from './components/move-copy-dialog/move-copy-dialog-data.interface';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ExplorerUploadService } from './services/explorer-upload.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -76,12 +70,16 @@ import { UploadOverlayComponent } from './components/upload-overlay/upload-overl
 import { ExplorerUploadItemFormFactoryService } from './services/explorer-upload-item-form-factory.service';
 import { UploadItemState } from './constants/enums/uploading-state.enum';
 import { UploadDialogComponent } from './components/upload-dialog/upload-dialog.component';
-import { UploadDialogDataInterface } from './components/upload-dialog/upload-dialog-data.interface';
 import { FileSystemObject } from './models/file-system-object.interface';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { DOCUMENT } from '@angular/common';
 import { ShareDialogComponent } from './components/share-dialog/share-dialog.component';
 import { ShareDialogDataInterface } from './components/share-dialog/share-dialog-data.interface';
+import { RenameDialogComponent } from './components/rename-dialog/rename-dialog.component';
+import { RenameDialogData } from './components/rename-dialog/rename-dialog-data.interface';
+import { RenameDialogReturnData } from './components/rename-dialog/rename-dialog-return-data.interface';
+import { FilesystemTableService } from './services/filesystem-table.service';
+import { CreateDialogReturnData } from './components/create-dialog/create-dialog-return-data.interface';
 
 @Component({
   selector: 'eustrosoft-front-explorer',
@@ -89,94 +87,116 @@ import { ShareDialogDataInterface } from './components/share-dialog/share-dialog
   styleUrls: ['./explorer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
+export class ExplorerComponent implements OnInit, OnDestroy {
   @ViewChild(InputFileComponent) inputFileComponent!: InputFileComponent;
-  @ViewChild(FilesystemTableComponent)
-  filesystemTableComponent!: FilesystemTableComponent;
   @ViewChild(UploadOverlayComponent)
   uploadOverlayComponent!: UploadOverlayComponent;
 
-  private dispatchService = inject(DispatchService);
-  private explorerRequestBuilderService = inject(ExplorerRequestBuilderService);
-  private explorerService = inject(ExplorerService);
-  private explorerPathService = inject(ExplorerPathService);
-  private explorerUploadService = inject(ExplorerUploadService);
-  private explorerUploadItemsService = inject(ExplorerUploadItemsService);
-  private snackBar = inject(MatSnackBar);
-  private cd = inject(ChangeDetectorRef);
-  private router = inject(Router);
-  private dialog = inject(MatDialog);
-  private translateService = inject(TranslateService);
-  private activatedRoute = inject(ActivatedRoute);
-  private fb = inject(FormBuilder);
-  private clipboard = inject(Clipboard);
-  private document = inject(DOCUMENT);
-  private explorerUploadItemFormFactoryService = inject(
+  private readonly dispatchService = inject(DispatchService);
+  private readonly explorerRequestBuilderService = inject(
+    ExplorerRequestBuilderService
+  );
+  private readonly explorerService = inject(ExplorerService);
+  private readonly explorerPathService = inject(ExplorerPathService);
+  private readonly explorerUploadService = inject(ExplorerUploadService);
+  private readonly explorerUploadItemsService = inject(
+    ExplorerUploadItemsService
+  );
+  private readonly snackBar = inject(MatSnackBar);
+  private readonly router = inject(Router);
+  private readonly dialog = inject(MatDialog);
+  private readonly translateService = inject(TranslateService);
+  private readonly activatedRoute = inject(ActivatedRoute);
+  private readonly fb = inject(FormBuilder);
+  private readonly clipboard = inject(Clipboard);
+  private readonly document = inject(DOCUMENT);
+  private readonly explorerUploadItemFormFactoryService = inject(
     ExplorerUploadItemFormFactoryService
   );
+  private readonly breakpointsService = inject(BreakpointsService);
+  protected readonly filesystemTableService = inject(FilesystemTableService);
+  protected readonly isSm = this.breakpointsService.isSm();
 
-  private destroy$ = new Subject<void>();
-  private fileSystemTableRendered$ = new Subject<void>();
-  private startUpload$ = new Subject<void>();
-  private fileUploadCancelled$ = new Subject<void>();
-  private teardownUpload$ = new Subject<void>();
+  private readonly destroy$ = new Subject<void>();
+  private readonly startUpload$ = new Subject<void>();
+  private readonly fileUploadCancelled$ = new Subject<void>();
+  private readonly teardownUpload$ = new Subject<void>();
 
-  refreshFolders$ = new BehaviorSubject<boolean>(true);
-  path$ = new BehaviorSubject<string>(
-    localStorage.getItem('qtis-explorer-last-path') || '/'
+  protected refresh$ = new Subject<void>();
+  protected path$ = new BehaviorSubject<string>('/');
+  protected currentFolder$ = new BehaviorSubject<FileSystemObject | undefined>(
+    undefined
   );
-
-  upload$!: Observable<any>;
-  fileControlChanges$!: Observable<FormArray<FormGroup<UploadItemForm>>>;
-  content$!: Observable<{
+  protected upload$!: Observable<any>;
+  protected fileControlChanges$!: Observable<
+    FormArray<FormGroup<UploadItemForm>>
+  >;
+  protected content$: Observable<{
     isLoading: boolean;
     isError: boolean;
     content: FileSystemObject[] | undefined;
-  }>;
-  selectedRows$!: Observable<FileSystemObject[]>;
+  }> = combineLatest([
+    this.path$.asObservable(),
+    this.refresh$.asObservable().pipe(startWith(undefined)),
+  ]).pipe(
+    switchMap(([path]) => {
+      this.explorerPathService.updateLastPathState(path);
+      return this.explorerService.getContents(path).pipe(
+        // startWith({ isLoading: true, isError: false, content: undefined })
+        catchError((err: HttpErrorResponse) => {
+          this.path$.next('/');
+          this.snackBar.open(err.error, 'close', { duration: 7000 });
+          return EMPTY;
+        })
+      );
+    }),
+    startWith({ isLoading: true, isError: false, content: undefined })
+  );
 
-  fileControl = new FormControl<File[]>([], { nonNullable: true });
-
-  overlayHidden = true;
-
-  ngOnInit(): void {
-    this.content$ = combineLatest([this.path$, this.refreshFolders$]).pipe(
-      switchMap(([path]) =>
-        combineLatest([of(path), this.activatedRoute.queryParamMap])
-      ),
-      switchMap(([path, queryParamMap]) =>
-        iif(
-          () => queryParamMap.get('path') !== null,
-          of<string>(queryParamMap.get('path') as string),
-          of<string>(path)
-        )
-      ),
-      switchMap((path) => {
-        this.explorerPathService.updateLastPathState(path);
-        return this.explorerService
-          .getContents(path)
-          .pipe
-          // startWith({ isLoading: true, isError: false, content: undefined })
-          ();
-      }),
-      startWith({ isLoading: true, isError: false, content: undefined }),
-      shareReplay(1),
-      catchError((err: HttpErrorResponse) => {
-        console.error(err);
-        this.snackBar.open(
-          err.error,
-          this.translateService.instant('EXPLORER.ERRORS.CLOSE_BUTTON_TEXT')
-        );
-        return of({ isLoading: true, isError: true, content: undefined });
-      })
+  protected selectedRows$ = this.filesystemTableService.selection.changed
+    .asObservable()
+    .pipe(
+      map(
+        (selection: SelectionChange<FileSystemObject>) =>
+          selection.source.selected
+      )
     );
 
+  protected fileControl = new FormControl<File[]>([], { nonNullable: true });
+
+  protected overlayHidden = true;
+
+  ngOnInit(): void {
+    this.initializePathObs();
+    this.initializeUploadObs();
+  }
+
+  initializePathObs(): void {
+    this.activatedRoute.queryParamMap
+      .pipe(
+        map((query) => query.get('path') ?? undefined),
+        filter(
+          (queryPath): queryPath is string => typeof queryPath !== 'undefined'
+        ),
+        tap((path) => {
+          this.explorerPathService.updateLastPathState(path);
+          this.clearQueryParams();
+          this.path$.next(path);
+        }),
+        takeUntil(this.destroy$)
+      )
+      .subscribe();
+  }
+
+  initializeUploadObs(): void {
     this.fileControlChanges$ = this.fileControl.valueChanges.pipe(
       map((files) => {
         const formArray =
           this.explorerUploadItemFormFactoryService.makeUploadItemsForm(
             files,
-            this.path$.getValue()
+            this.path$.getValue(),
+            this.currentFolder$.getValue()?.securityLevel.value ??
+              SecurityLevels.PUBLIC_PLUS
           );
         this.explorerUploadItemsService.uploadItems$.next(formArray);
         // this.overlayHidden = false;
@@ -195,34 +215,17 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
       ),
       tap(() => {
         console.log('teardownUpload$ call');
-        this.teardownUpload$.next();
-        this.refreshFolders$.next(true);
+        this.closeOverlay();
+        this.refresh$.next();
       }),
-      catchError((err) => {
+      catchError((err: HttpErrorResponse) => {
         console.error(err);
-        this.snackBar.open(
-          this.translateService.instant('EXPLORER.ERRORS.REQUEST_ERROR_TEXT'),
-          this.translateService.instant('EXPLORER.ERRORS.CLOSE_BUTTON_TEXT')
-        );
+        this.snackBar.open(err.error, 'close');
         this.inputFileComponent.clear();
         this.closeOverlay();
-        this.cd.markForCheck();
-
         return EMPTY;
       }),
       repeat()
-    );
-  }
-
-  ngAfterViewInit(): void {
-    this.fileSystemTableRendered$.next();
-    this.selectedRows$ = this.content$.pipe(
-      delay(1),
-      switchMap(() => this.filesystemTableComponent.selection.changed),
-      map(
-        (selection: SelectionChange<FileSystemObject>) =>
-          selection.source.selected
-      )
     );
   }
 
@@ -235,13 +238,12 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
     if (fsElem.type !== FileSystemObjectTypes.DIRECTORY) {
       return;
     }
-    this.clearQueryParams();
-    this.filesystemTableComponent.selection.clear();
+    this.filesystemTableService.selection.clear();
     this.path$.next(fsElem.fullPath);
+    this.currentFolder$.next(fsElem);
   }
 
   openByPath(path: string) {
-    this.clearQueryParams();
     this.path$.next(path);
   }
 
@@ -284,87 +286,39 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   createFolder(): void {
     const dialogRef = this.dialog.open<
-      CreateRenameFolderDialogComponent,
-      CreateRenameDialogDataInterface
-    >(CreateRenameFolderDialogComponent, {
+      CreateDialogComponent,
+      CreateDialogData,
+      CreateDialogReturnData
+    >(CreateDialogComponent, {
       data: {
-        title: this.translateService.instant(
-          'EXPLORER.CREATE_FOLDER_DIALOG.TITLE'
-        ),
-        inputLabel: this.translateService.instant(
-          'EXPLORER.CREATE_FOLDER_DIALOG.INPUT_LABEL_TEXT'
-        ),
-        defaultInputValue: this.translateService.instant(
-          'EXPLORER.CREATE_FOLDER_DIALOG.DEFAULT_INPUT_VALUE'
-        ),
-        submitButtonText: this.translateService.instant(
-          'EXPLORER.CREATE_FOLDER_DIALOG.SUBMIT_BUTTON_TEXT'
-        ),
+        nameInputDefaultValue:
+          'EXPLORER.CREATE_FOLDER_DIALOG.NAME_INPUT_DEFAULT_VALUE',
+        securityLevelSelectDefaultValue:
+          this.currentFolder$.getValue()?.securityLevel.value ??
+          SecurityLevels.PUBLIC_PLUS,
+        descriptionInputDefaultValue: '',
       },
+      minWidth: '40vw',
     });
 
     dialogRef
       .afterClosed()
       .pipe(
-        filter((str) => typeof str === 'string'),
-        switchMap((folderName: string) =>
-          this.explorerRequestBuilderService.buildCreateRequest(
+        filter(
+          (data): data is CreateDialogReturnData => typeof data !== 'undefined'
+        ),
+        switchMap((data) =>
+          this.explorerService.create(
             this.path$.getValue(),
+            data.name,
             FileSystemObjectTypes.DIRECTORY,
-            folderName
+            data.description,
+            data.securityLevel
           )
         ),
-        switchMap((body: QtisRequestResponseInterface<CreateRequest>) =>
-          this.dispatchService.dispatch<CreateRequest, CreateResponse>(body)
-        ),
         tap(() => {
-          this.refreshFolders$.next(true);
+          this.refresh$.next();
         }),
-        catchError((err) => this.handleError(err)),
-        take(1)
-      )
-      .subscribe();
-  }
-
-  createFile(): void {
-    const dialogRef = this.dialog.open<
-      CreateRenameFolderDialogComponent,
-      CreateRenameDialogDataInterface
-    >(CreateRenameFolderDialogComponent, {
-      data: {
-        title: this.translateService.instant(
-          'EXPLORER.CREATE_FILE_DIALOG.TITLE'
-        ),
-        inputLabel: this.translateService.instant(
-          'EXPLORER.CREATE_FILE_DIALOG.INPUT_LABEL_TEXT'
-        ),
-        defaultInputValue: this.translateService.instant(
-          'EXPLORER.CREATE_FILE_DIALOG.DEFAULT_INPUT_VALUE'
-        ),
-        submitButtonText: this.translateService.instant(
-          'EXPLORER.CREATE_FILE_DIALOG.SUBMIT_BUTTON_TEXT'
-        ),
-      },
-    });
-
-    dialogRef
-      .afterClosed()
-      .pipe(
-        filter((str) => typeof str === 'string'),
-        switchMap((folderName: string) =>
-          this.explorerRequestBuilderService.buildCreateRequest(
-            this.path$.getValue(),
-            FileSystemObjectTypes.FILE,
-            folderName
-          )
-        ),
-        switchMap((body: QtisRequestResponseInterface<CreateRequest>) =>
-          this.dispatchService.dispatch<CreateRequest, CreateResponse>(body)
-        ),
-        tap(() => {
-          this.refreshFolders$.next(true);
-        }),
-        catchError((err) => this.handleError(err)),
         take(1)
       )
       .subscribe();
@@ -372,44 +326,26 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   rename(row: FileSystemObject): void {
     const dialogRef = this.dialog.open<
-      CreateRenameFolderDialogComponent,
-      CreateRenameDialogDataInterface,
-      string
-    >(CreateRenameFolderDialogComponent, {
+      RenameDialogComponent,
+      RenameDialogData,
+      RenameDialogReturnData
+    >(RenameDialogComponent, {
       data: {
-        title: this.translateService.instant('EXPLORER.RENAME_DIALOG.TITLE'),
-        inputLabel: this.translateService.instant(
-          'EXPLORER.RENAME_DIALOG.INPUT_LABEL_TEXT'
-        ),
-        defaultInputValue: row.fileName,
-        submitButtonText: this.translateService.instant(
-          'EXPLORER.RENAME_DIALOG.SUBMIT_BUTTON_TEXT'
-        ),
+        nameInputValue: row.fileName,
+        descriptionInputValue: row.description,
       },
     });
 
     dialogRef
       .afterClosed()
       .pipe(
-        filter((str) => typeof str !== 'undefined'),
-        map((str) => str as string),
-        switchMap((newName: string) => {
-          const folder = this.explorerPathService.getFullPathToLastFolder(
-            row.fullPath
-          );
-          return this.explorerRequestBuilderService.buildMoveCopyRequest(
-            [row],
-            [`${folder}/${newName}`],
-            CmsRequestActions.MOVE
-          );
-        }),
-        switchMap((body: QtisRequestResponseInterface<MoveCopyRequest>) =>
-          this.dispatchService.dispatch<MoveCopyRequest, MoveCopyResponse>(body)
+        filter(
+          (str): str is RenameDialogReturnData => typeof str !== 'undefined'
         ),
+        switchMap((data) => this.explorerService.move(row, data)),
         tap(() => {
-          this.refreshFolders$.next(true);
+          this.refresh$.next();
         }),
-        catchError((err) => this.handleError(err)),
         take(1)
       )
       .subscribe();
@@ -418,18 +354,12 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
   move(rows: FileSystemObject[]): void {
     const dialogRef = this.dialog.open<
       MoveCopyDialogComponent,
-      MoveCopyDialogDataInterface,
+      MoveCopyDialogData,
       string[]
     >(MoveCopyDialogComponent, {
       data: {
-        title: this.translateService.instant('EXPLORER.MOVE_DIALOG.TITLE'),
-        cancelButtonText: this.translateService.instant(
-          'EXPLORER.MOVE_DIALOG.CANCEL_BUTTON_TEXT'
-        ),
-        submitButtonText: this.translateService.instant(
-          'EXPLORER.MOVE_DIALOG.SUBMIT_BUTTON_TEXT'
-        ),
         fsObjects: rows,
+        defaultPath: this.path$.getValue(),
       },
     });
 
@@ -461,7 +391,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
           const path = to[0].substring(0, lastIndex) || '/';
           this.path$.next(path);
         }),
-        catchError((err) => this.handleError(err)),
+        catchError((err) => this.explorerService.handleError(err)),
         take(1)
       )
       .subscribe();
@@ -470,18 +400,12 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
   copy(rows: FileSystemObject[]): void {
     const dialogRef = this.dialog.open<
       MoveCopyDialogComponent,
-      MoveCopyDialogDataInterface,
+      MoveCopyDialogData,
       string[]
     >(MoveCopyDialogComponent, {
       data: {
-        title: this.translateService.instant('EXPLORER.COPY_DIALOG.TITLE'),
-        cancelButtonText: this.translateService.instant(
-          'EXPLORER.COPY_DIALOG.CANCEL_BUTTON_TEXT'
-        ),
-        submitButtonText: this.translateService.instant(
-          'EXPLORER.COPY_DIALOG.SUBMIT_BUTTON_TEXT'
-        ),
         fsObjects: rows,
+        defaultPath: this.path$.getValue(),
       },
     });
 
@@ -513,7 +437,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
           const path = to[0].substring(0, lastIndex);
           this.path$.next(path);
         }),
-        catchError((err) => this.handleError(err)),
+        catchError((err) => this.explorerService.handleError(err)),
         take(1)
       )
       .subscribe();
@@ -550,8 +474,11 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
         switchMap((body: QtisRequestResponseInterface<DeleteRequest>) =>
           this.dispatchService.dispatch<DeleteRequest, DeleteResponse>(body)
         ),
-        tap(() => this.refreshFolders$.next(true)),
-        catchError((err) => this.handleError(err)),
+        tap(() => {
+          this.refresh$.next();
+          this.filesystemTableService.selection.clear();
+        }),
+        catchError((err) => this.explorerService.handleError(err)),
         take(1)
       )
       .subscribe();
@@ -564,26 +491,22 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
         tap((url: string) => {
           this.document.location.href = url;
         }),
-        catchError((err) => this.handleError(err)),
+        catchError((err) => this.explorerService.handleError(err)),
         takeUntil(this.destroy$)
       )
       .subscribe();
   }
 
-  shareLink(rows: FileSystemObject[]) {
-    const linkObs$ = this.explorerService
-      .makeDownloadLink(rows[0].fullPath, CmsDownloadParams.PATH)
-      .pipe(
-        map((url) => ({
-          isLoading: false,
-          isError: false,
-          link: this.document.location.origin + url,
-        })),
-        startWith({ isLoading: true, isError: false, link: undefined }),
-        catchError(() =>
-          of({ isLoading: false, isError: true, link: undefined })
-        )
-      );
+  shareLink(rows: FileSystemObject[]): void {
+    const linkObs$ = this.explorerService.makeShareLink(rows[0].fullPath).pipe(
+      map((link) => ({
+        isLoading: false,
+        isError: false,
+        link,
+      })),
+      startWith({ isLoading: true, isError: false, link: undefined }),
+      catchError(() => of({ isLoading: false, isError: true, link: undefined }))
+    );
 
     const dialogRef = this.dialog.open<
       ShareDialogComponent,
@@ -591,10 +514,6 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
       string
     >(ShareDialogComponent, {
       data: {
-        title: 'EXPLORER.SHARE_DIALOG.TITLE',
-        inputLabel: 'EXPLORER.SHARE_DIALOG.INPUT_LABEL_TEXT',
-        cancelButtonText: 'EXPLORER.SHARE_DIALOG.CANCEL_BUTTON_TEXT',
-        submitButtonText: 'EXPLORER.SHARE_DIALOG.SUBMIT_BUTTON_TEXT',
         linkObs$,
       },
       width: '50vw',
@@ -603,9 +522,9 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
     dialogRef
       .afterClosed()
       .pipe(
-        filter((url) => typeof url !== 'undefined'),
+        filter((url): url is string => typeof url !== 'undefined'),
         tap((url) => {
-          this.clipboard.copy(url as string);
+          this.clipboard.copy(url);
           this.snackBar.open(
             this.translateService.instant('EXPLORER.LINK_COPIED_TO_CLIPBOARD'),
             'close',
@@ -618,23 +537,12 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   openUploadDialog(): void {
-    const dialogRef = this.dialog.open<
+    const dialogRef = this.dialog.open<UploadDialogComponent, undefined, void>(
       UploadDialogComponent,
-      UploadDialogDataInterface,
-      void
-    >(UploadDialogComponent, {
-      data: {
-        title: 'EXPLORER.UPLOAD_DIALOG.TITLE',
-        selectFileButtonText: 'EXPLORER.UPLOAD_DIALOG.SELECT_FILE_BUTTON_TEXT',
-        cancelButtonText: 'EXPLORER.UPLOAD_DIALOG.CANCEL_BUTTON_TEXT',
-        startUploadButtonText:
-          'EXPLORER.UPLOAD_DIALOG.START_UPLOAD_BUTTON_TEXT',
-        uploadCompleteText: 'EXPLORER.UPLOAD_DIALOG.UPLOAD_COMPLETE_TEXT',
-        securityLevelNoteText:
-          'EXPLORER.UPLOAD_DIALOG.SUGGESTIONS.SECURITY_LVL_WARNING',
-      },
-      width: '50vw',
-    });
+      {
+        width: this.isSm ? '100vw' : '50vw',
+      }
+    );
 
     const dialogClosed$ = dialogRef.afterClosed();
 
@@ -669,6 +577,16 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
         takeUntil(dialogClosed$)
       )
       .subscribe();
+
+    this.teardownUpload$
+      .asObservable()
+      .pipe(
+        tap(() => {
+          dialogRef.close();
+        }),
+        takeUntil(dialogClosed$)
+      )
+      .subscribe();
   }
 
   clearQueryParams(): void {
@@ -676,13 +594,5 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnDestroy {
       queryParams: null,
       queryParamsHandling: null,
     });
-  }
-
-  handleError(err: HttpErrorResponse): Observable<never> {
-    this.snackBar.open(
-      err.error,
-      this.translateService.instant('EXPLORER.ERRORS.CLOSE_BUTTON_TEXT')
-    );
-    return EMPTY;
   }
 }

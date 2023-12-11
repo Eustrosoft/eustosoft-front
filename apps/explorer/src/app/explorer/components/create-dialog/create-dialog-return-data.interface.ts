@@ -5,9 +5,8 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-import { FileSystemObject } from '../../models/file-system-object.interface';
-
-export interface MoveCopyDialogData {
-  fsObjects: FileSystemObject[];
-  defaultPath: string;
+export interface CreateDialogReturnData {
+  name: string;
+  securityLevel: string;
+  description: string;
 }

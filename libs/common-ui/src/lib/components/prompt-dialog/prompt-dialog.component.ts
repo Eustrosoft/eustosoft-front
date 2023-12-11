@@ -24,7 +24,7 @@ export class PromptDialogComponent {
   private readonly dialogRef: MatDialogRef<PromptDialogComponent> = inject(
     MatDialogRef<PromptDialogComponent>
   );
-  protected data: PromptDialogDataInterface = inject(MAT_DIALOG_DATA);
+  protected data = inject<PromptDialogDataInterface>(MAT_DIALOG_DATA);
 
   @HostListener('keydown.enter', ['$event'])
   onEnterKeydown(e: KeyboardEvent): void {

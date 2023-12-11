@@ -26,7 +26,7 @@ export class RenameChatDialogComponent {
   private dialogRef: MatDialogRef<RenameChatDialogComponent> = inject(
     MatDialogRef<RenameChatDialogComponent>
   );
-  public data: RenameChatDialogDataInterface = inject(MAT_DIALOG_DATA);
+  public data = inject<RenameChatDialogDataInterface>(MAT_DIALOG_DATA);
   private fb = inject(FormBuilder);
 
   form = this.fb.nonNullable.group<RenameChatDialogFormInterface>({

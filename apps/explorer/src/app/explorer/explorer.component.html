@@ -21,10 +21,6 @@
           <mat-icon>create_new_folder</mat-icon>
           <span>{{ 'EXPLORER.NEW_FOLDER_BUTTON_TEXT' | translate }}</span>
         </button>
-        <button *ngIf="false" (click)="createFile()" mat-menu-item>
-          <mat-icon>note_add</mat-icon>
-          <span>{{ 'EXPLORER.NEW_FILE_BUTTON_TEXT' | translate }}</span>
-        </button>
         <button
           *ngIf="false"
           (click)="inputFileComponent.fileInput.nativeElement.click()"
@@ -54,7 +50,7 @@
         <mat-menu #batchOperationsMenu="matMenu">
           <button
             *ngIf="false"
-            (click)="copy(filesystemTableComponent.selection.selected)"
+            (click)="copy(filesystemTableService.selection.selected)"
             mat-menu-item
           >
             <mat-icon>content_copy</mat-icon>
@@ -62,14 +58,14 @@
           </button>
           <button
             *ngIf="false"
-            (click)="move(filesystemTableComponent.selection.selected)"
+            (click)="move(filesystemTableService.selection.selected)"
             mat-menu-item
           >
             <mat-icon>drive_file_move</mat-icon>
             <span>{{ 'EXPLORER.MOVE_TO_BUTTON_TEXT' | translate }}</span>
           </button>
           <button
-            (click)="delete(filesystemTableComponent.selection.selected)"
+            (click)="delete(filesystemTableService.selection.selected)"
             mat-menu-item
           >
             <mat-icon>delete</mat-icon>

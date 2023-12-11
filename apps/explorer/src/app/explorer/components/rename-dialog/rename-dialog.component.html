@@ -1,0 +1,50 @@
+<!--
+  ~ Copyright (c) 2023. IdrisovII & EustroSoft.org
+  ~
+  ~ This file is part of eustrosoft-front project.
+  ~ See the LICENSE file at the project root for licensing information.
+  -->
+
+<div class="flex flex-column g-3">
+  <h1 class="m-0 px-3 pb-0" mat-dialog-title>
+    {{ 'EXPLORER.RENAME_DIALOG.TITLE' | translate }}
+  </h1>
+
+  <div class="flex flex-column g-3 px-3 py-0">
+    <eustrosoft-front-input
+      [label]="'EXPLORER.RENAME_DIALOG.NAME_INPUT_LABEL_TEXT' | translate"
+      [fieldAppearance]="'outline'"
+      [control]="form.controls.name"
+      [hideSubscriptWrapper]="true"
+    ></eustrosoft-front-input>
+    <eustrosoft-front-input
+      [label]="
+        'EXPLORER.RENAME_DIALOG.DESCRIPTION_INPUT_LABEL_TEXT' | translate
+      "
+      [placeholder]="
+        'EXPLORER.RENAME_DIALOG.DESCRIPTION_INPUT_PLACEHOLDER' | translate
+      "
+      [fieldAppearance]="'outline'"
+      [control]="form.controls.description"
+      [hideSubscriptWrapper]="true"
+    ></eustrosoft-front-input>
+  </div>
+  <div class="flex g-2 px-3 pb-3 pt-0" [align]="'end'" mat-dialog-actions>
+    <eustrosoft-front-button
+      [buttonType]="'button'"
+      [buttonStyleType]="'flat'"
+      [buttonText]="'EXPLORER.RENAME_DIALOG.CANCEL_BUTTON_TEXT' | translate"
+      (clicked)="reject()"
+    >
+    </eustrosoft-front-button>
+    <eustrosoft-front-button
+      [buttonType]="'button'"
+      [buttonStyleType]="'flat'"
+      [buttonText]="'EXPLORER.RENAME_DIALOG.SUBMIT_BUTTON_TEXT' | translate"
+      [color]="'primary'"
+      [disabled]="form.invalid"
+      (clicked)="resolve()"
+    >
+    </eustrosoft-front-button>
+  </div>
+</div>

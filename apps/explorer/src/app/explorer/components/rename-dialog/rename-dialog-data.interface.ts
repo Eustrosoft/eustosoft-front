@@ -5,9 +5,7 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-export interface CreateRenameDialogDataInterface {
-  title: string;
-  inputLabel: string;
-  defaultInputValue: string;
-  submitButtonText: string;
+export interface RenameDialogData {
+  nameInputValue: string;
+  descriptionInputValue: string;
 }

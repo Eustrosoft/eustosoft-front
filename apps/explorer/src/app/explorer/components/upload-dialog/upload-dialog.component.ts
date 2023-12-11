@@ -12,12 +12,10 @@ import {
   inject,
   Output,
 } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormArray, FormGroup } from '@angular/forms';
-import { UploadDialogDataInterface } from './upload-dialog-data.interface';
 import { UploadItemState } from '../../constants/enums/uploading-state.enum';
 import { map, Observable, shareReplay, tap } from 'rxjs';
-import { UploadItemForm } from '@eustrosoft-front/core';
+import { SecurityLevels, UploadItemForm } from '@eustrosoft-front/core';
 import { ExplorerUploadItemsService } from '../../services/explorer-upload-items.service';
 import { ExplorerDictionaryService } from '../../services/explorer-dictionary.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -39,29 +37,32 @@ export class UploadDialogComponent {
   }>();
   @Output() openFileFolder = new EventEmitter<string>();
 
-  private dialogRef = inject<MatDialogRef<UploadDialogComponent>>(
-    MatDialogRef<UploadDialogComponent>
+  private readonly explorerUploadItemsService = inject(
+    ExplorerUploadItemsService
   );
-  private explorerUploadItemsService = inject(ExplorerUploadItemsService);
-  private explorerDictionaryService = inject(ExplorerDictionaryService);
-  private snackBar = inject(MatSnackBar);
-  private translateService = inject(TranslateService);
-  public data: UploadDialogDataInterface = inject(MAT_DIALOG_DATA);
-  readonly UploadingState = UploadItemState;
+  private readonly explorerDictionaryService = inject(
+    ExplorerDictionaryService
+  );
+  private readonly snackBar = inject(MatSnackBar);
+  private readonly translateService = inject(TranslateService);
+  protected readonly UploadingState = UploadItemState;
+  protected readonly securityLevelOptions$ =
+    this.explorerDictionaryService.securityOptions$;
 
-  startUploadButtonText = this.data.startUploadButtonText;
-  startUploadButtonDisabled = false;
-  startUploadClicksCount = 0;
+  protected startUploadButtonText =
+    'EXPLORER.UPLOAD_DIALOG.START_UPLOAD_BUTTON_TEXT';
+  protected startUploadButtonDisabled = false;
+  protected showSuggestion = false;
+  protected suggestionText = '';
+  protected descriptionSuggestionShown = false;
+  protected securityLevelSuggestionShown = false;
 
-  showSuggestion = false;
-  suggestionText = '';
-
-  uploadItems$: Observable<FormArray<FormGroup<UploadItemForm>>> =
+  protected uploadItems$: Observable<FormArray<FormGroup<UploadItemForm>>> =
     this.explorerUploadItemsService.uploadItems$
       .asObservable()
       .pipe(shareReplay(1));
 
-  isUploading$ = this.uploadItems$.pipe(
+  protected isUploading$ = this.uploadItems$.pipe(
     map((forms) =>
       forms.controls.some(
         (form) =>
@@ -69,7 +70,6 @@ export class UploadDialogComponent {
       )
     ),
     tap((isUploading) => {
-      console.log('isUploading: ', isUploading);
       if (isUploading) {
         this.modifyUploadButtonState(isUploading);
       } else {
@@ -82,7 +82,7 @@ export class UploadDialogComponent {
     })
   );
 
-  uploadCompleted$ = this.uploadItems$.pipe(
+  protected uploadCompleted$ = this.uploadItems$.pipe(
     map(
       (forms) =>
         forms.controls.length > 0 &&
@@ -92,45 +92,38 @@ export class UploadDialogComponent {
         )
     ),
     tap((uploadCompleted) => {
-      console.log('uploadCompleted: ', uploadCompleted);
       if (uploadCompleted) {
         this.snackBar.open(
-          this.translateService.instant(this.data.uploadCompleteText),
+          this.translateService.instant(
+            'EXPLORER.UPLOAD_DIALOG.UPLOAD_COMPLETE_TEXT'
+          ),
           'close',
           {
-            duration: 2500,
+            duration: 10000,
           }
         );
-        this.startUploadClicksCount = 0;
-        this.modifyUploadButtonState(false, this.data.startUploadButtonText);
+        this.modifyUploadButtonState(
+          false,
+          'EXPLORER.UPLOAD_DIALOG.START_UPLOAD_BUTTON_TEXT'
+        );
       }
     })
   );
 
-  securityLevelOptions$ = this.explorerDictionaryService.securityOptions$;
-
-  cancelUpload(): void {
+  cancel(): void {
     this.cancelUploadClicked.emit();
   }
 
   startUpload(forms: FormArray<FormGroup<UploadItemForm>> | null): void {
-    if (
-      !forms ||
-      (forms && forms.controls.length === 0) ||
-      forms.controls.every(
-        (form) =>
-          form.controls.uploadItem.value.state === UploadItemState.UPLOADED
-      )
-    ) {
-      this.suggestionText =
-        'EXPLORER.UPLOAD_DIALOG.SUGGESTIONS.SELECT_NEW_FILES';
+    if (!forms || forms.controls.length === 0) {
+      this.suggestionText = 'EXPLORER.UPLOAD_DIALOG.SUGGESTIONS.SELECT_FILES';
       return;
     }
-    this.startUploadClicksCount++;
+
     if (
       forms &&
       forms.controls[0].controls.description.value === '' &&
-      this.startUploadClicksCount < 2
+      !this.descriptionSuggestionShown
     ) {
       this.suggestionText =
         'EXPLORER.UPLOAD_DIALOG.SUGGESTIONS.FILL_DESCRIPTION_TEXT';
@@ -138,10 +131,34 @@ export class UploadDialogComponent {
         false,
         'EXPLORER.UPLOAD_DIALOG.PROCEED_AFTER_SUGGESTION_TEXT'
       );
+      this.descriptionSuggestionShown = true;
       return;
     }
+
+    const isLowSecurityLevel =
+      forms &&
+      forms.controls[0].controls.securityLevel.value &&
+      [
+        SecurityLevels.SYSTEM,
+        SecurityLevels.PUBLIC,
+        SecurityLevels.PUBLIC_PLUS,
+      ].includes(forms.controls[0].controls.securityLevel.value);
+
+    if (forms && isLowSecurityLevel && !this.securityLevelSuggestionShown) {
+      this.suggestionText =
+        'EXPLORER.UPLOAD_DIALOG.SUGGESTIONS.SECURITY_LVL_WARNING';
+      this.modifyUploadButtonState(
+        false,
+        'EXPLORER.UPLOAD_DIALOG.PROCEED_AFTER_SUGGESTION_TEXT'
+      );
+      this.securityLevelSuggestionShown = true;
+      return;
+    }
+
     this.suggestionText = '';
     this.modifyUploadButtonState(true);
+    this.descriptionSuggestionShown = false;
+    this.securityLevelSuggestionShown = false;
     this.startUploadClicked.emit();
   }
 

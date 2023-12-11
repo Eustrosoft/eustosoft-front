@@ -8,10 +8,6 @@
 import { Observable } from 'rxjs';
 
 export interface ShareDialogDataInterface {
-  title: string;
-  inputLabel: string;
-  cancelButtonText: string;
-  submitButtonText: string;
   linkObs$: Observable<{
     isLoading: boolean;
     isError: boolean;

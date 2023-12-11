@@ -12,8 +12,8 @@ import {
   CreateRequest,
   DeleteRequest,
   DownloadTicketRequest,
-  FileSystemObjectTypes,
   MoveCopyRequest,
+  MoveRequest,
   QtisRequestResponseInterface,
   Subsystems,
   SupportedLanguages,
@@ -121,6 +121,47 @@ export class ExplorerRequestBuilderService {
     };
   }
 
+  buildMoveRequest(
+    from: FileSystemObject[],
+    to: string[],
+    description: string | undefined = undefined,
+    action: CmsRequestActions = CmsRequestActions.MOVE
+  ): Observable<QtisRequestResponseInterface<MoveRequest>> {
+    switch (action) {
+      case CmsRequestActions.RENAME: {
+        return of({
+          r: [
+            {
+              s: Subsystems.CMS,
+              r: CmsRequestActions.MOVE,
+              l: SupportedLanguages.EN_US,
+              to: to[0],
+              description: description,
+            } as MoveRequest,
+          ],
+          t: 0,
+        });
+      }
+      case CmsRequestActions.MOVE:
+      default: {
+        return of({
+          r: from.map(
+            (obj: FileSystemObject, i: number) =>
+              ({
+                s: Subsystems.CMS,
+                r: action,
+                l: SupportedLanguages.EN_US,
+                from: obj.fullPath,
+                to: to[i],
+                description: description,
+              } as MoveRequest)
+          ),
+          t: 0,
+        });
+      }
+    }
+  }
+
   buildMoveCopyRequest(
     from: FileSystemObject[],
     to: string[],
@@ -158,9 +199,7 @@ export class ExplorerRequestBuilderService {
   }
 
   buildCreateRequest(
-    path: string,
-    type: FileSystemObjectTypes,
-    fileName: string
+    params: Omit<CreateRequest, 's' | 'l' | 'r'>
   ): Observable<QtisRequestResponseInterface<CreateRequest>> {
     return of({
       r: [
@@ -168,9 +207,7 @@ export class ExplorerRequestBuilderService {
           s: Subsystems.CMS,
           r: CmsRequestActions.CREATE,
           l: SupportedLanguages.EN_US,
-          path: path,
-          type,
-          fileName,
+          ...params,
         },
       ],
       t: 0,

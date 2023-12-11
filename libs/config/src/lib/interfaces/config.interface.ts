@@ -8,6 +8,7 @@
 export interface Config {
   production: boolean;
   apiUrl: string;
+  shareUrl: string;
   loginUrl: string;
   dispatcherUrl: string;
   explorerUrl: string;

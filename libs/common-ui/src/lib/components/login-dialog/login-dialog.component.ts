@@ -16,5 +16,5 @@ import { LoginDialogDataInterface } from './login-dialog-data.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginDialogComponent {
-  data: LoginDialogDataInterface = inject(MAT_DIALOG_DATA);
+  data = inject<LoginDialogDataInterface>(MAT_DIALOG_DATA);
 }

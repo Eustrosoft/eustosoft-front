@@ -7,13 +7,17 @@
 
 <div class="flex flex-column g-3">
   <ng-container *ngIf="{ items: uploadItems$ | async } as vm">
-    <h1 class="m-0 px-3 pb-0" mat-dialog-title>{{ data.title | translate }}</h1>
-    <div class="flex flex-column g-2 px-3 py-0" mat-dialog-content>
+    <h1 class="m-0 px-3 pb-0" mat-dialog-title>
+      {{ 'EXPLORER.UPLOAD_DIALOG.TITLE' | translate }}
+    </h1>
+    <div class="flex flex-column g-3 px-3 py-0" mat-dialog-content>
       <div class="flex">
         <eustrosoft-front-button
           [buttonType]="'button'"
           [buttonStyleType]="'stroked'"
-          [buttonText]="data.selectFileButtonText | translate"
+          [buttonText]="
+            'EXPLORER.UPLOAD_DIALOG.SELECT_FILE_BUTTON_TEXT' | translate
+          "
           (clicked)="selectFile()"
           class="px-0 py-0"
         >
@@ -29,39 +33,44 @@
           <div
             class="flex align-items-center justify-content-space-between g-2 flex-wrap-nowrap overflow-hidden"
           >
-            <div
-              class="flex overflow-hidden flex-basis-20"
-              [title]="item.controls.uploadItem.value.file.name"
-            >
-              <span
-                class="filename text-truncate"
+            <div class="flex flex-column flex-auto g-2 overflow-hidden">
+              <div
+                class="flex overflow-hidden"
                 [title]="item.controls.uploadItem.value.file.name"
               >
-                {{ item.controls.uploadItem.value.file.name }}
-              </span>
-            </div>
-            <div class="flex flex-auto flex-column g-2">
-              <eustrosoft-front-select
-                [label]="
-                  'EXPLORER.UPLOAD_OVERLAY.EXTRA_OPTIONS_PANEL_SECURITY_LEVEL_LABEL'
-                    | translate
-                "
-                [control]="item.controls.securityLevel"
-                [options]="(securityLevelOptions$ | async) || []"
-                [fieldAppearance]="'outline'"
-                [hideSubscriptWrapper]="true"
-                class="mt-1 upload-control"
-              ></eustrosoft-front-select>
-              <eustrosoft-front-input
-                [label]="
-                  'EXPLORER.UPLOAD_OVERLAY.EXTRA_OPTIONS_PANEL_DESCRIPTION_LABEL'
-                    | translate
-                "
-                [control]="item.controls.description"
-                [fieldAppearance]="'outline'"
-                [hideSubscriptWrapper]="true"
-                class="mt-1 upload-control"
-              ></eustrosoft-front-input>
+                <span
+                  class="filename text-truncate"
+                  [title]="item.controls.uploadItem.value.file.name"
+                >
+                  {{ item.controls.uploadItem.value.file.name }}
+                </span>
+              </div>
+              <div class="flex flex-auto flex-column g-2">
+                <eustrosoft-front-select
+                  [label]="
+                    'EXPLORER.UPLOAD_DIALOG.SECURITY_LEVEL_SELECT_LABEL'
+                      | translate
+                  "
+                  [control]="item.controls.securityLevel"
+                  [options]="(securityLevelOptions$ | async) || []"
+                  [fieldAppearance]="'outline'"
+                  [hideSubscriptWrapper]="true"
+                  class="mt-1 upload-control"
+                ></eustrosoft-front-select>
+                <eustrosoft-front-input
+                  [label]="
+                    'EXPLORER.UPLOAD_DIALOG.DESCRIPTION_INPUT_LABEL' | translate
+                  "
+                  [placeholder]="
+                    'EXPLORER.UPLOAD_DIALOG.DESCRIPTION_INPUT_PLACEHOLDER'
+                      | translate
+                  "
+                  [control]="item.controls.description"
+                  [fieldAppearance]="'outline'"
+                  [hideSubscriptWrapper]="true"
+                  class="mt-1 upload-control"
+                ></eustrosoft-front-input>
+              </div>
             </div>
             <eustrosoft-front-button
               [hidden]="
@@ -87,7 +96,7 @@
               [color]="'primary'"
               (clicked)="openFolder(item)"
               [matTooltip]="
-                'EXPLORER.UPLOAD_OVERLAY.OPEN_FOLDER_BUTTON_TOOLTIP' | translate
+                'EXPLORER.UPLOAD_DIALOG.OPEN_FOLDER_BUTTON_TOOLTIP' | translate
               "
               [matTooltipShowDelay]="100"
             >
@@ -98,18 +107,21 @@
             [value]="item.controls.uploadItem.value.progress"
           ></eustrosoft-front-progress-bar>
         </div>
-        <span>{{ data.securityLevelNoteText | translate }}</span>
       </cdk-virtual-scroll-viewport>
     </div>
-    <div class="flex g-2 px-3 pb-3 pt-0" [align]="'end'" mat-dialog-actions>
-      <span class="fw-bold">
+    <div
+      class="flex flex-wrap-nowrap g-2 px-3 pb-3 pt-0"
+      [align]="'end'"
+      mat-dialog-actions
+    >
+      <span class="fw-bold fs-3">
         {{ suggestionText | translate }}
       </span>
       <eustrosoft-front-button
         [buttonType]="'button'"
         [buttonStyleType]="'flat'"
-        [buttonText]="data.cancelButtonText | translate"
-        (clicked)="cancelUpload()"
+        [buttonText]="'EXPLORER.UPLOAD_DIALOG.CANCEL_BUTTON_TEXT' | translate"
+        (clicked)="cancel()"
       >
       </eustrosoft-front-button>
       <eustrosoft-front-button

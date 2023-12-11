@@ -1,6 +1,7 @@
 {
   "production": false,
   "apiUrl": "http://fudo.eustrosoft.org:8080/eustrosofthandler_war/api",
+  "shareUrl": "https://dev37.qxyz.ru/ftpub",
   "dispatcherUrl": "http://fudo.eustrosoft.org:8080/dispatcher/",
   "explorerUrl": "http://fudo.eustrosoft.org:8080/explorer/",
   "loginUrl": "http://fudo.eustrosoft.org:8080/login/",
