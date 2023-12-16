@@ -17,7 +17,7 @@
 
 @mixin link($default-color, $visited-color, $hover-color, $active-color) {
   color: $default-color;
-  text-decoration: none; // Remove underline by default
+  text-decoration: none;
 
   &:visited {
     color: $visited-color;

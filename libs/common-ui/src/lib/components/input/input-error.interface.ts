@@ -5,7 +5,7 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-export interface InputErrorInterface {
+export interface InputError {
   errorCode: string;
   message: string;
 }

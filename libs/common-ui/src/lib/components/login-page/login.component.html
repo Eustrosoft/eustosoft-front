@@ -6,20 +6,25 @@
   -->
 
 <ng-template #loginTemplate>
-  <form
-    [formGroup]="form"
-    (ngSubmit)="submit()"
-    class="flex flex-column align-items-center m-3 g-2"
-  >
-    <h2 class="m-0 fs-4">{{ texts.heading }}</h2>
+  <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-column m-3">
+    <div class="flex flex-wrap align-items-center g-2 mb-4">
+      <a
+        [href]="(config | async)?.homePageUrl || '/'"
+        class="text-decoration-none link fs-4 fw-500 lh-normal outline-none"
+      >
+        {{ texts.title }}
+      </a>
+      <h2 class="m-0 fs-4">|</h2>
+      <h2 class="m-0 fs-4">{{ texts.heading }}</h2>
+    </div>
     <eustrosoft-front-input
       [inputType]="InputTypes.TEXT"
       [label]="texts.loginLabel"
       [control]="form.get('login')! | formControl"
       [fieldAppearance]="'outline'"
+      [showSuffixIcon]="true"
       [suffixIcon]="'person'"
       [errors]="loginErrors"
-      class="w-80"
     >
     </eustrosoft-front-input>
     <eustrosoft-front-input
@@ -27,15 +32,16 @@
       [label]="texts.passwordLabel"
       [control]="form.get('password')! | formControl"
       [fieldAppearance]="'outline'"
+      [showSuffixIcon]="true"
       [suffixIcon]="'lock'"
       [errors]="passwordErrors"
-      class="w-80"
     >
     </eustrosoft-front-input>
     <eustrosoft-front-button
       [buttonStyleType]="'stroked'"
       [buttonText]="texts.submitButtonText"
       [buttonType]="'submit'"
+      [buttonStyles]="{ height: '55px', 'font-size': '1.25rem' }"
       [disabled]="form.get('submit')!.disabled"
     ></eustrosoft-front-button>
   </form>

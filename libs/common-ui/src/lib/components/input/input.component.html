@@ -20,7 +20,7 @@
     (blur)="blurred.emit($event)"
     matInput
   />
-  <mat-icon matSuffix>{{ suffixIcon }}</mat-icon>
+  <mat-icon *ngIf="showSuffixIcon" matSuffix>{{ suffixIcon }}</mat-icon>
   <!--TODO Понять как увеличивать высоту компонента при большом количестве ошибок-->
   <mat-error *ngIf="control.touched && control.errors">
     <ng-container *ngFor="let error of errors">

@@ -118,13 +118,13 @@
             <mat-icon>drive_file_rename_outline</mat-icon>
             <span>{{ 'EXPLORER.RENAME_BUTTON_TEXT' | translate }}</span>
           </button>
-          <button (click)="moveClicked.emit([content[i]])" hidden mat-menu-item>
-            <mat-icon>drive_file_move</mat-icon>
-            <span>{{ 'EXPLORER.MOVE_TO_BUTTON_TEXT' | translate }}</span>
-          </button>
           <button (click)="copyClicked.emit([content[i]])" hidden mat-menu-item>
             <mat-icon>content_copy</mat-icon>
             <span>{{ 'EXPLORER.COPY_BUTTON_TEXT' | translate }}</span>
+          </button>
+          <button (click)="moveClicked.emit([content[i]])" hidden mat-menu-item>
+            <mat-icon>drive_file_move</mat-icon>
+            <span>{{ 'EXPLORER.MOVE_TO_BUTTON_TEXT' | translate }}</span>
           </button>
           <button (click)="deleteClicked.emit([content[i]])" mat-menu-item>
             <mat-icon>delete</mat-icon>

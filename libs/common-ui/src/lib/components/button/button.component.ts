@@ -35,6 +35,8 @@ export class ButtonComponent {
   @Input() disabled = false;
   @Input() iconName = '';
   @Input() iconPosition: 'start' | 'end' = 'start';
+  @Input() buttonClasses: string[] = [];
+  @Input() buttonStyles: { [p: string]: any } | null | undefined = undefined;
 
   @Output() clicked = new EventEmitter<MouseEvent>();
 }

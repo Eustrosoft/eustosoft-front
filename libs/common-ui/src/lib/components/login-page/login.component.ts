@@ -24,13 +24,14 @@ import { catchError, EMPTY, of, Subject, take, tap } from 'rxjs';
 import { LoginService } from '@eustrosoft-front/security';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpErrorResponse } from '@angular/common/http';
-import { InputErrorInterface } from '../input/input-error.interface';
+import { InputError } from '../input/input-error.interface';
 import { InputErrors } from '../../constants/enums/input-errors.enum';
 import { LoginDialogComponent } from '../login-dialog/login-dialog.component';
 import { LoginDialogDataInterface } from '../login-dialog/login-dialog-data.interface';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { InputTypes, LoginForm } from '@eustrosoft-front/core';
 import { BreakpointsService } from '../../services/breakpoints.service';
+import { APP_CONFIG } from '@eustrosoft-front/config';
 
 @Component({
   selector: 'eustrosoft-front-login',
@@ -43,13 +44,13 @@ export class LoginComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @Input() pathAfterLogin!: string[];
   @Input() texts!: {
+    title: string;
     heading: string;
     loginLabel: string;
     passwordLabel: string;
     submitButtonText: string;
   };
 
-  private loginDialogRef!: MatDialogRef<LoginDialogComponent>;
   private readonly fb = inject(FormBuilder);
   private readonly loginService = inject(LoginService);
   private readonly router = inject(Router);
@@ -58,20 +59,21 @@ export class LoginComponent implements OnInit, OnDestroy, AfterViewInit {
   private readonly dialog = inject(MatDialog);
   private readonly breakpointsService = inject(BreakpointsService);
   private readonly destroyed$ = new Subject<void>();
-
+  protected readonly config = inject(APP_CONFIG);
+  private loginDialogRef!: MatDialogRef<LoginDialogComponent>;
   protected form: FormGroup<LoginForm> = this.fb.nonNullable.group<LoginForm>({
     login: this.fb.nonNullable.control('', [Validators.required]),
     password: this.fb.nonNullable.control('', Validators.required),
     submit: this.fb.nonNullable.control(false),
   });
   // TODO i18n для сообщений о ошибках
-  protected loginErrors: InputErrorInterface[] = [
+  protected loginErrors: InputError[] = [
     {
       errorCode: InputErrors.REQUIRED,
       message: 'Required',
     },
   ];
-  protected passwordErrors: InputErrorInterface[] = [
+  protected passwordErrors: InputError[] = [
     {
       errorCode: InputErrors.REQUIRED,
       message: 'Required',
@@ -88,7 +90,7 @@ export class LoginComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit(): void {
     this.form = this.fb.nonNullable.group<LoginForm>({
       login: this.fb.nonNullable.control<string>('', [Validators.required]),
-      password: this.fb.nonNullable.control<string>('', Validators.required),
+      password: this.fb.nonNullable.control<string>('', [Validators.required]),
       submit: this.fb.nonNullable.control<boolean>(false),
     });
   }
@@ -103,7 +105,7 @@ export class LoginComponent implements OnInit, OnDestroy, AfterViewInit {
         template: this.loginTemplate,
       },
       disableClose: true,
-      width: this.isSm ? '100vw' : '50vw',
+      minWidth: this.isSm ? '90vw' : '50vw',
     });
   }
 

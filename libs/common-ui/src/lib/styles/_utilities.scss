@@ -80,6 +80,12 @@ $flex-options: (
   flex-auto: (
     flex: auto,
   ),
+  flex-1: (
+    flex: 1,
+  ),
+  flex-0: (
+    flex: 0,
+  ),
   flex-row: (
     flex-direction: row,
   ),
@@ -268,13 +274,73 @@ $text-decoration-options: (
 @include mixins.generate-utility-classes($text-decoration-options);
 
 $font-weight-options: (
-  fw-normal: (font-weight: normal),
-  fw-bold: (font-weight: bold),
-  fw-bolder: (font-weight: bolder),
-  fw-lighter: (font-weight: lighter),
+  fw-100: (
+    font-weight: 100,
+  ),
+  fw-200: (
+    font-weight: 200,
+  ),
+  fw-300: (
+    font-weight: 300,
+  ),
+  fw-400: (
+    font-weight: 400,
+  ),
+  fw-500: (
+    font-weight: 500,
+  ),
+  fw-600: (
+    font-weight: 600,
+  ),
+  fw-700: (
+    font-weight: 700,
+  ),
+  fw-800: (
+    font-weight: 800,
+  ),
+  fw-900: (
+    font-weight: 900,
+  ),
+  fw-normal: (
+    font-weight: normal,
+  ),
+  fw-bold: (
+    font-weight: bold,
+  ),
+  fw-bolder: (
+    font-weight: bolder,
+  ),
+  fw-lighter: (
+    font-weight: lighter,
+  ),
 );
 
 @include mixins.generate-utility-classes($font-weight-options);
+
+$line-height-options: (
+  lh-normal: (
+    line-height: normal,
+  ),
+  lh-1: (
+    line-height: 1,
+  ),
+  lh-1_5: (
+    line-height: 1.5,
+  ),
+  lh-2: (
+    line-height: 2,
+  ),
+);
+
+@include mixins.generate-utility-classes($line-height-options);
+
+$outline-options: (
+  outline-none: (
+    outline: none,
+  ),
+);
+
+@include mixins.generate-utility-classes($outline-options);
 
 .text-truncate {
   @extend .whitespace-nowrap, .overflow-hidden, .text-overflow-ellipsis;

@@ -16,6 +16,7 @@
     <mat-drawer-content>
       <main class="wrapper">
         <eustrosoft-front-header
+          *ngIf="vm.isAuthenticated"
           [appsListTemplate]="appsListTemplate"
           [texts]="{
             title: 'HEADER.TITLE' | translate,

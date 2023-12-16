@@ -244,6 +244,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
   }
 
   openByPath(path: string) {
+    this.filesystemTableService.selection.clear();
     this.path$.next(path);
   }
 
@@ -358,10 +359,13 @@ export class ExplorerComponent implements OnInit, OnDestroy {
       string[]
     >(MoveCopyDialogComponent, {
       data: {
+        title: 'EXPLORER.MOVE_DIALOG.TITLE',
+        cancelButtonText: 'EXPLORER.MOVE_DIALOG.CANCEL_BUTTON_TEXT',
+        submitButtonText: 'EXPLORER.MOVE_DIALOG.SUBMIT_BUTTON_TEXT',
         fsObjects: rows,
         defaultPath: this.path$.getValue(),
       },
-      minWidth: this.isSm ? '80vw' : '50vw',
+      minWidth: this.isSm ? '90vw' : '50vw',
     });
 
     dialogRef
@@ -405,9 +409,13 @@ export class ExplorerComponent implements OnInit, OnDestroy {
       string[]
     >(MoveCopyDialogComponent, {
       data: {
+        title: 'EXPLORER.COPY_DIALOG.TITLE',
+        cancelButtonText: 'EXPLORER.COPY_DIALOG.CANCEL_BUTTON_TEXT',
+        submitButtonText: 'EXPLORER.COPY_DIALOG.SUBMIT_BUTTON_TEXT',
         fsObjects: rows,
         defaultPath: this.path$.getValue(),
       },
+      minWidth: this.isSm ? '90vw' : '50vw',
     });
 
     dialogRef

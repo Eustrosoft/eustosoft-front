@@ -8,6 +8,9 @@
 import { FileSystemObject } from '../../models/file-system-object.interface';
 
 export interface MoveCopyDialogData {
+  title: string;
+  cancelButtonText: string;
+  submitButtonText: string;
   fsObjects: FileSystemObject[];
   defaultPath: string;
 }

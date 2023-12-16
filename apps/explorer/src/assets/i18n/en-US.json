@@ -11,9 +11,9 @@
   },
   "LOGIN_PAGE": {
     "AUTHENTICATION_HEADING": "Authentication",
-    "LOGIN_LABEL": "Your login",
-    "PASSWORD_LABEL": "Your password",
-    "SUBMIT_BUTTON_TEXT": "Submit"
+    "LOGIN_LABEL": "Your Login",
+    "PASSWORD_LABEL": "Your Password",
+    "SUBMIT_BUTTON_TEXT": "Log In"
   },
   "EXPLORER": {
     "NEW_MENU_BUTTON_TEXT": "New",

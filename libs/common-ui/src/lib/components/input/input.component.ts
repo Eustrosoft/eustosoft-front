@@ -16,7 +16,7 @@ import {
 import { FormControl } from '@angular/forms';
 import { MatFormFieldAppearance } from '@angular/material/form-field';
 import { InputTypes } from '@eustrosoft-front/core';
-import { InputErrorInterface } from './input-error.interface';
+import { InputError } from './input-error.interface';
 import { MatInput } from '@angular/material/input';
 
 @Component({
@@ -31,10 +31,11 @@ export class InputComponent<T extends string> {
   @Input() fieldAppearance: MatFormFieldAppearance = 'fill';
   @Input() control!: FormControl<T>;
   @Input() inputType: InputTypes = InputTypes.TEXT;
+  @Input() showSuffixIcon = false;
   @Input() suffixIcon = '';
   @Input() disabled = false;
   @Input() hideSubscriptWrapper = false;
-  @Input() errors: InputErrorInterface[] = [];
+  @Input() errors: InputError[] = [];
   @Input()
   set value(value: T) {
     this.control.setValue(value);

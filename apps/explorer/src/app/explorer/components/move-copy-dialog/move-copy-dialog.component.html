@@ -6,7 +6,7 @@
   -->
 <div class="flex flex-column g-3">
   <h1 class="g-3 pt-3 px-3 m-0 p-0 flex align-items-center" mat-dialog-title>
-    <span>{{ 'EXPLORER.MOVE_DIALOG.TITLE' | translate }}</span>
+    <span>{{ data.title | translate }}</span>
   </h1>
 
   <div class="flex flex-column g-2 px-3 py-0" mat-dialog-content>
@@ -98,13 +98,13 @@
     <eustrosoft-front-button
       [buttonType]="'button'"
       [buttonStyleType]="'flat'"
-      [buttonText]="'EXPLORER.MOVE_DIALOG.CANCEL_BUTTON_TEXT' | translate"
+      [buttonText]="data.cancelButtonText | translate"
       (click)="reject()"
     >
     </eustrosoft-front-button>
     <eustrosoft-front-button
       [buttonStyleType]="'flat'"
-      [buttonText]="'EXPLORER.MOVE_DIALOG.SUBMIT_BUTTON_TEXT' | translate"
+      [buttonText]="data.submitButtonText | translate"
       [color]="'primary'"
       [disabled]="!!(moveButtonDisabled$ | async)"
       [matTooltip]="moveButtonErrorText | translate"
