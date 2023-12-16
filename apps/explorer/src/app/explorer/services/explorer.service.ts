@@ -41,10 +41,8 @@ import { ExplorerRequestBuilderService } from './explorer-request-builder.servic
 import { ExplorerDictionaryService } from './explorer-dictionary.service';
 import { FileSystemObject } from '../models/file-system-object.interface';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { TranslateService } from '@ngx-translate/core';
 import { ExplorerPathService } from './explorer-path.service';
 import { RenameDialogReturnData } from '../components/rename-dialog/rename-dialog-return-data.interface';
-import { DOCUMENT } from '@angular/common';
 
 @Injectable()
 export class ExplorerService {
@@ -58,9 +56,7 @@ export class ExplorerService {
     ExplorerDictionaryService
   );
   private readonly snackBar = inject(MatSnackBar);
-  private readonly translateService = inject(TranslateService);
   private readonly explorerPathService = inject(ExplorerPathService);
-  private readonly document = inject(DOCUMENT);
 
   makeShareLink(path: string): Observable<string> {
     return this.config.pipe(

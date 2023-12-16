@@ -122,11 +122,11 @@ export class ExplorerComponent implements OnInit, OnDestroy {
   private readonly fileUploadCancelled$ = new Subject<void>();
   private readonly teardownUpload$ = new Subject<void>();
 
-  protected refresh$ = new Subject<void>();
-  protected path$ = new BehaviorSubject<string>('/');
-  protected currentFolder$ = new BehaviorSubject<FileSystemObject | undefined>(
-    undefined
-  );
+  protected readonly refresh$ = new Subject<void>();
+  protected readonly path$ = new BehaviorSubject<string>('/');
+  protected readonly currentFolder$ = new BehaviorSubject<
+    FileSystemObject | undefined
+  >(undefined);
   protected upload$!: Observable<any>;
   protected fileControlChanges$!: Observable<
     FormArray<FormGroup<UploadItemForm>>
@@ -361,6 +361,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
         fsObjects: rows,
         defaultPath: this.path$.getValue(),
       },
+      minWidth: this.isSm ? '80vw' : '50vw',
     });
 
     dialogRef
@@ -516,7 +517,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
       data: {
         linkObs$,
       },
-      width: '50vw',
+      minWidth: '50vw',
     });
 
     dialogRef
