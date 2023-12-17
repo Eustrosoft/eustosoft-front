@@ -100,9 +100,9 @@
       "UPLOAD_COMPLETE_TEXT": "Upload completed",
       "PROCEED_AFTER_SUGGESTION_TEXT": "Proceed",
       "SUGGESTIONS": {
-        "FILL_DESCRIPTION_TEXT": "It is recommended to fill out the description field. You can also leave it blank",
+        "FILL_DESCRIPTION_TEXT": "Warning! It is recommended to fill out the description field. You can also leave it blank",
         "SELECT_FILES": "Select file to upload",
-        "SECURITY_LVL_WARNING": "All files whose security level is lower than or equal to 2F will be publicly viewable"
+        "SECURITY_LVL_WARNING": "Warning! All files whose security level is lower than or equal to 2F will be publicly viewable"
       }
     },
     "SHARE_DIALOG": {

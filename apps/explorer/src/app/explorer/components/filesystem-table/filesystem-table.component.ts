@@ -13,12 +13,10 @@ import {
   inject,
   Input,
   OnChanges,
-  OnDestroy,
   Output,
   ViewChild,
 } from '@angular/core';
 import { FileSystemObjectTypes } from '@eustrosoft-front/core';
-import { Subject } from 'rxjs';
 import { MatSort } from '@angular/material/sort';
 import { FileSystemObject } from '../../models/file-system-object.interface';
 import { FilesystemTableService } from '../../services/filesystem-table.service';
@@ -29,9 +27,7 @@ import { FilesystemTableService } from '../../services/filesystem-table.service'
   styleUrls: ['./filesystem-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FilesystemTableComponent
-  implements OnChanges, AfterViewInit, OnDestroy
-{
+export class FilesystemTableComponent implements OnChanges, AfterViewInit {
   @Input() content!: FileSystemObject[];
   @Output() openClicked = new EventEmitter<FileSystemObject>();
   @Output() downloadClicked = new EventEmitter<FileSystemObject[]>();
@@ -49,8 +45,7 @@ export class FilesystemTableComponent
   @ViewChild(MatSort) sort!: MatSort;
 
   protected readonly fsObjTypes = FileSystemObjectTypes;
-
-  displayedColumns: string[] = [
+  protected readonly displayedColumns: string[] = [
     'select',
     'fileName',
     'space',
@@ -58,21 +53,26 @@ export class FilesystemTableComponent
     'securityLevel',
     'actions',
   ];
-
   protected readonly filesystemTableService = inject(FilesystemTableService);
-  private readonly destroy$ = new Subject<void>();
 
   ngAfterViewInit(): void {
     this.filesystemTableService.dataSource.sort = this.sort;
+    this.filesystemTableService.dataSource.sortingDataAccessor = (
+      item: FileSystemObject,
+      property: string
+    ): string | number => {
+      switch (property) {
+        case 'securityLevel':
+          return item.securityLevel.displayText;
+        default:
+          // other items have primitive values
+          return (item as never)[property];
+      }
+    };
   }
 
   ngOnChanges(): void {
     this.filesystemTableService.dataSource.data = this.content;
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
   }
 
   isAllSelected(): boolean {

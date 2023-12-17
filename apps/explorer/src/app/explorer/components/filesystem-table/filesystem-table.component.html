@@ -6,11 +6,10 @@
   -->
 
 <table
-  *ngIf="content.length > 0; else noContent"
+  [dataSource]="filesystemTableService.dataSource"
+  [hidden]="!content.length"
   mat-table
-  [dataSource]="content"
   matSort
-  matSortDisableClear
   class="mat-elevation-z8"
 >
   <!-- Checkbox Column -->
@@ -149,11 +148,9 @@
   <tr *ngIf="content.length === 0"></tr>
 </table>
 
-<ng-template #noContent>
-  <div
-    *ngIf="content.length === 0"
-    class="flex flex-auto align-items-center justify-content-center"
-  >
-    <p class="fs-4">{{ 'EXPLORER.FOLDER_IS_EMPTY' | translate }}</p>
-  </div>
-</ng-template>
+<div
+  *ngIf="!content.length"
+  class="flex flex-auto align-items-center justify-content-center"
+>
+  <p class="fs-4">{{ 'EXPLORER.FOLDER_IS_EMPTY' | translate }}</p>
+</div>

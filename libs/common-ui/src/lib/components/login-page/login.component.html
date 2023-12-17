@@ -20,7 +20,7 @@
     <eustrosoft-front-input
       [inputType]="InputTypes.TEXT"
       [label]="texts.loginLabel"
-      [control]="form.get('login')! | formControl"
+      [control]="form.controls.login"
       [fieldAppearance]="'outline'"
       [showSuffixIcon]="true"
       [suffixIcon]="'person'"
@@ -30,7 +30,7 @@
     <eustrosoft-front-input
       [inputType]="InputTypes.PASSWORD"
       [label]="texts.passwordLabel"
-      [control]="form.get('password')! | formControl"
+      [control]="form.controls.password"
       [fieldAppearance]="'outline'"
       [showSuffixIcon]="true"
       [suffixIcon]="'lock'"
@@ -38,11 +38,12 @@
     >
     </eustrosoft-front-input>
     <eustrosoft-front-button
-      [buttonStyleType]="'stroked'"
+      [buttonStyleType]="'flat'"
       [buttonText]="texts.submitButtonText"
       [buttonType]="'submit'"
-      [buttonStyles]="{ height: '55px', 'font-size': '1.25rem' }"
-      [disabled]="form.get('submit')!.disabled"
+      [color]="'primary'"
+      [buttonStyles]="{ height: '50px', 'font-size': '1.25rem' }"
+      [disabled]="form.controls.submit.disabled"
     ></eustrosoft-front-button>
   </form>
 </ng-template>

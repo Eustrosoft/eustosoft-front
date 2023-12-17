@@ -53,7 +53,7 @@ export class UploadDialogComponent {
     'EXPLORER.UPLOAD_DIALOG.START_UPLOAD_BUTTON_TEXT';
   protected startUploadButtonDisabled = false;
   protected showSuggestion = false;
-  protected suggestionText = '';
+  protected warningText = '';
   protected descriptionSuggestionShown = false;
   protected securityLevelSuggestionShown = false;
 
@@ -73,7 +73,7 @@ export class UploadDialogComponent {
       if (isUploading) {
         this.modifyUploadButtonState(isUploading);
       } else {
-        this.suggestionText = '';
+        this.warningText = '';
         this.modifyUploadButtonState(
           false,
           'EXPLORER.UPLOAD_DIALOG.START_UPLOAD_BUTTON_TEXT'
@@ -116,7 +116,7 @@ export class UploadDialogComponent {
 
   startUpload(forms: FormArray<FormGroup<UploadItemForm>> | null): void {
     if (!forms || forms.controls.length === 0) {
-      this.suggestionText = 'EXPLORER.UPLOAD_DIALOG.SUGGESTIONS.SELECT_FILES';
+      this.warningText = 'EXPLORER.UPLOAD_DIALOG.SUGGESTIONS.SELECT_FILES';
       return;
     }
 
@@ -125,7 +125,7 @@ export class UploadDialogComponent {
       forms.controls[0].controls.description.value === '' &&
       !this.descriptionSuggestionShown
     ) {
-      this.suggestionText =
+      this.warningText =
         'EXPLORER.UPLOAD_DIALOG.SUGGESTIONS.FILL_DESCRIPTION_TEXT';
       this.modifyUploadButtonState(
         false,
@@ -145,7 +145,7 @@ export class UploadDialogComponent {
       ].includes(forms.controls[0].controls.securityLevel.value);
 
     if (forms && isLowSecurityLevel && !this.securityLevelSuggestionShown) {
-      this.suggestionText =
+      this.warningText =
         'EXPLORER.UPLOAD_DIALOG.SUGGESTIONS.SECURITY_LVL_WARNING';
       this.modifyUploadButtonState(
         false,
@@ -155,7 +155,7 @@ export class UploadDialogComponent {
       return;
     }
 
-    this.suggestionText = '';
+    this.warningText = '';
     this.modifyUploadButtonState(true);
     this.descriptionSuggestionShown = false;
     this.securityLevelSuggestionShown = false;

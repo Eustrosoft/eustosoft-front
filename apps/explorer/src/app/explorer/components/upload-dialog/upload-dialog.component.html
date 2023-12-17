@@ -31,7 +31,7 @@
           [hidden]="item.controls.uploadItem.value.cancelled"
         >
           <div
-            class="flex align-items-center justify-content-space-between g-2 flex-wrap-nowrap overflow-hidden"
+            class="flex align-items-center justify-content-space-between g-2 flex-wrap overflow-hidden"
           >
             <div class="flex flex-column flex-auto g-2 overflow-hidden">
               <div
@@ -45,7 +45,7 @@
                   {{ item.controls.uploadItem.value.file.name }}
                 </span>
               </div>
-              <div class="flex flex-auto flex-column g-2">
+              <div class="flex flex-auto flex-column g-2 pe-1">
                 <eustrosoft-front-select
                   [label]="
                     'EXPLORER.UPLOAD_DIALOG.SECURITY_LEVEL_SELECT_LABEL'
@@ -114,8 +114,8 @@
       [align]="'end'"
       mat-dialog-actions
     >
-      <span class="fw-bold fs-3">
-        {{ suggestionText | translate }}
+      <span class="fw-500 fs-3 warning-text">
+        {{ warningText | translate }}
       </span>
       <eustrosoft-front-button
         [buttonType]="'button'"

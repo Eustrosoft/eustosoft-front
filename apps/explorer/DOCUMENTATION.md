@@ -13,7 +13,6 @@
   - [Компонент MoveCopyDialogComponent](#компонент-movecopydialogcomponent)
   - [Компонент UploadObjectComponent](#компонент-uploadobjectcomponent)
   - [Компонент UploadOverlayComponent](#компонент-uploadoverlaycomponent)
-  - [Компонент UploadPageComponent](#компонент-uploadpagecomponent)
 - [Сервисы](#сервисы)
   - [Сервис ExplorerService](#сервис-explorerservice)
   - [Сервис ExplorerPathService](#сервис-explorerpathservice)
@@ -81,10 +80,6 @@
 
 Компонент для отображения загружаемых файлов и управления процессом загрузки.
 Можно отменять загрузку одного или всех файлов, которые находятся в очереди
-
-### Компонент `UploadPageComponent`
-
-Компонент для новой реализации загрузки файлой в систему. На данный момент находится в проектировании
 
 ### Компонент `LoginPageComponent`
 

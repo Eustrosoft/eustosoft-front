@@ -105,7 +105,7 @@ export class LoginComponent implements OnInit, OnDestroy, AfterViewInit {
         template: this.loginTemplate,
       },
       disableClose: true,
-      minWidth: this.isSm ? '90vw' : '50vw',
+      minWidth: this.isSm ? '90vw' : '40vw',
     });
   }
 
