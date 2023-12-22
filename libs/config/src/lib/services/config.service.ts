@@ -39,7 +39,14 @@ export class ConfigService {
               err
             );
             return throwError(
-              () => `Unable to fetch configuration from ${err.url}`
+              () =>
+                new HttpErrorResponse({
+                  url: err.url ?? '',
+                  error: `Unable to fetch configuration from ${err.url}`,
+                  headers: err.headers,
+                  status: err.status,
+                  statusText: err.statusText,
+                })
             );
           })
         );

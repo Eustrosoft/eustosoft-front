@@ -36,13 +36,18 @@ import {
   of,
   switchMap,
 } from 'rxjs';
-import { APP_CONFIG } from '@eustrosoft-front/config';
+import {
+  APP_CONFIG,
+  FallbackConfig,
+  OriginReplaceString,
+} from '@eustrosoft-front/config';
 import { ExplorerRequestBuilderService } from './explorer-request-builder.service';
 import { ExplorerDictionaryService } from './explorer-dictionary.service';
 import { FileSystemObject } from '../models/file-system-object.interface';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ExplorerPathService } from './explorer-path.service';
 import { RenameDialogReturnData } from '../components/rename-dialog/rename-dialog-return-data.interface';
+import { DOCUMENT } from '@angular/common';
 
 @Injectable()
 export class ExplorerService {
@@ -57,6 +62,7 @@ export class ExplorerService {
   );
   private readonly snackBar = inject(MatSnackBar);
   private readonly explorerPathService = inject(ExplorerPathService);
+  private readonly document = inject(DOCUMENT);
 
   makeShareLink(path: string): Observable<string> {
     return this.config.pipe(
@@ -64,7 +70,32 @@ export class ExplorerService {
         iif(
           () => !!config.shareUrl,
           of(`${config.shareUrl}${path}`),
-          this.makeDownloadLink(path, CmsDownloadParams.PATH)
+          of(`${FallbackConfig.shareUrl}${path}`)
+        ).pipe(
+          switchMap(() =>
+            iif(
+              () => config.shareUrl.includes(OriginReplaceString),
+              of(
+                `${config.shareUrl.replace(
+                  OriginReplaceString,
+                  this.document.location.origin
+                )}${path}`
+              ),
+              of(`${config.shareUrl}${path}`)
+            )
+          )
+        )
+      )
+    );
+  }
+
+  makeOWikiShareLink(path: string): Observable<string> {
+    return this.config.pipe(
+      switchMap((config) =>
+        iif(
+          () => !!config.shareOWikiUrl,
+          of(`${config.shareOWikiUrl}${path}`),
+          of(`${FallbackConfig.shareOWikiUrl}${path}`)
         )
       )
     );

@@ -10,7 +10,7 @@
     <div class="flex flex-wrap align-items-center g-2 mb-4">
       <a
         [href]="(config | async)?.homePageUrl || '/'"
-        class="text-decoration-none link fs-4 fw-500 lh-normal outline-none"
+        class="text-decoration-none link fs-4 fw-500 outline-none"
       >
         {{ texts.title }}
       </a>
@@ -25,6 +25,7 @@
       [showSuffixIcon]="true"
       [suffixIcon]="'person'"
       [errors]="loginErrors"
+      class="mb-1"
     >
     </eustrosoft-front-input>
     <eustrosoft-front-input
@@ -35,6 +36,7 @@
       [showSuffixIcon]="true"
       [suffixIcon]="'lock'"
       [errors]="passwordErrors"
+      class="mb-1"
     >
     </eustrosoft-front-input>
     <eustrosoft-front-button

@@ -107,9 +107,10 @@
     },
     "SHARE_DIALOG": {
       "TITLE": "Share",
-      "INPUT_LABEL_TEXT": "Link",
-      "CANCEL_BUTTON_TEXT": "Cancel",
-      "SUBMIT_BUTTON_TEXT": "Copy"
+      "SHARE_INPUT_LABEL_TEXT": "Download Link",
+      "SHARE_OWIKI_INPUT_LABEL_TEXT": "OWiki Link",
+      "CLOSE_BUTTON_TEXT": "Close",
+      "COPY_BUTTON_TEXT": "Copy"
     },
     "UPLOAD_OVERLAY": {
       "START_UPLOAD_BUTTON_TEXT": "Start upload",

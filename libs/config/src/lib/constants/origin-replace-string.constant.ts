@@ -5,9 +5,4 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-import { Observable } from 'rxjs';
-
-export interface ShareDialogDataInterface {
-  shareLinkObs$: Observable<string>;
-  shareOWikiLinkObs$: Observable<string>;
-}
+export const OriginReplaceString = '{origin}';

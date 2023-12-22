@@ -507,14 +507,10 @@ export class ExplorerComponent implements OnInit, OnDestroy {
   }
 
   shareLink(rows: FileSystemObject[]): void {
-    const linkObs$ = this.explorerService.makeShareLink(rows[0].fullPath).pipe(
-      map((link) => ({
-        isLoading: false,
-        isError: false,
-        link,
-      })),
-      startWith({ isLoading: true, isError: false, link: undefined }),
-      catchError(() => of({ isLoading: false, isError: true, link: undefined }))
+    const shareLinkObs$ = this.explorerService.makeShareLink(rows[0].fullPath);
+
+    const shareOWikiLinkObs$ = this.explorerService.makeOWikiShareLink(
+      rows[0].fullPath
     );
 
     const dialogRef = this.dialog.open<
@@ -523,15 +519,19 @@ export class ExplorerComponent implements OnInit, OnDestroy {
       string
     >(ShareDialogComponent, {
       data: {
-        linkObs$,
+        shareLinkObs$,
+        shareOWikiLinkObs$,
       },
-      minWidth: '50vw',
+      minWidth: this.isSm ? '100vw' : '50vw',
     });
 
-    dialogRef
-      .afterClosed()
+    const dialogClosed$ = dialogRef.afterClosed();
+
+    merge(
+      dialogRef.componentInstance.shareUrlCopied,
+      dialogRef.componentInstance.shareOWikiUrlCopied
+    )
       .pipe(
-        filter((url): url is string => typeof url !== 'undefined'),
         tap((url) => {
           this.clipboard.copy(url);
           this.snackBar.open(
@@ -540,7 +540,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
             { duration: 2000 }
           );
         }),
-        take(1)
+        takeUntil(dialogClosed$)
       )
       .subscribe();
   }

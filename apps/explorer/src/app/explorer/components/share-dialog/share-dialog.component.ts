@@ -1,8 +1,10 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  EventEmitter,
   HostListener,
   inject,
+  Output,
 } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormControl } from '@angular/forms';
@@ -20,21 +22,23 @@ export class ShareDialogComponent {
   >(MatDialogRef<ShareDialogComponent>);
   protected data = inject<ShareDialogDataInterface>(MAT_DIALOG_DATA);
 
-  protected control = new FormControl('', {
+  protected shareUrlControl = new FormControl('', {
     nonNullable: true,
   });
+  protected shareOWikiUrlControl = new FormControl('', {
+    nonNullable: true,
+  });
+
+  @Output() shareUrlCopied = new EventEmitter<string>();
+  @Output() shareOWikiUrlCopied = new EventEmitter<string>();
 
   @HostListener('keydown.enter', ['$event'])
   onEnterKeydown(e: KeyboardEvent) {
     e.stopPropagation();
-    this.dialogRef.close(this.control.value);
+    this.reject();
   }
 
   reject(): void {
     this.dialogRef.close();
-  }
-
-  resolve(): void {
-    this.dialogRef.close(this.control.value);
   }
 }

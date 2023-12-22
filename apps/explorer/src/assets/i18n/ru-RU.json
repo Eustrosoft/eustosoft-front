@@ -105,6 +105,13 @@
         "SECURITY_LVL_WARNING": "Внимание! Все файлы, уровень безопасности которых ниже или равен 2F, будут общедоступны для просмотра"
       }
     },
+    "SHARE_DIALOG": {
+      "TITLE": "Поделиться",
+      "SHARE_INPUT_LABEL_TEXT": "Ссылка для скачивания",
+      "SHARE_OWIKI_INPUT_LABEL_TEXT": "Ссылка для OWiki",
+      "CLOSE_BUTTON_TEXT": "Закрыть",
+      "COPY_BUTTON_TEXT": "Копировать"
+    },
     "UPLOAD_OVERLAY": {
       "START_UPLOAD_BUTTON_TEXT": "Начать загрузку",
       "START_UPLOAD_BUTTON_TEXT_UPLOADING_STATE": "Файлы загружаются",

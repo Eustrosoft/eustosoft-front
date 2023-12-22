@@ -1,7 +1,12 @@
 {
+  "//": "Config receiving order: 1) App tries to fetch config.json from app location (use `document.baseURI` in browser console). 2) If 1) fails - app tries to fetch config from origin (use `location.origin` in browser console). App will throw error and exit if won't be able to fetch config from origin",
   "production": true,
+  "// 0": "API URL. Usage: `${config.apiUrl}/dispatch`",
   "apiUrl": "http://fudo.eustrosoft.org:8080/eustrosofthandler_war/api",
+  "// 1": "URL for sharing files. https://dev37.qxyz.ru can be changed to {origin} for dynamic replacement with location.origin variable",
   "shareUrl": "https://dev37.qxyz.ru/ftpub",
+  "// 2": "Used for making OWiki links: ftpub:/LOCAL/pub/images",
+  "shareOWikiUrl": "ftpub:",
   "dispatcherUrl": "http://fudo.eustrosoft.org:8080/dispatcher/",
   "explorerUrl": "http://fudo.eustrosoft.org:8080/explorer/",
   "loginUrl": "http://fudo.eustrosoft.org:8080/login/",

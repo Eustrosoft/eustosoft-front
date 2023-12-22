@@ -9,6 +9,7 @@ export interface Config {
   production: boolean;
   apiUrl: string;
   shareUrl: string;
+  shareOWikiUrl: string;
   loginUrl: string;
   dispatcherUrl: string;
   explorerUrl: string;
