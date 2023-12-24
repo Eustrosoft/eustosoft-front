@@ -4,9 +4,8 @@
  * This file is part of eustrosoft-front project.
  * See the LICENSE file at the project root for licensing information.
  */
-
-table {
-  max-width: 100%;
+:host {
+  overflow: auto;
 }
 
 .table-container {

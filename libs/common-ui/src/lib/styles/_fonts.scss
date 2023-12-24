@@ -4,10 +4,10 @@
  * This file is part of eustrosoft-front project.
  * See the LICENSE file at the project root for licensing information.
  */
-
+@use 'variables' as vars;
 /* cyrillic-ext */
 @font-face {
-  font-family: 'Roboto';
+  font-family: vars.$font-family;
   font-style: normal;
   font-weight: 300;
   font-display: swap;
@@ -16,7 +16,7 @@
 }
 /* cyrillic */
 @font-face {
-  font-family: 'Roboto';
+  font-family: vars.$font-family;
   font-style: normal;
   font-weight: 300;
   font-display: swap;
@@ -25,7 +25,7 @@
 }
 /* latin-ext */
 @font-face {
-  font-family: 'Roboto';
+  font-family: vars.$font-family;
   font-style: normal;
   font-weight: 300;
   font-display: swap;
@@ -34,7 +34,7 @@
 }
 /* latin */
 @font-face {
-  font-family: 'Roboto';
+  font-family: vars.$font-family;
   font-style: normal;
   font-weight: 300;
   font-display: swap;
@@ -43,7 +43,7 @@
 }
 /* cyrillic-ext */
 @font-face {
-  font-family: 'Roboto';
+  font-family: vars.$font-family;
   font-style: normal;
   font-weight: 400;
   font-display: swap;
@@ -52,7 +52,7 @@
 }
 /* cyrillic */
 @font-face {
-  font-family: 'Roboto';
+  font-family: vars.$font-family;
   font-style: normal;
   font-weight: 400;
   font-display: swap;
@@ -61,7 +61,7 @@
 }
 /* latin-ext */
 @font-face {
-  font-family: 'Roboto';
+  font-family: vars.$font-family;
   font-style: normal;
   font-weight: 400;
   font-display: swap;
@@ -70,7 +70,7 @@
 }
 /* latin */
 @font-face {
-  font-family: 'Roboto';
+  font-family: vars.$font-family;
   font-style: normal;
   font-weight: 400;
   font-display: swap;
@@ -79,7 +79,7 @@
 }
 /* cyrillic-ext */
 @font-face {
-  font-family: 'Roboto';
+  font-family: vars.$font-family;
   font-style: normal;
   font-weight: 500;
   font-display: swap;
@@ -88,7 +88,7 @@
 }
 /* cyrillic */
 @font-face {
-  font-family: 'Roboto';
+  font-family: vars.$font-family;
   font-style: normal;
   font-weight: 500;
   font-display: swap;
@@ -97,7 +97,7 @@
 }
 /* latin-ext */
 @font-face {
-  font-family: 'Roboto';
+  font-family: vars.$font-family;
   font-style: normal;
   font-weight: 500;
   font-display: swap;
@@ -106,7 +106,7 @@
 }
 /* latin */
 @font-face {
-  font-family: 'Roboto';
+  font-family: vars.$font-family;
   font-style: normal;
   font-weight: 500;
   font-display: swap;
@@ -115,31 +115,31 @@
 }
 
 @font-face {
-  font-family: 'Material Symbols Outlined';
+  font-family: vars.$icons-font-family;
   font-style: normal;
   font-weight: 100;
   src: url(../material/fonts/material-symbols-outlined/material-symbols-outlined-100.woff2) format('woff2');
 }
 @font-face {
-  font-family: 'Material Symbols Outlined';
+  font-family: vars.$icons-font-family;
   font-style: normal;
   font-weight: 200;
   src: url(../material/fonts/material-symbols-outlined/material-symbols-outlined-200.woff2) format('woff2');
 }
 @font-face {
-  font-family: 'Material Symbols Outlined';
+  font-family: vars.$icons-font-family;
   font-style: normal;
   font-weight: 300;
   src: url(../material/fonts/material-symbols-outlined/material-symbols-outlined-300.woff2) format('woff2');
 }
 @font-face {
-  font-family: 'Material Symbols Outlined';
+  font-family: vars.$icons-font-family;
   font-style: normal;
   font-weight: 400;
   src: url(../material/fonts/material-symbols-outlined/material-symbols-outlined-400.woff2) format('woff2');
 }
 .material-symbols-outlined {
-  font-family: 'Material Symbols Outlined';
+  font-family: vars.$icons-font-family;
   font-weight: normal;
   font-style: normal;
   font-size: 24px;

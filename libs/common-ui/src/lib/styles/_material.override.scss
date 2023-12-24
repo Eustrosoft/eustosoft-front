@@ -5,13 +5,17 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-.mat-mdc-simple-snack-bar .mat-mdc-snack-bar-actions .mat-mdc-snack-bar-action {
-  font-family: 'Material Symbols Outlined', serif;
-  font-size: 1.5rem;
-  line-height: 1;
-  letter-spacing: normal;
-  text-transform: none;
-}
+@use '@material/snackbar/snackbar-theme' as mdc-snackbar-theme;
+@use 'variables' as vars;
+
+$snackbar-theme-styles: (
+  action-label-text-font: vars.$icons-font-family,
+  action-label-text-size: map-get(vars.$common-sizes, 4),
+  action-label-text-weight: 400
+);
+
+@include mdc-snackbar-theme.theme-styles($snackbar-theme-styles);
+
 
 .hide-subscript-wrapper {
   .mat-mdc-form-field-subscript-wrapper {

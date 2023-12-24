@@ -5,27 +5,20 @@
   ~ See the LICENSE file at the project root for licensing information.
   -->
 
-<div class="container-fluid">
-  <div class="row vh-75 align-items-center justify-content-around">
-    <div eustrosoftFrontHover class="col-4 d-flex justify-content-center">
+<div
+  class="flex flex-auto align-items-center justify-content-space-evenly flex-wrap"
+>
+  <ng-container *ngIf="{ conf: config | async } as vm">
+    <ng-container *ngFor="let app of vm.conf?.apps ?? []">
       <div
-        [routerLink]="['/dispatcher']"
-        [skipLocationChange]="true"
-        class="d-flex flex-column align-items-center"
+        *ngIf="app.active"
+        (click)="toApp(app.url)"
+        eustrosoftFrontHoverShadow
+        class="flex flex-column align-items-center"
       >
-        <mat-icon class="app-icon database">database</mat-icon>
-        <h2>{{ 'APPLICATIONS_PAGE.REQUEST_DISPATCHER' | translate }}</h2>
+        <mat-icon class="app-icon">{{ app.icon }}</mat-icon>
+        <h2>{{ app.title | translate }}</h2>
       </div>
-    </div>
-    <div eustrosoftFrontHover class="col-4 d-flex justify-content-center">
-      <div
-        [routerLink]="['/explorer']"
-        [skipLocationChange]="true"
-        class="d-flex flex-column align-items-center"
-      >
-        <mat-icon class="app-icon folder">folder_open</mat-icon>
-        <h2>{{ 'APPLICATIONS_PAGE.FILE_EXPLORER' | translate }}</h2>
-      </div>
-    </div>
-  </div>
+    </ng-container>
+  </ng-container>
 </div>

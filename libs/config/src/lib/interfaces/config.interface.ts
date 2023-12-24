@@ -10,11 +10,15 @@ export interface Config {
   apiUrl: string;
   shareUrl: string;
   shareOWikiUrl: string;
+  apps: App[];
   loginUrl: string;
-  dispatcherUrl: string;
-  explorerUrl: string;
   appsPageUrl: string;
   homePageUrl: string;
 }
 
-export type ConfigKey = keyof Config;
+export interface App {
+  title: string;
+  active: boolean;
+  url: string;
+  icon: string;
+}

@@ -5,15 +5,15 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { APP_CONFIG } from '@eustrosoft-front/config';
 import { PRECONFIGURED_TRANSLATE_SERVICE } from '@eustrosoft-front/core';
-import { combineLatest, map, Observable } from 'rxjs';
+import { take, tap } from 'rxjs';
+import {
+  AuthenticationService,
+  LoginService,
+} from '@eustrosoft-front/security';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'eustrosoft-front-root',
@@ -21,37 +21,24 @@ import { combineLatest, map, Observable } from 'rxjs';
   styleUrls: ['./app.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AppComponent implements OnInit {
-  public config = inject(APP_CONFIG);
-  private translateService = inject(PRECONFIGURED_TRANSLATE_SERVICE);
-  public translatedValues!: Observable<{
-    title: string;
-    appName: string;
-    appsButtonText: string;
-    explorer: string;
-    dispatcher: string;
-    appsPage: string;
-  }>;
+export class AppComponent {
+  private readonly loginService = inject(LoginService);
+  private readonly authenticationService = inject(AuthenticationService);
+  private readonly router = inject(Router);
+  private readonly translateService = inject(PRECONFIGURED_TRANSLATE_SERVICE);
+  protected readonly config = inject(APP_CONFIG);
+  protected isAuthenticated$ =
+    this.authenticationService.isAuthenticated$.asObservable();
 
-  ngOnInit(): void {
-    this.translatedValues = combineLatest([
-      this.translateService.get('HEADER.TITLE'),
-      this.translateService.get('HEADER.APP_NAME'),
-      this.translateService.get('HEADER.APPS_BUTTON_TEXT'),
-      this.translateService.get('HEADER.APPS.EXPLORER'),
-      this.translateService.get('HEADER.APPS.DISPATCHER'),
-      this.translateService.get('HEADER.APPS.ALL_APPS_PAGE'),
-    ]).pipe(
-      map(
-        ([title, appName, appsButtonText, explorer, dispatcher, appsPage]) => ({
-          title,
-          appName,
-          appsButtonText,
-          explorer,
-          dispatcher,
-          appsPage,
-        })
+  logout(): void {
+    this.loginService
+      .logout()
+      .pipe(
+        tap(() => {
+          this.router.navigate(['']);
+        }),
+        take(1)
       )
-    );
+      .subscribe();
   }
 }

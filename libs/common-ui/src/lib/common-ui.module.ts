@@ -24,7 +24,7 @@ import {
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
-import { HoverDirective } from './directives/hover.directive';
+import { HoverShadowDirective } from './directives/hover-shadow.directive';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { FilesDropZoneDirective } from './directives/files-drop-zone.directive';
@@ -83,7 +83,7 @@ import { BreakpointsService } from './services/breakpoints.service';
     PreloaderComponent,
     SelectComponent,
     TextareaComponent,
-    HoverDirective,
+    HoverShadowDirective,
     FilesDropZoneDirective,
     RippleHoverDirective,
     ProgressBarComponent,
@@ -102,7 +102,7 @@ import { BreakpointsService } from './services/breakpoints.service';
     PreloaderComponent,
     SelectComponent,
     TextareaComponent,
-    HoverDirective,
+    HoverShadowDirective,
     FilesDropZoneDirective,
     RippleHoverDirective,
     ProgressBarComponent,

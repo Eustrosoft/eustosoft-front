@@ -11,23 +11,20 @@
   [control]="form.get('queryType')! | formControl"
   [options]="queryTypeOptions"
   [fieldAppearance]="'outline'"
-  class="col-12"
 ></eustrosoft-front-select>
 <eustrosoft-front-textarea
   *ngIf="(form.get('queryType')! | formControl).value === QueryTypes.SQL"
   [label]="'SQL'"
   [control]="form.get('request')! | formControl"
   [fieldAppearance]="'outline'"
-  class="col-12"
+  [hideSubscriptWrapper]="true"
 ></eustrosoft-front-textarea>
 <eustrosoft-front-input-file
   *ngIf="(form.get('queryType')! | formControl).value === QueryTypes.FILE"
   [control]="form.get('file')! | formControl"
-  class="col-12"
 ></eustrosoft-front-input-file>
 <eustrosoft-front-file-list
   [files]="(form.get('file')! | formControl).value"
   [classesForVirtualViewport]="['h-25']"
   (deleteFile)="deleteFile($event)"
-  class="col-12"
 ></eustrosoft-front-file-list>

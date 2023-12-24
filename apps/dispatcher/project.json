@@ -15,9 +15,6 @@
         "baseHref": "/dispatcher/",
         "polyfills": ["zone.js"],
         "tsConfig": "apps/dispatcher/tsconfig.app.json",
-        "stylePreprocessorOptions": {
-          "includePaths": ["libs/common-ui/src/lib/styles"]
-        },
         "inlineStyleLanguage": "scss",
         "assets": [
           "apps/dispatcher/src/favicon.ico",
@@ -25,15 +22,13 @@
         ],
         "styles": [
           "@angular/material/prebuilt-themes/deeppurple-amber.css",
-          "node_modules/bootstrap/scss/bootstrap.scss",
-          "libs/common-ui/src/lib/material/css/roboto.css",
-          "libs/common-ui/src/lib/material/css/material-symbols-outlined.css",
           "apps/dispatcher/src/styles.scss"
         ],
         "scripts": []
       },
       "configurations": {
         "production": {
+          "baseHref": "./",
           "assets": [
             "apps/dispatcher/src/favicon.ico",
             {
@@ -57,6 +52,7 @@
           "buildOptimizer": true
         },
         "stage": {
+          "baseHref": "./",
           "assets": [
             "apps/dispatcher/src/favicon.ico",
             {

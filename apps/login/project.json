@@ -15,22 +15,17 @@
         "baseHref": "/login/",
         "polyfills": ["zone.js"],
         "tsConfig": "apps/login/tsconfig.app.json",
-        "stylePreprocessorOptions": {
-          "includePaths": ["libs/common-ui/src/lib/styles"]
-        },
         "inlineStyleLanguage": "scss",
         "assets": ["apps/login/src/favicon.ico", "apps/login/src/assets"],
         "styles": [
           "@angular/material/prebuilt-themes/deeppurple-amber.css",
-          "node_modules/bootstrap/scss/bootstrap.scss",
-          "libs/common-ui/src/lib/material/css/roboto.css",
-          "libs/common-ui/src/lib/material/css/material-symbols-outlined.css",
           "apps/login/src/styles.scss"
         ],
         "scripts": []
       },
       "configurations": {
         "production": {
+          "baseHref": "./",
           "assets": [
             "apps/login/src/favicon.ico",
             {
@@ -54,6 +49,7 @@
           "buildOptimizer": true
         },
         "stage": {
+          "baseHref": "./",
           "assets": [
             "apps/login/src/favicon.ico",
             {

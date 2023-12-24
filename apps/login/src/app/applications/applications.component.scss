@@ -8,18 +8,14 @@
 @use 'libs/common-ui/src/lib/styles/variables' as vars;
 
 :host {
-  .app-icon {
-    font-size: 10em;
-    font-weight: 300;
-    width: auto;
-    height: auto;
-  }
+  flex: auto;
+  display: flex;
+}
 
-  .database {
-    color: map-get(vars.$grey-palette, 200);
-  }
-
-  .folder {
-    color: map-get(vars.$grey-palette, 200);
-  }
+.app-icon {
+  font-size: 10rem;
+  font-weight: 300;
+  width: auto;
+  height: auto;
+  color: map-get(vars.$grey-palette, 300);
 }

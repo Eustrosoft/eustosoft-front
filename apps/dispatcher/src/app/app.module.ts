@@ -12,7 +12,7 @@ import { AppComponent } from './app.component';
 import { RouterModule } from '@angular/router';
 import { appRoutes } from './app.routes';
 import { CommonUiModule } from '@eustrosoft-front/common-ui';
-import { CoreModule } from '@eustrosoft-front/core';
+import { CoreModule, CustomLocationStrategy } from '@eustrosoft-front/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SecurityModule } from '@eustrosoft-front/security';
 import { MatIconModule } from '@angular/material/icon';
@@ -25,6 +25,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatMenuModule } from '@angular/material/menu';
 import { ConfigModule } from '@eustrosoft-front/config';
 import { LoginPageComponent } from './login-page/login-page.component';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { LocationStrategy } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -45,8 +47,13 @@ import { LoginPageComponent } from './login-page/login-page.component';
     MatTableModule,
     MatIconModule,
     MatMenuModule,
+    MatSidenavModule,
   ],
-  providers: [RequestBuilderService, RequestFormBuilderService],
+  providers: [
+    RequestBuilderService,
+    RequestFormBuilderService,
+    { provide: LocationStrategy, useClass: CustomLocationStrategy },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

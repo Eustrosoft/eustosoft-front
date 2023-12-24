@@ -7,8 +7,27 @@
   "shareUrl": "https://dev37.qxyz.ru/ftpub",
   "// 2": "Used for making OWiki links: ftpub:/LOCAL/pub/images",
   "shareOWikiUrl": "ftpub:",
-  "dispatcherUrl": "http://fudo.eustrosoft.org:8080/dispatcher/",
-  "explorerUrl": "http://fudo.eustrosoft.org:8080/explorer/",
+  "// 3": "List of apps that will be show on apps page of login app. Title: path to value in assets/i18n json files. Active: visibility control. Url: what page should be opened after click. Icon: icon to show, source: https://fonts.google.com/icons",
+  "apps": [
+    {
+      "title": "HEADER.APPS.DISPATCHER",
+      "active": true,
+      "url": "http://fudo.eustrosoft.org:8080/dispatcher/",
+      "icon": "database"
+    },
+    {
+      "title": "HEADER.APPS.EXPLORER",
+      "active": true,
+      "url": "http://fudo.eustrosoft.org:8080/explorer/",
+      "icon": "folder_open"
+    },
+    {
+      "title": "HEADER.APPS.MSG",
+      "active": true,
+      "url": "http://fudo.eustrosoft.org:8080/msg/",
+      "icon": "chat"
+    }
+  ],
   "loginUrl": "http://fudo.eustrosoft.org:8080/login/",
   "appsPageUrl": "http://fudo.eustrosoft.org:8080/login/apps",
   "homePageUrl": "http://fudo.eustrosoft.org"

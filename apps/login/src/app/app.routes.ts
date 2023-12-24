@@ -7,14 +7,8 @@
 
 import { Route } from '@angular/router';
 import { LoginPageComponent } from './login-page/login-page.component';
-import { authenticationGuard, redirectGuard } from '@eustrosoft-front/security';
+import { authenticationGuard } from '@eustrosoft-front/security';
 import { ApplicationsComponent } from './applications/applications.component';
-import { AppComponent } from './app.component';
-import {
-  dispatcherUrlKey,
-  explorerUrlKey,
-  loginUrlKey,
-} from '@eustrosoft-front/config';
 
 export const appRoutes: Route[] = [
   {
@@ -32,30 +26,6 @@ export const appRoutes: Route[] = [
         title: 'TIS | Apps',
         component: ApplicationsComponent,
       },
-      {
-        path: 'explorer',
-        canActivate: [redirectGuard],
-        component: ApplicationsComponent,
-        data: {
-          key: explorerUrlKey,
-        },
-      },
-      {
-        path: 'dispatcher',
-        canActivate: [redirectGuard],
-        component: ApplicationsComponent,
-        data: {
-          key: dispatcherUrlKey,
-        },
-      },
     ],
-  },
-  {
-    path: 'login',
-    canActivate: [redirectGuard],
-    component: AppComponent,
-    data: {
-      key: loginUrlKey,
-    },
   },
 ];

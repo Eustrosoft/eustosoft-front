@@ -71,7 +71,7 @@ export class RequestsComponent implements OnInit {
   public removeFormButtonTitle = `Remove last request form`;
   public submitButtonText = `Run`;
 
-  tables?: Table[][];
+  tables: Table[][] = [];
 
   requestResult$!: Observable<QtisRequestResponseInterface<SqlResponse> | null>;
   isResultLoading = new BehaviorSubject<boolean>(false);

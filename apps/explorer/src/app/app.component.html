@@ -31,12 +31,11 @@
 
         <ng-template #appsListTemplate>
           <ng-container *ngIf="config | async as cnf">
-            <a mat-menu-item [href]="cnf.loginUrl">
-              {{ 'HEADER.APPS.LOGIN' | translate }}
-            </a>
-            <a mat-menu-item [href]="cnf.dispatcherUrl">
-              {{ 'HEADER.APPS.DISPATCHER' | translate }}
-            </a>
+            <ng-container *ngFor="let app of cnf.apps">
+              <a mat-menu-item *ngIf="app.active" [href]="app.url">
+                {{ app.title | translate }}
+              </a>
+            </ng-container>
             <a mat-menu-item [href]="cnf.appsPageUrl">
               {{ 'HEADER.APPS.ALL_APPS_PAGE' | translate }}
             </a>

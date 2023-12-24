@@ -12,8 +12,26 @@ export const FallbackConfig: Config = {
   apiUrl: 'http://fudo.eustrosoft.org:8080/eustrosofthandler_war/api',
   shareUrl: 'https://dev37.qxyz.ru/ftpub',
   shareOWikiUrl: 'ftpub:',
-  dispatcherUrl: 'http://fudo.eustrosoft.org:8080/dispatcher/',
-  explorerUrl: 'http://fudo.eustrosoft.org:8080/explorer/',
+  apps: [
+    {
+      title: 'HEADER.APPS.DISPATCHER',
+      active: true,
+      url: 'http://fudo.eustrosoft.org:8080/dispatcher/',
+      icon: 'database',
+    },
+    {
+      title: 'HEADER.APPS.EXPLORER',
+      active: true,
+      url: 'http://fudo.eustrosoft.org:8080/explorer/',
+      icon: 'folder_open',
+    },
+    {
+      title: 'HEADER.APPS.MSG',
+      active: true,
+      url: 'http://fudo.eustrosoft.org:8080/msg/',
+      icon: 'chat',
+    },
+  ],
   loginUrl: 'http://fudo.eustrosoft.org:8080/login/',
   appsPageUrl: 'http://fudo.eustrosoft.org:8080/login/apps',
   homePageUrl: 'http://fudo.eustrosoft.org',

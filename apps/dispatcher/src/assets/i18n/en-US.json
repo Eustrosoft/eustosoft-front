@@ -6,6 +6,7 @@
     "APPS": {
       "LOGIN": "Login",
       "EXPLORER": "Explorer",
+      "MSG": "Messenger",
       "ALL_APPS_PAGE": "All apps page"
     }
   },
@@ -13,6 +14,6 @@
     "AUTHENTICATION_HEADING": "Authentication",
     "LOGIN_LABEL": "Your login",
     "PASSWORD_LABEL": "Your password",
-    "SUBMIT_BUTTON_TEXT": "Submit"
+    "SUBMIT_BUTTON_TEXT": "Log In"
   }
 }

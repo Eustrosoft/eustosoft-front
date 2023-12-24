@@ -18,15 +18,13 @@ export class RequestFormBuilderService {
     return this.fb.group<RequestsForm>({
       forms: this.fb.array<FormGroup<SingleRequestForm>>([
         this.fb.group<SingleRequestForm>({
-          request: this.fb.control(
-            'select * from tis.samusers;select * from tis.files;'
-          ),
+          request: this.fb.control('select current_database(), version();'),
           file: this.fb.control([]),
           queryType: this.fb.control(DispatcherQueryTypes.SQL),
         }),
         this.fb.group<SingleRequestForm>({
           request: this.fb.control(
-            'select * from tis.samacl;select * from tis.comments;'
+            'select * from pg_views;select * from pg_user;'
           ),
           file: this.fb.control([]),
           queryType: this.fb.control(DispatcherQueryTypes.SQL),
