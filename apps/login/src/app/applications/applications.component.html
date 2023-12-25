@@ -6,7 +6,7 @@
   -->
 
 <div
-  class="flex flex-auto align-items-center justify-content-space-evenly flex-wrap"
+  class="flex flex-auto align-items-center justify-content-space-evenly flex-wrap mx-3"
 >
   <ng-container *ngIf="{ conf: config | async } as vm">
     <ng-container *ngFor="let app of vm.conf?.apps ?? []">
@@ -14,7 +14,7 @@
         *ngIf="app.active"
         (click)="toApp(app.url)"
         eustrosoftFrontHoverShadow
-        class="flex flex-column align-items-center"
+        class="flex flex-auto flex-column align-items-center br-3"
       >
         <mat-icon class="app-icon">{{ app.icon }}</mat-icon>
         <h2>{{ app.title | translate }}</h2>

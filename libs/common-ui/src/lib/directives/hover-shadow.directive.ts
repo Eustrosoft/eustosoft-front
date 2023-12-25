@@ -11,7 +11,7 @@ import {
   HostBinding,
   HostListener,
   inject,
-  Renderer2,
+  Input,
 } from '@angular/core';
 
 @Directive({
@@ -19,7 +19,10 @@ import {
 })
 export class HoverShadowDirective {
   private readonly elementRef = inject(ElementRef);
-  private readonly renderer = inject(Renderer2);
+  private readonly classes = this.elementRef.nativeElement
+    .classList as DOMTokenList;
+
+  @Input() shadowClasses = ['mat-elevation-z7'];
 
   @HostBinding('style.cursor') cursor = 'pointer';
 
@@ -32,25 +35,10 @@ export class HoverShadowDirective {
   }
 
   private addShadow(): void {
-    this.renderer.setStyle(
-      this.elementRef.nativeElement,
-      'box-shadow',
-      '0 0 0.5rem 0 rgba(0, 0, 0, 0.25)'
-    );
-    this.renderer.setStyle(
-      this.elementRef.nativeElement,
-      'transition',
-      'box-shadow 0.2s ease-in-out'
-    );
-    this.renderer.setStyle(
-      this.elementRef.nativeElement,
-      'border-radius',
-      '0.5rem'
-    );
+    this.classes.add(...this.shadowClasses);
   }
 
   private removeShadow(): void {
-    this.renderer.removeStyle(this.elementRef.nativeElement, 'box-shadow');
-    this.renderer.removeStyle(this.elementRef.nativeElement, 'border-radius');
+    this.classes.remove(...this.shadowClasses);
   }
 }
