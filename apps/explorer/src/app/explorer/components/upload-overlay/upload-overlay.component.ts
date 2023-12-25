@@ -58,7 +58,6 @@ export class UploadOverlayComponent {
           (form) =>
             form.controls.uploadItem.value.state === UploadItemState.UPLOADED
         );
-        console.log('isUploading: ', isUploading);
         if (isUploading) {
           this.modifyUploadingView(isUploading);
         } else {

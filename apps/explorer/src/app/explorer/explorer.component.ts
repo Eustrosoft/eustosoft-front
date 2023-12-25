@@ -30,7 +30,6 @@ import {
   merge,
   Observable,
   of,
-  repeat,
   startWith,
   Subject,
   switchMap,
@@ -145,7 +144,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
         // startWith({ isLoading: true, isError: false, content: undefined })
         catchError((err: HttpErrorResponse) => {
           this.path$.next('/');
-          this.snackBar.open(err.error, 'close', { duration: 7000 });
+          this.snackBar.open(err.error, 'close');
           return EMPTY;
         })
       );
@@ -214,7 +213,6 @@ export class ExplorerComponent implements OnInit, OnDestroy {
           .pipe(takeUntil(this.teardownUpload$))
       ),
       tap(() => {
-        console.log('teardownUpload$ call');
         this.closeOverlay();
         this.refresh$.next();
       }),
@@ -224,8 +222,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
         this.inputFileComponent.clear();
         this.closeOverlay();
         return EMPTY;
-      }),
-      repeat()
+      })
     );
   }
 

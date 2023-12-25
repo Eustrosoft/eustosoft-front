@@ -12,7 +12,8 @@ import { UploadItemState } from '../constants/enums/uploading-state.enum';
 
 @Injectable()
 export class ExplorerUploadItemFormFactoryService {
-  private fb: FormBuilder = inject(FormBuilder);
+  private readonly fb: FormBuilder = inject(FormBuilder);
+
   makeUploadItemsForm(
     files: File[],
     uploadPath: string,
@@ -28,6 +29,7 @@ export class ExplorerUploadItemFormFactoryService {
             cancelled: false,
             uploadPath,
           }),
+          filename: this.fb.nonNullable.control(file.name),
           description: this.fb.nonNullable.control(''),
           securityLevel: this.fb.nonNullable.control({
             value: defaultSecurityLevel,

@@ -33,45 +33,46 @@
           <div
             class="flex align-items-center justify-content-space-between g-2 flex-wrap overflow-hidden"
           >
-            <div class="flex flex-column flex-auto g-2 overflow-hidden">
-              <div
-                class="flex overflow-hidden"
-                [title]="item.controls.uploadItem.value.file.name"
-              >
-                <span
-                  class="filename text-truncate"
-                  [title]="item.controls.uploadItem.value.file.name"
-                >
-                  {{ item.controls.uploadItem.value.file.name }}
-                </span>
-              </div>
-              <div class="flex flex-auto flex-column g-2 pe-1">
-                <eustrosoft-front-select
-                  [label]="
-                    'EXPLORER.UPLOAD_DIALOG.SECURITY_LEVEL_SELECT_LABEL'
-                      | translate
-                  "
-                  [control]="item.controls.securityLevel"
-                  [options]="(securityLevelOptions$ | async) || []"
-                  [fieldAppearance]="'outline'"
-                  [hideSubscriptWrapper]="true"
-                  class="mt-1 upload-control"
-                ></eustrosoft-front-select>
-                <eustrosoft-front-input
-                  [label]="
-                    'EXPLORER.UPLOAD_DIALOG.DESCRIPTION_INPUT_LABEL' | translate
-                  "
-                  [placeholder]="
-                    'EXPLORER.UPLOAD_DIALOG.DESCRIPTION_INPUT_PLACEHOLDER'
-                      | translate
-                  "
-                  [control]="item.controls.description"
-                  [fieldAppearance]="'outline'"
-                  [hideSubscriptWrapper]="true"
-                  class="mt-1 upload-control"
-                ></eustrosoft-front-input>
-              </div>
+            <div class="flex flex-auto flex-column g-2 my-2">
+              <eustrosoft-front-input
+                [label]="
+                  'EXPLORER.UPLOAD_DIALOG.FILENAME_INPUT_LABEL' | translate
+                "
+                [placeholder]="
+                  'EXPLORER.UPLOAD_DIALOG.FILENAME_INPUT_PLACEHOLDER'
+                    | translate
+                "
+                [control]="item.controls.filename"
+                [fieldAppearance]="'outline'"
+                [hideSubscriptWrapper]="true"
+                class="mt-1 upload-control"
+              ></eustrosoft-front-input>
+              <eustrosoft-front-select
+                [label]="
+                  'EXPLORER.UPLOAD_DIALOG.SECURITY_LEVEL_SELECT_LABEL'
+                    | translate
+                "
+                [control]="item.controls.securityLevel"
+                [options]="(securityLevelOptions$ | async) || []"
+                [fieldAppearance]="'outline'"
+                [hideSubscriptWrapper]="true"
+                class="mt-1 upload-control"
+              ></eustrosoft-front-select>
+              <eustrosoft-front-input
+                [label]="
+                  'EXPLORER.UPLOAD_DIALOG.DESCRIPTION_INPUT_LABEL' | translate
+                "
+                [placeholder]="
+                  'EXPLORER.UPLOAD_DIALOG.DESCRIPTION_INPUT_PLACEHOLDER'
+                    | translate
+                "
+                [control]="item.controls.description"
+                [fieldAppearance]="'outline'"
+                [hideSubscriptWrapper]="true"
+                class="mt-1 upload-control"
+              ></eustrosoft-front-input>
             </div>
+
             <eustrosoft-front-button
               [hidden]="
                 item.controls.uploadItem.value.state === UploadingState.UPLOADED

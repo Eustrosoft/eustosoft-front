@@ -93,6 +93,8 @@
       "CANCEL_BUTTON_TEXT": "Cancel",
       "START_UPLOAD_BUTTON_TEXT": "Start upload",
       "START_UPLOAD_BUTTON_TEXT_UPLOADING_STATE": "Files being uploaded",
+      "FILENAME_INPUT_LABEL": "Filename",
+      "FILENAME_INPUT_PLACEHOLDER": "Filename",
       "SECURITY_LEVEL_SELECT_LABEL": "Security level",
       "DESCRIPTION_INPUT_LABEL": "Description",
       "DESCRIPTION_INPUT_PLACEHOLDER": "Additional info",

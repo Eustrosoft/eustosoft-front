@@ -99,7 +99,6 @@ export class FileReaderService {
       chunks: string[];
     }
   > {
-    console.log('SPLITTING:', item.file.name);
     return of(item).pipe(
       concatMap((item) => {
         const buffer = this.blobToArrayBuffer(item.file);
@@ -112,7 +111,7 @@ export class FileReaderService {
               const newStartPointer = startPointer + chunkSize;
               const chunk = buffer.slice(startPointer, newStartPointer);
 
-              // TODO executes ~ 150 ms - move to web worker
+              // TODO executes ~ 150 ms with 5MB file => move to web worker
               let byteaStr = '';
               const h = '0123456789ABCDEF';
               new Uint8Array(chunk).forEach((v) => {

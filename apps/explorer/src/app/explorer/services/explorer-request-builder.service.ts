@@ -85,6 +85,7 @@ export class ExplorerRequestBuilderService {
 
   buildHexChunkRequest(
     file: File,
+    filename: string,
     chunk: string,
     chunkIndex: number,
     totalChunks: number,
@@ -94,7 +95,7 @@ export class ExplorerRequestBuilderService {
   ): QtisRequestResponseInterface<UploadHexRequest> {
     const params: UploadHexRequest['parameters'] = {
       hexString: chunk,
-      name: file.name,
+      name: filename ?? file.name,
       ext: file.name.split('.').pop() as string,
       chunk: chunkIndex,
       all_chunks: totalChunks,
@@ -104,7 +105,6 @@ export class ExplorerRequestBuilderService {
     if (securityLevel !== undefined) {
       params.securityLevel = +securityLevel;
     }
-
     if (description !== undefined) {
       params.description = description;
     }

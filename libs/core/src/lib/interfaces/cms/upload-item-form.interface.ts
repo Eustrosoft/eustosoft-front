@@ -11,6 +11,7 @@ import { SecurityLevels } from '../../constants/enums/security-levels.enum';
 
 export interface UploadItemForm {
   uploadItem: FormControl<UploadItem>;
+  filename: FormControl<string>;
   description: FormControl<string | undefined>;
   securityLevel: FormControl<SecurityLevels | undefined>;
 }

@@ -7,7 +7,6 @@
 
 import { inject, Injectable } from '@angular/core';
 import {
-  catchError,
   combineLatest,
   concatMap,
   filter,
@@ -15,7 +14,6 @@ import {
   of,
   switchMap,
   tap,
-  throwError,
   toArray,
 } from 'rxjs';
 import { FileReaderService, UploadItemForm } from '@eustrosoft-front/core';
@@ -27,11 +25,15 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Injectable()
 export class ExplorerUploadService {
-  private fileReaderService = inject(FileReaderService);
-  private explorerRequestBuilderService = inject(ExplorerRequestBuilderService);
-  private explorerService = inject(ExplorerService);
-  private explorerUploadItemsService = inject(ExplorerUploadItemsService);
-  private fb = inject(FormBuilder);
+  private readonly fileReaderService = inject(FileReaderService);
+  private readonly explorerRequestBuilderService = inject(
+    ExplorerRequestBuilderService
+  );
+  private readonly explorerService = inject(ExplorerService);
+  private readonly explorerUploadItemsService = inject(
+    ExplorerUploadItemsService
+  );
+  private readonly fb = inject(FormBuilder);
 
   uploadHexString(path: string = '/') {
     return this.explorerUploadItemsService.uploadItems$.asObservable().pipe(
@@ -54,6 +56,7 @@ export class ExplorerUploadService {
                   const request =
                     this.explorerRequestBuilderService.buildHexChunkRequest(
                       item.file,
+                      itemForm.controls.filename.value,
                       chunk,
                       currentChunk,
                       item.chunks.length,
@@ -71,10 +74,6 @@ export class ExplorerUploadService {
                   ]);
                 }),
                 tap(([response, items, file, chunks, currentChunk]) => {
-                  console.log(
-                    file.name,
-                    100 * ((currentChunk + 1) / chunks.length)
-                  );
                   const uploadItems = items.controls
                     .map((item) => {
                       if (
@@ -104,8 +103,7 @@ export class ExplorerUploadService {
               )
             )
           )
-      ),
-      catchError((err) => throwError(() => err))
+      )
     );
   }
 }

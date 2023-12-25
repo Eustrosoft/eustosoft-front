@@ -56,6 +56,7 @@ import { ShareDialogComponent } from './explorer/components/share-dialog/share-d
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { RenameDialogComponent } from './explorer/components/rename-dialog/rename-dialog.component';
 import { FilesystemTableService } from './explorer/services/filesystem-table.service';
+import { MAT_SNACK_BAR_DEFAULT_OPTIONS } from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [
@@ -109,6 +110,7 @@ import { FilesystemTableService } from './explorer/services/filesystem-table.ser
     FilesystemTableService,
     Stack,
     { provide: LocationStrategy, useClass: CustomLocationStrategy },
+    { provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: { duration: 7000 } },
   ],
   bootstrap: [AppComponent],
 })

@@ -93,6 +93,8 @@
       "CANCEL_BUTTON_TEXT": "Отмена",
       "START_UPLOAD_BUTTON_TEXT": "Начать загрузку",
       "START_UPLOAD_BUTTON_TEXT_UPLOADING_STATE": "Файлы загружаются",
+      "FILENAME_INPUT_LABEL": "Имя файла",
+      "FILENAME_INPUT_PLACEHOLDER": "Имя файла",
       "SECURITY_LEVEL_SELECT_LABEL": "Уровень доступа",
       "DESCRIPTION_INPUT_LABEL": "Описание",
       "DESCRIPTION_INPUT_PLACEHOLDER": "Дополнительная информация",
