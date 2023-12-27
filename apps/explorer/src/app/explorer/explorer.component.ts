@@ -30,6 +30,7 @@ import {
   merge,
   Observable,
   of,
+  repeat,
   startWith,
   Subject,
   switchMap,
@@ -222,7 +223,8 @@ export class ExplorerComponent implements OnInit, OnDestroy {
         this.inputFileComponent.clear();
         this.closeOverlay();
         return EMPTY;
-      })
+      }),
+      repeat()
     );
   }
 
