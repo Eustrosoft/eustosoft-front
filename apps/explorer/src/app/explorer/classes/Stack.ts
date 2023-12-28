@@ -20,8 +20,7 @@ export class Stack<T> {
     this.stack$.next(stack);
     if (returnLastElementAfterPop) {
       return stack[stack.length - 1];
-    } else {
-      return value;
     }
+    return value;
   }
 }

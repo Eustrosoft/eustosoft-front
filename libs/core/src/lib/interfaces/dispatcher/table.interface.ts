@@ -5,8 +5,10 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
+import { CdkTableDataSourceInput } from '@angular/cdk/table';
+
 export interface Table {
-  dataSource: any;
+  dataSource: CdkTableDataSourceInput<unknown>;
   columnsToDisplay: string[];
   displayedColumns: string[];
   data_types: string[];

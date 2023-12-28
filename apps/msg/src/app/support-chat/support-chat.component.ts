@@ -165,7 +165,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
       const chatIdsWithChangedZver = objectForView.chats
         .filter((item) => {
           const arrayItem = chatUpdatesMap.get(item.zoid);
-          return arrayItem && arrayItem !== item.zver;
+          return arrayItem !== undefined && arrayItem !== item.zver;
         })
         .map((item) => item.zoid);
       // set hasUpdates prop if chat version had changed
@@ -214,7 +214,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
   chatFilterOptions$: Observable<DicValue[]> = this.msgDictionaryService
     .getStatusOptions()
     .pipe(
-      catchError((err: HttpErrorResponse) => {
+      catchError((_err: HttpErrorResponse) => {
         this.snackBar.open(
           this.translateService.instant(
             'MSG.ERRORS.CHAT_STATUS_FILTERS_FETCH_ERROR'
@@ -228,7 +228,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
   securityLevelOptions$: Observable<Option[]> = this.msgDictionaryService
     .getSecurityLevelOptions()
     .pipe(
-      catchError((err: HttpErrorResponse) => {
+      catchError((_err: HttpErrorResponse) => {
         this.snackBar.open(
           this.translateService.instant(
             'MSG.ERRORS.CHAT_SECURITY_LEVEL_OPTIONS_FETCH_ERROR'
@@ -242,7 +242,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
   scopeOptions$: Observable<Option[]> = this.msgDictionaryService
     .getScopeOptions()
     .pipe(
-      catchError((err: HttpErrorResponse) => {
+      catchError((_err: HttpErrorResponse) => {
         this.snackBar.open(
           this.translateService.instant(
             'MSG.ERRORS.CHAT_SECURITY_LEVEL_OPTIONS_FETCH_ERROR'
@@ -261,13 +261,13 @@ export class SupportChatComponent implements OnInit, OnDestroy {
   isSm = false;
 
   @HostListener('window:resize', ['$event'])
-  onWindowResize() {
+  onWindowResize(): void {
     this.setUpSidebar();
   }
 
   ngOnInit(): void {
     this.setUpSidebar();
-    this.msgSubjectsService.createSubject<void>(
+    this.msgSubjectsService.createSubject(
       MsgSubjects.MESSAGE_SUCCESSFULLY_SENT
     );
   }
@@ -392,9 +392,8 @@ export class SupportChatComponent implements OnInit, OnDestroy {
           this.fetchChatMessagesByChatId$.next(
             this.selectedChat?.zoid as number
           );
-          this.msgSubjectsService.performNext<void>(
-            MsgSubjects.MESSAGE_SUCCESSFULLY_SENT,
-            undefined
+          this.msgSubjectsService.performNext(
+            MsgSubjects.MESSAGE_SUCCESSFULLY_SENT
           );
         }),
         catchError((err: HttpErrorResponse) => {
@@ -529,7 +528,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  renameChat(chat: Chat) {
+  renameChat(chat: Chat): void {
     const dialogRef = this.dialog.open<
       RenameChatDialogComponent,
       RenameChatDialogDataInterface,
@@ -586,7 +585,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  deleteChat(chat: Chat) {
+  deleteChat(chat: Chat): void {
     const dialogRef = this.dialog.open<
       PromptDialogComponent,
       PromptDialogDataInterface,
@@ -631,7 +630,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  statusFilterChanged(statuses: MsgChatStatus[]) {
+  statusFilterChanged(statuses: MsgChatStatus[]): void {
     this.selectedStatuses = statuses;
     this.selectedChat = undefined;
     this.fetchChatsByStatuses$.next(statuses);

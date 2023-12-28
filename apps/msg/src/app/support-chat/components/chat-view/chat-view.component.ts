@@ -93,7 +93,7 @@ export class ChatViewComponent implements OnChanges, AfterViewInit {
   }
 
   scrollAtBottom(): boolean {
-    if (!this.messagesScrollableBlock) {
+    if (this.messagesScrollableBlock === undefined) {
       return false;
     }
     return (
@@ -105,11 +105,11 @@ export class ChatViewComponent implements OnChanges, AfterViewInit {
     );
   }
 
-  editMessage(message: ChatMessage) {
+  editMessage(message: ChatMessage): void {
     this.messageInEdit = message;
   }
 
-  saveEditedMessage(message: string) {
+  saveEditedMessage(message: string): void {
     const editedMessage: ChatMessage = {
       ...(this.messageInEdit as ChatMessage),
       content: message,
@@ -132,11 +132,11 @@ export class ChatViewComponent implements OnChanges, AfterViewInit {
     this.closeChatClicked.emit(this.selectedChat);
   }
 
-  editCanceled() {
+  editCanceled(): void {
     this.messageInEdit = undefined;
   }
 
-  reopenChat() {
+  reopenChat(): void {
     this.reopenChatClicked.emit(this.selectedChat);
   }
 }

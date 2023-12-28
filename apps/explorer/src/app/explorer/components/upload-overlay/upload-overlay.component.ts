@@ -16,7 +16,6 @@ import { UploadItemForm } from '@eustrosoft-front/core';
 import { UploadItemState } from '../../constants/enums/uploading-state.enum';
 import { catchError, EMPTY, Observable, shareReplay, tap } from 'rxjs';
 import { Option } from '@eustrosoft-front/common-ui';
-import { HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslateService } from '@ngx-translate/core';
 import { ExplorerDictionaryService } from '../../services/explorer-dictionary.service';
@@ -79,7 +78,7 @@ export class UploadOverlayComponent {
     .getSecurityLevelOptions()
     .pipe(
       shareReplay(1),
-      catchError((err: HttpErrorResponse) => {
+      catchError(() => {
         this.snackBar.open(
           this.translateService.instant(
             'EXPLORER.ERRORS.SECURITY_LEVEL_OPTIONS_FETCH_ERROR'

@@ -37,7 +37,7 @@ export class RequestComponent {
   @ViewChild(InputFileComponent) inputFileComponent!: InputFileComponent;
   public QueryTypes = DispatcherQueryTypes;
 
-  public queryTypeLabelText = `Query type`;
+  public queryTypeLabelText = 'Query type';
 
   deleteFile(index: number): void {
     const control = this.form.get('file');

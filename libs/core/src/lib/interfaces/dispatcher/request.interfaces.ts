@@ -13,7 +13,7 @@ export interface TisResponse {
 
 export interface TisRequest {
   qtisver: number;
-  requests: Array<FileRequest | ChunkedFileRequest>;
+  requests: FileRequest[] | ChunkedFileRequest[];
   qtisend: boolean;
 }
 
@@ -29,7 +29,7 @@ export interface TisResponseBody {
 export interface TisTableResult {
   columns: string[];
   data_types: string[];
-  rows: Array<Array<any>>;
+  rows: unknown[][];
   rows_count: number;
 }
 

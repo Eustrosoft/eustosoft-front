@@ -66,10 +66,10 @@ export class RequestsComponent implements OnInit {
       } as Option)
   );
 
-  public displayTypeLabelText = `Display as`;
-  public addFormButtonTitle = `Add request form`;
-  public removeFormButtonTitle = `Remove last request form`;
-  public submitButtonText = `Run`;
+  public displayTypeLabelText = 'Display as';
+  public addFormButtonTitle = 'Add request form';
+  public removeFormButtonTitle = 'Remove last request form';
+  public submitButtonText = 'Run';
 
   tables: Table[][] = [];
 

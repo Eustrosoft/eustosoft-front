@@ -22,6 +22,6 @@ export interface SqlResponse extends BaseDispatcherResponse {
 export interface DispatcherTableResult {
   columns: string[];
   data_types: string[];
-  rows: Array<Array<any>>;
+  rows: unknown[][];
   rows_count: number;
 }

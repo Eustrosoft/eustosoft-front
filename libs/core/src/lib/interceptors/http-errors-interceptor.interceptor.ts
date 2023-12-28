@@ -27,7 +27,7 @@ export class HttpErrorsInterceptorInterceptor implements HttpInterceptor {
       tap((event) => {
         if (event instanceof HttpResponse) {
           if (
-            event.body &&
+            Boolean(event.body) &&
             Array.isArray(event.body.r) &&
             event.body.r[0].e !== 0
           ) {

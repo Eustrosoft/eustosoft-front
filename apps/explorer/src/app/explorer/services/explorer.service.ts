@@ -187,7 +187,7 @@ export class ExplorerService {
       fileName: name,
       description,
     };
-    if (securityLevel) {
+    if (securityLevel !== undefined) {
       params.securityLevel = +securityLevel;
     }
     return this.explorerRequestBuilderService.buildCreateRequest(params).pipe(

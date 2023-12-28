@@ -33,7 +33,7 @@ export class ShareDialogComponent {
   @Output() shareOWikiUrlCopied = new EventEmitter<string>();
 
   @HostListener('keydown.enter', ['$event'])
-  onEnterKeydown(e: KeyboardEvent) {
+  onEnterKeydown(e: KeyboardEvent): void {
     e.stopPropagation();
     this.reject();
   }

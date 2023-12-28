@@ -127,7 +127,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
   protected readonly currentFolder$ = new BehaviorSubject<
     FileSystemObject | undefined
   >(undefined);
-  protected upload$!: Observable<any>;
+  protected upload$!: Observable<unknown>;
   protected fileControlChanges$!: Observable<
     FormArray<FormGroup<UploadItemForm>>
   >;
@@ -195,8 +195,8 @@ export class ExplorerComponent implements OnInit, OnDestroy {
           this.explorerUploadItemFormFactoryService.makeUploadItemsForm(
             files,
             this.path$.getValue(),
-            this.currentFolder$.getValue()?.securityLevel.value ??
-              SecurityLevels.PUBLIC_PLUS
+            (this.currentFolder$.getValue()?.securityLevel
+              .value as SecurityLevels) ?? SecurityLevels.PUBLIC_PLUS
           );
         this.explorerUploadItemsService.uploadItems$.next(formArray);
         // this.overlayHidden = false;
@@ -218,7 +218,6 @@ export class ExplorerComponent implements OnInit, OnDestroy {
         this.refresh$.next();
       }),
       catchError((err: HttpErrorResponse) => {
-        console.error(err);
         this.snackBar.open(err.error, 'close');
         this.inputFileComponent.clear();
         this.closeOverlay();
@@ -242,7 +241,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
     this.currentFolder$.next(fsElem);
   }
 
-  openByPath(path: string) {
+  openByPath(path: string): void {
     this.filesystemTableService.selection.clear();
     this.path$.next(path);
   }
@@ -294,8 +293,8 @@ export class ExplorerComponent implements OnInit, OnDestroy {
         nameInputDefaultValue:
           'EXPLORER.CREATE_FOLDER_DIALOG.NAME_INPUT_DEFAULT_VALUE',
         securityLevelSelectDefaultValue:
-          this.currentFolder$.getValue()?.securityLevel.value ??
-          SecurityLevels.PUBLIC_PLUS,
+          (this.currentFolder$.getValue()?.securityLevel
+            .value as SecurityLevels) ?? SecurityLevels.PUBLIC_PLUS,
         descriptionInputDefaultValue: '',
       },
       minWidth: '40vw',
@@ -390,7 +389,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
             of(to),
           ])
         ),
-        tap(([moveResponse, to]) => {
+        tap(([_, to]) => {
           const lastIndex = to[0].lastIndexOf('/');
           const path = to[0].substring(0, lastIndex) || '/';
           this.path$.next(path);
@@ -440,7 +439,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
             of(to),
           ])
         ),
-        tap(([copyResponse, to]) => {
+        tap(([_copyResponse, to]) => {
           const lastIndex = to[0].lastIndexOf('/');
           const path = to[0].substring(0, lastIndex);
           this.path$.next(path);

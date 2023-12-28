@@ -61,12 +61,13 @@ export class FilesystemTableComponent implements OnChanges, AfterViewInit {
       item: FileSystemObject,
       property: string
     ): string | number => {
+      const fsObj = item as never;
       switch (property) {
         case 'securityLevel':
           return item.securityLevel.displayText;
         default:
           // other items have primitive values
-          return (item as never)[property];
+          return fsObj[property];
       }
     };
   }
@@ -92,7 +93,7 @@ export class FilesystemTableComponent implements OnChanges, AfterViewInit {
     );
   }
 
-  selectRange(event: Event, row: FileSystemObject) {
+  selectRange(event: Event, row: FileSystemObject): void {
     if (
       event instanceof KeyboardEvent &&
       event.shiftKey &&

@@ -26,11 +26,11 @@ export class HoverShadowDirective {
 
   @HostBinding('style.cursor') cursor = 'pointer';
 
-  @HostListener('mouseenter') onMouseEnter() {
+  @HostListener('mouseenter') onMouseEnter(): void {
     this.addShadow();
   }
 
-  @HostListener('mouseleave') onMouseLeave() {
+  @HostListener('mouseleave') onMouseLeave(): void {
     this.removeShadow();
   }
 

@@ -51,7 +51,7 @@ import { SM_SCREEN_RESOLUTION } from './di/extra-small-screen-resolution.token';
 
         const browserLang = translateService.getBrowserCultureLang();
 
-        if (browserLang) {
+        if (browserLang !== undefined) {
           let closestCode: string | undefined = undefined;
           let maxMatches = 0;
 
@@ -64,7 +64,7 @@ import { SM_SCREEN_RESOLUTION } from './di/extra-small-screen-resolution.token';
               maxMatches = matches;
             }
           }
-          if (closestCode) {
+          if (closestCode !== undefined) {
             translateService.use(closestCode);
           } else {
             translateService.use(SupportedLanguages.EN_US);
@@ -72,8 +72,8 @@ import { SM_SCREEN_RESOLUTION } from './di/extra-small-screen-resolution.token';
         } else {
           translateService.use(SupportedLanguages.EN_US);
         }
-        console.log('Supported Languages:', translateService.getLangs());
-        console.log('Current Language:', translateService.currentLang);
+        console.warn('Supported Languages:', translateService.getLangs());
+        console.warn('Current Language:', translateService.currentLang);
         return translateService;
       },
       deps: [TranslateService],

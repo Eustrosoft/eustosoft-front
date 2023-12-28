@@ -58,11 +58,11 @@ export class ChatMessageInputComponent
   @ViewChild(TextareaComponent)
   messageInputComponent!: TextareaComponent;
 
-  private el = inject(ElementRef);
-  private msgSubjectsService = inject(MsgSubjectsService);
-  private destroy$ = new Subject<void>();
+  private readonly el = inject(ElementRef);
+  private readonly msgSubjectsService = inject(MsgSubjectsService);
+  private readonly destroy$ = new Subject<void>();
 
-  control = new FormControl('', {
+  protected control = new FormControl('', {
     nonNullable: true,
   });
 
@@ -80,7 +80,7 @@ export class ChatMessageInputComponent
       .subscribe();
 
     this.msgSubjectsService
-      .getSubjectObservable<void>(MsgSubjects.MESSAGE_SUCCESSFULLY_SENT)
+      .getSubjectObservable(MsgSubjects.MESSAGE_SUCCESSFULLY_SENT)
       .pipe(
         tap(() => {
           this.control.setValue('');
@@ -91,7 +91,7 @@ export class ChatMessageInputComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     if ('messageInEdit' in changes) {
-      this.control.setValue(this.messageInEdit?.content || '');
+      this.control.setValue(this.messageInEdit?.content ?? '');
       if (changes['messageInEdit'].currentValue) {
         this.focusOnInput();
       }

@@ -6,7 +6,7 @@
  */
 
 export interface Option {
-  value: any;
+  value: unknown;
   displayText: string;
   disabled: boolean;
 }

@@ -15,11 +15,11 @@ export class HoverCursorDirective {
   @Input() cursorType: CursorTypes = CursorTypes.POINTER;
   @HostBinding('style.cursor') cursor = this.cursorType;
 
-  @HostListener('mouseenter') onMouseEnter() {
+  @HostListener('mouseenter') onMouseEnter(): void {
     this.cursor = this.cursorType;
   }
 
-  @HostListener('mouseleave') onMouseLeave() {
+  @HostListener('mouseleave') onMouseLeave(): void {
     this.cursor = CursorTypes.DEFAULT;
   }
 }

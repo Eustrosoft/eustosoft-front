@@ -11,6 +11,7 @@ import {
   concatMap,
   filter,
   from,
+  Observable,
   of,
   switchMap,
   tap,
@@ -35,18 +36,15 @@ export class ExplorerUploadService {
   );
   private readonly fb = inject(FormBuilder);
 
-  uploadHexString(path: string = '/') {
+  uploadHexString(path: string = '/'): Observable<unknown> {
     return this.explorerUploadItemsService.uploadItems$.asObservable().pipe(
-      switchMap((items) => combineLatest([of(items), from(items.controls)])),
+      switchMap((items) => combineLatest([from(items.controls), of(items)])),
       filter(
-        ([itemsForms, itemForm]) =>
+        ([itemForm]) =>
           itemForm.controls.uploadItem.value.state !== UploadItemState.UPLOADED
       ),
-      filter(
-        ([itemsForms, itemForm]) =>
-          !itemForm.controls.uploadItem.value.cancelled
-      ),
-      concatMap(([itemsForms, itemForm]) =>
+      filter(([itemForm]) => !itemForm.controls.uploadItem.value.cancelled),
+      concatMap(([itemForm, itemsForms]) =>
         this.fileReaderService
           .splitOneToHexString(itemForm.controls.uploadItem.value)
           .pipe(
@@ -66,14 +64,14 @@ export class ExplorerUploadService {
                     );
 
                   return combineLatest([
-                    this.explorerService.uploadHexChunks(request, {}),
                     of(itemsForms),
                     of(item.file),
                     of(item.chunks),
                     of(currentChunk),
+                    this.explorerService.uploadHexChunks(request, {}),
                   ]);
                 }),
-                tap(([response, items, file, chunks, currentChunk]) => {
+                tap(([items, file, chunks, currentChunk]) => {
                   const uploadItems = items.controls
                     .map((item) => {
                       if (

@@ -51,28 +51,28 @@ export class ChatListComponent implements OnInit {
     });
   }
 
-  selectChat(chat: Chat) {
+  selectChat(chat: Chat): void {
     this.selectedChat = chat;
     this.chatSelected.emit(chat);
   }
 
-  createNewChat() {
+  createNewChat(): void {
     this.newChatCreateClicked.emit();
   }
 
-  renameChat(chat: Chat) {
+  renameChat(chat: Chat): void {
     this.renameChatClicked.emit(chat);
   }
 
-  deleteChat(chat: Chat) {
+  deleteChat(chat: Chat): void {
     this.deleteChatClicked.emit(chat);
   }
 
-  refreshChats() {
+  refreshChats(): void {
     this.refreshChatsClicked.emit();
   }
 
-  filterChange(event: MatCheckboxChange, value: string) {
+  filterChange(event: MatCheckboxChange, value: string): void {
     this.checkedStatuses[value] = event.checked;
     const codes = Object.keys(this.checkedStatuses).filter(
       (optionValue) => this.checkedStatuses[optionValue]

@@ -121,7 +121,6 @@ export class UploadDialogComponent {
     }
 
     if (
-      forms &&
       forms.controls[0].controls.description.value === '' &&
       !this.descriptionSuggestionShown
     ) {
@@ -136,15 +135,14 @@ export class UploadDialogComponent {
     }
 
     const isLowSecurityLevel =
-      forms &&
-      forms.controls[0].controls.securityLevel.value &&
+      forms.controls[0].controls.securityLevel.value !== undefined &&
       [
         SecurityLevels.SYSTEM,
         SecurityLevels.PUBLIC,
         SecurityLevels.PUBLIC_PLUS,
       ].includes(forms.controls[0].controls.securityLevel.value);
 
-    if (forms && isLowSecurityLevel && !this.securityLevelSuggestionShown) {
+    if (isLowSecurityLevel && !this.securityLevelSuggestionShown) {
       this.warningText =
         'EXPLORER.UPLOAD_DIALOG.SUGGESTIONS.SECURITY_LVL_WARNING';
       this.modifyUploadButtonState(

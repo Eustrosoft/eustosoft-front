@@ -52,7 +52,7 @@ export class CreateChatDialogComponent {
   });
 
   @HostListener('keydown.enter', ['$event'])
-  onEnterKeydown(event: KeyboardEvent) {
+  onEnterKeydown(event: KeyboardEvent): void {
     event.stopPropagation();
     this.formSubmitted.emit(this.form.getRawValue());
   }

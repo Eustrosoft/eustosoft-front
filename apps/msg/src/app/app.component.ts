@@ -5,7 +5,7 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { APP_CONFIG } from '@eustrosoft-front/config';
 import { take, tap } from 'rxjs';
 import {
@@ -19,6 +19,7 @@ import { PRECONFIGURED_TRANSLATE_SERVICE } from '@eustrosoft-front/core';
   selector: 'eustrosoft-front-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent {
   private readonly loginService = inject(LoginService);

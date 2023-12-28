@@ -60,7 +60,7 @@ export class MoveCopyDialogComponent implements AfterViewInit, OnDestroy {
     .pipe(switchMap((path) => this.explorerService.getContents(path)));
 
   @HostListener('keydown.enter', ['$event'])
-  onEnterKeydown(e: KeyboardEvent) {
+  onEnterKeydown(e: KeyboardEvent): void {
     e.stopPropagation();
     this.resolve();
   }
@@ -142,14 +142,13 @@ export class MoveCopyDialogComponent implements AfterViewInit, OnDestroy {
 
   navigateBack(): void {
     this.matSelectionList.deselectAll();
-    this.path$.next(this.navigationHistoryStack.pop(true) || '/');
+    this.path$.next(this.navigationHistoryStack.pop(true) ?? '/');
   }
 
   createNewFolder(): void {
     /** TODO
      *   Implement
      */
-    return;
   }
 
   reject(): void {

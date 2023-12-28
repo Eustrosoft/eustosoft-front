@@ -52,7 +52,7 @@ export class CreateDialogComponent {
   });
 
   @HostListener('keydown.enter', ['$event'])
-  onEnterKeydown(e: KeyboardEvent) {
+  onEnterKeydown(e: KeyboardEvent): void {
     e.stopPropagation();
     this.dialogRef.close(this.form.getRawValue());
   }

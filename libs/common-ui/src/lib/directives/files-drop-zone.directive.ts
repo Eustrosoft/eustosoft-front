@@ -23,7 +23,7 @@ export class FilesDropZoneDirective {
   @Input() fsObjType!: FileSystemObjectTypes;
   @Output() filesDropped = new EventEmitter<File[]>();
 
-  @HostListener('dragover', ['$event']) onDragOver(event: DragEvent) {
+  @HostListener('dragover', ['$event']) onDragOver(event: DragEvent): void {
     event.preventDefault();
     event.stopPropagation();
     if (this.fsObjType === FileSystemObjectTypes.DIRECTORY) {
@@ -31,13 +31,13 @@ export class FilesDropZoneDirective {
     }
   }
 
-  @HostListener('dragleave', ['$event']) onDragLeave(event: DragEvent) {
+  @HostListener('dragleave', ['$event']) onDragLeave(event: DragEvent): void {
     event.preventDefault();
     event.stopPropagation();
     this.filesOver = false;
   }
 
-  @HostListener('drop', ['$event']) onDrop(event: DragEvent) {
+  @HostListener('drop', ['$event']) onDrop(event: DragEvent): void {
     event.preventDefault();
     event.stopPropagation();
     this.filesOver = false;

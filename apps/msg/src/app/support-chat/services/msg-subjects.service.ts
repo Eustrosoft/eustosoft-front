@@ -11,20 +11,23 @@ import { MsgSubjects } from '../contants/enums/msg-subjects.enum';
 
 @Injectable()
 export class MsgSubjectsService {
-  private subjects = new Map<MsgSubjects, Subject<any>>();
+  private readonly subjects = new Map<MsgSubjects, Subject<never>>();
 
-  createSubject<T>(notifier: MsgSubjects): void {
+  createSubject<T extends never>(notifier: MsgSubjects): void {
     this.subjects.set(notifier, new Subject<T>());
   }
 
-  performNext<T>(notifier: MsgSubjects, payload: T): void {
+  performNext<T extends never>(
+    notifier: MsgSubjects,
+    payload: T = {} as never
+  ): void {
     const subject = this.subjects.get(notifier);
     if (subject) {
       subject.next(payload);
     }
   }
 
-  getSubjectObservable<T>(notifier: MsgSubjects): Observable<T> {
+  getSubjectObservable<T extends never>(notifier: MsgSubjects): Observable<T> {
     const subject = this.subjects.get(notifier);
     if (subject) {
       return subject.asObservable();
@@ -36,9 +39,8 @@ export class MsgSubjectsService {
     const subject = this.subjects.get(notifier);
     if (subject) {
       return subject.complete();
-    } else {
-      console.error('No such subject');
     }
+    console.error('No such subject');
   }
 
   completeAll(): void {
