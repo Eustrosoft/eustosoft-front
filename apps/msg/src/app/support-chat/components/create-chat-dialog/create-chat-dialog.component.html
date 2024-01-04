@@ -4,90 +4,84 @@
   ~ This file is part of eustrosoft-front project.
   ~ See the LICENSE file at the project root for licensing information.
   -->
-
-<div class="container">
-  <div class="row">
-    <h1 class="col-12 m-0" mat-dialog-title>{{ data.title }}</h1>
-  </div>
-  <div class="row">
-    <div class="py-2" mat-dialog-content>
-      <div class="col-12">
-        <eustrosoft-front-input
-          [label]="data.subjectInputLabel"
-          [fieldAppearance]="'outline'"
-          [control]="form.controls.subject"
-        ></eustrosoft-front-input>
-      </div>
-      <div class="col-12">
-        <eustrosoft-front-textarea
-          [label]="data.messageInputLabel"
-          [fieldAppearance]="'outline'"
-          [control]="form.controls.message"
-        ></eustrosoft-front-textarea>
-      </div>
-      <ng-container
-        *ngIf="{
-          securityLevelOptions: data.securityLevelOptions$ | async,
-          scopeOptions: data.scopeOptions$ | async
-        } as vm"
-      >
-        <div class="col-12">
-          <mat-accordion>
-            <mat-expansion-panel>
-              <mat-expansion-panel-header>
-                <mat-panel-title>
-                  {{
-                    'MSG.CREATE_CHAT_MODAL.EXTRA_OPTIONS_PANEL_TITLE'
-                      | translate
-                  }}
-                </mat-panel-title>
-                <mat-panel-description>
-                  {{
-                    'MSG.CREATE_CHAT_MODAL.EXTRA_OPTIONS_PANEL_DESCRIPTION'
-                      | translate
-                  }}
-                </mat-panel-description>
-              </mat-expansion-panel-header>
-              <eustrosoft-front-select
-                [label]="
-                  'MSG.CREATE_CHAT_MODAL.EXTRA_OPTIONS_PANEL_SECURITY_LEVEL_LABEL'
-                    | translate
-                "
-                [control]="form.controls.securityLevel"
-                [options]="vm.securityLevelOptions || []"
-                [fieldAppearance]="'fill'"
-                [color]="'primary'"
-              ></eustrosoft-front-select>
-              <eustrosoft-front-select
-                [label]="
-                  'MSG.CREATE_CHAT_MODAL.EXTRA_OPTIONS_PANEL_SCOPE_LABEL'
-                    | translate
-                "
-                [control]="form.controls.scope"
-                [options]="vm.scopeOptions || []"
-                [fieldAppearance]="'fill'"
-                [color]="'primary'"
-              ></eustrosoft-front-select>
-            </mat-expansion-panel>
-          </mat-accordion>
-        </div>
-      </ng-container>
-    </div>
-  </div>
-  <div class="row">
-    <div [align]="'end'" mat-dialog-actions>
+<div class="flex flex-column g-3">
+  <h1 class="m-0 px-3 pb-0" mat-dialog-title>
+    {{ 'MSG.CREATE_CHAT_MODAL.TITLE_TEXT' | translate }}
+  </h1>
+  <div class="flex flex-column g-3 px-3 py-0" mat-dialog-content>
+    <eustrosoft-front-input
+      [label]="'MSG.CREATE_CHAT_MODAL.SUBJECT_LABEL_TEXT' | translate"
+      [fieldAppearance]="'outline'"
+      [control]="form.controls.subject"
+      [hideSubscriptWrapper]="true"
+      class="pt-2"
+    ></eustrosoft-front-input>
+    <eustrosoft-front-textarea
+      [label]="'MSG.CREATE_CHAT_MODAL.MESSAGE_LABEL_TEXT' | translate"
+      [fieldAppearance]="'outline'"
+      [control]="form.controls.message"
+      [hideSubscriptWrapper]="true"
+    ></eustrosoft-front-textarea>
+    <ng-container
+      *ngIf="{
+        securityLevelOptions: data.securityLevelOptions$ | async,
+        scopeOptions: data.scopeOptions$ | async
+      } as vm"
+    >
+      <mat-accordion>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              {{
+                'MSG.CREATE_CHAT_MODAL.EXTRA_OPTIONS_PANEL_TITLE' | translate
+              }}
+            </mat-panel-title>
+            <mat-panel-description>
+              {{
+                'MSG.CREATE_CHAT_MODAL.EXTRA_OPTIONS_PANEL_DESCRIPTION'
+                  | translate
+              }}
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <eustrosoft-front-select
+            [label]="
+              'MSG.CREATE_CHAT_MODAL.EXTRA_OPTIONS_PANEL_SECURITY_LEVEL_LABEL'
+                | translate
+            "
+            [control]="form.controls.securityLevel"
+            [options]="vm.securityLevelOptions || []"
+            [fieldAppearance]="'fill'"
+            [color]="'primary'"
+          ></eustrosoft-front-select>
+          <eustrosoft-front-select
+            [label]="
+              'MSG.CREATE_CHAT_MODAL.EXTRA_OPTIONS_PANEL_SCOPE_LABEL'
+                | translate
+            "
+            [control]="form.controls.scope"
+            [options]="vm.scopeOptions || []"
+            [fieldAppearance]="'fill'"
+            [color]="'primary'"
+          ></eustrosoft-front-select>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </ng-container>
+    <div
+      class="flex flex-wrap-nowrap g-2 pb-3 px-0 pt-0"
+      [align]="'end'"
+      mat-dialog-actions
+    >
       <eustrosoft-front-button
         [buttonType]="'button'"
         [buttonStyleType]="'flat'"
-        [buttonText]="data.cancelButtonText"
+        [buttonText]="'MSG.CREATE_CHAT_MODAL.CANCEL_BUTTON_TEXT' | translate"
         (clicked)="reject()"
       >
       </eustrosoft-front-button>
-      <span class="buttons-spacer"></span>
       <eustrosoft-front-button
         [buttonType]="'button'"
         [buttonStyleType]="'flat'"
-        [buttonText]="data.submitButtonText"
+        [buttonText]="'MSG.CREATE_CHAT_MODAL.SUBMIT_BUTTON_TEXT' | translate"
         [color]="'primary'"
         [disabled]="form.invalid || form.disabled"
         (clicked)="resolve()"

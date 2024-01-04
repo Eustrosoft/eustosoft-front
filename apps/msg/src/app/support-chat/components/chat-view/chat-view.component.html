@@ -5,25 +5,25 @@
   ~ See the LICENSE file at the project root for licensing information.
   -->
 
-<div class="d-flex flex-column h-100">
-  <div class="flex-grow-0 flex-shrink-0 bg-secondary bg-opacity-25 rounded-top">
+<div class="flex flex-auto flex-column">
+  <div class="flex-grow-0 flex-shrink-0 brt-2 grey-background-header">
     <div
-      class="d-flex align-items-center justify-content-between"
+      class="flex align-items-center justify-content-between"
       [class.p-1]="selectedChat"
     >
-      <div class="d-flex align-items-center">
+      <div class="flex align-items-center">
         <eustrosoft-front-button
           [buttonType]="'button'"
           [buttonStyleType]="'icon'"
           [iconName]="'menu'"
-          class="d-sm-none"
+          [class.display-none]="!isSm"
           (clicked)="collapseClicked.emit()"
         ></eustrosoft-front-button>
         <h2 class="mb-0">
           {{ selectedChat && selectedChat.subject }}
         </h2>
       </div>
-      <div class="d-flex align-items-center">
+      <div class="flex align-items-center">
         <eustrosoft-front-button
           [buttonType]="'button'"
           [buttonStyleType]="'icon'"
@@ -56,10 +56,10 @@
       </div>
     </div>
   </div>
-  <div class="flex-grow-1 h-100 overflow-auto bg-secondary bg-opacity-10">
+  <div class="flex flex-auto overflow-auto grey-background-chat">
     <div
       *ngIf="selectedChat"
-      class="d-flex flex-column justify-content-between h-100"
+      class="flex flex-auto flex-column justify-content-between"
     >
       <div class="overflow-auto" #messagesScrollableBlock>
         <ng-container
@@ -67,7 +67,7 @@
         >
           <ng-container *ngIf="userInfo$ | async as info">
             <ng-container *ngIf="+info.userId === msg.user.id">
-              <div class="d-flex justify-content-end m-2 list-message-item">
+              <div class="flex justify-content-end m-2">
                 <ng-container
                   [ngTemplateOutlet]="msgTemplate"
                   [ngTemplateOutletContext]="{ $implicit: msg }"
@@ -75,7 +75,7 @@
               </div>
             </ng-container>
             <ng-container *ngIf="+info.userId !== msg.user.id">
-              <div class="d-flex m-2 list-message-item">
+              <div class="flex m-2">
                 <ng-container
                   [ngTemplateOutlet]="msgTemplate"
                   [ngTemplateOutletContext]="{ $implicit: msg }"
@@ -86,9 +86,7 @@
         </ng-container>
       </div>
       <ng-container *ngIf="!(selectedChatMessages.length > 0)">
-        <div
-          class="d-flex flex-column align-items-center justify-content-center h-100"
-        >
+        <div class="flex flex-column align-items-center justify-content-center">
           <h2>{{ 'MSG.NO_MESSAGES_CAPTION_TEXT' | translate }}</h2>
         </div>
       </ng-container>
@@ -111,7 +109,7 @@
           (messageEditCanceled)="editCanceled()"
           (messageEdited)="saveEditedMessage($event)"
           (messageDeleted)="deleteMessage($event)"
-          class="d-flex align-items-center p-3 pe-1"
+          class="flex align-items-center p-3 pe-1"
         ></eustrosoft-front-chat-message-input>
       </ng-container>
     </div>
@@ -119,12 +117,10 @@
 </div>
 <ng-template #msgTemplate let-msg>
   <ng-container *ngIf="userInfo$ | async as info">
-    <div class="d-flex flex-column mw-45">
-      <div class="p-2 bg-light rounded-1">
+    <div class="flex flex-column max-width-45">
+      <div class="p-2 bg-white br-1">
         <div class="text-break" [innerHTML]="msg.content | newLineToBr"></div>
-        <div
-          class="d-flex align-items-center justify-content-between flex-wrap"
-        >
+        <div class="flex align-items-center justify-content-between flex-wrap">
           <span class="fw-light fst-italic me-2">
             {{ msg.user.id === info.userId ? 'me' : msg.user.fullName }}
           </span>
@@ -157,7 +153,7 @@
 </ng-template>
 
 <ng-template #inactiveChatTemplate>
-  <div class="d-flex justify-content-center align-items-center p-3 pe-1">
+  <div class="flex justify-content-center align-items-center p-3 pe-1">
     <h4>{{ 'MSG.INACTIVE_TICKET_CAPTION_TEXT' | translate }}</h4>
   </div>
 </ng-template>

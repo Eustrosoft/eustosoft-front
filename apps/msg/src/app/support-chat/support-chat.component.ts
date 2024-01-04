@@ -26,6 +26,7 @@ import {
   Observable,
   of,
   pairwise,
+  shareReplay,
   startWith,
   switchMap,
   take,
@@ -57,7 +58,6 @@ import {
   QtisRequestResponseInterface,
   SendChatMessageRequest,
   SendChatMessageResponse,
-  SM_SCREEN_RESOLUTION,
   UpdateChatListRequest,
   UpdateChatListResponse,
   ViewChatsRequest,
@@ -68,6 +68,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslateService } from '@ngx-translate/core';
 import {
+  BreakpointsService,
   Option,
   PromptDialogComponent,
   PromptDialogDataInterface,
@@ -88,15 +89,15 @@ import { MsgMapperService } from './services/msg-mapper.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SupportChatComponent implements OnInit, OnDestroy {
-  private dispatchService = inject(DispatchService);
-  private msgRequestBuilderService = inject(MsgRequestBuilderService);
-  private msgDictionaryService = inject(MsgDictionaryService);
-  private msgSubjectsService = inject(MsgSubjectsService);
-  private msgMapperService = inject(MsgMapperService);
-  private dialog = inject(MatDialog);
-  private snackBar = inject(MatSnackBar);
-  private translateService = inject(TranslateService);
-  private smScreenRes = inject(SM_SCREEN_RESOLUTION);
+  private readonly dispatchService = inject(DispatchService);
+  private readonly msgRequestBuilderService = inject(MsgRequestBuilderService);
+  private readonly msgDictionaryService = inject(MsgDictionaryService);
+  private readonly msgSubjectsService = inject(MsgSubjectsService);
+  private readonly msgMapperService = inject(MsgMapperService);
+  private readonly dialog = inject(MatDialog);
+  private readonly snackBar = inject(MatSnackBar);
+  private readonly translateService = inject(TranslateService);
+  private readonly breakpointsService = inject(BreakpointsService);
 
   fetchChatsByStatuses$ = new BehaviorSubject<MsgChatStatus[]>([]);
   fetchChatMessagesByChatId$ = new BehaviorSubject<number | undefined>(
@@ -186,26 +187,24 @@ export class SupportChatComponent implements OnInit, OnDestroy {
         this.fetchChatMessagesByChatId$.next(this.selectedChat.zoid);
       }
       return of(structuredClone(objectForView));
-    })
+    }),
+    shareReplay(1)
   );
 
   chatMessages$: Observable<{
     messages: ChatMessage[] | undefined;
     isLoading: boolean;
     isError: boolean;
-  }> = combineLatest([
-    this.fetchChatMessagesByChatId$.pipe(
-      filter((zoid): zoid is number => typeof zoid !== 'undefined')
-    ),
-  ]).pipe(
-    startWith([1, 1]),
+  }> = this.fetchChatMessagesByChatId$.asObservable().pipe(
+    filter((zoid): zoid is number => typeof zoid !== 'undefined'),
+    startWith(1),
     pairwise(),
     switchMap(([first, second]) =>
       iif(
         // If selected chat zoid is changed - fetchWithPreloader, if not - fetchWithoutPreloader
-        () => first[0] === second[0],
-        this.msgMapperService.fetchChatMessagesWithoutPreloader(second[0]),
-        this.msgMapperService.fetchChatMessagesWithPreloader(second[0])
+        () => first === second,
+        this.msgMapperService.fetchChatMessagesWithoutPreloader(second),
+        this.msgMapperService.fetchChatMessagesWithPreloader(second)
       )
     )
   );
@@ -258,7 +257,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
   selectedChat: Chat | undefined = undefined;
   selectedStatuses: MsgChatStatus[] = [];
   isCollapsed = true;
-  isSm = false;
+  protected isSm = this.breakpointsService.isSm();
 
   @HostListener('window:resize', ['$event'])
   onWindowResize(): void {
@@ -277,7 +276,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
   }
 
   setUpSidebar(): void {
-    if (window.innerWidth <= this.smScreenRes) {
+    if (this.breakpointsService.isSm()) {
       this.isCollapsed = true;
       this.isSm = true;
     } else {
@@ -310,26 +309,10 @@ export class SupportChatComponent implements OnInit, OnDestroy {
       CreateChatDialogReturnDataInterface
     >(CreateChatDialogComponent, {
       data: {
-        title: this.translateService.instant(
-          'MSG.CREATE_CHAT_MODAL.TITLE_TEXT'
-        ),
-        subjectInputLabel: this.translateService.instant(
-          'MSG.CREATE_CHAT_MODAL.SUBJECT_LABEL_TEXT'
-        ),
-        messageInputLabel: this.translateService.instant(
-          'MSG.CREATE_CHAT_MODAL.MESSAGE_LABEL_TEXT'
-        ),
-        cancelButtonText: this.translateService.instant(
-          'MSG.CREATE_CHAT_MODAL.CANCEL_BUTTON_TEXT'
-        ),
-        submitButtonText: this.translateService.instant(
-          'MSG.CREATE_CHAT_MODAL.SUBMIT_BUTTON_TEXT'
-        ),
         securityLevelOptions$: this.securityLevelOptions$,
         scopeOptions$: this.scopeOptions$,
       },
-      minHeight: '25vh',
-      minWidth: '40vw',
+      width: this.isSm ? '100vw' : '50vw',
     });
 
     const dialogClosed$ = dialogRef.afterClosed();
@@ -535,22 +518,9 @@ export class SupportChatComponent implements OnInit, OnDestroy {
       RenameChatDialogReturnDataInterface
     >(RenameChatDialogComponent, {
       data: {
-        title: this.translateService.instant(
-          'MSG.RENAME_CHAT_MODAL.TITLE_TEXT'
-        ),
-        subjectInputLabel: this.translateService.instant(
-          'MSG.RENAME_CHAT_MODAL.SUBJECT_LABEL_TEXT'
-        ),
         currentChatSubject: chat.subject,
-        cancelButtonText: this.translateService.instant(
-          'MSG.RENAME_CHAT_MODAL.CANCEL_BUTTON_TEXT'
-        ),
-        submitButtonText: this.translateService.instant(
-          'MSG.RENAME_CHAT_MODAL.SUBMIT_BUTTON_TEXT'
-        ),
       },
-      minHeight: '20vh',
-      minWidth: '40vw',
+      width: this.isSm ? '100vw' : '50vw',
     });
 
     dialogRef

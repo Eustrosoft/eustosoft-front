@@ -58,6 +58,14 @@
   .br-#{$size} {
     border-radius: $value !important;
   }
+  .brs-#{$size} {
+    border-bottom-left-radius: $value !important;
+    border-top-left-radius: $value !important;
+  }
+  .brt-#{$size} {
+    border-top-left-radius: $value !important;
+    border-top-right-radius: $value !important;
+  }
   // font-size
   .fs-#{$size} {
     font-size: $value !important;
@@ -71,6 +79,12 @@
   .h-#{$size} {
     height: $value !important;
   }
+  .max-width-#{$size} {
+    max-width: $value !important;
+  }
+  .max-height-#{$size} {
+    max-height: $value !important;
+  }
 }
 
 $flex-options: (
@@ -79,6 +93,18 @@ $flex-options: (
   ),
   flex-auto: (
     flex: auto,
+  ),
+  flex-shrink-0: (
+    flex-shrink: 0,
+  ),
+  flex-shrink-1: (
+    flex-shrink: 1,
+  ),
+  flex-grow-0: (
+    flex-grow: 0,
+  ),
+  flex-grow-1: (
+    flex-grow: 1,
   ),
   flex-1: (
     flex: 1,
@@ -134,6 +160,17 @@ $flex-options: (
 );
 
 @include mixins.generate-utility-classes($flex-options);
+
+$display-options: (
+  display-none: (
+    display: none,
+  ),
+  display-block: (
+    display: block,
+  ),
+);
+
+@include mixins.generate-utility-classes($display-options);
 
 $flex-basis-options: (
   auto: (
@@ -320,6 +357,20 @@ $font-weight-options: (
 
 @include mixins.generate-utility-classes($font-weight-options);
 
+$font-style-options: (
+  fst-normal: (
+    font-style: normal,
+  ),
+  fst-italic: (
+    font-style: italic,
+  ),
+  fst-oblique: (
+    font-style: oblique,
+  ),
+);
+
+@include mixins.generate-utility-classes($font-style-options);
+
 $line-height-options: (
   lh-normal: (
     line-height: normal,
@@ -347,4 +398,13 @@ $outline-options: (
 
 .text-truncate {
   @extend .whitespace-nowrap, .overflow-hidden, .text-overflow-ellipsis;
+}
+
+.text-break {
+  word-wrap: break-word !important;
+  word-break: break-word !important;
+}
+
+.bg-white {
+  background-color: rgba(255, 255, 255, 1) !important;
 }

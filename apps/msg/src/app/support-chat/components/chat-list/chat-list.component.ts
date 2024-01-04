@@ -9,6 +9,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
+  inject,
   Input,
   OnInit,
   Output,
@@ -21,6 +22,7 @@ import {
   trackByZridFunction,
 } from '@eustrosoft-front/core';
 import { MatCheckboxChange } from '@angular/material/checkbox';
+import { BreakpointsService } from '@eustrosoft-front/common-ui';
 
 @Component({
   selector: 'eustrosoft-front-chat-list',
@@ -42,8 +44,11 @@ export class ChatListComponent implements OnInit {
   @Output() refreshChatsClicked = new EventEmitter<void>();
   @Output() statusFilterChanged = new EventEmitter<MsgChatStatus[]>();
 
-  trackByFn = trackByZridFunction;
-  checkedStatuses: { [key: string]: boolean } = {};
+  private readonly breakpointsService = inject(BreakpointsService);
+
+  protected trackByFn = trackByZridFunction;
+  protected checkedStatuses: { [key: string]: boolean } = {};
+  protected isSm = this.breakpointsService.isSm();
 
   ngOnInit(): void {
     this.chatStatusFilterOptions.forEach((option) => {

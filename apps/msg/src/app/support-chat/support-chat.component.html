@@ -5,55 +5,26 @@
   ~ See the LICENSE file at the project root for licensing information.
   -->
 
-<div class="container-fluid mt-3">
-  <div class="row h-100">
-    <div
-      [ngClass]="{ sidebar: isSm, collapsed: isCollapsed }"
-      class="col-6 col-sm-4 col-md-4 col-lg-4 col-xl-4 pe-0 h-100"
-    >
-      <ng-container
-        *ngIf="{
-          chats: chats$ | async,
-          userSeenChatVersions: userSeenChatVersions$ | async,
-          chatsStatusFilterOptions: chatFilterOptions$ | async
-        } as chatVm"
-      >
-        <ng-container *ngIf="chatVm.chats?.isLoading && !chatVm.chats?.isError">
-          <div
-            class="d-flex flex-column align-items-center justify-content-center h-100"
-          >
-            <eustrosoft-front-preloader></eustrosoft-front-preloader>
-          </div>
-        </ng-container>
-        <ng-container *ngIf="chatVm.chats?.isError">
-          <div
-            class="d-flex flex-column align-items-center justify-content-center h-100"
-          >
-            <p>{{ 'MSG.ERRORS.CHATS_FETCH_ERROR' | translate }}</p>
-          </div>
-        </ng-container>
-        <ng-container *ngIf="chatVm.chats?.chats as chats">
-          <eustrosoft-front-chat-list
-            [chats]="chats"
-            [selectedChat]="selectedChat"
-            [removeBorderRadius]="isSm"
-            [chatStatusFilterOptions]="chatVm.chatsStatusFilterOptions || []"
-            (chatSelected)="chatSelected($event)"
-            (collapseClicked)="toggleSidebar()"
-            (newChatCreateClicked)="createNewChat()"
-            (renameChatClicked)="renameChat($event)"
-            (deleteChatClicked)="deleteChat($event)"
-            (refreshChatsClicked)="refreshChats()"
-            (statusFilterChanged)="statusFilterChanged($event)"
-            class="h-100"
-          ></eustrosoft-front-chat-list>
-        </ng-container>
-      </ng-container>
+<mat-drawer-container class="flex flex-auto" [hasBackdrop]="true">
+  <mat-drawer
+    class="flex flex-auto"
+    #drawer
+    [mode]="'over'"
+    [position]="'start'"
+  >
+    <div class="flex flex-auto">
+      <ng-container *ngTemplateOutlet="chatListTemplate"></ng-container>
     </div>
-    <div class="col-12 col-sm-8 col-md-8 col-lg-8 col-xl-8 h-100">
+  </mat-drawer>
+  <mat-drawer-content class="flex flex-auto">
+    <div class="flex flex-auto g-2 overflow-auto mt-3 mx-2">
+      <div class="flex flex-basis-30 flex-shrink-0" [class.display-none]="isSm">
+        <ng-container *ngTemplateOutlet="chatListTemplate"></ng-container>
+      </div>
+
       <ng-container *ngIf="!selectedChat">
         <div
-          class="d-flex flex-column align-items-center justify-content-center h-100"
+          class="flex flex-auto flex-column align-items-center justify-content-center"
         >
           <h2>{{ 'MSG.SELECT_TICKET_CAPTION_TEXT' | translate }}</h2>
           <ng-container *ngIf="isSm">
@@ -63,28 +34,30 @@
               [buttonType]="'button'"
               [buttonText]="'MSG.OPEN_MENU_BUTTON_TEXT' | translate"
               [title]="'MSG.OPEN_MENU_BUTTON_TEXT' | translate"
-              (clicked)="toggleSidebar()"
+              (clicked)="drawer.toggle()"
             ></eustrosoft-front-button>
           </ng-container>
         </div>
       </ng-container>
       <ng-container
-        *ngIf="{
-          chatMessages: chatMessages$ | async
-        } as chatMessagesVm"
+        *ngIf="
+          selectedChat && {
+            chatMessages: chatMessages$ | async
+          } as chatMessagesVm
+        "
       >
         <ng-container
           *ngIf="chatMessagesVm.chatMessages?.isLoading && selectedChat"
         >
           <div
-            class="d-flex flex-column align-items-center justify-content-center h-100"
+            class="flex flex-auto flex-column align-items-center justify-content-center"
           >
             <eustrosoft-front-preloader></eustrosoft-front-preloader>
           </div>
         </ng-container>
         <ng-container *ngIf="chatMessagesVm.chatMessages?.isError">
           <div
-            class="d-flex flex-column align-items-center justify-content-center h-100"
+            class="flex flex-auto flex-column align-items-center justify-content-center"
           >
             <p>{{ 'MSG.ERRORS.CHAT_MESSAGES_FETCH_ERROR' | translate }}</p>
           </div>
@@ -93,21 +66,55 @@
           <eustrosoft-front-chat-view
             [selectedChat]="selectedChat"
             [selectedChatMessages]="messages"
-            (collapseClicked)="toggleSidebar()"
+            (collapseClicked)="drawer.toggle()"
             (messageSent)="sendMessage($event)"
             (messageEdited)="editMessage($event)"
             (messageDeleted)="deleteMessage($event)"
             (closeChatClicked)="closeChat($event)"
             (reopenChatClicked)="reopenChat($event)"
-            class="h-100"
+            class="flex flex-auto"
           ></eustrosoft-front-chat-view>
         </ng-container>
       </ng-container>
     </div>
-  </div>
-</div>
+  </mat-drawer-content>
+</mat-drawer-container>
 
-<div
-  (click)="toggleSidebar()"
-  [ngClass]="{ backdrop: !isCollapsed && isSm }"
-></div>
+<ng-template #chatListTemplate>
+  <ng-container
+    *ngIf="{
+      chats: chats$ | async,
+      userSeenChatVersions: userSeenChatVersions$ | async,
+      chatsStatusFilterOptions: chatFilterOptions$ | async
+    } as chatVm"
+  >
+    <ng-container *ngIf="chatVm.chats?.isLoading && !chatVm.chats?.isError">
+      <div
+        class="flex flex-auto flex-column align-items-center justify-content-center"
+      >
+        <eustrosoft-front-preloader></eustrosoft-front-preloader>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="chatVm.chats?.isError">
+      <div class="flex flex-column align-items-center justify-content-center">
+        <p>{{ 'MSG.ERRORS.CHATS_FETCH_ERROR' | translate }}</p>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="chatVm.chats?.chats as chats">
+      <eustrosoft-front-chat-list
+        [chats]="chats"
+        [selectedChat]="selectedChat"
+        [removeBorderRadius]="isSm"
+        [chatStatusFilterOptions]="chatVm.chatsStatusFilterOptions || []"
+        (chatSelected)="chatSelected($event)"
+        (collapseClicked)="drawer.toggle()"
+        (newChatCreateClicked)="createNewChat()"
+        (renameChatClicked)="renameChat($event)"
+        (deleteChatClicked)="deleteChat($event)"
+        (refreshChatsClicked)="refreshChats()"
+        (statusFilterChanged)="statusFilterChanged($event)"
+        class="flex-auto"
+      ></eustrosoft-front-chat-list>
+    </ng-container>
+  </ng-container>
+</ng-template>

@@ -6,9 +6,5 @@
  */
 
 export interface RenameChatDialogDataInterface {
-  title: string;
-  subjectInputLabel: string;
   currentChatSubject: string;
-  cancelButtonText: string;
-  submitButtonText: string;
 }

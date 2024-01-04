@@ -27,6 +27,7 @@ import {
 } from '@eustrosoft-front/core';
 import { AuthenticationService } from '@eustrosoft-front/security';
 import { shareReplay } from 'rxjs';
+import { BreakpointsService } from '@eustrosoft-front/common-ui';
 
 @Component({
   selector: 'eustrosoft-front-chat-view',
@@ -54,14 +55,16 @@ export class ChatViewComponent implements OnChanges, AfterViewInit {
   @ViewChild('messagesScrollableBlock')
   messagesScrollableBlock!: ElementRef<HTMLDivElement>;
 
-  private authenticationService = inject(AuthenticationService);
-  private cdRef = inject(ChangeDetectorRef);
+  private readonly authenticationService = inject(AuthenticationService);
+  private readonly cdRef = inject(ChangeDetectorRef);
+  private readonly breakpointsService = inject(BreakpointsService);
 
-  messageInEdit: ChatMessage | undefined = undefined;
-  MSG_CHAT_STATUS = MsgChatStatus;
-  trackByFn = trackByZridFunction;
+  protected messageInEdit: ChatMessage | undefined = undefined;
+  protected readonly MSG_CHAT_STATUS = MsgChatStatus;
+  protected trackByFn = trackByZridFunction;
+  protected isSm = this.breakpointsService.isSm();
 
-  userInfo$ = this.authenticationService.userInfo$
+  protected userInfo$ = this.authenticationService.userInfo$
     .asObservable()
     .pipe(shareReplay(1));
 

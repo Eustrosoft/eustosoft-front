@@ -8,11 +8,11 @@
 /* You can add global styles to this file, and also import other style files */
 
 @use 'libs/common-ui/src/lib/styles/material.override';
-@use 'libs/common-ui/src/lib/styles/bootstrap.override';
 @use 'libs/common-ui/src/lib/styles/global';
 @use 'libs/common-ui/src/lib/styles/utilities';
-@use 'libs/common-ui/src/lib/styles/variables';
+@use 'libs/common-ui/src/lib/styles/variables' as vars;
 @use 'libs/common-ui/src/lib/styles/fonts';
+@use '@angular/material' as mat;
 
 .msg-chat-status-filter-menu {
   .mdc-list {
@@ -20,4 +20,12 @@
     flex-direction: column;
     padding: 0.5rem;
   }
+}
+
+.grey-background-header {
+  background-color: mat.get-color-from-palette(vars.$grey-palette, 600, 0.25);
+}
+
+.grey-background-chat {
+  background-color: mat.get-color-from-palette(vars.$grey-palette, 600, 0.1);
 }
