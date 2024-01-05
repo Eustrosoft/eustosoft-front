@@ -8,20 +8,10 @@
     "start:explorer": "npx nx run explorer:serve",
     "build:all:stage": "npx nx run-many --target=build --configuration=stage --projects=login,dispatcher,explorer,msg --parallel=4",
     "build:all:production": "npx nx run-many --target=build --configuration=production --projects=login,dispatcher,explorer,msg --parallel=4",
-    "nx:graph": "npx nx graph"
+    "nx:graph": "npx nx graph",
+    "prepare": "husky install"
   },
   "private": true,
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "*.{ts,tsx}": [
-      "eslint --fix",
-      "git add"
-    ]
-  },
   "dependencies": {
     "@angular/animations": "15.2.2",
     "@angular/cdk": "15.2.2",
