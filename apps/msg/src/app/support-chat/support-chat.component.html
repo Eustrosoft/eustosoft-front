@@ -26,7 +26,9 @@
         <div
           class="flex flex-auto flex-column align-items-center justify-content-center"
         >
-          <h2>{{ 'MSG.SELECT_TICKET_CAPTION_TEXT' | translate }}</h2>
+          <h2 class="m-0 fw-500">
+            {{ 'MSG.SELECT_TICKET_CAPTION_TEXT' | translate }}
+          </h2>
           <ng-container *ngIf="isSm">
             <eustrosoft-front-button
               [buttonStyleType]="'stroked'"

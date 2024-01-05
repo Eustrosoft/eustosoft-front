@@ -26,7 +26,6 @@ export * from './lib/constants/enums/dic-actions.enum';
 export * from './lib/constants/enums/security-levels.enum';
 export * from './lib/pipes/form-array.pipe';
 export * from './lib/pipes/form-control.pipe';
-export * from './lib/pipes/to-number.pipe';
 export * from './lib/pipes/bytes-to-size.pipe';
 export * from './lib/interfaces/security/authenticated-user.interface';
 export * from './lib/interfaces/dispatcher/table.interface';

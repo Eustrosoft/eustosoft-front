@@ -5,7 +5,7 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-const nxPreset = require('@nrwl/jest/preset').default;
+const nxPreset = require('@nx/jest/preset').default;
 
 module.exports = {
   ...nxPreset,

@@ -10,7 +10,7 @@
     [ngClass]="{ 'brt-2': !removeBorderRadius }"
     class="grey-background-header"
   >
-    <div class="flex align-items-center justify-content-between p-1">
+    <div class="flex align-items-center justify-content-space-between p-1">
       <div class="flex align-items-center">
         <eustrosoft-front-button
           [buttonType]="'button'"
@@ -19,7 +19,7 @@
           [class.display-none]="!isSm"
           (clicked)="collapseClicked.emit()"
         ></eustrosoft-front-button>
-        <h2 class="mb-0">
+        <h2 class="m-0 fw-500">
           {{ 'MSG.TICKET_LIST_HEADER_TEXT' | translate }}
         </h2>
       </div>

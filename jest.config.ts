@@ -5,7 +5,7 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-import { getJestProjects } from '@nrwl/jest';
+import { getJestProjects } from '@nx/jest';
 
 export default {
   projects: getJestProjects(),

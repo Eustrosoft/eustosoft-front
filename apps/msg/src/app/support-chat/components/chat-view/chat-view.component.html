@@ -8,7 +8,7 @@
 <div class="flex flex-auto flex-column">
   <div class="flex-grow-0 flex-shrink-0 brt-2 grey-background-header">
     <div
-      class="flex align-items-center justify-content-between"
+      class="flex align-items-center justify-content-space-between"
       [class.p-1]="selectedChat"
     >
       <div class="flex align-items-center">
@@ -19,7 +19,7 @@
           [class.display-none]="!isSm"
           (clicked)="collapseClicked.emit()"
         ></eustrosoft-front-button>
-        <h2 class="mb-0">
+        <h2 class="m-0 fw-500">
           {{ selectedChat && selectedChat.subject }}
         </h2>
       </div>
@@ -59,7 +59,7 @@
   <div class="flex flex-auto overflow-auto grey-background-chat">
     <div
       *ngIf="selectedChat"
-      class="flex flex-auto flex-column justify-content-between"
+      class="flex flex-auto flex-column justify-content-space-between"
     >
       <div class="overflow-auto" #messagesScrollableBlock>
         <ng-container
@@ -120,12 +120,14 @@
     <div class="flex flex-column max-width-45">
       <div class="p-2 bg-white br-1">
         <div class="text-break" [innerHTML]="msg.content | newLineToBr"></div>
-        <div class="flex align-items-center justify-content-between flex-wrap">
-          <span class="fw-light fst-italic me-2">
+        <div
+          class="flex align-items-center justify-content-space-between flex-wrap"
+        >
+          <span class="fw-lighter fst-italic me-2">
             {{ msg.user.id === info.userId ? 'me' : msg.user.fullName }}
           </span>
-          <span class="fw-light fst-italic me-1">
-            {{ msg.created | date : 'short' }}
+          <span class="fw-lighter fst-italic me-1">
+            {{ msg.created | date: 'short' }}
           </span>
           <ng-container *ngIf="msg.user.id === info.userId">
             <eustrosoft-front-button

@@ -10,7 +10,6 @@ import { CommonModule } from '@angular/common';
 import { FormControlPipe } from './pipes/form-control.pipe';
 import { FormArrayPipe } from './pipes/form-array.pipe';
 import { FileReaderService } from './services/file-reader.service';
-import { ToNumberPipe } from './pipes/to-number.pipe';
 import { ConfigModule } from '@eustrosoft-front/config';
 import { HTTP_INTERCEPTORS, HttpClient } from '@angular/common/http';
 import { HttpErrorsInterceptorInterceptor } from './interceptors/http-errors-interceptor.interceptor';
@@ -27,7 +26,7 @@ import { initializeLocales } from './functions/locale-initializer.function';
 import { SM_SCREEN_RESOLUTION } from './di/extra-small-screen-resolution.token';
 
 @NgModule({
-  declarations: [FormControlPipe, FormArrayPipe, ToNumberPipe, BytesToSizePipe],
+  declarations: [FormControlPipe, FormArrayPipe, BytesToSizePipe],
   imports: [
     CommonModule,
     ConfigModule,
@@ -99,12 +98,6 @@ import { SM_SCREEN_RESOLUTION } from './di/extra-small-screen-resolution.token';
       useValue: 576,
     },
   ],
-  exports: [
-    FormControlPipe,
-    FormArrayPipe,
-    ToNumberPipe,
-    BytesToSizePipe,
-    TranslateModule,
-  ],
+  exports: [FormControlPipe, FormArrayPipe, BytesToSizePipe, TranslateModule],
 })
 export class CoreModule {}

@@ -22,7 +22,6 @@
         "assets": ["apps/msg/src/favicon.ico", "apps/msg/src/assets"],
         "styles": [
           "@angular/material/prebuilt-themes/deeppurple-amber.css",
-          "node_modules/bootstrap/scss/bootstrap.scss",
           "apps/msg/src/styles.scss"
         ],
         "scripts": []
@@ -99,11 +98,11 @@
       },
       "configurations": {
         "production": {
-          "browserTarget": "msg:build:production"
+          "buildTarget": "msg:build:production"
         },
         "development": {
-          "browserTarget": "msg:build:development",
-          "proxyConfig": "proxy.conf.js"
+          "proxyConfig": "proxy.conf.js",
+          "buildTarget": "msg:build:development"
         }
       },
       "defaultConfiguration": "development"
@@ -111,28 +110,18 @@
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
       "options": {
-        "browserTarget": "msg:build"
+        "buildTarget": "msg:build"
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["apps/msg/**/*.ts", "apps/msg/**/*.html"]
-      }
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "apps/msg/jest.config.ts",
-        "passWithNoTests": true
-      },
-      "configurations": {
-        "ci": {
-          "ci": true,
-          "codeCoverage": true
-        }
+        "jestConfig": "apps/msg/jest.config.ts"
       }
     }
   },

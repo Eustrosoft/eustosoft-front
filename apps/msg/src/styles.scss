@@ -15,7 +15,7 @@
 @use '@angular/material' as mat;
 
 .msg-chat-status-filter-menu {
-  .mdc-list {
+  .mat-mdc-menu-content {
     display: flex;
     flex-direction: column;
     padding: 0.5rem;
