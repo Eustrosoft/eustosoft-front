@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2024. IdrisovII & EustroSoft.org
+ *
+ * This file is part of eustrosoft-front project.
+ * See the LICENSE file at the project root for licensing information.
+ */
+
 import { Injectable } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { FileSystemObject } from '../models/file-system-object.interface';
