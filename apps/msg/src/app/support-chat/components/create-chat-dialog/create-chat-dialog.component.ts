@@ -34,7 +34,10 @@ export class CreateChatDialogComponent {
     CreateChatDialogComponent,
     CreateChatDialogReturnDataInterface
   > = inject(
-    MatDialogRef<CreateChatDialogComponent, CreateChatDialogReturnDataInterface>
+    MatDialogRef<
+      CreateChatDialogComponent,
+      CreateChatDialogReturnDataInterface
+    >,
   );
   private fb = inject(FormBuilder);
   public data = inject<CreateChatDialogDataInterface>(MAT_DIALOG_DATA);

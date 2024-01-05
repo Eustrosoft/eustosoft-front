@@ -54,11 +54,11 @@ export class ExplorerService {
   private readonly http = inject(HttpClient);
   private readonly config = inject(APP_CONFIG);
   private readonly explorerRequestBuilderService = inject(
-    ExplorerRequestBuilderService
+    ExplorerRequestBuilderService,
   );
   private readonly dispatchService = inject(DispatchService);
   private readonly explorerDictionaryService = inject(
-    ExplorerDictionaryService
+    ExplorerDictionaryService,
   );
   private readonly snackBar = inject(MatSnackBar);
   private readonly explorerPathService = inject(ExplorerPathService);
@@ -70,7 +70,7 @@ export class ExplorerService {
         iif(
           () => !!config.shareUrl,
           of(`${config.shareUrl}${path}`),
-          of(`${FallbackConfig.shareUrl}${path}`)
+          of(`${FallbackConfig.shareUrl}${path}`),
         ).pipe(
           switchMap(() =>
             iif(
@@ -78,14 +78,14 @@ export class ExplorerService {
               of(
                 `${config.shareUrl.replace(
                   OriginReplaceString,
-                  this.document.location.origin
-                )}${path}`
+                  this.document.location.origin,
+                )}${path}`,
               ),
-              of(`${config.shareUrl}${path}`)
-            )
-          )
-        )
-      )
+              of(`${config.shareUrl}${path}`),
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -95,21 +95,21 @@ export class ExplorerService {
         iif(
           () => !!config.shareOWikiUrl,
           of(`${config.shareOWikiUrl}${path}`),
-          of(`${FallbackConfig.shareOWikiUrl}${path}`)
-        )
-      )
+          of(`${FallbackConfig.shareOWikiUrl}${path}`),
+        ),
+      ),
     );
   }
 
   makeDownloadLink(
     parameterValue: string,
-    parameterName: CmsDownloadParams = CmsDownloadParams.TICKET
+    parameterName: CmsDownloadParams = CmsDownloadParams.TICKET,
   ): Observable<string> {
     return this.config.pipe(
       map(
         (config) =>
-          `${config.apiUrl}/download?${parameterName}=${parameterValue}`
-      )
+          `${config.apiUrl}/download?${parameterName}=${parameterValue}`,
+      ),
     );
   }
 
@@ -120,16 +120,16 @@ export class ExplorerService {
   }> {
     return of(path).pipe(
       switchMap((path) =>
-        this.explorerRequestBuilderService.buildViewRequest(path)
+        this.explorerRequestBuilderService.buildViewRequest(path),
       ),
       switchMap((request: QtisRequestResponseInterface<ViewRequest>) =>
         this.dispatchService
           .dispatch<ViewRequest, ViewResponse>(request)
           .pipe(
             map((response: QtisRequestResponseInterface<ViewResponse>) =>
-              response.r.flatMap((r: ViewResponse) => r.content)
-            )
-          )
+              response.r.flatMap((r: ViewResponse) => r.content),
+            ),
+          ),
       ),
       switchMap((contents) =>
         combineLatest([
@@ -139,7 +139,7 @@ export class ExplorerService {
           switchMap(([contents, securityLevelOptions]) => {
             const cont = contents.map<FileSystemObject>((obj) => {
               const matchingDict = securityLevelOptions.find(
-                (dict) => dict.value === obj.securityLevel?.toString()
+                (dict) => dict.value === obj.securityLevel?.toString(),
               );
               const value: FileSystemObject = {
                 ...obj,
@@ -151,15 +151,15 @@ export class ExplorerService {
               return value;
             });
             return of({ isLoading: false, isError: false, content: cont });
-          })
-        )
-      )
+          }),
+        ),
+      ),
     );
   }
 
   uploadHexChunks(
     body: QtisRequestResponseInterface<UploadHexRequest>,
-    headers: { [p: string]: string | string[] }
+    headers: { [p: string]: string | string[] },
   ): Observable<QtisRequestResponseInterface<UploadResponse>> {
     return this.config.pipe(
       switchMap((config) =>
@@ -168,9 +168,9 @@ export class ExplorerService {
           body,
           {
             headers: new HttpHeaders(headers),
-          }
-        )
-      )
+          },
+        ),
+      ),
     );
   }
 
@@ -179,7 +179,7 @@ export class ExplorerService {
     name: string,
     type: FileSystemObjectTypes,
     description: string = '',
-    securityLevel: string | undefined = undefined
+    securityLevel: string | undefined = undefined,
   ): Observable<QtisRequestResponseInterface<CreateResponse>> {
     const params: Omit<CreateRequest, 's' | 'l' | 'r'> = {
       path,
@@ -192,19 +192,19 @@ export class ExplorerService {
     }
     return this.explorerRequestBuilderService.buildCreateRequest(params).pipe(
       switchMap((body: QtisRequestResponseInterface<CreateRequest>) =>
-        this.dispatchService.dispatch<CreateRequest, CreateResponse>(body)
+        this.dispatchService.dispatch<CreateRequest, CreateResponse>(body),
       ),
-      catchError((err) => this.handleError(err))
+      catchError((err) => this.handleError(err)),
     );
   }
 
   move(
     row: FileSystemObject,
-    data: RenameDialogReturnData
+    data: RenameDialogReturnData,
   ): Observable<QtisRequestResponseInterface<MoveResponse>> {
     return of(row.fullPath).pipe(
       switchMap((fullPath) =>
-        of(this.explorerPathService.getFullPathToLastFolder(fullPath))
+        of(this.explorerPathService.getFullPathToLastFolder(fullPath)),
       ),
       switchMap((folder) =>
         iif(
@@ -212,20 +212,20 @@ export class ExplorerService {
           this.explorerRequestBuilderService.buildMoveRequest(
             [row],
             [`${folder}/${data.name}`],
-            data.description ?? ''
+            data.description ?? '',
           ),
           this.explorerRequestBuilderService.buildMoveRequest(
             [row],
             [`${folder}/${data.name}`],
             data.description ?? '',
-            CmsRequestActions.RENAME
-          )
-        )
+            CmsRequestActions.RENAME,
+          ),
+        ),
       ),
       switchMap((body: QtisRequestResponseInterface<MoveRequest>) =>
-        this.dispatchService.dispatch<MoveRequest, MoveResponse>(body)
+        this.dispatchService.dispatch<MoveRequest, MoveResponse>(body),
       ),
-      catchError((err) => this.handleError(err))
+      catchError((err) => this.handleError(err)),
     );
   }
 

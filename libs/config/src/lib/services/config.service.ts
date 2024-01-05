@@ -36,7 +36,7 @@ export class ConfigService {
           catchError((err: HttpErrorResponse) => {
             console.error(
               'Failed to fetch configuration from the second URL:',
-              err
+              err,
             );
             return throwError(
               () =>
@@ -46,12 +46,12 @@ export class ConfigService {
                   headers: err.headers,
                   status: err.status,
                   statusText: err.statusText,
-                })
+                }),
             );
-          })
+          }),
         );
       }),
-      shareReplay(1)
+      shareReplay(1),
     );
   }
 }

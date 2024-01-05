@@ -28,7 +28,7 @@ export class FileReaderService {
 
   splitOneBase64(
     item: UploadItem,
-    chunkSize: number = 1048576
+    chunkSize: number = 1048576,
   ): Observable<
     UploadItem & {
       chunks: string[];
@@ -56,15 +56,15 @@ export class FileReaderService {
               startPointer = newStartPointer;
             }
             return of({ ...item, chunks: chunks });
-          })
+          }),
         );
-      })
+      }),
     );
   }
 
   splitOneBinary(
     item: UploadItem,
-    chunkSize: number = 1048576
+    chunkSize: number = 1048576,
   ): Observable<
     UploadItem & {
       chunks: Blob[];
@@ -85,15 +85,15 @@ export class FileReaderService {
               startPointer = newStartPointer;
             }
             return of({ ...item, chunks: chunks });
-          })
+          }),
         );
-      })
+      }),
     );
   }
 
   splitOneToHexString(
     item: UploadItem,
-    chunkSize: number = 1048576
+    chunkSize: number = 1048576,
   ): Observable<
     UploadItem & {
       chunks: string[];
@@ -122,9 +122,9 @@ export class FileReaderService {
               startPointer = newStartPointer;
             }
             return of({ ...item, chunks: chunks });
-          })
+          }),
         );
-      })
+      }),
     );
   }
 

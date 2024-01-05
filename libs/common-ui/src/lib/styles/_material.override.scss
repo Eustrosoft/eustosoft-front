@@ -11,7 +11,7 @@
 $snackbar-theme-styles: (
   action-label-text-font: vars.$icons-font-family,
   action-label-text-size: map-get(vars.$common-sizes, 4),
-  action-label-text-weight: 400
+  action-label-text-weight: 400,
 );
 
 @include mdc-snackbar-theme.theme-styles($snackbar-theme-styles);

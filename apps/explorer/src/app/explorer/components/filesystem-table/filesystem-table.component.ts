@@ -59,7 +59,7 @@ export class FilesystemTableComponent implements OnChanges, AfterViewInit {
     this.filesystemTableService.dataSource.sort = this.sort;
     this.filesystemTableService.dataSource.sortingDataAccessor = (
       item: FileSystemObject,
-      property: string
+      property: string,
     ): string | number => {
       const fsObj = item as never;
       switch (property) {
@@ -89,7 +89,7 @@ export class FilesystemTableComponent implements OnChanges, AfterViewInit {
     }
 
     this.filesystemTableService.selection.select(
-      ...this.filesystemTableService.dataSource.data
+      ...this.filesystemTableService.dataSource.data,
     );
   }
 
@@ -102,13 +102,13 @@ export class FilesystemTableComponent implements OnChanges, AfterViewInit {
       const lastIndex =
         this.filesystemTableService.dataSource.data.indexOf(row);
       const firstIndex = this.filesystemTableService.dataSource.data.indexOf(
-        this.filesystemTableService.selection.selected[0]
+        this.filesystemTableService.selection.selected[0],
       );
       const start = Math.min(firstIndex, lastIndex);
       const end = Math.max(firstIndex, lastIndex);
       for (let i = start + 1; i < end; i++) {
         this.filesystemTableService.selection.select(
-          this.filesystemTableService.dataSource.data[i]
+          this.filesystemTableService.dataSource.data[i],
         );
       }
     }

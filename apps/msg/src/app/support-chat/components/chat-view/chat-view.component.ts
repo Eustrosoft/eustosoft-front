@@ -103,7 +103,7 @@ export class ChatViewComponent implements OnChanges, AfterViewInit {
       Math.abs(
         this.messagesScrollableBlock.nativeElement.scrollHeight -
           this.messagesScrollableBlock.nativeElement.scrollTop -
-          this.messagesScrollableBlock.nativeElement.clientHeight
+          this.messagesScrollableBlock.nativeElement.clientHeight,
       ) < 1
     );
   }

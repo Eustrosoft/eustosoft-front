@@ -51,27 +51,27 @@ export class UploadOverlayComponent {
       tap((forms) => {
         const isUploading = forms.controls.some(
           (form) =>
-            form.controls.uploadItem.value.state === UploadItemState.UPLOADING
+            form.controls.uploadItem.value.state === UploadItemState.UPLOADING,
         );
         const uploadComplete = forms.controls.every(
           (form) =>
-            form.controls.uploadItem.value.state === UploadItemState.UPLOADED
+            form.controls.uploadItem.value.state === UploadItemState.UPLOADED,
         );
         if (isUploading) {
           this.modifyUploadingView(isUploading);
         } else {
           this.modifyUploadingView(
             false,
-            'EXPLORER.UPLOAD_OVERLAY.START_UPLOAD_BUTTON_TEXT'
+            'EXPLORER.UPLOAD_OVERLAY.START_UPLOAD_BUTTON_TEXT',
           );
         }
         if (uploadComplete) {
           this.modifyUploadingView(
             true,
-            'EXPLORER.UPLOAD_OVERLAY.START_UPLOAD_BUTTON_TEXT_UPLOADING_COMPLETE_STATE'
+            'EXPLORER.UPLOAD_OVERLAY.START_UPLOAD_BUTTON_TEXT_UPLOADING_COMPLETE_STATE',
           );
         }
-      })
+      }),
     );
 
   securityLevelOptions$: Observable<Option[]> = this.explorerDictionaryService
@@ -81,12 +81,12 @@ export class UploadOverlayComponent {
       catchError(() => {
         this.snackBar.open(
           this.translateService.instant(
-            'EXPLORER.ERRORS.SECURITY_LEVEL_OPTIONS_FETCH_ERROR'
+            'EXPLORER.ERRORS.SECURITY_LEVEL_OPTIONS_FETCH_ERROR',
           ),
-          'close'
+          'close',
         );
         return EMPTY;
-      })
+      }),
     );
 
   openFolder(item: FormGroup<UploadItemForm>): void {
@@ -112,7 +112,7 @@ export class UploadOverlayComponent {
 
   modifyUploadingView(
     uploadButtonDisabled: boolean,
-    startUploadButtonText = 'EXPLORER.UPLOAD_OVERLAY.START_UPLOAD_BUTTON_TEXT_UPLOADING_STATE'
+    startUploadButtonText = 'EXPLORER.UPLOAD_OVERLAY.START_UPLOAD_BUTTON_TEXT_UPLOADING_STATE',
   ): void {
     this.startUploadButtonDisabled = uploadButtonDisabled;
     this.startUploadButtonText = startUploadButtonText;

@@ -19,7 +19,7 @@ export class BytesToSizePipe implements PipeTransform {
     }
     const k = 1024;
     const sizes = Object.values<string>(
-      this.translateService.instant('EXPLORER.SIZES')
+      this.translateService.instant('EXPLORER.SIZES'),
     );
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     const size = parseFloat((bytes / Math.pow(k, i)).toFixed(decimals));

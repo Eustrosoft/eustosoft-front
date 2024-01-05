@@ -22,7 +22,7 @@ import { PromptDialogDataInterface } from './prompt-dialog-data.interface';
 })
 export class PromptDialogComponent {
   private readonly dialogRef: MatDialogRef<PromptDialogComponent> = inject(
-    MatDialogRef<PromptDialogComponent>
+    MatDialogRef<PromptDialogComponent>,
   );
   protected data = inject<PromptDialogDataInterface>(MAT_DIALOG_DATA);
 

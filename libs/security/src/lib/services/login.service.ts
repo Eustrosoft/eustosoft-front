@@ -26,7 +26,7 @@ export class LoginService {
 
   login(
     login: string,
-    password: string
+    password: string,
   ): Observable<QtisRequestResponseInterface<LoginLogoutResponse>> {
     return this.dispatchService
       .dispatch<LoginRequest, LoginLogoutResponse>({
@@ -44,7 +44,7 @@ export class LoginService {
       .pipe(
         tap((v) => {
           this.authenticationService.isAuthenticated$.next(v.r[0].e === 0);
-        })
+        }),
       );
   }
 
@@ -63,7 +63,7 @@ export class LoginService {
       .pipe(
         tap(() => {
           this.authenticationService.isAuthenticated$.next(false);
-        })
+        }),
       );
   }
 }

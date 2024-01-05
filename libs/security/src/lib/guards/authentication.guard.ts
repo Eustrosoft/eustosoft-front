@@ -18,7 +18,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 
 export const authenticationGuard = (): Observable<UrlTree | boolean> => {
   const authenticationService: AuthenticationService = inject(
-    AuthenticationService
+    AuthenticationService,
   );
   const snackBar: MatSnackBar = inject(MatSnackBar);
   const router: Router = inject(Router);
@@ -36,9 +36,9 @@ export const authenticationGuard = (): Observable<UrlTree | boolean> => {
     catchError((err: HttpErrorResponse) => {
       snackBar.open(
         `${err.status} ${err.statusText} | Error text: ${err.error}`,
-        'Close'
+        'Close',
       );
       return of(false);
-    })
+    }),
   );
 };

@@ -94,13 +94,13 @@ export class ExplorerComponent implements OnInit, OnDestroy {
 
   private readonly dispatchService = inject(DispatchService);
   private readonly explorerRequestBuilderService = inject(
-    ExplorerRequestBuilderService
+    ExplorerRequestBuilderService,
   );
   private readonly explorerService = inject(ExplorerService);
   private readonly explorerPathService = inject(ExplorerPathService);
   private readonly explorerUploadService = inject(ExplorerUploadService);
   private readonly explorerUploadItemsService = inject(
-    ExplorerUploadItemsService
+    ExplorerUploadItemsService,
   );
   private readonly snackBar = inject(MatSnackBar);
   private readonly router = inject(Router);
@@ -111,7 +111,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
   private readonly clipboard = inject(Clipboard);
   private readonly document = inject(DOCUMENT);
   private readonly explorerUploadItemFormFactoryService = inject(
-    ExplorerUploadItemFormFactoryService
+    ExplorerUploadItemFormFactoryService,
   );
   private readonly breakpointsService = inject(BreakpointsService);
   protected readonly filesystemTableService = inject(FilesystemTableService);
@@ -147,10 +147,10 @@ export class ExplorerComponent implements OnInit, OnDestroy {
           this.path$.next('/');
           this.snackBar.open(err.error, 'close');
           return EMPTY;
-        })
+        }),
       );
     }),
-    startWith({ isLoading: true, isError: false, content: undefined })
+    startWith({ isLoading: true, isError: false, content: undefined }),
   );
 
   protected selectedRows$ = this.filesystemTableService.selection.changed
@@ -158,8 +158,8 @@ export class ExplorerComponent implements OnInit, OnDestroy {
     .pipe(
       map(
         (selection: SelectionChange<FileSystemObject>) =>
-          selection.source.selected
-      )
+          selection.source.selected,
+      ),
     );
 
   protected fileControl = new FormControl<File[]>([], { nonNullable: true });
@@ -176,14 +176,14 @@ export class ExplorerComponent implements OnInit, OnDestroy {
       .pipe(
         map((query) => query.get('path') ?? undefined),
         filter(
-          (queryPath): queryPath is string => typeof queryPath !== 'undefined'
+          (queryPath): queryPath is string => typeof queryPath !== 'undefined',
         ),
         tap((path) => {
           this.explorerPathService.updateLastPathState(path);
           this.clearQueryParams();
           this.path$.next(path);
         }),
-        takeUntil(this.destroy$)
+        takeUntil(this.destroy$),
       )
       .subscribe();
   }
@@ -196,12 +196,12 @@ export class ExplorerComponent implements OnInit, OnDestroy {
             files,
             this.path$.getValue(),
             (this.currentFolder$.getValue()?.securityLevel
-              .value as SecurityLevels) ?? SecurityLevels.PUBLIC_PLUS
+              .value as SecurityLevels) ?? SecurityLevels.PUBLIC_PLUS,
           );
         this.explorerUploadItemsService.uploadItems$.next(formArray);
         // this.overlayHidden = false;
         return formArray;
-      })
+      }),
     );
 
     this.upload$ = combineLatest([
@@ -211,7 +211,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
       switchMap(() =>
         this.explorerUploadService
           .uploadHexString(this.path$.getValue())
-          .pipe(takeUntil(this.teardownUpload$))
+          .pipe(takeUntil(this.teardownUpload$)),
       ),
       tap(() => {
         this.closeOverlay();
@@ -223,7 +223,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
         this.closeOverlay();
         return EMPTY;
       }),
-      repeat()
+      repeat(),
     );
   }
 
@@ -272,7 +272,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
 
   closeOverlay(): void {
     this.explorerUploadItemsService.uploadItems$.next(
-      this.fb.array<FormGroup<UploadItemForm>>([])
+      this.fb.array<FormGroup<UploadItemForm>>([]),
     );
     this.teardownUpload$.next();
     this.overlayHidden = true;
@@ -304,7 +304,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
       .afterClosed()
       .pipe(
         filter(
-          (data): data is CreateDialogReturnData => typeof data !== 'undefined'
+          (data): data is CreateDialogReturnData => typeof data !== 'undefined',
         ),
         switchMap((data) =>
           this.explorerService.create(
@@ -312,13 +312,13 @@ export class ExplorerComponent implements OnInit, OnDestroy {
             data.name,
             FileSystemObjectTypes.DIRECTORY,
             data.description,
-            data.securityLevel
-          )
+            data.securityLevel,
+          ),
         ),
         tap(() => {
           this.refresh$.next();
         }),
-        take(1)
+        take(1),
       )
       .subscribe();
   }
@@ -339,13 +339,13 @@ export class ExplorerComponent implements OnInit, OnDestroy {
       .afterClosed()
       .pipe(
         filter(
-          (str): str is RenameDialogReturnData => typeof str !== 'undefined'
+          (str): str is RenameDialogReturnData => typeof str !== 'undefined',
         ),
         switchMap((data) => this.explorerService.move(row, data)),
         tap(() => {
           this.refresh$.next();
         }),
-        take(1)
+        take(1),
       )
       .subscribe();
   }
@@ -376,18 +376,18 @@ export class ExplorerComponent implements OnInit, OnDestroy {
             this.explorerRequestBuilderService.buildMoveCopyRequest(
               rows,
               to,
-              CmsRequestActions.MOVE
+              CmsRequestActions.MOVE,
             ),
             of(to),
-          ])
+          ]),
         ),
         switchMap(([body, to]) =>
           combineLatest([
             this.dispatchService.dispatch<MoveCopyRequest, MoveCopyResponse>(
-              body
+              body,
             ),
             of(to),
-          ])
+          ]),
         ),
         tap(([_, to]) => {
           const lastIndex = to[0].lastIndexOf('/');
@@ -395,7 +395,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
           this.path$.next(path);
         }),
         catchError((err) => this.explorerService.handleError(err)),
-        take(1)
+        take(1),
       )
       .subscribe();
   }
@@ -426,18 +426,18 @@ export class ExplorerComponent implements OnInit, OnDestroy {
             this.explorerRequestBuilderService.buildMoveCopyRequest(
               rows,
               to,
-              CmsRequestActions.COPY
+              CmsRequestActions.COPY,
             ),
             of(to),
-          ])
+          ]),
         ),
         switchMap(([body, to]) =>
           combineLatest([
             this.dispatchService.dispatch<MoveCopyRequest, MoveCopyResponse>(
-              body
+              body,
             ),
             of(to),
-          ])
+          ]),
         ),
         tap(([_copyResponse, to]) => {
           const lastIndex = to[0].lastIndexOf('/');
@@ -445,7 +445,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
           this.path$.next(path);
         }),
         catchError((err) => this.explorerService.handleError(err)),
-        take(1)
+        take(1),
       )
       .subscribe();
   }
@@ -463,10 +463,10 @@ export class ExplorerComponent implements OnInit, OnDestroy {
           objectsWord: rows.length > 1 ? 'objects' : 'object',
         }),
         cancelButtonText: this.translateService.instant(
-          'EXPLORER.DELETE_DIALOG.CANCEL_BUTTON_TEXT'
+          'EXPLORER.DELETE_DIALOG.CANCEL_BUTTON_TEXT',
         ),
         submitButtonText: this.translateService.instant(
-          'EXPLORER.DELETE_DIALOG.SUBMIT_BUTTON_TEXT'
+          'EXPLORER.DELETE_DIALOG.SUBMIT_BUTTON_TEXT',
         ),
       },
     });
@@ -476,17 +476,17 @@ export class ExplorerComponent implements OnInit, OnDestroy {
       .pipe(
         filter((v) => Boolean(v)),
         switchMap(() =>
-          this.explorerRequestBuilderService.buildDeleteRequests(rows)
+          this.explorerRequestBuilderService.buildDeleteRequests(rows),
         ),
         switchMap((body: QtisRequestResponseInterface<DeleteRequest>) =>
-          this.dispatchService.dispatch<DeleteRequest, DeleteResponse>(body)
+          this.dispatchService.dispatch<DeleteRequest, DeleteResponse>(body),
         ),
         tap(() => {
           this.refresh$.next();
           this.filesystemTableService.selection.clear();
         }),
         catchError((err) => this.explorerService.handleError(err)),
-        take(1)
+        take(1),
       )
       .subscribe();
   }
@@ -499,7 +499,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
           this.document.location.href = url;
         }),
         catchError((err) => this.explorerService.handleError(err)),
-        takeUntil(this.destroy$)
+        takeUntil(this.destroy$),
       )
       .subscribe();
   }
@@ -508,7 +508,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
     const shareLinkObs$ = this.explorerService.makeShareLink(rows[0].fullPath);
 
     const shareOWikiLinkObs$ = this.explorerService.makeOWikiShareLink(
-      rows[0].fullPath
+      rows[0].fullPath,
     );
 
     const dialogRef = this.dialog.open<
@@ -527,7 +527,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
 
     merge(
       dialogRef.componentInstance.shareUrlCopied,
-      dialogRef.componentInstance.shareOWikiUrlCopied
+      dialogRef.componentInstance.shareOWikiUrlCopied,
     )
       .pipe(
         tap((url) => {
@@ -535,10 +535,10 @@ export class ExplorerComponent implements OnInit, OnDestroy {
           this.snackBar.open(
             this.translateService.instant('EXPLORER.LINK_COPIED_TO_CLIPBOARD'),
             'close',
-            { duration: 2000 }
+            { duration: 2000 },
           );
         }),
-        takeUntil(dialogClosed$)
+        takeUntil(dialogClosed$),
       )
       .subscribe();
   }
@@ -548,7 +548,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
       UploadDialogComponent,
       {
         width: this.isSm ? '100vw' : '50vw',
-      }
+      },
     );
 
     const dialogClosed$ = dialogRef.afterClosed();
@@ -558,7 +558,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
         tap(() => {
           this.inputFileComponent.fileInput.nativeElement.click();
         }),
-        takeUntil(dialogClosed$)
+        takeUntil(dialogClosed$),
       )
       .subscribe();
 
@@ -567,21 +567,21 @@ export class ExplorerComponent implements OnInit, OnDestroy {
         tap(() => {
           this.startUpload$.next();
         }),
-        takeUntil(dialogClosed$)
+        takeUntil(dialogClosed$),
       )
       .subscribe();
 
     merge(
       dialogRef.componentInstance.cancelUploadClicked,
       dialogRef.componentInstance.removeItem,
-      dialogRef.backdropClick()
+      dialogRef.backdropClick(),
     )
       .pipe(
         tap(() => {
           this.closeOverlay();
           dialogRef.close();
         }),
-        takeUntil(dialogClosed$)
+        takeUntil(dialogClosed$),
       )
       .subscribe();
 
@@ -591,7 +591,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
         tap(() => {
           dialogRef.close();
         }),
-        takeUntil(dialogClosed$)
+        takeUntil(dialogClosed$),
       )
       .subscribe();
   }

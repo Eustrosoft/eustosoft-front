@@ -125,7 +125,7 @@ export class LoginComponent implements OnInit, OnDestroy, AfterViewInit {
           this.cdRef.markForCheck();
           return of(EMPTY);
         }),
-        take(1)
+        take(1),
       )
       .subscribe();
   }

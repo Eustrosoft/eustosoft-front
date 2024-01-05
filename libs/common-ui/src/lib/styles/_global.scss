@@ -14,9 +14,9 @@ body {
 
 .link {
   @include mixins.link(
-      map-get(vars.$blue-palette, A400),
-      map-get(vars.$blue-palette, A400),
-      map-get(vars.$blue-palette, A700),
-      map-get(vars.$blue-palette, A400)
+    map-get(vars.$blue-palette, A400),
+    map-get(vars.$blue-palette, A400),
+    map-get(vars.$blue-palette, A700),
+    map-get(vars.$blue-palette, A400)
   );
 }

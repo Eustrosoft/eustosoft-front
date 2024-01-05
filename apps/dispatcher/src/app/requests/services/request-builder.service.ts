@@ -25,7 +25,7 @@ export class RequestBuilderService {
   constructor(private fileReaderService: FileReaderService) {}
 
   buildQuery(
-    forms: FormArray<FormGroup<SingleRequestForm>>
+    forms: FormArray<FormGroup<SingleRequestForm>>,
   ): Observable<QtisRequestResponseInterface<FileRequest | SqlRequest>> {
     const requests = forms.controls.map(
       (control: FormGroup<SingleRequestForm>) => {
@@ -35,7 +35,7 @@ export class RequestBuilderService {
           case DispatcherQueryTypes.SQL:
             return this.buildSqlQuery(control.value.request as string);
         }
-      }
+      },
     );
 
     return combineLatest(requests).pipe(
@@ -43,8 +43,8 @@ export class RequestBuilderService {
         of({
           r: value,
           t: 0,
-        })
-      )
+        }),
+      ),
     );
   }
 
@@ -72,8 +72,8 @@ export class RequestBuilderService {
           },
           request: 'upload',
           subsystem: 'file',
-        })
-      )
+        }),
+      ),
     );
   }
 }

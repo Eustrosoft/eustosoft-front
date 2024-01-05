@@ -55,7 +55,7 @@ export class RequestsComponent implements OnInit {
         value: queryType,
         displayText: queryType,
         disabled: false,
-      } as Option)
+      }) as Option,
   );
   public displayTypeOptions: Option[] = Object.values(DisplayTypes).map(
     (queryType) =>
@@ -63,7 +63,7 @@ export class RequestsComponent implements OnInit {
         value: queryType,
         displayText: queryType,
         disabled: false,
-      } as Option)
+      }) as Option,
   );
 
   public displayTypeLabelText = 'Display as';
@@ -82,7 +82,7 @@ export class RequestsComponent implements OnInit {
     private requestFormBuilderService: RequestFormBuilderService,
     private dispatchService: DispatchService,
     private cd: ChangeDetectorRef,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
   ) {}
 
   ngOnInit(): void {
@@ -97,8 +97,8 @@ export class RequestsComponent implements OnInit {
       .pipe(
         mergeMap((query) =>
           this.dispatchService.dispatch<SqlRequest | FileRequest, SqlResponse>(
-            query
-          )
+            query,
+          ),
         ),
         map((response: QtisRequestResponseInterface<SqlResponse>) => {
           this.tables = response.r.map((res: SqlResponse) =>
@@ -106,14 +106,14 @@ export class RequestsComponent implements OnInit {
               return {
                 dataSource: result.rows.map((row) => {
                   return Object.fromEntries(
-                    result.columns.map((_, i) => [result.columns[i], row[i]])
+                    result.columns.map((_, i) => [result.columns[i], row[i]]),
                   );
                 }),
                 columnsToDisplay: result.columns,
                 displayedColumns: result.columns,
                 data_types: result.data_types,
               };
-            })
+            }),
           );
           return response;
         }),
@@ -127,13 +127,13 @@ export class RequestsComponent implements OnInit {
           this.snackBar.open(err.error, 'close');
           this.cd.detectChanges();
           return of(null);
-        })
+        }),
       );
   }
 
   addForm(): void {
     this.form.controls.forms.push(
-      this.requestFormBuilderService.makeNewRequestForm()
+      this.requestFormBuilderService.makeNewRequestForm(),
     );
   }
 

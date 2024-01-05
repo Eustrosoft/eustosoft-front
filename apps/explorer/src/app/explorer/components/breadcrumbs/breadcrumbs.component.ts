@@ -44,7 +44,7 @@ export class BreadcrumbsComponent implements OnInit {
           const text = segment || 'Home';
           return { href, text };
         });
-      })
+      }),
     );
   }
 

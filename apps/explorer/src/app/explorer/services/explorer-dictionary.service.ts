@@ -24,7 +24,7 @@ export class ExplorerDictionaryService {
   getSecurityLevelOptions(): Observable<Option[]> {
     return this.dicService.getMappedDicValues<Option>(
       Dictionaries.SLEVEL,
-      this.dicMapperService.toOption
+      this.dicMapperService.toOption,
     );
   }
 }

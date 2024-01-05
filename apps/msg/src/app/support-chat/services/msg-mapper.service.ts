@@ -39,19 +39,19 @@ export class MsgMapperService {
           .dispatch<ViewChatRequest, ViewChatResponse>(req)
           .pipe(
             map((response: QtisRequestResponseInterface<ViewChatResponse>) =>
-              response.r.flatMap((r: ViewChatResponse) => r.messages)
+              response.r.flatMap((r: ViewChatResponse) => r.messages),
             ),
             switchMap((messages: ChatMessage[]) =>
               of({ isLoading: false, isError: false, messages }).pipe(
-                delay(200)
-              )
+                delay(200),
+              ),
             ),
             startWith({ isLoading: true, isError: false, messages: undefined }),
             catchError(() =>
-              of({ isLoading: false, isError: true, messages: undefined })
-            )
-          )
-      )
+              of({ isLoading: false, isError: true, messages: undefined }),
+            ),
+          ),
+      ),
     );
   }
 
@@ -66,16 +66,16 @@ export class MsgMapperService {
           .dispatch<ViewChatRequest, ViewChatResponse>(req)
           .pipe(
             map((response: QtisRequestResponseInterface<ViewChatResponse>) =>
-              response.r.flatMap((r: ViewChatResponse) => r.messages)
+              response.r.flatMap((r: ViewChatResponse) => r.messages),
             ),
             switchMap((messages: ChatMessage[]) =>
-              of({ isLoading: false, isError: false, messages })
+              of({ isLoading: false, isError: false, messages }),
             ),
             catchError(() =>
-              of({ isLoading: false, isError: true, messages: undefined })
-            )
-          )
-      )
+              of({ isLoading: false, isError: true, messages: undefined }),
+            ),
+          ),
+      ),
     );
   }
 }

@@ -24,7 +24,7 @@ import { RenameChatDialogDataInterface } from './rename-chat-dialog-data.interfa
 })
 export class RenameChatDialogComponent {
   private dialogRef: MatDialogRef<RenameChatDialogComponent> = inject(
-    MatDialogRef<RenameChatDialogComponent>
+    MatDialogRef<RenameChatDialogComponent>,
   );
   public data = inject<RenameChatDialogDataInterface>(MAT_DIALOG_DATA);
   private fb = inject(FormBuilder);

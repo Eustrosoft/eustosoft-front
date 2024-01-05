@@ -43,7 +43,7 @@ export class InputFileComponent implements OnInit, OnDestroy {
           files.forEach((file: File) => dt.items.add(file));
           this.fileInput.nativeElement.files = dt.files;
         }),
-        takeUntil(this.destroy$)
+        takeUntil(this.destroy$),
       )
       .subscribe();
   }

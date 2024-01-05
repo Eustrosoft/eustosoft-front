@@ -18,7 +18,7 @@ import { Observable } from 'rxjs';
 export class WithCredentialsInterceptor implements HttpInterceptor {
   intercept(
     request: HttpRequest<unknown>,
-    next: HttpHandler
+    next: HttpHandler,
   ): Observable<HttpEvent<unknown>> {
     request = request.clone({
       withCredentials: true,

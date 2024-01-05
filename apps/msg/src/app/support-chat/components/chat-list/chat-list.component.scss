@@ -11,10 +11,10 @@
   display: flex;
   ::ng-deep {
     .mat-mdc-list-item-title:before {
-      height: 1.3rem!important;
+      height: 1.3rem !important;
     }
     .mat-mdc-list-item-title:after {
-      height: 1.3rem!important;
+      height: 1.3rem !important;
     }
   }
 }
@@ -26,5 +26,6 @@
 
 .list-item-hover {
   background-color: mat.get-color-from-palette(vars.$grey-palette, 600, 0.25);
-  border-left: map-get(vars.$common-sizes, 1) solid mat.get-color-from-palette(vars.$grey-palette, 600);
+  border-left: map-get(vars.$common-sizes, 1) solid
+    mat.get-color-from-palette(vars.$grey-palette, 600);
 }

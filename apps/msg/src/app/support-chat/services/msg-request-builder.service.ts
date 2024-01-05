@@ -26,7 +26,7 @@ import {
 @Injectable()
 export class MsgRequestBuilderService {
   buildViewChatsRequest(
-    params: ViewChatsRequest['params']
+    params: ViewChatsRequest['params'],
   ): Observable<QtisRequestResponseInterface<ViewChatsRequest>> {
     return of({
       r: [
@@ -41,7 +41,7 @@ export class MsgRequestBuilderService {
     });
   }
   buildViewChatRequest(
-    zoid: number
+    zoid: number,
   ): Observable<QtisRequestResponseInterface<ViewChatRequest>> {
     return of({
       r: [
@@ -59,7 +59,7 @@ export class MsgRequestBuilderService {
   }
 
   buildCreateChatRequest(
-    params: CreateChatRequest['params']
+    params: CreateChatRequest['params'],
   ): Observable<QtisRequestResponseInterface<CreateChatRequest>> {
     return of({
       r: [
@@ -75,7 +75,7 @@ export class MsgRequestBuilderService {
   }
 
   buildSendMessageToChatRequest(
-    params: SendChatMessageRequest['params']
+    params: SendChatMessageRequest['params'],
   ): Observable<QtisRequestResponseInterface<SendChatMessageRequest>> {
     return of({
       r: [
@@ -91,7 +91,7 @@ export class MsgRequestBuilderService {
   }
 
   buildEditMessageRequest(
-    params: EditChatMessageRequest['params']
+    params: EditChatMessageRequest['params'],
   ): Observable<QtisRequestResponseInterface<EditChatMessageRequest>> {
     return of({
       r: [
@@ -107,7 +107,7 @@ export class MsgRequestBuilderService {
   }
 
   buildDeleteChatMessageRequest(
-    params: DeleteChatMessageRequest['params']
+    params: DeleteChatMessageRequest['params'],
   ): Observable<QtisRequestResponseInterface<DeleteChatMessageRequest>> {
     return of({
       r: [
@@ -123,7 +123,7 @@ export class MsgRequestBuilderService {
   }
 
   buildDeleteChatRequest(
-    params: DeleteChatRequest['params']
+    params: DeleteChatRequest['params'],
   ): Observable<QtisRequestResponseInterface<DeleteChatRequest>> {
     return of({
       r: [
@@ -139,7 +139,7 @@ export class MsgRequestBuilderService {
   }
 
   buildChangeChatStatusRequest(
-    params: ChangeChatStatusRequest['params']
+    params: ChangeChatStatusRequest['params'],
   ): Observable<QtisRequestResponseInterface<ChangeChatStatusRequest>> {
     return of({
       r: [
@@ -155,7 +155,7 @@ export class MsgRequestBuilderService {
   }
 
   buildUpdateChatListRequest(
-    params: UpdateChatListRequest['params']
+    params: UpdateChatListRequest['params'],
   ): Observable<QtisRequestResponseInterface<UpdateChatListRequest>> {
     return of({
       r: [

@@ -33,15 +33,15 @@ export class MsgDictionaryService {
       .getDicValues(Dictionaries.MSG_CHANNEL_STATUS)
       .pipe(
         map((response: QtisRequestResponseInterface<DicValuesResponse>) =>
-          response.r.flatMap((r: DicValuesResponse) => r.values)
-        )
+          response.r.flatMap((r: DicValuesResponse) => r.values),
+        ),
       );
   }
 
   getSecurityLevelOptions(): Observable<Option[]> {
     return this.dicService.getMappedDicValues<Option>(
       Dictionaries.SLEVEL,
-      this.dicMapperService.toOption
+      this.dicMapperService.toOption,
     );
   }
 
@@ -49,15 +49,15 @@ export class MsgDictionaryService {
     return this.samService.getUserAvailableScope(Scopes.MSGC).pipe(
       map(
         (response: QtisRequestResponseInterface<UserAvailableScopesResponse>) =>
-          response.r.flatMap((r) => r.zsid)
+          response.r.flatMap((r) => r.zsid),
       ),
       map((values) =>
         values.map((value) => ({
           value: value,
           displayText: value.toString(),
           disabled: false,
-        }))
-      )
+        })),
+      ),
     );
   }
 }

@@ -21,7 +21,7 @@ import { getHttpStatusCodeName } from '../functions/get-http-status-code-name.fu
 export class HttpErrorsInterceptorInterceptor implements HttpInterceptor {
   intercept(
     request: HttpRequest<object>,
-    next: HttpHandler
+    next: HttpHandler,
   ): Observable<HttpEvent<unknown>> {
     return next.handle(request).pipe(
       tap((event) => {
@@ -41,7 +41,7 @@ export class HttpErrorsInterceptorInterceptor implements HttpInterceptor {
           }
         }
       }),
-      catchError((err: HttpErrorResponse) => throwError(() => err))
+      catchError((err: HttpErrorResponse) => throwError(() => err)),
     );
   }
 }

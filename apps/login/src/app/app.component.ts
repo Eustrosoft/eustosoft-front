@@ -37,7 +37,7 @@ export class AppComponent {
         tap(() => {
           this.router.navigate(['']);
         }),
-        take(1)
+        take(1),
       )
       .subscribe();
   }

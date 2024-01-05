@@ -1,6 +1,7 @@
 # Документация библиотеки core
 
 ## Содержание
+
 - [Введение](#введение)
 - [Начало работы](#начало-работы)
 - [Структура библиотеки](#структура-библиотеки)
@@ -16,7 +17,7 @@
 
 ## Введение
 
-Библиотека предназначена для работы с общим функционалом, который может быть повторно использован в разных модулях и подсистемах или при интеграции функционала одного приложения с другим 
+Библиотека предназначена для работы с общим функционалом, который может быть повторно использован в разных модулях и подсистемах или при интеграции функционала одного приложения с другим
 
 ## Начало работы
 
@@ -74,14 +75,16 @@ export interface QtisRequestResponseInterface<T> {
   t: number;
 }
 ```
+
 где:
+
 - `r` - запрос или ответ какого-либо типа переданного в `T` в зависимости от приложения
 - `t` - время выполнения запроса / получения ответа
 
 В конкретных приложениях с помощью дженерика `T` указывается тип запроса / ответа, например запрос на получение структуры в `explorer`:
 
 ```ts
-// вспомогательные интерфейсы для формирования соответствующего запроса / ответа в explorer 
+// вспомогательные интерфейсы для формирования соответствующего запроса / ответа в explorer
 interface BaseCmsRequest {
   s: Subsystems;
   r: CmsRequestActions;
@@ -110,24 +113,15 @@ export class RequestService {
   private http = inject(HttpClient);
   private config = inject(APP_CONFIG);
 
-  dispatch<Req, Res>(
-    body: QtisRequestResponseInterface<Req>
-  ): Observable<QtisRequestResponseInterface<Res>> {
-    return this.config.pipe(
-      switchMap((config) =>
-        this.http.post<QtisRequestResponseInterface<Res>>(
-          `${config.apiUrl}/dispatch`,
-          body
-        )
-      )
-    );
+  dispatch<Req, Res>(body: QtisRequestResponseInterface<Req>): Observable<QtisRequestResponseInterface<Res>> {
+    return this.config.pipe(switchMap((config) => this.http.post<QtisRequestResponseInterface<Res>>(`${config.apiUrl}/dispatch`, body)));
   }
 }
 ```
 
 ```ts
 // пример использования сервиса для получения данных для просмотра контента
-this.explorerService.dispatch<ViewRequest, ViewResponse>(request)
+this.explorerService.dispatch<ViewRequest, ViewResponse>(request);
 ```
 
 JSON запросы формируются с помощью отдельных сервисов в каждом приложении в соответствии с определенными для этих приложений интерфейсами.

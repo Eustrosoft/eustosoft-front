@@ -41,7 +41,7 @@ import { ExplorerService } from '../../services/explorer.service';
 export class MoveCopyDialogComponent implements AfterViewInit, OnDestroy {
   @ViewChild(MatSelectionList) matSelectionList!: MatSelectionList;
   private readonly dialogRef: MatDialogRef<MoveCopyDialogComponent> = inject(
-    MatDialogRef<MoveCopyDialogComponent>
+    MatDialogRef<MoveCopyDialogComponent>,
   );
   private readonly explorerService = inject(ExplorerService);
   private readonly cdRef = inject(ChangeDetectorRef);
@@ -68,7 +68,7 @@ export class MoveCopyDialogComponent implements AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     this.moveButtonDisabled$ = merge(
       this.matSelectionList.options.changes,
-      this.matSelectionList.selectedOptions.changed
+      this.matSelectionList.selectedOptions.changed,
     ).pipe(
       map(() => {
         const options = this.matSelectionList.options
@@ -77,12 +77,12 @@ export class MoveCopyDialogComponent implements AfterViewInit, OnDestroy {
 
         const matchingObjects = options.filter((option) =>
           this.data.fsObjects.some(
-            (fsObject) => option.fileName === fsObject.fileName
-          )
+            (fsObject) => option.fileName === fsObject.fileName,
+          ),
         );
 
         const matchingIndexes = matchingObjects.map((file) =>
-          options.findIndex((f) => f.fileName === file.fileName)
+          options.findIndex((f) => f.fileName === file.fileName),
         );
 
         const objectsAlreadyExistsInFolder =
@@ -90,7 +90,7 @@ export class MoveCopyDialogComponent implements AfterViewInit, OnDestroy {
             (value: FileSystemObject) =>
               (value.type === FileSystemObjectTypes.FILE ||
                 value.type === FileSystemObjectTypes.DIRECTORY) &&
-              matchingIndexes.length > 0
+              matchingIndexes.length > 0,
           ).length > 0;
 
         matchingIndexes.forEach((index: number) => {
@@ -124,7 +124,7 @@ export class MoveCopyDialogComponent implements AfterViewInit, OnDestroy {
         setTimeout(() => {
           this.cdRef.detectChanges();
         }, 0);
-      })
+      }),
     );
   }
 
@@ -159,7 +159,7 @@ export class MoveCopyDialogComponent implements AfterViewInit, OnDestroy {
     if (this.matSelectionList.selectedOptions.hasValue()) {
       const paths = this.buildPaths(
         this.matSelectionList.selectedOptions.selected[0].value.fullPath,
-        this.data.fsObjects
+        this.data.fsObjects,
       );
       this.dialogRef.close(paths);
     } else {

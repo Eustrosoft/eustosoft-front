@@ -38,10 +38,10 @@ export class UploadDialogComponent {
   @Output() openFileFolder = new EventEmitter<string>();
 
   private readonly explorerUploadItemsService = inject(
-    ExplorerUploadItemsService
+    ExplorerUploadItemsService,
   );
   private readonly explorerDictionaryService = inject(
-    ExplorerDictionaryService
+    ExplorerDictionaryService,
   );
   private readonly snackBar = inject(MatSnackBar);
   private readonly translateService = inject(TranslateService);
@@ -66,8 +66,8 @@ export class UploadDialogComponent {
     map((forms) =>
       forms.controls.some(
         (form) =>
-          form.controls.uploadItem.value.state === UploadItemState.UPLOADING
-      )
+          form.controls.uploadItem.value.state === UploadItemState.UPLOADING,
+      ),
     ),
     tap((isUploading) => {
       if (isUploading) {
@@ -76,10 +76,10 @@ export class UploadDialogComponent {
         this.warningText = '';
         this.modifyUploadButtonState(
           false,
-          'EXPLORER.UPLOAD_DIALOG.START_UPLOAD_BUTTON_TEXT'
+          'EXPLORER.UPLOAD_DIALOG.START_UPLOAD_BUTTON_TEXT',
         );
       }
-    })
+    }),
   );
 
   protected uploadCompleted$ = this.uploadItems$.pipe(
@@ -88,26 +88,26 @@ export class UploadDialogComponent {
         forms.controls.length > 0 &&
         forms.controls.every(
           (form) =>
-            form.controls.uploadItem.value.state === UploadItemState.UPLOADED
-        )
+            form.controls.uploadItem.value.state === UploadItemState.UPLOADED,
+        ),
     ),
     tap((uploadCompleted) => {
       if (uploadCompleted) {
         this.snackBar.open(
           this.translateService.instant(
-            'EXPLORER.UPLOAD_DIALOG.UPLOAD_COMPLETE_TEXT'
+            'EXPLORER.UPLOAD_DIALOG.UPLOAD_COMPLETE_TEXT',
           ),
           'close',
           {
             duration: 10000,
-          }
+          },
         );
         this.modifyUploadButtonState(
           false,
-          'EXPLORER.UPLOAD_DIALOG.START_UPLOAD_BUTTON_TEXT'
+          'EXPLORER.UPLOAD_DIALOG.START_UPLOAD_BUTTON_TEXT',
         );
       }
-    })
+    }),
   );
 
   cancel(): void {
@@ -128,7 +128,7 @@ export class UploadDialogComponent {
         'EXPLORER.UPLOAD_DIALOG.SUGGESTIONS.FILL_DESCRIPTION_TEXT';
       this.modifyUploadButtonState(
         false,
-        'EXPLORER.UPLOAD_DIALOG.PROCEED_AFTER_SUGGESTION_TEXT'
+        'EXPLORER.UPLOAD_DIALOG.PROCEED_AFTER_SUGGESTION_TEXT',
       );
       this.descriptionSuggestionShown = true;
       return;
@@ -147,7 +147,7 @@ export class UploadDialogComponent {
         'EXPLORER.UPLOAD_DIALOG.SUGGESTIONS.SECURITY_LVL_WARNING';
       this.modifyUploadButtonState(
         false,
-        'EXPLORER.UPLOAD_DIALOG.PROCEED_AFTER_SUGGESTION_TEXT'
+        'EXPLORER.UPLOAD_DIALOG.PROCEED_AFTER_SUGGESTION_TEXT',
       );
       this.securityLevelSuggestionShown = true;
       return;
@@ -180,7 +180,7 @@ export class UploadDialogComponent {
 
   modifyUploadButtonState(
     uploadButtonDisabled: boolean,
-    startUploadButtonText = 'EXPLORER.UPLOAD_DIALOG.START_UPLOAD_BUTTON_TEXT_UPLOADING_STATE'
+    startUploadButtonText = 'EXPLORER.UPLOAD_DIALOG.START_UPLOAD_BUTTON_TEXT_UPLOADING_STATE',
   ): void {
     this.startUploadButtonDisabled = uploadButtonDisabled;
     this.startUploadButtonText = startUploadButtonText;

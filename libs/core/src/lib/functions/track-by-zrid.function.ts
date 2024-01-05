@@ -7,7 +7,7 @@
 
 export const trackByZridFunction = <T extends { zrid: number }>(
   index: number,
-  element: T
+  element: T,
 ): number => {
   return element.zrid;
 };

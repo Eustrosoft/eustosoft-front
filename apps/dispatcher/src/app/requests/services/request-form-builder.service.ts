@@ -24,7 +24,7 @@ export class RequestFormBuilderService {
         }),
         this.fb.group<SingleRequestForm>({
           request: this.fb.control(
-            'select * from pg_views;select * from pg_user;'
+            'select * from pg_views;select * from pg_user;',
           ),
           file: this.fb.control([]),
           queryType: this.fb.control(DispatcherQueryTypes.SQL),

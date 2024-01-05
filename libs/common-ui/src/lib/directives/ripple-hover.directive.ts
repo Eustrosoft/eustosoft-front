@@ -22,5 +22,8 @@ export class RippleHoverDirective {
     this.rippleRef.fadeOut();
   }
 
-  constructor(private elementRef: ElementRef, private ripple: MatRipple) {}
+  constructor(
+    private elementRef: ElementRef,
+    private ripple: MatRipple,
+  ) {}
 }

@@ -101,7 +101,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
 
   fetchChatsByStatuses$ = new BehaviorSubject<MsgChatStatus[]>([]);
   fetchChatMessagesByChatId$ = new BehaviorSubject<number | undefined>(
-    undefined
+    undefined,
   );
   chatListRefreshInterval$ = interval(5000).pipe(startWith(1));
 
@@ -121,17 +121,17 @@ export class SupportChatComponent implements OnInit, OnDestroy {
               this.dispatchService.dispatch<
                 ViewChatsRequest,
                 ViewChatsResponse
-              >(req)
+              >(req),
             ),
             map((response: QtisRequestResponseInterface<ViewChatsResponse>) =>
-              response.r.flatMap((r: ViewChatsResponse) => r.chats)
+              response.r.flatMap((r: ViewChatsResponse) => r.chats),
             ),
             switchMap((chats: Chat[]) =>
-              of({ isLoading: false, isError: false, chats }).pipe(delay(200))
-            )
-          )
+              of({ isLoading: false, isError: false, chats }).pipe(delay(200)),
+            ),
+          ),
       ),
-      startWith({ isLoading: true, isError: false, chats: undefined })
+      startWith({ isLoading: true, isError: false, chats: undefined }),
     ),
     this.fetchChatMessagesByChatId$.asObservable().pipe(
       switchMap(() =>
@@ -139,21 +139,21 @@ export class SupportChatComponent implements OnInit, OnDestroy {
           switchMap(() =>
             this.msgRequestBuilderService.buildUpdateChatListRequest({
               statuses: this.fetchChatsByStatuses$.getValue(),
-            })
+            }),
           ),
           switchMap(
             (req: QtisRequestResponseInterface<UpdateChatListRequest>) =>
               this.dispatchService.dispatch<
                 UpdateChatListRequest,
                 UpdateChatListResponse
-              >(req)
+              >(req),
           ),
           map(
             (response: QtisRequestResponseInterface<UpdateChatListResponse>) =>
-              response.r.flatMap((r: UpdateChatListResponse) => r.chats)
-          )
-        )
-      )
+              response.r.flatMap((r: UpdateChatListResponse) => r.chats),
+          ),
+        ),
+      ),
     ),
   ]).pipe(
     switchMap(([objectForView, chatUpdates]) => {
@@ -161,7 +161,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
         return of(structuredClone(objectForView));
       }
       const chatUpdatesMap = new Map(
-        chatUpdates.map((item) => [item.zoid, item.zver])
+        chatUpdates.map((item) => [item.zoid, item.zver]),
       );
       const chatIdsWithChangedZver = objectForView.chats
         .filter((item) => {
@@ -188,7 +188,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
       }
       return of(structuredClone(objectForView));
     }),
-    shareReplay(1)
+    shareReplay(1),
   );
 
   chatMessages$: Observable<{
@@ -204,9 +204,9 @@ export class SupportChatComponent implements OnInit, OnDestroy {
         // If selected chat zoid is changed - fetchWithPreloader, if not - fetchWithoutPreloader
         () => first === second,
         this.msgMapperService.fetchChatMessagesWithoutPreloader(second),
-        this.msgMapperService.fetchChatMessagesWithPreloader(second)
-      )
-    )
+        this.msgMapperService.fetchChatMessagesWithPreloader(second),
+      ),
+    ),
   );
 
   // TODO Get dictionary values only once on app init
@@ -216,12 +216,12 @@ export class SupportChatComponent implements OnInit, OnDestroy {
       catchError((_err: HttpErrorResponse) => {
         this.snackBar.open(
           this.translateService.instant(
-            'MSG.ERRORS.CHAT_STATUS_FILTERS_FETCH_ERROR'
+            'MSG.ERRORS.CHAT_STATUS_FILTERS_FETCH_ERROR',
           ),
-          'close'
+          'close',
         );
         return EMPTY;
-      })
+      }),
     );
 
   securityLevelOptions$: Observable<Option[]> = this.msgDictionaryService
@@ -230,12 +230,12 @@ export class SupportChatComponent implements OnInit, OnDestroy {
       catchError((_err: HttpErrorResponse) => {
         this.snackBar.open(
           this.translateService.instant(
-            'MSG.ERRORS.CHAT_SECURITY_LEVEL_OPTIONS_FETCH_ERROR'
+            'MSG.ERRORS.CHAT_SECURITY_LEVEL_OPTIONS_FETCH_ERROR',
           ),
-          'close'
+          'close',
         );
         return EMPTY;
-      })
+      }),
     );
 
   scopeOptions$: Observable<Option[]> = this.msgDictionaryService
@@ -244,12 +244,12 @@ export class SupportChatComponent implements OnInit, OnDestroy {
       catchError((_err: HttpErrorResponse) => {
         this.snackBar.open(
           this.translateService.instant(
-            'MSG.ERRORS.CHAT_SECURITY_LEVEL_OPTIONS_FETCH_ERROR'
+            'MSG.ERRORS.CHAT_SECURITY_LEVEL_OPTIONS_FETCH_ERROR',
           ),
-          'close'
+          'close',
         );
         return EMPTY;
-      })
+      }),
     );
 
   userSeenChatVersions$!: Observable<ChatVersion[]>;
@@ -267,7 +267,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.setUpSidebar();
     this.msgSubjectsService.createSubject(
-      MsgSubjects.MESSAGE_SUCCESSFULLY_SENT
+      MsgSubjects.MESSAGE_SUCCESSFULLY_SENT,
     );
   }
 
@@ -321,7 +321,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
       .pipe(
         filter(
           (data): data is CreateChatDialogReturnDataInterface =>
-            typeof data !== 'undefined'
+            typeof data !== 'undefined',
         ),
         switchMap((content) => {
           const params: CreateChatRequest['params'] = {
@@ -344,14 +344,14 @@ export class SupportChatComponent implements OnInit, OnDestroy {
                 this.snackBar.open(`${err.error}`, 'close');
                 dialogRef.componentInstance.form.enable();
                 return EMPTY;
-              })
-            )
+              }),
+            ),
         ),
         tap(() => {
           this.fetchChatsByStatuses$.next(this.selectedStatuses);
           dialogRef.close();
         }),
-        takeUntil(dialogClosed$)
+        takeUntil(dialogClosed$),
       )
       .subscribe();
   }
@@ -369,21 +369,21 @@ export class SupportChatComponent implements OnInit, OnDestroy {
           this.dispatchService.dispatch<
             SendChatMessageRequest,
             SendChatMessageResponse
-          >(request)
+          >(request),
         ),
         tap(() => {
           this.fetchChatMessagesByChatId$.next(
-            this.selectedChat?.zoid as number
+            this.selectedChat?.zoid as number,
           );
           this.msgSubjectsService.performNext(
-            MsgSubjects.MESSAGE_SUCCESSFULLY_SENT
+            MsgSubjects.MESSAGE_SUCCESSFULLY_SENT,
           );
         }),
         catchError((err: HttpErrorResponse) => {
           this.snackBar.open(`${err.error}`, 'close');
           return EMPTY;
         }),
-        take(1)
+        take(1),
       )
       .subscribe();
   }
@@ -402,18 +402,18 @@ export class SupportChatComponent implements OnInit, OnDestroy {
           this.dispatchService.dispatch<
             EditChatMessageRequest,
             EditChatMessageResponse
-          >(request)
+          >(request),
         ),
         tap(() =>
           this.fetchChatMessagesByChatId$.next(
-            this.selectedChat?.zoid as number
-          )
+            this.selectedChat?.zoid as number,
+          ),
         ),
         catchError((err: HttpErrorResponse) => {
           this.snackBar.open(`${err.error}`, 'close');
           return EMPTY;
         }),
-        take(1)
+        take(1),
       )
       .subscribe();
   }
@@ -429,18 +429,18 @@ export class SupportChatComponent implements OnInit, OnDestroy {
           this.dispatchService.dispatch<
             DeleteChatMessageRequest,
             DeleteChatMessageResponse
-          >(request)
+          >(request),
         ),
         tap(() =>
           this.fetchChatMessagesByChatId$.next(
-            this.selectedChat?.zoid as number
-          )
+            this.selectedChat?.zoid as number,
+          ),
         ),
         catchError((err: HttpErrorResponse) => {
           this.snackBar.open(`${err.error}`, 'close');
           return EMPTY;
         }),
-        take(1)
+        take(1),
       )
       .subscribe();
   }
@@ -459,11 +459,11 @@ export class SupportChatComponent implements OnInit, OnDestroy {
           this.dispatchService.dispatch<
             ChangeChatStatusRequest,
             ChangeChatStatusResponse
-          >(request)
+          >(request),
         ),
         map(
           (response: QtisRequestResponseInterface<ChangeChatStatusResponse>) =>
-            response.r[0].e
+            response.r[0].e,
         ),
         tap((hasError) => {
           this.fetchChatsByStatuses$.next(this.selectedStatuses);
@@ -475,7 +475,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
           this.snackBar.open(`${err.error}`, 'close');
           return EMPTY;
         }),
-        take(1)
+        take(1),
       )
       .subscribe();
   }
@@ -494,11 +494,11 @@ export class SupportChatComponent implements OnInit, OnDestroy {
           this.dispatchService.dispatch<
             ChangeChatStatusRequest,
             ChangeChatStatusResponse
-          >(request)
+          >(request),
         ),
         map(
           (response: QtisRequestResponseInterface<ChangeChatStatusResponse>) =>
-            response.r[0].e
+            response.r[0].e,
         ),
         tap((hasError) => {
           this.fetchChatsByStatuses$.next(this.selectedStatuses);
@@ -506,7 +506,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
             this.chatSelected({ ...chat, status: MsgChatStatus.WIP });
           }
         }),
-        take(1)
+        take(1),
       )
       .subscribe();
   }
@@ -528,7 +528,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
       .pipe(
         filter(
           (data): data is RenameChatDialogReturnDataInterface =>
-            typeof data !== 'undefined'
+            typeof data !== 'undefined',
         ),
         switchMap((data) =>
           this.msgRequestBuilderService.buildChangeChatStatusRequest({
@@ -537,20 +537,20 @@ export class SupportChatComponent implements OnInit, OnDestroy {
             subject: data.subject,
             reference: null,
             status: chat.status,
-          })
+          }),
         ),
         switchMap((req) =>
           this.dispatchService.dispatch<
             ChangeChatStatusRequest,
             ChangeChatStatusResponse
-          >(req)
+          >(req),
         ),
         tap(() => this.fetchChatsByStatuses$.next(this.selectedStatuses)),
         catchError((err: HttpErrorResponse) => {
           this.snackBar.open(`${err.error}`, 'close');
           return EMPTY;
         }),
-        take(1)
+        take(1),
       )
       .subscribe();
   }
@@ -567,10 +567,10 @@ export class SupportChatComponent implements OnInit, OnDestroy {
           subject: chat.subject,
         }),
         cancelButtonText: this.translateService.instant(
-          'MSG.DELETE_CHAT_MODAL.CANCEL_BUTTON_TEXT'
+          'MSG.DELETE_CHAT_MODAL.CANCEL_BUTTON_TEXT',
         ),
         submitButtonText: this.translateService.instant(
-          'MSG.DELETE_CHAT_MODAL.SUBMIT_BUTTON_TEXT'
+          'MSG.DELETE_CHAT_MODAL.SUBMIT_BUTTON_TEXT',
         ),
       },
     });
@@ -583,19 +583,19 @@ export class SupportChatComponent implements OnInit, OnDestroy {
           this.msgRequestBuilderService.buildDeleteChatRequest({
             zoid: chat.zoid,
             zver: chat.zver,
-          })
+          }),
         ),
         switchMap((req) =>
           this.dispatchService.dispatch<DeleteChatRequest, DeleteChatResponse>(
-            req
-          )
+            req,
+          ),
         ),
         tap(() => this.fetchChatsByStatuses$.next(this.selectedStatuses)),
         catchError((err: HttpErrorResponse) => {
           this.snackBar.open(`${err.error}`, 'close');
           return EMPTY;
         }),
-        take(1)
+        take(1),
       )
       .subscribe();
   }

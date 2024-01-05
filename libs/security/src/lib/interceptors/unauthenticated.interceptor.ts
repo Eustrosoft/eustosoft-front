@@ -25,7 +25,7 @@ export class UnauthenticatedInterceptor implements HttpInterceptor {
 
   intercept(
     request: HttpRequest<object>,
-    next: HttpHandler
+    next: HttpHandler,
   ): Observable<HttpEvent<unknown>> {
     return next.handle(request).pipe(
       tap((event) => {
@@ -52,7 +52,7 @@ export class UnauthenticatedInterceptor implements HttpInterceptor {
           this.router.navigate(['login']);
         }
         return throwError(() => err);
-      })
+      }),
     );
   }
 }

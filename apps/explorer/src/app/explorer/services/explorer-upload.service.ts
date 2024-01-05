@@ -28,11 +28,11 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 export class ExplorerUploadService {
   private readonly fileReaderService = inject(FileReaderService);
   private readonly explorerRequestBuilderService = inject(
-    ExplorerRequestBuilderService
+    ExplorerRequestBuilderService,
   );
   private readonly explorerService = inject(ExplorerService);
   private readonly explorerUploadItemsService = inject(
-    ExplorerUploadItemsService
+    ExplorerUploadItemsService,
   );
   private readonly fb = inject(FormBuilder);
 
@@ -41,7 +41,7 @@ export class ExplorerUploadService {
       switchMap((items) => combineLatest([from(items.controls), of(items)])),
       filter(
         ([itemForm]) =>
-          itemForm.controls.uploadItem.value.state !== UploadItemState.UPLOADED
+          itemForm.controls.uploadItem.value.state !== UploadItemState.UPLOADED,
       ),
       filter(([itemForm]) => !itemForm.controls.uploadItem.value.cancelled),
       concatMap(([itemForm, itemsForms]) =>
@@ -60,7 +60,7 @@ export class ExplorerUploadService {
                       item.chunks.length,
                       itemForm.controls.securityLevel.value,
                       itemForm.controls.description.value,
-                      path
+                      path,
                     );
 
                   return combineLatest([
@@ -91,17 +91,17 @@ export class ExplorerUploadService {
                     })
                     .filter(
                       (itemForm) =>
-                        !itemForm.controls.uploadItem.value.cancelled
+                        !itemForm.controls.uploadItem.value.cancelled,
                     );
                   const formArray =
                     this.fb.array<FormGroup<UploadItemForm>>(uploadItems);
                   this.explorerUploadItemsService.uploadItems$.next(formArray);
                 }),
-                toArray()
-              )
-            )
-          )
-      )
+                toArray(),
+              ),
+            ),
+          ),
+      ),
     );
   }
 }

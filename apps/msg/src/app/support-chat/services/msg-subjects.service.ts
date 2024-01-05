@@ -19,7 +19,7 @@ export class MsgSubjectsService {
 
   performNext<T extends never>(
     notifier: MsgSubjects,
-    payload: T = {} as never
+    payload: T = {} as never,
   ): void {
     const subject = this.subjects.get(notifier);
     if (subject) {

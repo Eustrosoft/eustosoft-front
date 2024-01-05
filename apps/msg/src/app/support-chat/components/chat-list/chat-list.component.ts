@@ -80,7 +80,7 @@ export class ChatListComponent implements OnInit {
   filterChange(event: MatCheckboxChange, value: string): void {
     this.checkedStatuses[value] = event.checked;
     const codes = Object.keys(this.checkedStatuses).filter(
-      (optionValue) => this.checkedStatuses[optionValue]
+      (optionValue) => this.checkedStatuses[optionValue],
     ) as MsgChatStatus[];
     this.statusFilterChanged.emit(codes);
   }

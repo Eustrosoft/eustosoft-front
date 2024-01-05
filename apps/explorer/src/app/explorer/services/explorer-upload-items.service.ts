@@ -14,6 +14,6 @@ import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 export class ExplorerUploadItemsService {
   private fb = inject(FormBuilder);
   uploadItems$ = new BehaviorSubject<FormArray<FormGroup<UploadItemForm>>>(
-    this.fb.array<FormGroup<UploadItemForm>>([])
+    this.fb.array<FormGroup<UploadItemForm>>([]),
   );
 }

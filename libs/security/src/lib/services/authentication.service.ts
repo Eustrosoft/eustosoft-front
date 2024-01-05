@@ -71,10 +71,10 @@ export class AuthenticationService {
           userId: id,
           userFullName: pingRes.r[0].fullName,
           userSlvl: slvl,
-        })
+        }),
       ),
       switchMap(([pingRes]) => of(pingRes)),
-      catchError((err: HttpErrorResponse) => throwError(() => err))
+      catchError((err: HttpErrorResponse) => throwError(() => err)),
     );
   }
 }

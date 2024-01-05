@@ -24,7 +24,7 @@ export class SidenavComponent implements AfterViewInit {
   @Output() logoutClicked = new EventEmitter<void>();
 
   private readonly authenticationService: AuthenticationService = inject(
-    AuthenticationService
+    AuthenticationService,
   );
   protected readonly userInfo$ =
     this.authenticationService.userInfo$.asObservable();

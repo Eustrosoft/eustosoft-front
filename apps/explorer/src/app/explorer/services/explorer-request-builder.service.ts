@@ -32,7 +32,7 @@ export class ExplorerRequestBuilderService {
     chunkIndex: number,
     totalChunks: number,
     uint8Array: Uint8Array,
-    path: string = '/'
+    path: string = '/',
   ): QtisRequestResponseInterface<UploadRequest> {
     return {
       r: [
@@ -60,7 +60,7 @@ export class ExplorerRequestBuilderService {
     chunk: string,
     chunkIndex: number,
     totalChunks: number,
-    path: string = '/'
+    path: string = '/',
   ): QtisRequestResponseInterface<UploadRequest> {
     return {
       r: [
@@ -91,7 +91,7 @@ export class ExplorerRequestBuilderService {
     totalChunks: number,
     securityLevel?: string,
     description?: string,
-    path: string = '/'
+    path: string = '/',
   ): QtisRequestResponseInterface<UploadHexRequest> {
     const params: UploadHexRequest['parameters'] = {
       hexString: chunk,
@@ -125,7 +125,7 @@ export class ExplorerRequestBuilderService {
     from: FileSystemObject[],
     to: string[],
     description: string | undefined = undefined,
-    action: CmsRequestActions = CmsRequestActions.MOVE
+    action: CmsRequestActions = CmsRequestActions.MOVE,
   ): Observable<QtisRequestResponseInterface<MoveRequest>> {
     switch (action) {
       case CmsRequestActions.RENAME: {
@@ -154,7 +154,7 @@ export class ExplorerRequestBuilderService {
                 from: obj.fullPath,
                 to: to[i],
                 description: description,
-              } as MoveRequest)
+              }) as MoveRequest,
           ),
           t: 0,
         });
@@ -165,7 +165,7 @@ export class ExplorerRequestBuilderService {
   buildMoveCopyRequest(
     from: FileSystemObject[],
     to: string[],
-    action: CmsRequestActions
+    action: CmsRequestActions,
   ): Observable<QtisRequestResponseInterface<MoveCopyRequest>> {
     return of({
       r: from.map(
@@ -176,14 +176,14 @@ export class ExplorerRequestBuilderService {
             l: SupportedLanguages.EN_US,
             from: obj.fullPath,
             to: to[i],
-          } as MoveCopyRequest)
+          }) as MoveCopyRequest,
       ),
       t: 0,
     });
   }
 
   buildViewRequest(
-    path: string
+    path: string,
   ): Observable<QtisRequestResponseInterface<ViewRequest>> {
     return of({
       r: [
@@ -199,7 +199,7 @@ export class ExplorerRequestBuilderService {
   }
 
   buildCreateRequest(
-    params: Omit<CreateRequest, 's' | 'l' | 'r'>
+    params: Omit<CreateRequest, 's' | 'l' | 'r'>,
   ): Observable<QtisRequestResponseInterface<CreateRequest>> {
     return of({
       r: [
@@ -215,7 +215,7 @@ export class ExplorerRequestBuilderService {
   }
 
   buildDeleteRequests(
-    rows: FileSystemObject[]
+    rows: FileSystemObject[],
   ): Observable<QtisRequestResponseInterface<DeleteRequest>> {
     return of({
       r: rows.map(
@@ -225,14 +225,14 @@ export class ExplorerRequestBuilderService {
             r: CmsRequestActions.DELETE,
             l: SupportedLanguages.EN_US,
             path: row.fullPath,
-          } as DeleteRequest)
+          }) as DeleteRequest,
       ),
       t: 0,
     });
   }
 
   buildDownloadTicketRequests(
-    rows: FileSystemObject[]
+    rows: FileSystemObject[],
   ): Observable<QtisRequestResponseInterface<DownloadTicketRequest>> {
     return of({
       r: rows.map(
@@ -242,7 +242,7 @@ export class ExplorerRequestBuilderService {
             r: CmsRequestActions.TICKET,
             l: SupportedLanguages.EN_US,
             path: row.fullPath,
-          } as DownloadTicketRequest)
+          }) as DownloadTicketRequest,
       ),
       t: 0,
     });

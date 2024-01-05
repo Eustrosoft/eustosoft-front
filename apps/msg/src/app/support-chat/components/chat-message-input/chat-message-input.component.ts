@@ -70,12 +70,12 @@ export class ChatMessageInputComponent
     fromEvent<KeyboardEvent>(this.el.nativeElement, 'keydown')
       .pipe(
         filter(
-          (event: KeyboardEvent) => event.ctrlKey && event.key === 'Enter'
+          (event: KeyboardEvent) => event.ctrlKey && event.key === 'Enter',
         ),
         debounceTime(300),
         distinctUntilChanged(),
         tap(() => this.submitMessage()),
-        takeUntil(this.destroy$)
+        takeUntil(this.destroy$),
       )
       .subscribe();
 
@@ -84,7 +84,7 @@ export class ChatMessageInputComponent
       .pipe(
         tap(() => {
           this.control.setValue('');
-        })
+        }),
       )
       .subscribe();
   }

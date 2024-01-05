@@ -96,7 +96,7 @@ export class SamService {
   }
 
   getUserAvailableScope(
-    type: Scopes
+    type: Scopes,
   ): Observable<QtisRequestResponseInterface<UserAvailableScopesResponse>> {
     return this.dispatchService.dispatch<
       UserAvailableScopesRequest,

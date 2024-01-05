@@ -39,7 +39,7 @@ export class DicService {
   }
 
   getDicValues(
-    dic: Dictionaries
+    dic: Dictionaries,
   ): Observable<QtisRequestResponseInterface<DicValuesResponse>> {
     return this.dispatchService.dispatch<DicValuesRequest, DicValuesResponse>({
       r: [
@@ -56,12 +56,12 @@ export class DicService {
 
   getMappedDicValues<T>(
     dic: Dictionaries,
-    mapFunc: (value: DicValue) => T
+    mapFunc: (value: DicValue) => T,
   ): Observable<T[]> {
     return this.getDicValues(dic).pipe(
       map((response: QtisRequestResponseInterface<DicValuesResponse>) =>
-        response.r.flatMap((r: DicValuesResponse) => r.values).map(mapFunc)
-      )
+        response.r.flatMap((r: DicValuesResponse) => r.values).map(mapFunc),
+      ),
     );
   }
 }

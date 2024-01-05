@@ -31,7 +31,7 @@ export class RequestComponent {
         value: queryType,
         displayText: queryType,
         disabled: false,
-      } as Option)
+      }) as Option,
   );
 
   @ViewChild(InputFileComponent) inputFileComponent!: InputFileComponent;

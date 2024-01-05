@@ -32,7 +32,7 @@ export class CreateDialogComponent {
   private readonly translateService = inject(TranslateService);
   private readonly fb = inject(FormBuilder);
   private readonly explorerDictionaryService = inject(
-    ExplorerDictionaryService
+    ExplorerDictionaryService,
   );
   protected readonly securityLevelOptions$ =
     this.explorerDictionaryService.securityOptions$;
@@ -41,13 +41,13 @@ export class CreateDialogComponent {
   protected form: FormGroup<CreateDialogForm> = this.fb.nonNullable.group({
     name: this.fb.nonNullable.control(
       this.translateService.instant(this.data.nameInputDefaultValue),
-      [Validators.required]
+      [Validators.required],
     ),
     securityLevel: this.fb.nonNullable.control(
-      this.data.securityLevelSelectDefaultValue
+      this.data.securityLevelSelectDefaultValue,
     ),
     description: this.fb.nonNullable.control(
-      this.data.descriptionInputDefaultValue
+      this.data.descriptionInputDefaultValue,
     ),
   });
 

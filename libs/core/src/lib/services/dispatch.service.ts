@@ -17,15 +17,15 @@ export class DispatchService {
   private config = inject(APP_CONFIG);
 
   dispatch<Req, Res>(
-    body: QtisRequestResponseInterface<Req>
+    body: QtisRequestResponseInterface<Req>,
   ): Observable<QtisRequestResponseInterface<Res>> {
     return this.config.pipe(
       switchMap((config: Config) =>
         this.http.post<QtisRequestResponseInterface<Res>>(
           `${config.apiUrl}/dispatch`,
-          body
-        )
-      )
+          body,
+        ),
+      ),
     );
   }
 }

@@ -17,7 +17,7 @@ export class ExplorerUploadItemFormFactoryService {
   makeUploadItemsForm(
     files: File[],
     uploadPath: string,
-    defaultSecurityLevel: SecurityLevels
+    defaultSecurityLevel: SecurityLevels,
   ): FormArray<FormGroup<UploadItemForm>> {
     return this.fb.array(
       files.map((file) =>
@@ -35,8 +35,8 @@ export class ExplorerUploadItemFormFactoryService {
             value: defaultSecurityLevel,
             disabled: false,
           }),
-        })
-      )
+        }),
+      ),
     );
   }
 }
