@@ -26,5 +26,5 @@ export * from './lib/directives/hover-cursor.directive';
 export * from './lib/components/progress-bar/progress-bar.component';
 export * from './lib/components/prompt-dialog/prompt-dialog.component';
 export * from './lib/components/prompt-dialog/prompt-dialog-data.interface';
-export * from './lib/components/select/option.interface';
+export * from './lib/interfaces/option.interface';
 export * from './lib/services/breakpoints.service';

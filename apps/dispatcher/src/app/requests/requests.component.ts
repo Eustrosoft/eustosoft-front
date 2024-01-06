@@ -90,7 +90,7 @@ export class RequestsComponent implements OnInit {
   }
 
   submit(): void {
-    this.form.get('submit')?.disable();
+    this.form.controls.submit.disable();
     this.isResultLoading.next(true);
     this.requestResult$ = this.requestBuilderService
       .buildQuery(this.form.controls.forms)
@@ -118,11 +118,11 @@ export class RequestsComponent implements OnInit {
           return response;
         }),
         tap(() => {
-          this.form.get('submit')?.enable();
+          this.form.controls.submit.enable();
           this.isResultLoading.next(false);
         }),
         catchError((err: HttpErrorResponse) => {
-          this.form.get('submit')?.enable();
+          this.form.controls.submit.enable();
           this.isResultLoading.next(false);
           this.snackBar.open(err.error, 'close');
           this.cd.detectChanges();

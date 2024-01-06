@@ -13,11 +13,6 @@
   type="file"
   name="file"
 />
-
-<eustrosoft-front-button
-  [buttonType]="'button'"
-  [buttonStyleType]="'stroked'"
-  [buttonText]="buttonText"
-  (click)="fileInput.click()"
->
-</eustrosoft-front-button>
+<button mat-stroked-button type="button" (click)="fileInput.click()">
+  {{ buttonText }}
+</button>

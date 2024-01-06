@@ -6,25 +6,42 @@
   -->
 
 <h1 class="ml-3 mb-3"># {{ formNumber }}</h1>
-<eustrosoft-front-select
-  [label]="queryTypeLabelText"
-  [control]="form.get('queryType')! | formControl"
-  [options]="queryTypeOptions"
-  [fieldAppearance]="'outline'"
-></eustrosoft-front-select>
-<eustrosoft-front-textarea
-  *ngIf="(form.get('queryType')! | formControl).value === QueryTypes.SQL"
-  [label]="'SQL'"
-  [control]="form.get('request')! | formControl"
-  [fieldAppearance]="'outline'"
-  [hideSubscriptWrapper]="true"
-></eustrosoft-front-textarea>
+<mat-form-field
+  [appearance]="'outline'"
+  [subscriptSizing]="'fixed'"
+  class="w-100"
+>
+  <mat-label>{{ queryTypeLabelText }}</mat-label>
+  <mat-select [formControl]="form.controls.queryType">
+    <mat-option
+      *ngFor="let option of queryTypeOptions"
+      [value]="option.value"
+      [disabled]="option.disabled"
+    >
+      {{ option.displayText }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+<mat-form-field
+  [appearance]="'outline'"
+  [subscriptSizing]="'fixed'"
+  class="w-100"
+  *ngIf="form.controls.queryType.value === QueryTypes.SQL"
+>
+  <mat-label>SQL</mat-label>
+  <textarea
+    [formControl]="form.controls.request"
+    [cols]="5"
+    [rows]="5"
+    matInput
+  ></textarea>
+</mat-form-field>
 <eustrosoft-front-input-file
-  *ngIf="(form.get('queryType')! | formControl).value === QueryTypes.FILE"
-  [control]="form.get('file')! | formControl"
+  *ngIf="form.controls.queryType.value === QueryTypes.FILE"
+  [control]="form.controls.file"
 ></eustrosoft-front-input-file>
 <eustrosoft-front-file-list
-  [files]="(form.get('file')! | formControl).value"
+  [files]="form.controls.file.value"
   [classesForVirtualViewport]="['h-25']"
   (deleteFile)="deleteFile($event)"
 ></eustrosoft-front-file-list>

@@ -8,7 +8,7 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatFormFieldAppearance } from '@angular/material/form-field';
-import { Option } from './option.interface';
+import { Option } from '../../interfaces/option.interface';
 import { ThemePalette } from '@angular/material/core';
 
 @Component({

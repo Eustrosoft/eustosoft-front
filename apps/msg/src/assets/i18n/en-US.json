@@ -12,8 +12,8 @@
   },
   "LOGIN_PAGE": {
     "AUTHENTICATION_HEADING": "Authentication",
-    "LOGIN_LABEL": "Your Login",
-    "PASSWORD_LABEL": "Your Password",
+    "LOGIN_LABEL": "Login",
+    "PASSWORD_LABEL": "Password",
     "SUBMIT_BUTTON_TEXT": "Log In"
   },
   "MSG": {

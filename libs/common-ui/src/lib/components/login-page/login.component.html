@@ -17,35 +17,64 @@
       <h2 class="m-0 fs-4">|</h2>
       <h2 class="m-0 fs-4">{{ texts.heading }}</h2>
     </div>
-    <eustrosoft-front-input
-      [inputType]="InputTypes.TEXT"
-      [label]="texts.loginLabel"
-      [control]="form.controls.login"
-      [fieldAppearance]="'outline'"
-      [showSuffixIcon]="true"
-      [suffixIcon]="'person'"
-      [errors]="loginErrors"
+    <mat-form-field
+      [appearance]="'outline'"
+      [subscriptSizing]="'fixed'"
       class="mb-1"
     >
-    </eustrosoft-front-input>
-    <eustrosoft-front-input
-      [inputType]="InputTypes.PASSWORD"
-      [label]="texts.passwordLabel"
-      [control]="form.controls.password"
-      [fieldAppearance]="'outline'"
-      [showSuffixIcon]="true"
-      [suffixIcon]="'lock'"
-      [errors]="passwordErrors"
+      <mat-label>{{ texts.loginLabel }}</mat-label>
+      <input
+        [formControl]="form.controls.login"
+        [type]="InputTypes.TEXT"
+        [value]="form.controls.login.value"
+        matInput
+      />
+      <mat-icon matSuffix>person</mat-icon>
+      <mat-error
+        *ngIf="form.controls.login.touched && form.controls.login.errors"
+      >
+        <ng-container *ngFor="let error of loginErrors">
+          <ng-container *ngIf="form.controls.login.hasError(error.errorCode)">
+            <span>{{ error.message }}</span> <br />
+          </ng-container>
+        </ng-container>
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field
+      [appearance]="'outline'"
+      [subscriptSizing]="'fixed'"
       class="mb-1"
     >
-    </eustrosoft-front-input>
-    <eustrosoft-front-button
-      [buttonStyleType]="'flat'"
-      [buttonText]="texts.submitButtonText"
-      [buttonType]="'submit'"
-      [color]="'primary'"
-      [buttonStyles]="{ height: '50px', 'font-size': '1.25rem' }"
+      <mat-label>{{ texts.passwordLabel }}</mat-label>
+      <input
+        [formControl]="form.controls.password"
+        [type]="InputTypes.PASSWORD"
+        [value]="form.controls.password.value"
+        matInput
+      />
+      <mat-icon matSuffix>lock</mat-icon>
+      <mat-error
+        *ngIf="form.controls.password.touched && form.controls.password.errors"
+      >
+        <ng-container *ngFor="let error of passwordErrors">
+          <ng-container
+            *ngIf="form.controls.password.hasError(error.errorCode)"
+          >
+            <span>{{ error.message }}</span> <br />
+          </ng-container>
+        </ng-container>
+      </mat-error>
+    </mat-form-field>
+
+    <button
+      mat-flat-button
+      type="submit"
+      color="primary"
+      [ngStyle]="{ height: '50px', 'font-size': '1.25rem' }"
       [disabled]="form.controls.submit.disabled"
-    ></eustrosoft-front-button>
+    >
+      {{ texts.submitButtonText }}
+    </button>
   </form>
 </ng-template>

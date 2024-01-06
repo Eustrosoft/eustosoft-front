@@ -17,16 +17,19 @@
   </div>
   <ng-container *ngIf="isAuthenticated$ | async">
     <div hidden="hidden">
-      <eustrosoft-front-button
-        [buttonType]="'button'"
-        [buttonStyleType]="'with-icon'"
-        [buttonText]="'Menu'"
-        [iconName]="'expand_more'"
-        [iconPosition]="'end'"
-        [color]="'primary'"
+      <button
+        mat-stroked-button
+        type="button"
+        color="primary"
         [matMenuTriggerFor]="nestedMenu"
       >
-      </eustrosoft-front-button>
+        <div
+          class="flex flex-row-reverse align-items-center justify-content-space-between"
+        >
+          <mat-icon>expand_more</mat-icon>
+          <span> Menu</span>
+        </div>
+      </button>
       <mat-menu [backdropClass]="'ignore'" #nestedMenu="matMenu">
         <button
           *ngFor="let menuItem of menuItems.dropdowns; let i = index"
@@ -55,21 +58,18 @@
           <span class="px-3 text-truncate" [title]="info.userFullName">
             {{ info.userFullName }}
           </span>
-          <eustrosoft-front-button
-            [buttonStyleType]="'icon'"
-            [iconName]="'logout'"
-            [buttonType]="'button'"
-            (click)="logout()"
-          >
-          </eustrosoft-front-button>
+          <button mat-icon-button type="button" (click)="logout()">
+            <mat-icon>logout</mat-icon>
+          </button>
         </ng-container>
         <ng-container *ngIf="isSm">
-          <eustrosoft-front-button
-            [buttonType]="'button'"
-            [buttonStyleType]="'icon'"
-            [iconName]="'menu'"
-            (clicked)="sidenavToggleClicked.emit()"
-          ></eustrosoft-front-button>
+          <button
+            mat-icon-button
+            type="button"
+            (click)="sidenavToggleClicked.emit()"
+          >
+            <mat-icon>menu</mat-icon>
+          </button>
         </ng-container>
       </ng-container>
     </div>

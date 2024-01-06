@@ -11,28 +11,31 @@
       <h4 class="m-0 px-3 fs-4" [title]="info.userFullName">
         {{ info.userFullName }}
       </h4>
-      <eustrosoft-front-button
-        [buttonStyleType]="'icon'"
-        [iconName]="'logout'"
-        [buttonType]="'button'"
+      <button
+        mat-icon-button
+        type="button"
         (click)="logout()"
-        class="logout-icon"
+        [ngClass]="'logout-icon'"
       >
-      </eustrosoft-front-button>
+        <mat-icon>logout</mat-icon>
+      </button>
     </div>
   </ng-container>
   <ng-container *ngFor="let menuItem of menuItems.dropdowns; let i = index">
-    <eustrosoft-front-button
-      [buttonType]="'button'"
-      [buttonStyleType]="'with-icon'"
-      [buttonText]="menuItem.title"
-      [iconName]="'expand_more'"
-      [iconPosition]="'end'"
-      [color]="'primary'"
-      [matMenuTriggerFor]="menuTriggers[i]"
+    <button
+      mat-stroked-button
+      color="primary"
+      type="button"
       class="w-100"
+      [matMenuTriggerFor]="menuTriggers[i]"
     >
-    </eustrosoft-front-button>
+      <div
+        class="flex flex-row-reverse align-items-center justify-content-space-between"
+      >
+        <mat-icon>expand_more</mat-icon>
+        <span>{{ menuItem.title }}</span>
+      </div>
+    </button>
     <mat-menu [hasBackdrop]="true">
       <a
         *ngFor="let link of menuItem.links"

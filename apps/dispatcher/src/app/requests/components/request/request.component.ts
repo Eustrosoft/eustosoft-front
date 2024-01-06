@@ -40,7 +40,7 @@ export class RequestComponent {
   public queryTypeLabelText = 'Query type';
 
   deleteFile(index: number): void {
-    const control = this.form.get('file');
+    const control = this.form.controls.file;
     control?.value?.splice(index, 1);
     control?.patchValue(control?.value);
   }

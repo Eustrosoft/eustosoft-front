@@ -27,6 +27,12 @@ import { ConfigModule } from '@eustrosoft-front/config';
 import { LoginPageComponent } from './login-page/login-page.component';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { LocationStrategy } from '@angular/common';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatOptionModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { TextFieldModule } from '@angular/cdk/text-field';
 
 @NgModule({
   declarations: [
@@ -48,6 +54,12 @@ import { LocationStrategy } from '@angular/common';
     MatIconModule,
     MatMenuModule,
     MatSidenavModule,
+    MatFormFieldModule,
+    MatOptionModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatInputModule,
+    TextFieldModule,
   ],
   providers: [
     RequestBuilderService,
