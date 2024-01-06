@@ -5,18 +5,13 @@
  * See the LICENSE file at the project root for licensing information.
  */
 .icon {
-  ::ng-deep {
-    .mat-icon {
-      height: auto !important;
-      width: auto !important;
-      font-size: 1.05rem !important;
-    }
-    .mat-mdc-icon-button.mat-mdc-button-base {
-      height: 2rem;
-    }
-    .mdc-icon-button {
-      font-size: 1rem;
-      padding: 0.5rem;
-    }
+  .mat-icon {
+    height: auto !important;
+    width: auto !important;
+    font-size: 1.05rem !important;
   }
+  font-size: 1rem;
+  padding: 0.5rem;
+  height: 2rem;
+  width: 2rem;
 }

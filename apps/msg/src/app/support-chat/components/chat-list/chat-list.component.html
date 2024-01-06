@@ -12,26 +12,28 @@
   >
     <div class="flex align-items-center justify-content-space-between p-1">
       <div class="flex align-items-center">
-        <eustrosoft-front-button
-          [buttonType]="'button'"
-          [buttonStyleType]="'icon'"
-          [iconName]="'menu'"
+        <button
+          mat-icon-button
+          type="button"
           [class.display-none]="!isSm"
-          (clicked)="collapseClicked.emit()"
-        ></eustrosoft-front-button>
+          (click)="collapseClicked.emit()"
+        >
+          <mat-icon>menu</mat-icon>
+        </button>
         <h2 class="m-0">
           {{ 'MSG.TICKET_LIST_HEADER_TEXT' | translate }}
         </h2>
       </div>
       <div class="flex align-items-center">
-        <eustrosoft-front-button
-          [buttonType]="'button'"
-          [buttonStyleType]="'icon'"
-          [iconName]="'filter_alt'"
+        <button
+          mat-icon-button
+          type="button"
+          [matMenuTriggerFor]="chatFiltersMenu"
           [matTooltip]="'MSG.CHAT_FILTERS_BUTTON_TEXT' | translate"
           [matTooltipShowDelay]="300"
-          [matMenuTriggerFor]="chatFiltersMenu"
-        ></eustrosoft-front-button>
+        >
+          <mat-icon>filter_alt</mat-icon>
+        </button>
         <mat-menu
           #chatFiltersMenu="matMenu"
           class="msg-chat-status-filter-menu"
@@ -49,22 +51,24 @@
             </mat-checkbox>
           </ng-container>
         </mat-menu>
-        <eustrosoft-front-button
-          [buttonType]="'button'"
-          [buttonStyleType]="'icon'"
-          [iconName]="'add'"
+        <button
+          mat-icon-button
+          type="button"
           [matTooltip]="'MSG.CREATE_NEW_CHAT_BUTTON_TEXT' | translate"
           [matTooltipShowDelay]="300"
-          (clicked)="createNewChat()"
-        ></eustrosoft-front-button>
-        <eustrosoft-front-button
-          [buttonType]="'button'"
-          [buttonStyleType]="'icon'"
-          [iconName]="'refresh'"
+          (click)="createNewChat()"
+        >
+          <mat-icon>add</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          type="button"
           [matTooltip]="'MSG.REFRESH_TICKET_LIST_BUTTON_TOOLTIP' | translate"
           [matTooltipShowDelay]="300"
-          (clicked)="refreshChats()"
-        ></eustrosoft-front-button>
+          (click)="refreshChats()"
+        >
+          <mat-icon>refresh</mat-icon>
+        </button>
       </div>
     </div>
   </div>
@@ -97,13 +101,14 @@
             {{ chat.status | msgChatStatus }}
           </span>
           <div [class.display-none]="isSm" matListItemMeta>
-            <eustrosoft-front-button
-              [buttonType]="'button'"
-              [buttonStyleType]="'icon'"
-              [iconName]="'more_vert'"
+            <button
+              mat-icon-button
+              type="button"
               [matMenuTriggerFor]="chatActionsMenu"
               (click)="$event.stopPropagation()"
-            ></eustrosoft-front-button>
+            >
+              <mat-icon>more_vert</mat-icon>
+            </button>
             <mat-menu #chatActionsMenu="matMenu">
               <button (click)="renameChat(chat)" mat-menu-item>
                 <mat-icon>edit</mat-icon>
@@ -127,11 +132,8 @@
     class="flex flex-auto flex-column align-items-center justify-content-center"
   >
     <h2>{{ 'MSG.CREATE_NEW_CHAT_BUTTON_TEXT' | translate }}</h2>
-    <eustrosoft-front-button
-      [buttonType]="'button'"
-      [buttonStyleType]="'icon'"
-      [iconName]="'add'"
-      (clicked)="createNewChat()"
-    ></eustrosoft-front-button>
+    <button mat-icon-button type="button" (click)="createNewChat()">
+      <mat-icon>add</mat-icon>
+    </button>
   </div>
 </ng-template>

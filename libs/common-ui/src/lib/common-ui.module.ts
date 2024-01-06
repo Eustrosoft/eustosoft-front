@@ -8,13 +8,9 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from './components/header/header.component';
-import { ButtonComponent } from './components/button/button.component';
-import { InputComponent } from './components/input/input.component';
 import { FileListComponent } from './components/file-list/file-list.component';
 import { InputFileComponent } from './components/input-file/input-file.component';
 import { PreloaderComponent } from './components/preloader/preloader.component';
-import { SelectComponent } from './components/select/select.component';
-import { TextareaComponent } from './components/textarea/textarea.component';
 import { MatButtonModule } from '@angular/material/button';
 import {
   MAT_ICON_DEFAULT_OPTIONS,
@@ -75,13 +71,9 @@ import { BreakpointsService } from './services/breakpoints.service';
   ],
   declarations: [
     HeaderComponent,
-    ButtonComponent,
-    InputComponent,
     FileListComponent,
     InputFileComponent,
     PreloaderComponent,
-    SelectComponent,
-    TextareaComponent,
     HoverShadowDirective,
     FilesDropZoneDirective,
     ProgressBarComponent,
@@ -93,13 +85,9 @@ import { BreakpointsService } from './services/breakpoints.service';
   ],
   exports: [
     HeaderComponent,
-    ButtonComponent,
-    InputComponent,
     FileListComponent,
     InputFileComponent,
     PreloaderComponent,
-    SelectComponent,
-    TextareaComponent,
     HoverShadowDirective,
     FilesDropZoneDirective,
     ProgressBarComponent,

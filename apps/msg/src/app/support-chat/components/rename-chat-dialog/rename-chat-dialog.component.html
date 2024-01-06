@@ -10,34 +10,33 @@
     {{ 'MSG.RENAME_CHAT_MODAL.TITLE_TEXT' | translate }}
   </h1>
   <div class="flex flex-column g-3 px-3 py-0" mat-dialog-content>
-    <eustrosoft-front-input
-      [label]="'MSG.RENAME_CHAT_MODAL.SUBJECT_LABEL_TEXT' | translate"
-      [fieldAppearance]="'outline'"
-      [control]="form.controls.subject"
-      [hideSubscriptWrapper]="true"
+    <mat-form-field
+      [appearance]="'outline'"
+      [subscriptSizing]="'dynamic'"
       class="py-2"
-    ></eustrosoft-front-input>
+    >
+      <mat-label>
+        {{ 'MSG.RENAME_CHAT_MODAL.SUBJECT_LABEL_TEXT' | translate }}
+      </mat-label>
+      <input [formControl]="form.controls.subject" matInput />
+    </mat-form-field>
   </div>
   <div
     class="flex flex-wrap-nowrap g-2 pb-3 px-3 pt-0"
     [align]="'end'"
     mat-dialog-actions
   >
-    <eustrosoft-front-button
-      [buttonType]="'button'"
-      [buttonStyleType]="'flat'"
-      [buttonText]="'MSG.RENAME_CHAT_MODAL.CANCEL_BUTTON_TEXT' | translate"
-      (clicked)="reject()"
-    >
-    </eustrosoft-front-button>
-    <eustrosoft-front-button
-      [buttonType]="'button'"
-      [buttonStyleType]="'flat'"
-      [buttonText]="'MSG.RENAME_CHAT_MODAL.SUBMIT_BUTTON_TEXT' | translate"
-      [color]="'primary'"
+    <button mat-flat-button type="button" (click)="reject()">
+      {{ 'MSG.RENAME_CHAT_MODAL.CANCEL_BUTTON_TEXT' | translate }}
+    </button>
+    <button
+      mat-flat-button
+      type="button"
+      color="primary"
       [disabled]="form.invalid"
-      (clicked)="resolve()"
+      (click)="resolve()"
     >
-    </eustrosoft-front-button>
+      {{ 'MSG.RENAME_CHAT_MODAL.SUBMIT_BUTTON_TEXT' | translate }}
+    </button>
   </div>
 </div>

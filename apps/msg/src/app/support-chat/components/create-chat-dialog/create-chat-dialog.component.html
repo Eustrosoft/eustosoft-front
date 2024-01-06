@@ -9,19 +9,27 @@
     {{ 'MSG.CREATE_CHAT_MODAL.TITLE_TEXT' | translate }}
   </h1>
   <div class="flex flex-column g-3 px-3 py-0" mat-dialog-content>
-    <eustrosoft-front-input
-      [label]="'MSG.CREATE_CHAT_MODAL.SUBJECT_LABEL_TEXT' | translate"
-      [fieldAppearance]="'outline'"
-      [control]="form.controls.subject"
-      [hideSubscriptWrapper]="true"
+    <mat-form-field
+      [appearance]="'outline'"
+      [subscriptSizing]="'dynamic'"
       class="pt-2"
-    ></eustrosoft-front-input>
-    <eustrosoft-front-textarea
-      [label]="'MSG.CREATE_CHAT_MODAL.MESSAGE_LABEL_TEXT' | translate"
-      [fieldAppearance]="'outline'"
-      [control]="form.controls.message"
-      [hideSubscriptWrapper]="true"
-    ></eustrosoft-front-textarea>
+    >
+      <mat-label>
+        {{ 'MSG.CREATE_CHAT_MODAL.SUBJECT_LABEL_TEXT' | translate }}
+      </mat-label>
+      <input [formControl]="form.controls.subject" matInput />
+    </mat-form-field>
+    <mat-form-field [appearance]="'outline'" [subscriptSizing]="'dynamic'">
+      <mat-label>
+        {{ 'MSG.CREATE_CHAT_MODAL.MESSAGE_LABEL_TEXT' | translate }}
+      </mat-label>
+      <textarea
+        [formControl]="form.controls.message"
+        [cols]="5"
+        [rows]="5"
+        matInput
+      ></textarea>
+    </mat-form-field>
     <ng-container
       *ngIf="{
         securityLevelOptions: data.securityLevelOptions$ | async,
@@ -43,26 +51,51 @@
               }}
             </mat-panel-description>
           </mat-expansion-panel-header>
-          <eustrosoft-front-select
-            [label]="
-              'MSG.CREATE_CHAT_MODAL.EXTRA_OPTIONS_PANEL_SECURITY_LEVEL_LABEL'
-                | translate
-            "
-            [control]="form.controls.securityLevel"
-            [options]="vm.securityLevelOptions || []"
-            [fieldAppearance]="'fill'"
-            [color]="'primary'"
-          ></eustrosoft-front-select>
-          <eustrosoft-front-select
-            [label]="
-              'MSG.CREATE_CHAT_MODAL.EXTRA_OPTIONS_PANEL_SCOPE_LABEL'
-                | translate
-            "
-            [control]="form.controls.scope"
-            [options]="vm.scopeOptions || []"
-            [fieldAppearance]="'fill'"
-            [color]="'primary'"
-          ></eustrosoft-front-select>
+          <mat-form-field
+            [appearance]="'fill'"
+            [subscriptSizing]="'fixed'"
+            class="w-100"
+          >
+            <mat-label>
+              {{
+                'MSG.CREATE_CHAT_MODAL.EXTRA_OPTIONS_PANEL_SECURITY_LEVEL_LABEL'
+                  | translate
+              }}
+            </mat-label>
+            <mat-select [formControl]="form.controls.securityLevel">
+              <mat-option></mat-option>
+              <mat-option
+                *ngFor="let option of vm.securityLevelOptions || []"
+                [value]="option.value"
+                [disabled]="option.disabled"
+              >
+                {{ option.displayText }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field
+            [appearance]="'fill'"
+            [subscriptSizing]="'fixed'"
+            class="w-100"
+          >
+            <mat-label>
+              {{
+                'MSG.CREATE_CHAT_MODAL.EXTRA_OPTIONS_PANEL_SCOPE_LABEL'
+                  | translate
+              }}
+            </mat-label>
+            <mat-select [formControl]="form.controls.scope">
+              <mat-option></mat-option>
+              <mat-option
+                *ngFor="let option of vm.scopeOptions || []"
+                [value]="option.value"
+                [disabled]="option.disabled"
+              >
+                {{ option.displayText }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
         </mat-expansion-panel>
       </mat-accordion>
     </ng-container>
@@ -71,22 +104,18 @@
       [align]="'end'"
       mat-dialog-actions
     >
-      <eustrosoft-front-button
-        [buttonType]="'button'"
-        [buttonStyleType]="'flat'"
-        [buttonText]="'MSG.CREATE_CHAT_MODAL.CANCEL_BUTTON_TEXT' | translate"
-        (clicked)="reject()"
-      >
-      </eustrosoft-front-button>
-      <eustrosoft-front-button
-        [buttonType]="'button'"
-        [buttonStyleType]="'flat'"
-        [buttonText]="'MSG.CREATE_CHAT_MODAL.SUBMIT_BUTTON_TEXT' | translate"
-        [color]="'primary'"
+      <button mat-flat-button type="button" (click)="reject()">
+        {{ 'MSG.CREATE_CHAT_MODAL.CANCEL_BUTTON_TEXT' | translate }}
+      </button>
+      <button
+        mat-flat-button
+        type="button"
+        color="primary"
         [disabled]="form.invalid || form.disabled"
-        (clicked)="resolve()"
+        (click)="resolve()"
       >
-      </eustrosoft-front-button>
+        {{ 'MSG.CREATE_CHAT_MODAL.SUBMIT_BUTTON_TEXT' | translate }}
+      </button>
     </div>
   </div>
 </div>

@@ -24,7 +24,7 @@ import { catchError, EMPTY, of, Subject, take, tap } from 'rxjs';
 import { LoginService } from '@eustrosoft-front/security';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpErrorResponse } from '@angular/common/http';
-import { InputError } from '../input/input-error.interface';
+import { InputError } from '../../interfaces/input-error.interface';
 import { InputErrors } from '../../constants/enums/input-errors.enum';
 import { LoginDialogComponent } from '../login-dialog/login-dialog.component';
 import { LoginDialogDataInterface } from '../login-dialog/login-dialog-data.interface';

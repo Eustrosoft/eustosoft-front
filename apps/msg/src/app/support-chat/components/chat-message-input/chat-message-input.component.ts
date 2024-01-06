@@ -22,7 +22,6 @@ import {
 } from '@angular/core';
 import { Chat, ChatMessage } from '@eustrosoft-front/core';
 import { FormControl } from '@angular/forms';
-import { TextareaComponent } from '@eustrosoft-front/common-ui';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -34,6 +33,7 @@ import {
 } from 'rxjs';
 import { MsgSubjectsService } from '../../services/msg-subjects.service';
 import { MsgSubjects } from '../../contants/enums/msg-subjects.enum';
+import { MatInput } from '@angular/material/input';
 
 @Component({
   selector: 'eustrosoft-front-chat-message-input',
@@ -55,8 +55,7 @@ export class ChatMessageInputComponent
   @Output() messageDeleted = new EventEmitter<ChatMessage>();
   @Output() messageEditCanceled = new EventEmitter<void>();
 
-  @ViewChild(TextareaComponent)
-  messageInputComponent!: TextareaComponent;
+  @ViewChild(MatInput) messageInput!: MatInput;
 
   private readonly el = inject(ElementRef);
   private readonly msgSubjectsService = inject(MsgSubjectsService);
@@ -130,6 +129,6 @@ export class ChatMessageInputComponent
   }
 
   focusOnInput(): void {
-    this.messageInputComponent?.input?.focus();
+    this.messageInput?.focus();
   }
 }

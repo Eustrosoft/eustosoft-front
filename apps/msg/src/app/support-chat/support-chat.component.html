@@ -30,14 +30,14 @@
             {{ 'MSG.SELECT_TICKET_CAPTION_TEXT' | translate }}
           </h2>
           <ng-container *ngIf="isSm">
-            <eustrosoft-front-button
-              [buttonStyleType]="'stroked'"
-              [iconName]="'add'"
-              [buttonType]="'button'"
-              [buttonText]="'MSG.OPEN_MENU_BUTTON_TEXT' | translate"
+            <button
+              mat-stroked-button
+              type="button"
               [title]="'MSG.OPEN_MENU_BUTTON_TEXT' | translate"
-              (clicked)="drawer.toggle()"
-            ></eustrosoft-front-button>
+              (click)="drawer.toggle()"
+            >
+              {{ 'MSG.OPEN_MENU_BUTTON_TEXT' | translate }}
+            </button>
           </ng-container>
         </div>
       </ng-container>

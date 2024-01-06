@@ -12,25 +12,27 @@
       [class.p-1]="selectedChat"
     >
       <div class="flex align-items-center">
-        <eustrosoft-front-button
-          [buttonType]="'button'"
-          [buttonStyleType]="'icon'"
-          [iconName]="'menu'"
+        <button
+          mat-icon-button
+          type="button"
           [class.display-none]="!isSm"
-          (clicked)="collapseClicked.emit()"
-        ></eustrosoft-front-button>
+          (click)="collapseClicked.emit()"
+        >
+          <mat-icon>menu</mat-icon>
+        </button>
         <h2 class="m-0">
           {{ selectedChat && selectedChat.subject }}
         </h2>
       </div>
       <div class="flex align-items-center">
-        <eustrosoft-front-button
-          [buttonType]="'button'"
-          [buttonStyleType]="'icon'"
-          [iconName]="'more_vert'"
-          [matMenuTriggerFor]="chatActionsMenu"
+        <button
+          mat-icon-button
+          type="button"
           [hidden]="!selectedChat"
-        ></eustrosoft-front-button>
+          [matMenuTriggerFor]="chatActionsMenu"
+        >
+          <mat-icon>more_vert</mat-icon>
+        </button>
         <mat-menu #chatActionsMenu="matMenu">
           <button
             *ngIf="selectedChat?.status === MSG_CHAT_STATUS.CLOSED"
@@ -109,7 +111,7 @@
           (messageEditCanceled)="editCanceled()"
           (messageEdited)="saveEditedMessage($event)"
           (messageDeleted)="deleteMessage($event)"
-          class="flex align-items-center p-3 pe-1"
+          class="flex g-2 align-items-center p-3 pe-1"
         ></eustrosoft-front-chat-message-input>
       </ng-container>
     </div>
@@ -130,13 +132,14 @@
             {{ msg.created | date: 'short' }}
           </span>
           <ng-container *ngIf="msg.user.id === info.userId">
-            <eustrosoft-front-button
-              [buttonType]="'button'"
-              [buttonStyleType]="'icon'"
-              [iconName]="'more_vert'"
-              [matMenuTriggerFor]="messageActionsMenu"
+            <button
+              mat-icon-button
+              type="button"
               class="icon"
-            ></eustrosoft-front-button>
+              [matMenuTriggerFor]="messageActionsMenu"
+            >
+              <mat-icon>more_vert</mat-icon>
+            </button>
             <mat-menu #messageActionsMenu="matMenu">
               <button (click)="editMessage(msg)" mat-menu-item>
                 <mat-icon>edit</mat-icon>

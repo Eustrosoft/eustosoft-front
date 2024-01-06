@@ -38,6 +38,13 @@ import { DicModule } from '@eustrosoft-front/dic';
 import { MsgDictionaryService } from './support-chat/services/msg-dictionary.service';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MsgMapperService } from './support-chat/services/msg-mapper.service';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { ReactiveFormsModule } from '@angular/forms';
+import { TextFieldModule } from '@angular/cdk/text-field';
+import { MatOptionModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
 
 @NgModule({
   declarations: [
@@ -69,6 +76,13 @@ import { MsgMapperService } from './support-chat/services/msg-mapper.service';
     MatSidenavModule,
     MatCheckboxModule,
     MatExpansionModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    ReactiveFormsModule,
+    TextFieldModule,
+    MatOptionModule,
+    MatSelectModule,
   ],
   providers: [
     MsgRequestBuilderService,
