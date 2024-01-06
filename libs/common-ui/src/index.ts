@@ -22,7 +22,6 @@ export * from './lib/components/select/select.component';
 export * from './lib/components/textarea/textarea.component';
 export * from './lib/directives/files-drop-zone.directive';
 export * from './lib/directives/hover-shadow.directive';
-export * from './lib/directives/ripple-hover.directive';
 export * from './lib/directives/hover-cursor.directive';
 export * from './lib/components/progress-bar/progress-bar.component';
 export * from './lib/components/prompt-dialog/prompt-dialog.component';

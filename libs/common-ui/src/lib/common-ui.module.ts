@@ -28,7 +28,6 @@ import { HoverShadowDirective } from './directives/hover-shadow.directive';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { FilesDropZoneDirective } from './directives/files-drop-zone.directive';
-import { RippleHoverDirective } from './directives/ripple-hover.directive';
 import { ProgressBarComponent } from './components/progress-bar/progress-bar.component';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import {
@@ -85,7 +84,6 @@ import { BreakpointsService } from './services/breakpoints.service';
     TextareaComponent,
     HoverShadowDirective,
     FilesDropZoneDirective,
-    RippleHoverDirective,
     ProgressBarComponent,
     HoverCursorDirective,
     PromptDialogComponent,
@@ -104,7 +102,6 @@ import { BreakpointsService } from './services/breakpoints.service';
     TextareaComponent,
     HoverShadowDirective,
     FilesDropZoneDirective,
-    RippleHoverDirective,
     ProgressBarComponent,
     HoverCursorDirective,
     LoginComponent,

@@ -24,7 +24,7 @@
     {
       "title": "HEADER.APPS.MSG",
       "active": true,
-      "url": "http://localhost:4203/login/",
+      "url": "http://localhost:4203/msg/",
       "icon": "chat"
     }
   ],
