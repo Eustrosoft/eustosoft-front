@@ -95,15 +95,15 @@
     </th>
     <td mat-cell *matCellDef="let element; let i = index">
       <div class="flex">
-        <eustrosoft-front-button
-          [buttonType]="'button'"
-          [buttonStyleType]="'icon'"
-          [iconName]="'more_vert'"
-          [color]="'primary'"
+        <button
+          mat-icon-button
+          type="button"
+          color="primary"
           [matMenuTriggerFor]="actionsMenu"
           (click)="$event.stopPropagation()"
         >
-        </eustrosoft-front-button>
+          <mat-icon>more_vert</mat-icon>
+        </button>
         <mat-menu #actionsMenu="matMenu">
           <button (click)="downloadClicked.emit([content[i]])" mat-menu-item>
             <mat-icon>download</mat-icon>

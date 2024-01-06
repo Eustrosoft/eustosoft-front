@@ -18,55 +18,55 @@
     <div class="flex flex-column g-3 px-3 py-0">
       <ng-container *ngIf="vm.shareOWikiLink as shareOWikiLink">
         <div class="flex align-items-center g-3 py-0">
-          <eustrosoft-front-input
-            [label]="
-              'EXPLORER.SHARE_DIALOG.SHARE_OWIKI_INPUT_LABEL_TEXT' | translate
-            "
-            [fieldAppearance]="'outline'"
-            [control]="shareOWikiUrlControl"
-            [value]="shareOWikiLink"
-            [hideSubscriptWrapper]="true"
+          <mat-form-field
+            [appearance]="'outline'"
+            [subscriptSizing]="'dynamic'"
             class="flex-auto"
-          ></eustrosoft-front-input>
-          <eustrosoft-front-button
-            [buttonType]="'button'"
-            [buttonStyleType]="'flat'"
-            [buttonText]="'EXPLORER.SHARE_DIALOG.COPY_BUTTON_TEXT' | translate"
-            [color]="'primary'"
-            (clicked)="shareOWikiUrlCopied.emit(shareOWikiUrlControl.value)"
           >
-          </eustrosoft-front-button>
+            <mat-label>
+              {{
+                'EXPLORER.SHARE_DIALOG.SHARE_OWIKI_INPUT_LABEL_TEXT' | translate
+              }}
+            </mat-label>
+            <input [value]="shareOWikiLink" matInput />
+          </mat-form-field>
+          <button
+            mat-flat-button
+            type="button"
+            [color]="'primary'"
+            (click)="shareOWikiUrlCopied.emit(shareOWikiLink)"
+          >
+            {{ 'EXPLORER.SHARE_DIALOG.COPY_BUTTON_TEXT' | translate }}
+          </button>
         </div>
       </ng-container>
       <ng-container *ngIf="vm.shareLink as shareLink">
         <div class="flex align-items-center g-3 py-0">
-          <eustrosoft-front-input
-            [label]="'EXPLORER.SHARE_DIALOG.SHARE_INPUT_LABEL_TEXT' | translate"
-            [fieldAppearance]="'outline'"
-            [control]="shareUrlControl"
-            [value]="shareLink"
-            [hideSubscriptWrapper]="true"
+          <mat-form-field
+            [appearance]="'outline'"
+            [subscriptSizing]="'dynamic'"
             class="flex-auto"
-          ></eustrosoft-front-input>
-          <eustrosoft-front-button
-            [buttonType]="'button'"
-            [buttonStyleType]="'flat'"
-            [buttonText]="'EXPLORER.SHARE_DIALOG.COPY_BUTTON_TEXT' | translate"
-            [color]="'primary'"
-            (clicked)="shareUrlCopied.emit(shareUrlControl.value)"
           >
-          </eustrosoft-front-button>
+            <mat-label>
+              {{ 'EXPLORER.SHARE_DIALOG.SHARE_INPUT_LABEL_TEXT' | translate }}
+            </mat-label>
+            <input [value]="shareLink" matInput />
+          </mat-form-field>
+          <button
+            mat-flat-button
+            type="button"
+            [color]="'primary'"
+            (click)="shareUrlCopied.emit(shareLink)"
+          >
+            {{ 'EXPLORER.SHARE_DIALOG.COPY_BUTTON_TEXT' | translate }}
+          </button>
         </div>
       </ng-container>
     </div>
   </ng-container>
   <div class="flex g-2 px-3 pb-3 pt-0" [align]="'end'" mat-dialog-actions>
-    <eustrosoft-front-button
-      [buttonType]="'button'"
-      [buttonStyleType]="'flat'"
-      [buttonText]="'EXPLORER.SHARE_DIALOG.CLOSE_BUTTON_TEXT' | translate"
-      (clicked)="reject()"
-    >
-    </eustrosoft-front-button>
+    <button mat-flat-button type="button" (click)="reject()">
+      {{ 'EXPLORER.SHARE_DIALOG.CLOSE_BUTTON_TEXT' | translate }}
+    </button>
   </div>
 </div>

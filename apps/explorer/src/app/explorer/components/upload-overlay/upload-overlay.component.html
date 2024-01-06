@@ -8,22 +8,18 @@
   <div
     class="upload-overlay-controls flex align-items-center justify-content-space-between"
   >
-    <eustrosoft-front-button
-      [buttonType]="'button'"
-      [buttonStyleType]="'stroked'"
-      [buttonText]="startUploadButtonText | translate"
-      [color]="'primary'"
+    <button
+      mat-stroked-button
+      type="button"
+      color="primary"
       [disabled]="startUploadButtonDisabled"
-      (clicked)="runUpload()"
+      (click)="runUpload()"
     >
-    </eustrosoft-front-button>
-    <eustrosoft-front-button
-      [buttonType]="'button'"
-      [buttonStyleType]="'icon'"
-      [iconName]="'close'"
-      (clicked)="close()"
-    >
-    </eustrosoft-front-button>
+      {{ startUploadButtonText | translate }}
+    </button>
+    <button mat-icon-button type="button" (click)="close()">
+      <mat-icon>close</mat-icon>
+    </button>
   </div>
   <cdk-virtual-scroll-viewport itemSize="60" class="upload-overlay-items">
     <ng-container *ngIf="uploadItems$ | async as items">
@@ -63,53 +59,73 @@
                 </mat-panel-description>
               </mat-expansion-panel-header>
               <div class="flex flex-column g-2">
-                <eustrosoft-front-select
-                  [label]="
-                    'EXPLORER.UPLOAD_OVERLAY.EXTRA_OPTIONS_PANEL_SECURITY_LEVEL_LABEL'
-                      | translate
-                  "
-                  [control]="item.controls.securityLevel"
-                  [options]="(securityLevelOptions$ | async) || []"
-                  [fieldAppearance]="'outline'"
-                ></eustrosoft-front-select>
-                <eustrosoft-front-input
-                  [label]="
-                    'EXPLORER.UPLOAD_OVERLAY.EXTRA_OPTIONS_PANEL_DESCRIPTION_LABEL'
-                      | translate
-                  "
-                  [control]="item.controls.description"
-                  [fieldAppearance]="'outline'"
-                ></eustrosoft-front-input>
+                <mat-form-field
+                  [appearance]="'outline'"
+                  [subscriptSizing]="'dynamic'"
+                  class="mt-1 upload-control"
+                >
+                  <mat-label>
+                    {{
+                      'EXPLORER.UPLOAD_OVERLAY.EXTRA_OPTIONS_PANEL_SECURITY_LEVEL_LABEL'
+                        | translate
+                    }}
+                  </mat-label>
+                  <mat-select [formControl]="item.controls.securityLevel">
+                    <mat-option></mat-option>
+                    <mat-option
+                      *ngFor="
+                        let option of (securityLevelOptions$ | async) || []
+                      "
+                      [value]="option.value"
+                      [disabled]="option.disabled"
+                    >
+                      {{ option.displayText }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+                <mat-form-field
+                  [appearance]="'outline'"
+                  [subscriptSizing]="'dynamic'"
+                  class="mt-1 upload-control"
+                >
+                  <mat-label>
+                    {{
+                      'EXPLORER.UPLOAD_OVERLAY.EXTRA_OPTIONS_PANEL_DESCRIPTION_LABEL'
+                        | translate
+                    }}
+                  </mat-label>
+                  <input [formControl]="item.controls.description" matInput />
+                </mat-form-field>
               </div>
             </mat-expansion-panel>
           </mat-accordion>
-          <eustrosoft-front-button
+          <button
+            mat-icon-button
+            type="button"
+            color="warn"
             [hidden]="
               item.controls.uploadItem.value.state === UploadingState.UPLOADED
             "
-            [buttonType]="'button'"
-            [buttonStyleType]="'icon'"
-            [iconName]="'cancel'"
-            [color]="'warn'"
-            (clicked)="remove(item, i)"
+            (click)="remove(item, i)"
           >
-          </eustrosoft-front-button>
-          <eustrosoft-front-button
+            <mat-icon>cancel</mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            type="button"
+            color="primary"
             [hidden]="
               item.controls.uploadItem.value.state === UploadingState.PENDING ||
               item.controls.uploadItem.value.state === UploadingState.UPLOADING
             "
-            [buttonType]="'button'"
-            [buttonStyleType]="'icon'"
-            [iconName]="'folder'"
-            [color]="'primary'"
-            (clicked)="openFolder(item)"
             [matTooltip]="
               'EXPLORER.UPLOAD_OVERLAY.OPEN_FOLDER_BUTTON_TOOLTIP' | translate
             "
             [matTooltipShowDelay]="100"
+            (click)="openFolder(item)"
           >
-          </eustrosoft-front-button>
+            <mat-icon>folder</mat-icon>
+          </button>
         </div>
         <eustrosoft-front-progress-bar
           [mode]="'determinate'"

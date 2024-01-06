@@ -14,7 +14,6 @@ import {
   Output,
 } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { FormControl } from '@angular/forms';
 import { ShareDialogDataInterface } from './share-dialog-data.interface';
 
 @Component({
@@ -28,13 +27,6 @@ export class ShareDialogComponent {
     MatDialogRef<ShareDialogComponent, string>
   >(MatDialogRef<ShareDialogComponent>);
   protected data = inject<ShareDialogDataInterface>(MAT_DIALOG_DATA);
-
-  protected shareUrlControl = new FormControl('', {
-    nonNullable: true,
-  });
-  protected shareOWikiUrlControl = new FormControl('', {
-    nonNullable: true,
-  });
 
   @Output() shareUrlCopied = new EventEmitter<string>();
   @Output() shareOWikiUrlCopied = new EventEmitter<string>();

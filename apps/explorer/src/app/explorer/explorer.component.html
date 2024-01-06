@@ -8,14 +8,14 @@
 <div class="explorer">
   <div class="explorer-actions">
     <div>
-      <eustrosoft-front-button
-        [buttonType]="'button'"
-        [buttonStyleType]="'stroked'"
-        [buttonText]="'EXPLORER.NEW_MENU_BUTTON_TEXT' | translate"
-        [color]="'primary'"
+      <button
+        mat-stroked-button
+        color="primary"
+        type="button"
         [matMenuTriggerFor]="newActionsMenu"
       >
-      </eustrosoft-front-button>
+        {{ 'EXPLORER.NEW_MENU_BUTTON_TEXT' | translate }}
+      </button>
       <mat-menu #newActionsMenu="matMenu">
         <button (click)="createFolder()" mat-menu-item>
           <mat-icon>create_new_folder</mat-icon>
@@ -37,16 +37,15 @@
     </div>
     <ng-container *ngIf="selectedRows$ | async as selected">
       <div>
-        <eustrosoft-front-button
+        <button
+          mat-stroked-button
+          color="primary"
+          type="button"
           [hidden]="selected.length === 0"
-          [buttonType]="'button'"
-          [buttonStyleType]="'stroked'"
-          [buttonText]="'EXPLORER.BATCH_OPERATIONS_BUTTON_TEXT' | translate"
-          [color]="'primary'"
           [matMenuTriggerFor]="batchOperationsMenu"
         >
-        </eustrosoft-front-button>
-
+          {{ 'EXPLORER.BATCH_OPERATIONS_BUTTON_TEXT' | translate }}
+        </button>
         <mat-menu #batchOperationsMenu="matMenu">
           <button
             *ngIf="false"

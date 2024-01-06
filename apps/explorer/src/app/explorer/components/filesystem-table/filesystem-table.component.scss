@@ -13,12 +13,11 @@
   flex: 1 1 auto;
 }
 
-tr.table-row:hover {
-  background: map-get(vars.$grey-palette, 100);
-}
-
 tr.table-row {
   height: 4rem;
+  &:hover {
+    background: map-get(vars.$grey-palette, 100);
+  }
 }
 
 .mat-column-select {
