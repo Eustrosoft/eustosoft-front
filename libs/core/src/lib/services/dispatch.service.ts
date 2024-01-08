@@ -11,7 +11,7 @@ import { APP_CONFIG, Config } from '@eustrosoft-front/config';
 import { Observable, switchMap } from 'rxjs';
 import { QtisRequestResponseInterface } from '../interfaces/shared/shared.interface';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class DispatchService {
   private http = inject(HttpClient);
   private config = inject(APP_CONFIG);

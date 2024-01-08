@@ -12,20 +12,59 @@ import {
   inject,
   Output,
 } from '@angular/core';
-import { FormArray, FormGroup } from '@angular/forms';
+import { FormArray, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { UploadItemState } from '../../constants/enums/uploading-state.enum';
 import { map, Observable, shareReplay, tap } from 'rxjs';
 import { SecurityLevels, UploadItemForm } from '@eustrosoft-front/core';
 import { ExplorerUploadItemsService } from '../../services/explorer-upload-items.service';
 import { ExplorerDictionaryService } from '../../services/explorer-dictionary.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ProgressBarComponent } from '@eustrosoft-front/common-ui';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatIconModule } from '@angular/material/icon';
+import { MatOptionModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import {
+  CdkFixedSizeVirtualScroll,
+  CdkVirtualScrollViewport,
+} from '@angular/cdk/scrolling';
+import { MatButtonModule } from '@angular/material/button';
+import {
+  MatDialogActions,
+  MatDialogContent,
+  MatDialogTitle,
+} from '@angular/material/dialog';
+import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 
 @Component({
   selector: 'eustrosoft-front-upload-dialog',
   templateUrl: './upload-dialog.component.html',
   styleUrls: ['./upload-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    NgIf,
+    MatDialogTitle,
+    MatDialogContent,
+    MatButtonModule,
+    CdkVirtualScrollViewport,
+    CdkFixedSizeVirtualScroll,
+    NgFor,
+    MatFormFieldModule,
+    MatInputModule,
+    ReactiveFormsModule,
+    MatSelectModule,
+    MatOptionModule,
+    MatIconModule,
+    MatTooltipModule,
+    ProgressBarComponent,
+    MatDialogActions,
+    AsyncPipe,
+    TranslateModule,
+  ],
 })
 export class UploadDialogComponent {
   @Output() fileSelectClicked = new EventEmitter<void>();

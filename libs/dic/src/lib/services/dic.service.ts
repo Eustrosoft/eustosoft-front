@@ -21,7 +21,7 @@ import {
 import { map, Observable } from 'rxjs';
 import { Dictionaries } from '../contants/enums/dictionaries.enum';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class DicService {
   private dispatchService = inject(DispatchService);
 

@@ -10,7 +10,7 @@ import { BehaviorSubject } from 'rxjs';
 import { UploadItemForm } from '@eustrosoft-front/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class ExplorerUploadItemsService {
   private fb = inject(FormBuilder);
   uploadItems$ = new BehaviorSubject<FormArray<FormGroup<UploadItemForm>>>(

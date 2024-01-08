@@ -48,11 +48,13 @@
       "style": "scss",
       "linter": "eslint",
       "unitTestRunner": "jest",
-      "e2eTestRunner": "cypress"
+      "e2eTestRunner": "cypress",
+      "standalone": true
     },
     "@nx/angular:library": {
       "linter": "eslint",
-      "unitTestRunner": "jest"
+      "unitTestRunner": "jest",
+      "standalone": true
     },
     "@nx/angular:component": {
       "style": "scss",

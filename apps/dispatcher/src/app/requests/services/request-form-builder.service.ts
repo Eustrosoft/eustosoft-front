@@ -5,14 +5,14 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { DispatcherQueryTypes } from '@eustrosoft-front/core';
 import { RequestsForm, SingleRequestForm } from '../interfaces/request.types';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class RequestFormBuilderService {
-  constructor(private fb: FormBuilder) {}
+  private readonly fb = inject(FormBuilder);
 
   makeRequestForm(): FormGroup<RequestsForm> {
     return this.fb.group<RequestsForm>({

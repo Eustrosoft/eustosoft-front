@@ -24,7 +24,7 @@ import { UploadItemState } from '../constants/enums/uploading-state.enum';
 import { ExplorerUploadItemsService } from './explorer-upload-items.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class ExplorerUploadService {
   private readonly fileReaderService = inject(FileReaderService);
   private readonly explorerRequestBuilderService = inject(

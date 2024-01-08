@@ -21,14 +21,49 @@ import {
   MsgChatStatus,
   trackByZridFunction,
 } from '@eustrosoft-front/core';
-import { MatCheckboxChange } from '@angular/material/checkbox';
-import { BreakpointsService } from '@eustrosoft-front/common-ui';
+import {
+  MatCheckboxChange,
+  MatCheckboxModule,
+} from '@angular/material/checkbox';
+import {
+  BreakpointsService,
+  HoverCursorDirective,
+  HoverShadowDirective,
+} from '@eustrosoft-front/common-ui';
+import { MsgChatStatusPipe } from '../../pipes/msg-chat-status.pipe';
+import { TranslateModule } from '@ngx-translate/core';
+import { MatDividerModule } from '@angular/material/divider';
+import { VirtualScrollerModule } from '@iharbeck/ngx-virtual-scroller';
+import { MatListModule } from '@angular/material/list';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { NgClass, NgFor, NgIf } from '@angular/common';
 
 @Component({
   selector: 'eustrosoft-front-chat-list',
   templateUrl: './chat-list.component.html',
   styleUrls: ['./chat-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    NgClass,
+    MatButtonModule,
+    MatIconModule,
+    MatMenuModule,
+    MatTooltipModule,
+    NgFor,
+    MatCheckboxModule,
+    NgIf,
+    MatListModule,
+    VirtualScrollerModule,
+    HoverCursorDirective,
+    HoverShadowDirective,
+    MatDividerModule,
+    TranslateModule,
+    MsgChatStatusPipe,
+  ],
 })
 export class ChatListComponent implements OnInit {
   @Input() chats!: Chat[];

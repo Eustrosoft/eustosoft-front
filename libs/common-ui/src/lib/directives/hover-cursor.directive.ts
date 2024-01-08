@@ -9,7 +9,8 @@ import { Directive, HostBinding, HostListener, Input } from '@angular/core';
 import { CursorTypes } from '@eustrosoft-front/core';
 
 @Directive({
-  selector: '[eustrosoftFrontHoverCursor]',
+    selector: '[eustrosoftFrontHoverCursor]',
+    standalone: true,
 })
 export class HoverCursorDirective {
   @Input() cursorType: CursorTypes = CursorTypes.POINTER;

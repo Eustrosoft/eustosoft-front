@@ -15,7 +15,8 @@ import {
 } from '@angular/core';
 
 @Directive({
-  selector: '[eustrosoftFrontHoverShadow]',
+    selector: '[eustrosoftFrontHoverShadow]',
+    standalone: true,
 })
 export class HoverShadowDirective {
   private readonly elementRef = inject(ElementRef);

@@ -6,11 +6,15 @@
  */
 
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
+import { LoginComponent } from '@eustrosoft-front/common-ui';
 
 @Component({
   selector: 'eustrosoft-front-login-page',
   templateUrl: './login-page.component.html',
   styleUrls: ['./login-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [LoginComponent, TranslateModule],
 })
 export class LoginPageComponent {}

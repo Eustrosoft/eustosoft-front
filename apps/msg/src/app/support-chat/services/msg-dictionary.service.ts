@@ -22,7 +22,7 @@ import {
 import { Option } from '@eustrosoft-front/common-ui';
 import { SamService } from '@eustrosoft-front/security';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class MsgDictionaryService {
   private dicService = inject(DicService);
   private samService = inject(SamService);

@@ -10,7 +10,7 @@ import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { SecurityLevels, UploadItemForm } from '@eustrosoft-front/core';
 import { UploadItemState } from '../constants/enums/uploading-state.enum';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class ExplorerUploadItemFormFactoryService {
   private readonly fb: FormBuilder = inject(FormBuilder);
 

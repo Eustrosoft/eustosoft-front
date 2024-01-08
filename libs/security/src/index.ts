@@ -5,7 +5,6 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-export * from './lib/security.module';
 export * from './lib/services/login.service';
 export * from './lib/services/authentication.service';
 export * from './lib/services/sam.service';

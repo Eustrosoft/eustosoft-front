@@ -17,7 +17,7 @@ import {
 } from 'rxjs';
 import { UploadItem } from '../interfaces/cms/upload-item.interface';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class FileReaderService {
   // 1048576 - 1 MB
   // 5242880 - 5 MB

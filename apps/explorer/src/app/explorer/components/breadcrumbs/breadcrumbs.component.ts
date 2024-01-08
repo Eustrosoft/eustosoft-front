@@ -15,12 +15,19 @@ import {
 } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { CursorTypes } from '@eustrosoft-front/core';
+import { NgIf, NgFor, AsyncPipe } from '@angular/common';
 
 @Component({
-  selector: 'eustrosoft-front-breadcrumbs',
-  templateUrl: './breadcrumbs.component.html',
-  styleUrls: ['./breadcrumbs.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'eustrosoft-front-breadcrumbs',
+    templateUrl: './breadcrumbs.component.html',
+    styleUrls: ['./breadcrumbs.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [
+        NgIf,
+        NgFor,
+        AsyncPipe,
+    ],
 })
 export class BreadcrumbsComponent implements OnInit {
   @Input() path$!: Observable<string>;

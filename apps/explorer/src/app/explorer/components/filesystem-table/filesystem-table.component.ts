@@ -16,16 +16,39 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { FileSystemObjectTypes } from '@eustrosoft-front/core';
-import { MatSort } from '@angular/material/sort';
+import { BytesToSizePipe, FileSystemObjectTypes } from '@eustrosoft-front/core';
+import { MatSort, MatSortModule } from '@angular/material/sort';
 import { FileSystemObject } from '../../models/file-system-object.interface';
 import { FilesystemTableService } from '../../services/filesystem-table.service';
+import { TranslateModule } from '@ngx-translate/core';
+import { FilesDropZoneDirective } from '@eustrosoft-front/common-ui';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { NgIf, NgSwitch, NgSwitchCase } from '@angular/common';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatTableModule } from '@angular/material/table';
 
 @Component({
   selector: 'eustrosoft-front-filesystem-table',
   templateUrl: './filesystem-table.component.html',
   styleUrls: ['./filesystem-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatTableModule,
+    MatSortModule,
+    MatCheckboxModule,
+    NgSwitch,
+    NgSwitchCase,
+    MatIconModule,
+    MatButtonModule,
+    MatMenuModule,
+    FilesDropZoneDirective,
+    NgIf,
+    BytesToSizePipe,
+    TranslateModule,
+  ],
 })
 export class FilesystemTableComponent implements OnChanges, AfterViewInit {
   @Input() content!: FileSystemObject[];

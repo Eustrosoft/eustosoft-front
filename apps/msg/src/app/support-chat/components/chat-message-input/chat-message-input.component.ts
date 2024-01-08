@@ -21,7 +21,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { Chat, ChatMessage } from '@eustrosoft-front/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -33,13 +33,32 @@ import {
 } from 'rxjs';
 import { MsgSubjectsService } from '../../services/msg-subjects.service';
 import { MsgSubjects } from '../../contants/enums/msg-subjects.enum';
-import { MatInput } from '@angular/material/input';
+import { MatInput, MatInputModule } from '@angular/material/input';
+import { TranslateModule } from '@ngx-translate/core';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatButtonModule } from '@angular/material/button';
+import { NgIf } from '@angular/common';
+import { TextFieldModule } from '@angular/cdk/text-field';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
-  selector: 'eustrosoft-front-chat-message-input',
-  templateUrl: './chat-message-input.component.html',
-  styleUrls: ['./chat-message-input.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'eustrosoft-front-chat-message-input',
+    templateUrl: './chat-message-input.component.html',
+    styleUrls: ['./chat-message-input.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [
+        MatFormFieldModule,
+        MatInputModule,
+        ReactiveFormsModule,
+        TextFieldModule,
+        NgIf,
+        MatButtonModule,
+        MatTooltipModule,
+        MatIconModule,
+        TranslateModule,
+    ],
 })
 export class ChatMessageInputComponent
   implements OnInit, OnChanges, AfterViewInit, OnDestroy

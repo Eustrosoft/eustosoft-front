@@ -5,7 +5,6 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-export * from './lib/common-ui.module';
 export * from './lib/components/header/header.component';
 export * from './lib/components/sidenav/sidenav.component';
 export * from './lib/components/login-dialog/login-dialog.component';
@@ -24,3 +23,4 @@ export * from './lib/components/prompt-dialog/prompt-dialog.component';
 export * from './lib/components/prompt-dialog/prompt-dialog-data.interface';
 export * from './lib/interfaces/option.interface';
 export * from './lib/services/breakpoints.service';
+export * from './lib/common-ui';

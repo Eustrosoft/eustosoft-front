@@ -24,7 +24,7 @@ import {
 import { Observable, of } from 'rxjs';
 import { FileSystemObject } from '../models/file-system-object.interface';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class ExplorerRequestBuilderService {
   buildBinaryChunkRequest(
     file: File,

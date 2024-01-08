@@ -14,7 +14,7 @@ import {
 import { Observable, shareReplay } from 'rxjs';
 import { Option } from '@eustrosoft-front/common-ui';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class ExplorerDictionaryService {
   private dicService = inject(DicService);
   private dicMapperService = inject(DicMapperService);

@@ -19,7 +19,7 @@ import {
   SupportedLanguages,
 } from '@eustrosoft-front/core';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class LoginService {
   private readonly authenticationService = inject(AuthenticationService);
   private readonly dispatchService = inject(DispatchService);

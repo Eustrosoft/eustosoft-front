@@ -9,7 +9,7 @@ import { inject, Injectable } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { SM_SCREEN_RESOLUTION } from '@eustrosoft-front/core';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class BreakpointsService {
   private readonly smScreenRes = inject(SM_SCREEN_RESOLUTION);
   private readonly document = inject(DOCUMENT);

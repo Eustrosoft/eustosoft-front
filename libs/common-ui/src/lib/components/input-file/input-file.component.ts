@@ -18,12 +18,15 @@ import {
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Subject, takeUntil, tap } from 'rxjs';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
-  selector: 'eustrosoft-front-input-file',
-  templateUrl: './input-file.component.html',
-  styleUrls: ['./input-file.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'eustrosoft-front-input-file',
+    templateUrl: './input-file.component.html',
+    styleUrls: ['./input-file.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [MatButtonModule],
 })
 export class InputFileComponent implements OnInit, OnDestroy {
   @Input() control!: FormControl<File[]>;

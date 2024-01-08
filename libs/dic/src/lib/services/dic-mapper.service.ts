@@ -9,7 +9,7 @@ import { Injectable } from '@angular/core';
 import { DicValue } from '@eustrosoft-front/core';
 import { Option } from '@eustrosoft-front/common-ui';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class DicMapperService {
   toOption(value: DicValue): Option {
     return {

@@ -23,7 +23,7 @@ import {
   ViewChatsRequest,
 } from '@eustrosoft-front/core';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class MsgRequestBuilderService {
   buildViewChatsRequest(
     params: ViewChatsRequest['params'],

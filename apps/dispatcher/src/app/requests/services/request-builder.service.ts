@@ -5,7 +5,7 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import {
   DispatcherActions,
   DispatcherQueryTypes,
@@ -20,9 +20,9 @@ import { combineLatest, mergeMap, Observable, of } from 'rxjs';
 import { FormArray, FormGroup } from '@angular/forms';
 import { SingleRequestForm } from '../interfaces/request.types';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class RequestBuilderService {
-  constructor(private fileReaderService: FileReaderService) {}
+  private readonly fileReaderService = inject(FileReaderService);
 
   buildQuery(
     forms: FormArray<FormGroup<SingleRequestForm>>,

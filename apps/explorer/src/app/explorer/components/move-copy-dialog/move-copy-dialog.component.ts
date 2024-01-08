@@ -15,7 +15,13 @@ import {
   OnDestroy,
   ViewChild,
 } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogActions,
+  MatDialogContent,
+  MatDialogRef,
+  MatDialogTitle,
+} from '@angular/material/dialog';
 import {
   BehaviorSubject,
   map,
@@ -26,17 +32,60 @@ import {
   tap,
 } from 'rxjs';
 import { FileSystemObjectTypes } from '@eustrosoft-front/core';
-import { MatListOption, MatSelectionList } from '@angular/material/list';
+import {
+  MatListModule,
+  MatListOption,
+  MatSelectionList,
+} from '@angular/material/list';
 import { Stack } from '../../classes/Stack';
 import { MoveCopyDialogData } from './move-copy-dialog-data.interface';
 import { FileSystemObject } from '../../models/file-system-object.interface';
 import { ExplorerService } from '../../services/explorer.service';
+import { TranslateModule } from '@ngx-translate/core';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { PreloaderComponent } from '@eustrosoft-front/common-ui';
+import {
+  AsyncPipe,
+  NgFor,
+  NgIf,
+  NgSwitch,
+  NgSwitchCase,
+  NgTemplateOutlet,
+} from '@angular/common';
+import {
+  CdkFixedSizeVirtualScroll,
+  CdkVirtualScrollViewport,
+} from '@angular/cdk/scrolling';
+import { BreadcrumbsComponent } from '../breadcrumbs/breadcrumbs.component';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'eustrosoft-front-move-folder-dialog',
   templateUrl: './move-copy-dialog.component.html',
   styleUrls: ['./move-copy-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatDialogTitle,
+    MatDialogContent,
+    MatButtonModule,
+    MatIconModule,
+    BreadcrumbsComponent,
+    MatListModule,
+    CdkVirtualScrollViewport,
+    CdkFixedSizeVirtualScroll,
+    NgIf,
+    PreloaderComponent,
+    NgFor,
+    NgSwitch,
+    NgSwitchCase,
+    NgTemplateOutlet,
+    MatDialogActions,
+    MatTooltipModule,
+    AsyncPipe,
+    TranslateModule,
+  ],
 })
 export class MoveCopyDialogComponent implements AfterViewInit, OnDestroy {
   @ViewChild(MatSelectionList) matSelectionList!: MatSelectionList;

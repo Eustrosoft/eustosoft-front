@@ -11,22 +11,26 @@ import { catchError, Observable, shareReplay, throwError } from 'rxjs';
 import { Config } from '../interfaces/config.interface';
 import { APP_BASE_HREF, DOCUMENT } from '@angular/common';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class ConfigService {
   private readonly http: HttpClient = inject(HttpClient);
   private readonly appBaseHref = inject(APP_BASE_HREF);
   private readonly document = inject(DOCUMENT);
 
-  private configUrl = `${this.document.location.origin}${
+  private readonly configUrl = `${this.document.location.origin}${
     this.appBaseHref
   }config.json?${Date.now()}`;
 
-  private backupConfigUrl = `${
+  private readonly backupConfigUrl = `${
     this.document.location.origin
   }/config.json?${Date.now()}`;
 
-  private mainConfig = this.http.get<Config>(this.configUrl);
-  private backupConfig = this.http.get<Config>(this.backupConfigUrl);
+  private mainConfig = this.http
+    .get<Config>(this.configUrl)
+    .pipe(shareReplay(1));
+  private backupConfig = this.http
+    .get<Config>(this.backupConfigUrl)
+    .pipe(shareReplay(1));
 
   getConfig(): Observable<Config> {
     return this.mainConfig.pipe(
@@ -51,7 +55,6 @@ export class ConfigService {
           }),
         );
       }),
-      shareReplay(1),
     );
   }
 }

@@ -28,7 +28,7 @@ import {
 } from '@eustrosoft-front/core';
 import { Observable } from 'rxjs';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class SamService {
   private dispatchService = inject(DispatchService);
 

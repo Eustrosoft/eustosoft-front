@@ -13,14 +13,30 @@ import {
   inject,
   Output,
 } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogActions } from '@angular/material/dialog';
 import { ShareDialogDataInterface } from './share-dialog-data.interface';
+import { TranslateModule } from '@ngx-translate/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { NgIf, AsyncPipe } from '@angular/common';
 
 @Component({
-  selector: 'eustrosoft-front-share-dialog',
-  templateUrl: './share-dialog.component.html',
-  styleUrls: ['./share-dialog.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'eustrosoft-front-share-dialog',
+    templateUrl: './share-dialog.component.html',
+    styleUrls: ['./share-dialog.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [
+        MatDialogTitle,
+        NgIf,
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        MatDialogActions,
+        AsyncPipe,
+        TranslateModule,
+    ],
 })
 export class ShareDialogComponent {
   private readonly dialogRef = inject<

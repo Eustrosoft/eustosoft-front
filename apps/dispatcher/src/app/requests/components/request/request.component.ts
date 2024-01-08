@@ -12,15 +12,36 @@ import {
   ViewChild,
 } from '@angular/core';
 import { DispatcherQueryTypes } from '@eustrosoft-front/core';
-import { InputFileComponent, Option } from '@eustrosoft-front/common-ui';
-import { FormGroup } from '@angular/forms';
+import {
+  FileListComponent,
+  InputFileComponent,
+  Option,
+} from '@eustrosoft-front/common-ui';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { SingleRequestForm } from '../../interfaces/request.types';
+import { MatInputModule } from '@angular/material/input';
+import { MatOptionModule } from '@angular/material/core';
+import { NgFor, NgIf } from '@angular/common';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
   selector: 'eustrosoft-front-request',
   templateUrl: './request.component.html',
   styleUrls: ['./request.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatFormFieldModule,
+    MatSelectModule,
+    ReactiveFormsModule,
+    NgFor,
+    MatOptionModule,
+    NgIf,
+    MatInputModule,
+    FileListComponent,
+    InputFileComponent,
+  ],
 })
 export class RequestComponent {
   @Input() form!: FormGroup<SingleRequestForm>;

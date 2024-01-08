@@ -49,7 +49,7 @@ import { ExplorerPathService } from './explorer-path.service';
 import { RenameDialogReturnData } from '../components/rename-dialog/rename-dialog-return-data.interface';
 import { DOCUMENT } from '@angular/common';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class ExplorerService {
   private readonly http = inject(HttpClient);
   private readonly config = inject(APP_CONFIG);

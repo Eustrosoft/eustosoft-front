@@ -24,7 +24,7 @@ import {
 } from '@eustrosoft-front/core';
 import { MsgRequestBuilderService } from './msg-request-builder.service';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class MsgMapperService {
   private dispatchService = inject(DispatchService);
   private msgRequestBuilderService = inject(MsgRequestBuilderService);

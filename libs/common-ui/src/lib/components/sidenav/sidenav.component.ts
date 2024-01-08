@@ -17,13 +17,26 @@ import {
 } from '@angular/core';
 import { AuthenticationService } from '@eustrosoft-front/security';
 import { menuItems } from '../../constants/menu-items.contant';
-import { MatMenu, MatMenuPanel } from '@angular/material/menu';
+import { MatMenu, MatMenuPanel, MatMenuModule } from '@angular/material/menu';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { NgIf, NgClass, NgFor, AsyncPipe } from '@angular/common';
 
 @Component({
-  selector: 'eustrosoft-front-sidenav',
-  templateUrl: './sidenav.component.html',
-  styleUrls: ['./sidenav.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'eustrosoft-front-sidenav',
+    templateUrl: './sidenav.component.html',
+    styleUrls: ['./sidenav.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [
+        NgIf,
+        MatButtonModule,
+        NgClass,
+        MatIconModule,
+        NgFor,
+        MatMenuModule,
+        AsyncPipe,
+    ],
 })
 export class SidenavComponent implements AfterViewInit {
   @ViewChildren(MatMenu) menus!: QueryList<MatMenu>;

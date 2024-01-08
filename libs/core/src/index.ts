@@ -5,7 +5,6 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-export * from './lib/core.module';
 export * from './lib/constants/enums/input-types.enum';
 export * from './lib/constants/enums/dispatcher-query-types.enum';
 export * from './lib/constants/enums/display-types.enum';
@@ -24,8 +23,6 @@ export * from './lib/constants/enums/sam-actions.enum';
 export * from './lib/constants/enums/scopes.enum';
 export * from './lib/constants/enums/dic-actions.enum';
 export * from './lib/constants/enums/security-levels.enum';
-export * from './lib/pipes/form-array.pipe';
-export * from './lib/pipes/form-control.pipe';
 export * from './lib/pipes/bytes-to-size.pipe';
 export * from './lib/interfaces/security/authenticated-user.interface';
 export * from './lib/interfaces/dispatcher/table.interface';
@@ -59,6 +56,8 @@ export * from './lib/functions/get-http-status-code-name.function';
 export * from './lib/functions/number-to-hex.function';
 export * from './lib/functions/crc32.function';
 export * from './lib/functions/track-by-zrid.function';
+export * from './lib/functions/i18n-http-loader.function';
 export * from './lib/di/preconfigured-translate-service.token';
-export * from './lib/di/extra-small-screen-resolution.token';
+export * from './lib/di/small-screen-resolution.token';
 export * from './lib/classes/custom-location-strategy.class';
+export * from './lib/core';

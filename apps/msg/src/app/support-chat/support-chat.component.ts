@@ -66,10 +66,11 @@ import {
 import { MsgRequestBuilderService } from './services/msg-request-builder.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   BreakpointsService,
   Option,
+  PreloaderComponent,
   PromptDialogComponent,
   PromptDialogDataInterface,
 } from '@eustrosoft-front/common-ui';
@@ -80,6 +81,11 @@ import { MsgDictionaryService } from './services/msg-dictionary.service';
 import { MsgSubjectsService } from './services/msg-subjects.service';
 import { MsgSubjects } from './contants/enums/msg-subjects.enum';
 import { MsgMapperService } from './services/msg-mapper.service';
+import { ChatListComponent } from './components/chat-list/chat-list.component';
+import { ChatViewComponent } from './components/chat-view/chat-view.component';
+import { MatButtonModule } from '@angular/material/button';
+import { AsyncPipe, NgIf, NgTemplateOutlet } from '@angular/common';
+import { MatSidenavModule } from '@angular/material/sidenav';
 
 @Component({
   selector: 'eustrosoft-front-support-chat',
@@ -87,6 +93,18 @@ import { MsgMapperService } from './services/msg-mapper.service';
   styleUrls: ['./support-chat.component.scss'],
   providers: [MsgSubjectsService],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatSidenavModule,
+    NgTemplateOutlet,
+    NgIf,
+    MatButtonModule,
+    PreloaderComponent,
+    ChatViewComponent,
+    ChatListComponent,
+    AsyncPipe,
+    TranslateModule,
+  ],
 })
 export class SupportChatComponent implements OnInit, OnDestroy {
   private readonly dispatchService = inject(DispatchService);

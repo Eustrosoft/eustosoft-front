@@ -16,7 +16,8 @@ import {
 import { FileSystemObjectTypes } from '@eustrosoft-front/core';
 
 @Directive({
-  selector: '[eustrosoftFrontFilesDropZone]',
+    selector: '[eustrosoftFrontFilesDropZone]',
+    standalone: true,
 })
 export class FilesDropZoneDirective {
   @HostBinding('class.files-over') filesOver!: boolean;

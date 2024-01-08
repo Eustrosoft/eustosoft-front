@@ -1,19 +1,17 @@
 /*
- * Copyright (c) 2023-2024. IdrisovII & EustroSoft.org
+ * Copyright (c) 2024. IdrisovII & EustroSoft.org
  *
  * This file is part of eustrosoft-front project.
  * See the LICENSE file at the project root for licensing information.
  */
 
-import { NgModule } from '@angular/core';
-import { APP_BASE_HREF, CommonModule, PlatformLocation } from '@angular/common';
-import { ConfigService } from './services/config.service';
+import { Provider } from '@angular/core';
+import { APP_BASE_HREF, PlatformLocation } from '@angular/common';
 import { APP_CONFIG } from './di/config.token';
+import { ConfigService } from './services/config.service';
 
-@NgModule({
-  imports: [CommonModule],
-  providers: [
-    ConfigService,
+export function provideConfigLib(): Provider[] {
+  return [
     {
       provide: APP_BASE_HREF,
       useFactory: (pl: PlatformLocation) => pl.getBaseHrefFromDOM(),
@@ -24,6 +22,5 @@ import { APP_CONFIG } from './di/config.token';
       useFactory: (configService: ConfigService) => configService.getConfig(),
       deps: [ConfigService],
     },
-  ],
-})
-export class ConfigModule {}
+  ];
+}

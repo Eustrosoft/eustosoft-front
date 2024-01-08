@@ -11,14 +11,22 @@ import {
   HostListener,
   inject,
 } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { PromptDialogDataInterface } from './prompt-dialog-data.interface';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
-  selector: 'eustrosoft-front-prompt-dialog',
-  templateUrl: './prompt-dialog.component.html',
-  styleUrls: ['./prompt-dialog.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'eustrosoft-front-prompt-dialog',
+    templateUrl: './prompt-dialog.component.html',
+    styleUrls: ['./prompt-dialog.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [
+        MatDialogTitle,
+        MatDialogContent,
+        MatDialogActions,
+        MatButtonModule,
+    ],
 })
 export class PromptDialogComponent {
   private readonly dialogRef: MatDialogRef<PromptDialogComponent> = inject(

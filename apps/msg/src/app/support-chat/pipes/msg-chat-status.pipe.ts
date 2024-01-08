@@ -9,7 +9,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { MsgChatStatus } from '@eustrosoft-front/core';
 
 @Pipe({
-  name: 'msgChatStatus',
+    name: 'msgChatStatus',
+    standalone: true,
 })
 export class MsgChatStatusPipe implements PipeTransform {
   transform(value: MsgChatStatus): string {

@@ -18,7 +18,7 @@ import {
   TemplateRef,
   ViewChild,
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { catchError, EMPTY, of, Subject, take, tap } from 'rxjs';
 import { LoginService } from '@eustrosoft-front/security';
@@ -32,12 +32,29 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { InputTypes, LoginForm } from '@eustrosoft-front/core';
 import { BreakpointsService } from '../../services/breakpoints.service';
 import { APP_CONFIG } from '@eustrosoft-front/config';
+import { MatButtonModule } from '@angular/material/button';
+import { NgIf, NgFor, NgStyle, AsyncPipe } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
-  selector: 'eustrosoft-front-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'eustrosoft-front-login',
+    templateUrl: './login.component.html',
+    styleUrls: ['./login.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatIconModule,
+        NgIf,
+        NgFor,
+        MatButtonModule,
+        NgStyle,
+        AsyncPipe,
+    ],
 })
 export class LoginComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('loginTemplate') loginTemplate!: TemplateRef<unknown>;

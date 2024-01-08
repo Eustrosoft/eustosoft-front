@@ -13,17 +13,42 @@ import {
   inject,
   Output,
 } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { FormBuilder, Validators } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CreateChatDialogFormInterface } from './create-chat-dialog-form.interface';
 import { CreateChatDialogDataInterface } from './create-chat-dialog-data.interface';
 import { CreateChatDialogReturnDataInterface } from './create-chat-dialog-return-data.interface';
+import { TranslateModule } from '@ngx-translate/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatOptionModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { NgIf, NgFor, AsyncPipe } from '@angular/common';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
-  selector: 'eustrosoft-front-create-chat-dialog',
-  templateUrl: './create-chat-dialog.component.html',
-  styleUrls: ['./create-chat-dialog.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'eustrosoft-front-create-chat-dialog',
+    templateUrl: './create-chat-dialog.component.html',
+    styleUrls: ['./create-chat-dialog.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [
+        MatDialogTitle,
+        MatDialogContent,
+        MatFormFieldModule,
+        MatInputModule,
+        ReactiveFormsModule,
+        NgIf,
+        MatExpansionModule,
+        MatSelectModule,
+        MatOptionModule,
+        NgFor,
+        MatDialogActions,
+        MatButtonModule,
+        AsyncPipe,
+        TranslateModule,
+    ],
 })
 export class CreateChatDialogComponent {
   @Output() formSubmitted = new EventEmitter<

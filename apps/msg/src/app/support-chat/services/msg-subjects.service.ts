@@ -9,7 +9,7 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { MsgSubjects } from '../contants/enums/msg-subjects.enum';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class MsgSubjectsService {
   private readonly subjects = new Map<MsgSubjects, Subject<never>>();
 

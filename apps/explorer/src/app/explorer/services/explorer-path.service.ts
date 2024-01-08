@@ -7,7 +7,7 @@
 
 import { Injectable } from '@angular/core';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class ExplorerPathService {
   updateLastPathState(path: string): void {
     localStorage.setItem('qtis-explorer-last-path', path);

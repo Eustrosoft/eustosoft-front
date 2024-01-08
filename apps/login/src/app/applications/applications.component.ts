@@ -6,14 +6,26 @@
  */
 
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
+import { AsyncPipe, DOCUMENT, NgFor, NgIf } from '@angular/common';
 import { APP_CONFIG } from '@eustrosoft-front/config';
+import { TranslateModule } from '@ngx-translate/core';
+import { MatIconModule } from '@angular/material/icon';
+import { HoverShadowDirective } from '@eustrosoft-front/common-ui';
 
 @Component({
   selector: 'eustrosoft-front-applications',
   templateUrl: './applications.component.html',
   styleUrls: ['./applications.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    NgIf,
+    NgFor,
+    MatIconModule,
+    AsyncPipe,
+    TranslateModule,
+    HoverShadowDirective,
+  ],
 })
 export class ApplicationsComponent {
   private readonly document = inject(DOCUMENT);

@@ -16,6 +16,7 @@ import {
 import {
   BreakpointsService,
   InputFileComponent,
+  PreloaderComponent,
   PromptDialogComponent,
   PromptDialogDataInterface,
 } from '@eustrosoft-front/common-ui';
@@ -64,7 +65,7 @@ import { MoveCopyDialogComponent } from './components/move-copy-dialog/move-copy
 import { MoveCopyDialogData } from './components/move-copy-dialog/move-copy-dialog-data.interface';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ExplorerUploadService } from './services/explorer-upload.service';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ExplorerUploadItemsService } from './services/explorer-upload-items.service';
 import { UploadOverlayComponent } from './components/upload-overlay/upload-overlay.component';
 import { ExplorerUploadItemFormFactoryService } from './services/explorer-upload-item-form-factory.service';
@@ -72,7 +73,7 @@ import { UploadItemState } from './constants/enums/uploading-state.enum';
 import { UploadDialogComponent } from './components/upload-dialog/upload-dialog.component';
 import { FileSystemObject } from './models/file-system-object.interface';
 import { Clipboard } from '@angular/cdk/clipboard';
-import { DOCUMENT } from '@angular/common';
+import { AsyncPipe, DOCUMENT, NgIf } from '@angular/common';
 import { ShareDialogComponent } from './components/share-dialog/share-dialog.component';
 import { ShareDialogDataInterface } from './components/share-dialog/share-dialog-data.interface';
 import { RenameDialogComponent } from './components/rename-dialog/rename-dialog.component';
@@ -80,12 +81,31 @@ import { RenameDialogData } from './components/rename-dialog/rename-dialog-data.
 import { RenameDialogReturnData } from './components/rename-dialog/rename-dialog-return-data.interface';
 import { FilesystemTableService } from './services/filesystem-table.service';
 import { CreateDialogReturnData } from './components/create-dialog/create-dialog-return-data.interface';
+import { FilesystemTableComponent } from './components/filesystem-table/filesystem-table.component';
+import { BreadcrumbsComponent } from './components/breadcrumbs/breadcrumbs.component';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'eustrosoft-front-explorer',
   templateUrl: './explorer.component.html',
   styleUrls: ['./explorer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatButtonModule,
+    MatMenuModule,
+    MatIconModule,
+    NgIf,
+    InputFileComponent,
+    BreadcrumbsComponent,
+    PreloaderComponent,
+    FilesystemTableComponent,
+    UploadOverlayComponent,
+    AsyncPipe,
+    TranslateModule,
+  ],
 })
 export class ExplorerComponent implements OnInit, OnDestroy {
   @ViewChild(InputFileComponent) inputFileComponent!: InputFileComponent;

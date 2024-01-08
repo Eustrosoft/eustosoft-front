@@ -11,19 +11,39 @@ import {
   HostListener,
   inject,
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogActions } from '@angular/material/dialog';
 import { CreateDialogData } from './create-dialog-data.interface';
 import { CreateDialogReturnData } from './create-dialog-return-data.interface';
 import { CreateDialogForm } from './create-dialog-form.interface';
 import { ExplorerDictionaryService } from '../../services/explorer-dictionary.service';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { MatButtonModule } from '@angular/material/button';
+import { NgFor, AsyncPipe } from '@angular/common';
+import { MatOptionModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
-  selector: 'eustrosoft-front-create-fs-object-dialog',
-  templateUrl: './create-dialog.component.html',
-  styleUrls: ['./create-dialog.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'eustrosoft-front-create-fs-object-dialog',
+    templateUrl: './create-dialog.component.html',
+    styleUrls: ['./create-dialog.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [
+        MatDialogTitle,
+        MatFormFieldModule,
+        MatInputModule,
+        ReactiveFormsModule,
+        MatSelectModule,
+        MatOptionModule,
+        NgFor,
+        MatDialogActions,
+        MatButtonModule,
+        AsyncPipe,
+        TranslateModule,
+    ],
 })
 export class CreateDialogComponent {
   private readonly dialogRef = inject<

@@ -29,7 +29,7 @@ import {
 } from '@eustrosoft-front/core';
 import { SamService } from './sam.service';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class AuthenticationService {
   private dispatchService = inject(DispatchService);
   private samService = inject(SamService);
