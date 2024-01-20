@@ -6,7 +6,7 @@
  */
 
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
-import { DispatcherQueryTypes } from '@eustrosoft-front/core';
+import { DispatcherQueryTypes } from '@eustrosoft-front/dispatcher-lib';
 
 export type RequestsForm = {
   forms: FormArray<FormGroup<SingleRequestForm>>;

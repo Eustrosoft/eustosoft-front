@@ -12,7 +12,6 @@ import {
   inject,
   Output,
 } from '@angular/core';
-import { UploadItemForm } from '@eustrosoft-front/core';
 import { UploadItemState } from '../../constants/enums/uploading-state.enum';
 import { catchError, EMPTY, Observable, shareReplay, tap } from 'rxjs';
 import { Option, ProgressBarComponent } from '@eustrosoft-front/common-ui';
@@ -34,6 +33,7 @@ import {
 } from '@angular/cdk/scrolling';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { UploadItemForm } from '@eustrosoft-front/explorer-lib';
 
 @Component({
   selector: 'eustrosoft-front-upload-overlay',

@@ -20,7 +20,11 @@
       "@eustrosoft-front/config": ["libs/config/src/index.ts"],
       "@eustrosoft-front/core": ["libs/core/src/index.ts"],
       "@eustrosoft-front/dic": ["libs/dic/src/index.ts"],
-      "@eustrosoft-front/security": ["libs/security/src/index.ts"]
+      "@eustrosoft-front/explorer-lib": ["libs/explorer-lib/src/index.ts"],
+      "@eustrosoft-front/login-lib": ["libs/login-lib/src/index.ts"],
+      "@eustrosoft-front/security": ["libs/security/src/index.ts"],
+      "@eustrosoft-front/dispatcher-lib": ["libs/dispatcher-lib/src/index.ts"],
+      "@eustrosoft-front/msg-lib": ["libs/msg-lib/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

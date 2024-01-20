@@ -8,3 +8,7 @@
 export * from './lib/services/dic.service';
 export * from './lib/services/dic-mapper.service';
 export * from './lib/contants/enums/dictionaries.enum';
+export * from './lib/interfaces/dic-request.interface';
+export * from './lib/interfaces/dic-response.interface';
+export * from './lib/interfaces/dic-value.interface';
+export * from './lib/contants/enums/dic-actions.enum';

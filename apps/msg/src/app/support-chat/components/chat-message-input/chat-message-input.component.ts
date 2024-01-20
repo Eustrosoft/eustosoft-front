@@ -20,7 +20,7 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
-import { Chat, ChatMessage } from '@eustrosoft-front/core';
+import { Chat, ChatMessage } from '@eustrosoft-front/msg-lib';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import {
   debounceTime,
@@ -43,22 +43,22 @@ import { TextFieldModule } from '@angular/cdk/text-field';
 import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
-    selector: 'eustrosoft-front-chat-message-input',
-    templateUrl: './chat-message-input.component.html',
-    styleUrls: ['./chat-message-input.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [
-        MatFormFieldModule,
-        MatInputModule,
-        ReactiveFormsModule,
-        TextFieldModule,
-        NgIf,
-        MatButtonModule,
-        MatTooltipModule,
-        MatIconModule,
-        TranslateModule,
-    ],
+  selector: 'eustrosoft-front-chat-message-input',
+  templateUrl: './chat-message-input.component.html',
+  styleUrls: ['./chat-message-input.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatFormFieldModule,
+    MatInputModule,
+    ReactiveFormsModule,
+    TextFieldModule,
+    NgIf,
+    MatButtonModule,
+    MatTooltipModule,
+    MatIconModule,
+    TranslateModule,
+  ],
 })
 export class ChatMessageInputComponent
   implements OnInit, OnChanges, AfterViewInit, OnDestroy

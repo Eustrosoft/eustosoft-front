@@ -28,7 +28,7 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { bootstrapApplication, BrowserModule } from '@angular/platform-browser';
 import {
   CustomLocationStrategy,
-  httpErrorsInterceptorInterceptor,
+  httpErrorsInterceptor,
   HttpLoaderFactory,
   provideCoreLib,
 } from '@eustrosoft-front/core';
@@ -60,7 +60,7 @@ bootstrapApplication(AppComponent, {
       withInterceptors([
         unauthenticatedInterceptor,
         withCredentialsInterceptor,
-        httpErrorsInterceptorInterceptor,
+        httpErrorsInterceptor,
       ]),
     ),
     provideRouter(

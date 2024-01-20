@@ -10,14 +10,16 @@ import { Observable, tap } from 'rxjs';
 import { AuthenticationService } from './authentication.service';
 import {
   DispatchService,
-  LoginActions,
-  LoginLogoutResponse,
-  LoginRequest,
-  LogoutRequest,
   QtisRequestResponseInterface,
   Subsystems,
   SupportedLanguages,
 } from '@eustrosoft-front/core';
+import {
+  LoginActions,
+  LoginLogoutResponse,
+  LoginRequest,
+  LogoutRequest,
+} from '@eustrosoft-front/login-lib';
 
 @Injectable({ providedIn: 'root' })
 export class LoginService {

@@ -38,30 +38,8 @@ import { CreateChatDialogComponent } from './components/create-chat-dialog/creat
 import { CreateChatDialogDataInterface } from './components/create-chat-dialog/create-chat-dialog-data.interface';
 import { CreateChatDialogReturnDataInterface } from './components/create-chat-dialog/create-chat-dialog-return-data.interface';
 import {
-  ChangeChatStatusRequest,
-  ChangeChatStatusResponse,
-  Chat,
-  ChatMessage,
-  ChatVersion,
-  CreateChatRequest,
-  CreateChatResponse,
-  DeleteChatMessageRequest,
-  DeleteChatMessageResponse,
-  DeleteChatRequest,
-  DeleteChatResponse,
-  DicValue,
   DispatchService,
-  EditChatMessageRequest,
-  EditChatMessageResponse,
-  MessageType,
-  MsgChatStatus,
   QtisRequestResponseInterface,
-  SendChatMessageRequest,
-  SendChatMessageResponse,
-  UpdateChatListRequest,
-  UpdateChatListResponse,
-  ViewChatsRequest,
-  ViewChatsResponse,
 } from '@eustrosoft-front/core';
 import { MsgRequestBuilderService } from './services/msg-request-builder.service';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -86,6 +64,30 @@ import { ChatViewComponent } from './components/chat-view/chat-view.component';
 import { MatButtonModule } from '@angular/material/button';
 import { AsyncPipe, NgIf, NgTemplateOutlet } from '@angular/common';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import {
+  ChangeChatStatusRequest,
+  ChangeChatStatusResponse,
+  Chat,
+  ChatMessage,
+  ChatVersion,
+  CreateChatRequest,
+  CreateChatResponse,
+  DeleteChatMessageRequest,
+  DeleteChatMessageResponse,
+  DeleteChatRequest,
+  DeleteChatResponse,
+  EditChatMessageRequest,
+  EditChatMessageResponse,
+  MessageType,
+  MsgChatStatus,
+  SendChatMessageRequest,
+  SendChatMessageResponse,
+  UpdateChatListRequest,
+  UpdateChatListResponse,
+  ViewChatsRequest,
+  ViewChatsResponse,
+} from '@eustrosoft-front/msg-lib';
+import { DicValue } from '@eustrosoft-front/dic';
 
 @Component({
   selector: 'eustrosoft-front-support-chat',

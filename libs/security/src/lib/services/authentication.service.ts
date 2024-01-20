@@ -19,15 +19,14 @@ import {
 } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
-  AuthenticatedUserInterface,
   DispatchService,
-  PingRequest,
-  PingResponse,
   QtisRequestResponseInterface,
   Subsystems,
   SupportedLanguages,
 } from '@eustrosoft-front/core';
 import { SamService } from './sam.service';
+import { AuthenticatedUserInterface } from '../interfaces/authenticated-user.interface';
+import { PingRequest, PingResponse } from '@eustrosoft-front/login-lib';
 
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {

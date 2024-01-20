@@ -45,7 +45,7 @@ import { bootstrapApplication, BrowserModule } from '@angular/platform-browser';
 import { MAT_SNACK_BAR_DEFAULT_OPTIONS } from '@angular/material/snack-bar';
 import {
   CustomLocationStrategy,
-  httpErrorsInterceptorInterceptor,
+  httpErrorsInterceptor,
   HttpLoaderFactory,
   provideCoreLib,
 } from '@eustrosoft-front/core';
@@ -95,7 +95,7 @@ bootstrapApplication(AppComponent, {
       withInterceptors([
         unauthenticatedInterceptor,
         withCredentialsInterceptor,
-        httpErrorsInterceptorInterceptor,
+        httpErrorsInterceptor,
       ]),
     ),
     provideRouter(

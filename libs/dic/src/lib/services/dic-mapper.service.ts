@@ -6,8 +6,8 @@
  */
 
 import { Injectable } from '@angular/core';
-import { DicValue } from '@eustrosoft-front/core';
 import { Option } from '@eustrosoft-front/common-ui';
+import { DicValue } from '../interfaces/dic-value.interface';
 
 @Injectable({ providedIn: 'root' })
 export class DicMapperService {

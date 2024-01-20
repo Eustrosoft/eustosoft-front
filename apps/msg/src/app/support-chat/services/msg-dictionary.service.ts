@@ -10,17 +10,17 @@ import {
   DicMapperService,
   DicService,
   Dictionaries,
-} from '@eustrosoft-front/dic';
-import { map, Observable } from 'rxjs';
-import {
   DicValue,
   DicValuesResponse,
-  QtisRequestResponseInterface,
+} from '@eustrosoft-front/dic';
+import { map, Observable } from 'rxjs';
+import { QtisRequestResponseInterface } from '@eustrosoft-front/core';
+import { Option } from '@eustrosoft-front/common-ui';
+import {
+  SamService,
   Scopes,
   UserAvailableScopesResponse,
-} from '@eustrosoft-front/core';
-import { Option } from '@eustrosoft-front/common-ui';
-import { SamService } from '@eustrosoft-front/security';
+} from '@eustrosoft-front/security';
 
 @Injectable({ providedIn: 'root' })
 export class MsgDictionaryService {

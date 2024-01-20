@@ -15,7 +15,6 @@ import {
 import { FormArray, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { UploadItemState } from '../../constants/enums/uploading-state.enum';
 import { map, Observable, shareReplay, tap } from 'rxjs';
-import { SecurityLevels, UploadItemForm } from '@eustrosoft-front/core';
 import { ExplorerUploadItemsService } from '../../services/explorer-upload-items.service';
 import { ExplorerDictionaryService } from '../../services/explorer-dictionary.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -38,6 +37,8 @@ import {
   MatDialogTitle,
 } from '@angular/material/dialog';
 import { AsyncPipe, NgFor, NgIf } from '@angular/common';
+import { UploadItemForm } from '@eustrosoft-front/explorer-lib';
+import { SecurityLevels } from '@eustrosoft-front/security';
 
 @Component({
   selector: 'eustrosoft-front-upload-dialog',

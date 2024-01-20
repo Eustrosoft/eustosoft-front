@@ -17,12 +17,15 @@ import {
   tap,
   toArray,
 } from 'rxjs';
-import { FileReaderService, UploadItemForm } from '@eustrosoft-front/core';
 import { ExplorerRequestBuilderService } from './explorer-request-builder.service';
 import { ExplorerService } from './explorer.service';
 import { UploadItemState } from '../constants/enums/uploading-state.enum';
 import { ExplorerUploadItemsService } from './explorer-upload-items.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import {
+  FileReaderService,
+  UploadItemForm,
+} from '@eustrosoft-front/explorer-lib';
 
 @Injectable({ providedIn: 'root' })
 export class ExplorerUploadService {

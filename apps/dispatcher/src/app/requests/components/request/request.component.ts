@@ -11,7 +11,7 @@ import {
   Input,
   ViewChild,
 } from '@angular/core';
-import { DispatcherQueryTypes } from '@eustrosoft-front/core';
+import { DispatcherQueryTypes } from '@eustrosoft-front/dispatcher-lib';
 import {
   FileListComponent,
   InputFileComponent,

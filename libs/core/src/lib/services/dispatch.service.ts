@@ -9,7 +9,7 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { APP_CONFIG, Config } from '@eustrosoft-front/config';
 import { Observable, switchMap } from 'rxjs';
-import { QtisRequestResponseInterface } from '../interfaces/shared/shared.interface';
+import { QtisRequestResponseInterface } from '../interfaces/qtis-req-res.interface';
 
 @Injectable({ providedIn: 'root' })
 export class DispatchService {

@@ -14,13 +14,7 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import {
-  Chat,
-  ChatVersion,
-  DicValue,
-  MsgChatStatus,
-  trackByZridFunction,
-} from '@eustrosoft-front/core';
+import { trackByZridFunction } from '@eustrosoft-front/core';
 import {
   MatCheckboxChange,
   MatCheckboxModule,
@@ -40,6 +34,8 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { NgClass, NgFor, NgIf } from '@angular/common';
+import { DicValue } from '@eustrosoft-front/dic';
+import { Chat, ChatVersion, MsgChatStatus } from '@eustrosoft-front/msg-lib';
 
 @Component({
   selector: 'eustrosoft-front-chat-list',

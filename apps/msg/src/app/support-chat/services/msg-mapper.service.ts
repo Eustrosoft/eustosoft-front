@@ -16,13 +16,15 @@ import {
   switchMap,
 } from 'rxjs';
 import {
-  ChatMessage,
   DispatchService,
   QtisRequestResponseInterface,
-  ViewChatRequest,
-  ViewChatResponse,
 } from '@eustrosoft-front/core';
 import { MsgRequestBuilderService } from './msg-request-builder.service';
+import {
+  ChatMessage,
+  ViewChatRequest,
+  ViewChatResponse,
+} from '@eustrosoft-front/msg-lib';
 
 @Injectable({ providedIn: 'root' })
 export class MsgMapperService {

@@ -7,12 +7,6 @@
 
 import { inject, Injectable } from '@angular/core';
 import {
-  DicRequestActions,
-  DicsRequest,
-  DicsResponse,
-  DicValue,
-  DicValuesRequest,
-  DicValuesResponse,
   DispatchService,
   QtisRequestResponseInterface,
   Subsystems,
@@ -20,13 +14,23 @@ import {
 } from '@eustrosoft-front/core';
 import { map, Observable } from 'rxjs';
 import { Dictionaries } from '../contants/enums/dictionaries.enum';
+import {
+  DicsResponse,
+  DicValuesResponse,
+} from '../interfaces/dic-response.interface';
+import {
+  DicRequest,
+  DicValuesRequest,
+} from '../interfaces/dic-request.interface';
+import { DicRequestActions } from '../contants/enums/dic-actions.enum';
+import { DicValue } from '../interfaces/dic-value.interface';
 
 @Injectable({ providedIn: 'root' })
 export class DicService {
   private dispatchService = inject(DispatchService);
 
   getDictionaries(): Observable<QtisRequestResponseInterface<DicsResponse>> {
-    return this.dispatchService.dispatch<DicsRequest, DicsResponse>({
+    return this.dispatchService.dispatch<DicRequest, DicsResponse>({
       r: [
         {
           s: Subsystems.DIC,

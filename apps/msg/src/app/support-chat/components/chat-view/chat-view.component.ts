@@ -19,42 +19,44 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
-import {
-  Chat,
-  ChatMessage,
-  MsgChatStatus,
-  trackByZridFunction,
-} from '@eustrosoft-front/core';
+import { trackByZridFunction } from '@eustrosoft-front/core';
 import { AuthenticationService } from '@eustrosoft-front/security';
 import { shareReplay } from 'rxjs';
 import { BreakpointsService } from '@eustrosoft-front/common-ui';
 import { NewLineToBrPipe } from '../../pipes/new-line-to-br.pipe';
 import { TranslateModule } from '@ngx-translate/core';
 import { ChatMessageInputComponent } from '../chat-message-input/chat-message-input.component';
-import { NgIf, NgFor, NgTemplateOutlet, AsyncPipe, DatePipe } from '@angular/common';
+import {
+  AsyncPipe,
+  DatePipe,
+  NgFor,
+  NgIf,
+  NgTemplateOutlet,
+} from '@angular/common';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { Chat, ChatMessage, MsgChatStatus } from '@eustrosoft-front/msg-lib';
 
 @Component({
-    selector: 'eustrosoft-front-chat-view',
-    templateUrl: './chat-view.component.html',
-    styleUrls: ['./chat-view.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [
-        MatButtonModule,
-        MatIconModule,
-        MatMenuModule,
-        NgIf,
-        NgFor,
-        NgTemplateOutlet,
-        ChatMessageInputComponent,
-        AsyncPipe,
-        DatePipe,
-        TranslateModule,
-        NewLineToBrPipe,
-    ],
+  selector: 'eustrosoft-front-chat-view',
+  templateUrl: './chat-view.component.html',
+  styleUrls: ['./chat-view.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatButtonModule,
+    MatIconModule,
+    MatMenuModule,
+    NgIf,
+    NgFor,
+    NgTemplateOutlet,
+    ChatMessageInputComponent,
+    AsyncPipe,
+    DatePipe,
+    TranslateModule,
+    NewLineToBrPipe,
+  ],
 })
 export class ChatViewComponent implements OnChanges, AfterViewInit {
   @Input() selectedChat: Chat | undefined = undefined;

@@ -9,24 +9,28 @@ import { inject, Injectable } from '@angular/core';
 import {
   DispatchService,
   QtisRequestResponseInterface,
-  SamRequestActions,
-  Scopes,
   Subsystems,
   SupportedLanguages,
-  UserAvailableScopesRequest,
-  UserAvailableScopesResponse,
-  UserAvailableSlvlRequest,
-  UserAvailableSlvlResponse,
-  UserIdRequest,
-  UserIdResponse,
-  UserLangRequest,
-  UserLangResponse,
-  UserLoginRequest,
-  UserLoginResponse,
-  UserSlvlRequest,
-  UserSlvlResponse,
 } from '@eustrosoft-front/core';
 import { Observable } from 'rxjs';
+import {
+  UserAvailableScopesRequest,
+  UserAvailableSlvlRequest,
+  UserIdRequest,
+  UserLangRequest,
+  UserLoginRequest,
+  UserSlvlRequest,
+} from '../interfaces/sam-request.interface';
+import {
+  UserAvailableScopesResponse,
+  UserAvailableSlvlResponse,
+  UserIdResponse,
+  UserLangResponse,
+  UserLoginResponse,
+  UserSlvlResponse,
+} from '../interfaces/sam-response.interface';
+import { SamRequestActions } from '../constants/enums/sam-actions.enum';
+import { Scopes } from '../constants/enums/scopes.enum';
 
 @Injectable({ providedIn: 'root' })
 export class SamService {

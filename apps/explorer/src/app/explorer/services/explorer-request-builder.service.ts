@@ -7,22 +7,24 @@
 
 import { Injectable } from '@angular/core';
 import {
-  CmsRequestActions,
   crc32,
-  CreateRequest,
-  DeleteRequest,
-  DownloadTicketRequest,
-  MoveCopyRequest,
-  MoveRequest,
   QtisRequestResponseInterface,
   Subsystems,
   SupportedLanguages,
-  UploadHexRequest,
-  UploadRequest,
-  ViewRequest,
 } from '@eustrosoft-front/core';
 import { Observable, of } from 'rxjs';
 import { FileSystemObject } from '../models/file-system-object.interface';
+import {
+  CreateRequest,
+  DeleteRequest,
+  DownloadTicketRequest,
+  ExplorerRequestActions,
+  MoveCopyRequest,
+  MoveRequest,
+  UploadHexRequest,
+  UploadRequest,
+  ViewRequest,
+} from '@eustrosoft-front/explorer-lib';
 
 @Injectable({ providedIn: 'root' })
 export class ExplorerRequestBuilderService {
@@ -38,7 +40,7 @@ export class ExplorerRequestBuilderService {
       r: [
         {
           s: Subsystems.FILE,
-          r: CmsRequestActions.UPLOAD_CHUNKS_BINARY,
+          r: ExplorerRequestActions.UPLOAD_CHUNKS_BINARY,
           l: SupportedLanguages.EN_US,
           parameters: {
             file: '',
@@ -66,7 +68,7 @@ export class ExplorerRequestBuilderService {
       r: [
         {
           s: Subsystems.FILE,
-          r: CmsRequestActions.UPLOAD_CHUNKS_BASE64,
+          r: ExplorerRequestActions.UPLOAD_CHUNKS_BASE64,
           l: SupportedLanguages.EN_US,
           parameters: {
             file: chunk,
@@ -112,7 +114,7 @@ export class ExplorerRequestBuilderService {
       r: [
         {
           s: Subsystems.FILE,
-          r: CmsRequestActions.UPLOAD_CHUNKS_HEX,
+          r: ExplorerRequestActions.UPLOAD_CHUNKS_HEX,
           l: SupportedLanguages.EN_US,
           parameters: params,
         },
@@ -125,15 +127,15 @@ export class ExplorerRequestBuilderService {
     from: FileSystemObject[],
     to: string[],
     description: string | undefined = undefined,
-    action: CmsRequestActions = CmsRequestActions.MOVE,
+    action: ExplorerRequestActions = ExplorerRequestActions.MOVE,
   ): Observable<QtisRequestResponseInterface<MoveRequest>> {
     switch (action) {
-      case CmsRequestActions.RENAME: {
+      case ExplorerRequestActions.RENAME: {
         return of({
           r: [
             {
               s: Subsystems.CMS,
-              r: CmsRequestActions.MOVE,
+              r: ExplorerRequestActions.MOVE,
               l: SupportedLanguages.EN_US,
               to: to[0],
               description: description,
@@ -142,7 +144,7 @@ export class ExplorerRequestBuilderService {
           t: 0,
         });
       }
-      case CmsRequestActions.MOVE:
+      case ExplorerRequestActions.MOVE:
       default: {
         return of({
           r: from.map(
@@ -165,7 +167,7 @@ export class ExplorerRequestBuilderService {
   buildMoveCopyRequest(
     from: FileSystemObject[],
     to: string[],
-    action: CmsRequestActions,
+    action: ExplorerRequestActions,
   ): Observable<QtisRequestResponseInterface<MoveCopyRequest>> {
     return of({
       r: from.map(
@@ -189,7 +191,7 @@ export class ExplorerRequestBuilderService {
       r: [
         {
           s: Subsystems.CMS,
-          r: CmsRequestActions.VIEW,
+          r: ExplorerRequestActions.VIEW,
           l: SupportedLanguages.EN_US,
           path: path,
         },
@@ -205,7 +207,7 @@ export class ExplorerRequestBuilderService {
       r: [
         {
           s: Subsystems.CMS,
-          r: CmsRequestActions.CREATE,
+          r: ExplorerRequestActions.CREATE,
           l: SupportedLanguages.EN_US,
           ...params,
         },
@@ -222,7 +224,7 @@ export class ExplorerRequestBuilderService {
         (row: FileSystemObject) =>
           ({
             s: Subsystems.CMS,
-            r: CmsRequestActions.DELETE,
+            r: ExplorerRequestActions.DELETE,
             l: SupportedLanguages.EN_US,
             path: row.fullPath,
           }) as DeleteRequest,
@@ -239,7 +241,7 @@ export class ExplorerRequestBuilderService {
         (row: FileSystemObject) =>
           ({
             s: Subsystems.CMS,
-            r: CmsRequestActions.TICKET,
+            r: ExplorerRequestActions.TICKET,
             l: SupportedLanguages.EN_US,
             path: row.fullPath,
           }) as DownloadTicketRequest,

@@ -10,11 +10,9 @@ import { Router, UrlTree } from '@angular/router';
 import { catchError, delay, Observable, of, switchMap } from 'rxjs';
 import { AuthenticationService } from '../services/authentication.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import {
-  PingResponse,
-  QtisRequestResponseInterface,
-} from '@eustrosoft-front/core';
+import { QtisRequestResponseInterface } from '@eustrosoft-front/core';
 import { HttpErrorResponse } from '@angular/common/http';
+import { PingResponse } from '@eustrosoft-front/login-lib';
 
 export const authenticationGuard = (): Observable<UrlTree | boolean> => {
   const authenticationService: AuthenticationService = inject(

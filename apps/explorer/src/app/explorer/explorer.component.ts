@@ -40,17 +40,8 @@ import {
   tap,
 } from 'rxjs';
 import {
-  CmsDownloadParams,
-  CmsRequestActions,
-  DeleteRequest,
-  DeleteResponse,
   DispatchService,
-  FileSystemObjectTypes,
-  MoveCopyRequest,
-  MoveCopyResponse,
   QtisRequestResponseInterface,
-  SecurityLevels,
-  UploadItemForm,
 } from '@eustrosoft-front/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -86,6 +77,17 @@ import { BreadcrumbsComponent } from './components/breadcrumbs/breadcrumbs.compo
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
+import {
+  DeleteRequest,
+  DeleteResponse,
+  ExplorerDownloadParams,
+  ExplorerFsObjectTypes,
+  ExplorerRequestActions,
+  MoveCopyRequest,
+  MoveCopyResponse,
+  UploadItemForm,
+} from '@eustrosoft-front/explorer-lib';
+import { SecurityLevels } from '@eustrosoft-front/security';
 
 @Component({
   selector: 'eustrosoft-front-explorer',
@@ -253,7 +255,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
   }
 
   open(fsElem: FileSystemObject): void {
-    if (fsElem.type !== FileSystemObjectTypes.DIRECTORY) {
+    if (fsElem.type !== ExplorerFsObjectTypes.DIRECTORY) {
       return;
     }
     this.filesystemTableService.selection.clear();
@@ -330,7 +332,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
           this.explorerService.create(
             this.path$.getValue(),
             data.name,
-            FileSystemObjectTypes.DIRECTORY,
+            ExplorerFsObjectTypes.DIRECTORY,
             data.description,
             data.securityLevel,
           ),
@@ -396,7 +398,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
             this.explorerRequestBuilderService.buildMoveCopyRequest(
               rows,
               to,
-              CmsRequestActions.MOVE,
+              ExplorerRequestActions.MOVE,
             ),
             of(to),
           ]),
@@ -446,7 +448,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
             this.explorerRequestBuilderService.buildMoveCopyRequest(
               rows,
               to,
-              CmsRequestActions.COPY,
+              ExplorerRequestActions.COPY,
             ),
             of(to),
           ]),
@@ -513,7 +515,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
 
   downloadViaPath(rows: FileSystemObject[]): void {
     this.explorerService
-      .makeDownloadLink(rows[0].fullPath, CmsDownloadParams.PATH)
+      .makeDownloadLink(rows[0].fullPath, ExplorerDownloadParams.PATH)
       .pipe(
         tap((url: string) => {
           this.document.location.href = url;

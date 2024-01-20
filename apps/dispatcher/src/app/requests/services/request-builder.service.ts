@@ -7,18 +7,20 @@
 
 import { inject, Injectable } from '@angular/core';
 import {
-  DispatcherActions,
-  DispatcherQueryTypes,
-  FileReaderService,
-  FileRequest,
   QtisRequestResponseInterface,
-  SqlRequest,
   Subsystems,
   SupportedLanguages,
 } from '@eustrosoft-front/core';
 import { combineLatest, mergeMap, Observable, of } from 'rxjs';
 import { FormArray, FormGroup } from '@angular/forms';
 import { SingleRequestForm } from '../interfaces/request.types';
+import {
+  DispatcherActions,
+  DispatcherQueryTypes,
+  FileRequest,
+  SqlRequest,
+} from '@eustrosoft-front/dispatcher-lib';
+import { FileReaderService } from '@eustrosoft-front/explorer-lib';
 
 @Injectable({ providedIn: 'root' })
 export class RequestBuilderService {

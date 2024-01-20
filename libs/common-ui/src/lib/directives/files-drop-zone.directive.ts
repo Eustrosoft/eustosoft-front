@@ -13,21 +13,21 @@ import {
   Input,
   Output,
 } from '@angular/core';
-import { FileSystemObjectTypes } from '@eustrosoft-front/core';
+import { ExplorerFsObjectTypes } from '@eustrosoft-front/explorer-lib';
 
 @Directive({
-    selector: '[eustrosoftFrontFilesDropZone]',
-    standalone: true,
+  selector: '[eustrosoftFrontFilesDropZone]',
+  standalone: true,
 })
 export class FilesDropZoneDirective {
   @HostBinding('class.files-over') filesOver!: boolean;
-  @Input() fsObjType!: FileSystemObjectTypes;
+  @Input() fsObjType!: ExplorerFsObjectTypes;
   @Output() filesDropped = new EventEmitter<File[]>();
 
   @HostListener('dragover', ['$event']) onDragOver(event: DragEvent): void {
     event.preventDefault();
     event.stopPropagation();
-    if (this.fsObjType === FileSystemObjectTypes.DIRECTORY) {
+    if (this.fsObjType === ExplorerFsObjectTypes.DIRECTORY) {
       this.filesOver = true;
     }
   }

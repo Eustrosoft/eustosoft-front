@@ -16,7 +16,7 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { BytesToSizePipe, FileSystemObjectTypes } from '@eustrosoft-front/core';
+import { BytesToSizePipe } from '@eustrosoft-front/core';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { FileSystemObject } from '../../models/file-system-object.interface';
 import { FilesystemTableService } from '../../services/filesystem-table.service';
@@ -28,6 +28,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { NgIf, NgSwitch, NgSwitchCase } from '@angular/common';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTableModule } from '@angular/material/table';
+import { ExplorerFsObjectTypes } from '@eustrosoft-front/explorer-lib';
 
 @Component({
   selector: 'eustrosoft-front-filesystem-table',
@@ -67,7 +68,7 @@ export class FilesystemTableComponent implements OnChanges, AfterViewInit {
 
   @ViewChild(MatSort) sort!: MatSort;
 
-  protected readonly fsObjTypes = FileSystemObjectTypes;
+  protected readonly fsObjTypes = ExplorerFsObjectTypes;
   protected readonly displayedColumns: string[] = [
     'select',
     'fileName',

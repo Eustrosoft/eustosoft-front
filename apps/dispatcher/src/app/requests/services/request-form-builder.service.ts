@@ -7,7 +7,7 @@
 
 import { inject, Injectable } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { DispatcherQueryTypes } from '@eustrosoft-front/core';
+import { DispatcherQueryTypes } from '@eustrosoft-front/dispatcher-lib';
 import { RequestsForm, SingleRequestForm } from '../interfaces/request.types';
 
 @Injectable({ providedIn: 'root' })

@@ -31,7 +31,7 @@ import {
   switchMap,
   tap,
 } from 'rxjs';
-import { FileSystemObjectTypes } from '@eustrosoft-front/core';
+import { ExplorerFsObjectTypes } from '@eustrosoft-front/explorer-lib';
 import {
   MatListModule,
   MatListOption,
@@ -96,7 +96,7 @@ export class MoveCopyDialogComponent implements AfterViewInit, OnDestroy {
   private readonly cdRef = inject(ChangeDetectorRef);
   private readonly navigationHistoryStack: Stack<string> = inject(Stack);
   protected readonly data = inject<MoveCopyDialogData>(MAT_DIALOG_DATA);
-  protected readonly fsObjTypes = FileSystemObjectTypes;
+  protected readonly fsObjTypes = ExplorerFsObjectTypes;
 
   private currentSelectedOptionIndex: number | undefined = undefined;
   private destroy$ = new Subject<void>();
@@ -137,8 +137,8 @@ export class MoveCopyDialogComponent implements AfterViewInit, OnDestroy {
         const objectsAlreadyExistsInFolder =
           options.filter(
             (value: FileSystemObject) =>
-              (value.type === FileSystemObjectTypes.FILE ||
-                value.type === FileSystemObjectTypes.DIRECTORY) &&
+              (value.type === ExplorerFsObjectTypes.FILE ||
+                value.type === ExplorerFsObjectTypes.DIRECTORY) &&
               matchingIndexes.length > 0,
           ).length > 0;
 

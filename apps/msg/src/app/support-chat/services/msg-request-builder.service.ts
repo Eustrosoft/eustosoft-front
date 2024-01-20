@@ -8,20 +8,22 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import {
+  QtisRequestResponseInterface,
+  Subsystems,
+  SupportedLanguages,
+} from '@eustrosoft-front/core';
+import {
   ChangeChatStatusRequest,
   CreateChatRequest,
   DeleteChatMessageRequest,
   DeleteChatRequest,
   EditChatMessageRequest,
   MsgRequestActions,
-  QtisRequestResponseInterface,
   SendChatMessageRequest,
-  Subsystems,
-  SupportedLanguages,
   UpdateChatListRequest,
   ViewChatRequest,
   ViewChatsRequest,
-} from '@eustrosoft-front/core';
+} from '@eustrosoft-front/msg-lib';
 
 @Injectable({ providedIn: 'root' })
 export class MsgRequestBuilderService {

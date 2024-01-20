@@ -5,12 +5,9 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-import { FileSystemObjectResponse } from '@eustrosoft-front/core';
+import { ExplorerObjectResponse } from '@eustrosoft-front/explorer-lib';
 import { Option } from '@eustrosoft-front/common-ui';
 
-export type FileSystemObject = Omit<
-  FileSystemObjectResponse,
-  'securityLevel'
-> & {
+export type FileSystemObject = Omit<ExplorerObjectResponse, 'securityLevel'> & {
   securityLevel: Pick<Option, 'displayText' | 'value'>;
 };

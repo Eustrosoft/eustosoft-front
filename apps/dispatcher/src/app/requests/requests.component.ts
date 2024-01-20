@@ -26,17 +26,6 @@ import {
   FormGroup,
   ReactiveFormsModule,
 } from '@angular/forms';
-import {
-  DispatcherQueryTypes,
-  DispatcherTableResult,
-  DispatchService,
-  DisplayTypes,
-  FileRequest,
-  QtisRequestResponseInterface,
-  SqlRequest,
-  SqlResponse,
-  Table,
-} from '@eustrosoft-front/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { RequestBuilderService } from './services/request-builder.service';
 import { RequestFormBuilderService } from './services/request-form-builder.service';
@@ -51,6 +40,19 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { RequestComponent } from './components/request/request.component';
 import { AsyncPipe, JsonPipe, NgFor, NgIf } from '@angular/common';
+import {
+  DispatcherQueryTypes,
+  DispatcherTableResult,
+  DisplayTypes,
+  FileRequest,
+  SqlRequest,
+  SqlResponse,
+  Table,
+} from '@eustrosoft-front/dispatcher-lib';
+import {
+  DispatchService,
+  QtisRequestResponseInterface,
+} from '@eustrosoft-front/core';
 
 @Component({
   selector: 'eustrosoft-front-requests',

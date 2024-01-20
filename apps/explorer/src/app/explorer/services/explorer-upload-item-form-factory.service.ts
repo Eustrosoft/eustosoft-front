@@ -7,8 +7,9 @@
 
 import { inject, Injectable } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
-import { SecurityLevels, UploadItemForm } from '@eustrosoft-front/core';
 import { UploadItemState } from '../constants/enums/uploading-state.enum';
+import { UploadItemForm } from '@eustrosoft-front/explorer-lib';
+import { SecurityLevels } from '@eustrosoft-front/security';
 
 @Injectable({ providedIn: 'root' })
 export class ExplorerUploadItemFormFactoryService {

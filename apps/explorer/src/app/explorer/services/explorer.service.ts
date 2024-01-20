@@ -12,19 +12,8 @@ import {
   HttpHeaders,
 } from '@angular/common/http';
 import {
-  CmsDownloadParams,
-  CmsRequestActions,
-  CreateRequest,
-  CreateResponse,
   DispatchService,
-  FileSystemObjectTypes,
-  MoveRequest,
-  MoveResponse,
   QtisRequestResponseInterface,
-  UploadHexRequest,
-  UploadResponse,
-  ViewRequest,
-  ViewResponse,
 } from '@eustrosoft-front/core';
 import {
   catchError,
@@ -48,6 +37,19 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ExplorerPathService } from './explorer-path.service';
 import { RenameDialogReturnData } from '../components/rename-dialog/rename-dialog-return-data.interface';
 import { DOCUMENT } from '@angular/common';
+import {
+  CreateRequest,
+  CreateResponse,
+  ExplorerDownloadParams,
+  ExplorerFsObjectTypes,
+  ExplorerRequestActions,
+  MoveRequest,
+  MoveResponse,
+  UploadHexRequest,
+  UploadResponse,
+  ViewRequest,
+  ViewResponse,
+} from '@eustrosoft-front/explorer-lib';
 
 @Injectable({ providedIn: 'root' })
 export class ExplorerService {
@@ -103,7 +105,7 @@ export class ExplorerService {
 
   makeDownloadLink(
     parameterValue: string,
-    parameterName: CmsDownloadParams = CmsDownloadParams.TICKET,
+    parameterName: ExplorerDownloadParams = ExplorerDownloadParams.TICKET,
   ): Observable<string> {
     return this.config.pipe(
       map(
@@ -177,7 +179,7 @@ export class ExplorerService {
   create(
     path: string,
     name: string,
-    type: FileSystemObjectTypes,
+    type: ExplorerFsObjectTypes,
     description: string = '',
     securityLevel: string | undefined = undefined,
   ): Observable<QtisRequestResponseInterface<CreateResponse>> {
@@ -218,7 +220,7 @@ export class ExplorerService {
             [row],
             [`${folder}/${data.name}`],
             data.description ?? '',
-            CmsRequestActions.RENAME,
+            ExplorerRequestActions.RENAME,
           ),
         ),
       ),
