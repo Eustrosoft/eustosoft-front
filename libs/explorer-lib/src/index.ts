@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2024. IdrisovII & EustroSoft.org
+ *
+ * This file is part of eustrosoft-front project.
+ * See the LICENSE file at the project root for licensing information.
+ */
+
 export * from './lib/constants/enums/explorer-actions.enum';
 export * from './lib/constants/enums/explorer-download-params.enum';
 export * from './lib/constants/enums/explorer-fs-object-types.enum';
