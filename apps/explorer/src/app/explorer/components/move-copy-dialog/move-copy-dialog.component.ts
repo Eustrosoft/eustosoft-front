@@ -31,7 +31,10 @@ import {
   switchMap,
   tap,
 } from 'rxjs';
-import { ExplorerFsObjectTypes } from '@eustrosoft-front/explorer-lib';
+import {
+  ExplorerFsObjectTypes,
+  FileSystemObject,
+} from '@eustrosoft-front/explorer-lib';
 import {
   MatListModule,
   MatListOption,
@@ -39,7 +42,6 @@ import {
 } from '@angular/material/list';
 import { Stack } from '../../classes/Stack';
 import { MoveCopyDialogData } from './move-copy-dialog-data.interface';
-import { FileSystemObject } from '../../models/file-system-object.interface';
 import { ExplorerService } from '../../services/explorer.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { MatTooltipModule } from '@angular/material/tooltip';

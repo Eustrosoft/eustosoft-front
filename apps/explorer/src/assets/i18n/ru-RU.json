@@ -27,6 +27,7 @@
     "DELETE_BUTTON_TEXT": "Удалить",
     "SHARE_BUTTON_TEXT": "Поделиться",
     "DOWNLOAD_BUTTON_TEXT": "Скачать",
+    "PREVIEW_BUTTON_TEXT": "Предпросмотр",
     "RENAME_BUTTON_TEXT": "Переименовать",
     "NAME_COLUMN_TEXT": "Наименование",
     "SPACE_COLUMN_TEXT": "Размер",
@@ -129,7 +130,9 @@
       "SECURITY_LEVEL_OPTIONS_FETCH_ERROR": "Ошибка при попытке получения списка уровней доступа",
       "FILESYSTEM_OBJECTS_FETCH_ERROR": "Ошибка при попытке получения содержимого файловой системы",
       "MOVE_FILE_ALREADY_EXISTS_ERROR": "Выбранный элемент уже существует в этой папке",
-      "MOVE_SAME_NAME_ERROR": "Эта папка содержит папку с таким же именем"
+      "MOVE_SAME_NAME_ERROR": "Эта папка содержит папку с таким же именем",
+      "ERROR_FETCHING_DATA": "Ошибка отображения. Невозможно получить данные с сервера",
+      "FILE_LINK_ERROR": "Ошибка отображения. Неверная ссылка на файл"
     }
   }
 }

@@ -32,17 +32,13 @@ import {
 } from '@eustrosoft-front/config';
 import { ExplorerRequestBuilderService } from './explorer-request-builder.service';
 import { ExplorerDictionaryService } from './explorer-dictionary.service';
-import { FileSystemObject } from '../models/file-system-object.interface';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { ExplorerPathService } from './explorer-path.service';
-import { RenameDialogReturnData } from '../components/rename-dialog/rename-dialog-return-data.interface';
-import { DOCUMENT } from '@angular/common';
 import {
   CreateRequest,
   CreateResponse,
   ExplorerDownloadParams,
   ExplorerFsObjectTypes,
   ExplorerRequestActions,
+  FileSystemObject,
   MoveRequest,
   MoveResponse,
   UploadHexRequest,
@@ -50,6 +46,10 @@ import {
   ViewRequest,
   ViewResponse,
 } from '@eustrosoft-front/explorer-lib';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ExplorerPathService } from './explorer-path.service';
+import { RenameDialogReturnData } from '../components/rename-dialog/rename-dialog-return-data.interface';
+import { DOCUMENT } from '@angular/common';
 
 @Injectable({ providedIn: 'root' })
 export class ExplorerService {
@@ -149,6 +149,12 @@ export class ExplorerService {
                   displayText: '',
                   value: undefined,
                 },
+                previewable:
+                  obj.type === ExplorerFsObjectTypes.FILE &&
+                  this.explorerPathService.checkExtension(
+                    obj.fileName ?? '',
+                    'pdf',
+                  ),
               };
               return value;
             });

@@ -304,6 +304,14 @@ $text-overflow-options: (
 
 @include mixins.generate-utility-classes($text-overflow-options);
 
+$text-align-options: (
+  text-align-center: (
+    text-align: center,
+  ),
+);
+
+@include mixins.generate-utility-classes($text-align-options);
+
 $list-style-options: (
   list-style-none: (
     list-style: none,

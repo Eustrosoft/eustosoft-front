@@ -6,4 +6,5 @@ export * from './lib/interfaces/explorer-request.interface';
 export * from './lib/interfaces/explorer-response.interface';
 export * from './lib/interfaces/upload-item.interface';
 export * from './lib/interfaces/upload-item-form.interface';
+export * from './lib/interfaces/file-system-object.interface';
 export * from './lib/services/file-reader.service';

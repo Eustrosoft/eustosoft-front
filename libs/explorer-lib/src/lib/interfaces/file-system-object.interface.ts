@@ -5,9 +5,10 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-import { ExplorerObjectResponse } from '@eustrosoft-front/explorer-lib';
+import { ExplorerObjectResponse } from './explorer-object-response.interface';
 import { Option } from '@eustrosoft-front/common-ui';
 
 export type FileSystemObject = Omit<ExplorerObjectResponse, 'securityLevel'> & {
   securityLevel: Pick<Option, 'displayText' | 'value'>;
+  previewable: boolean;
 };

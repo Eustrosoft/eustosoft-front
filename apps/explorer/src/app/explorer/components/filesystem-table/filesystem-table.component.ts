@@ -18,17 +18,19 @@ import {
 } from '@angular/core';
 import { BytesToSizePipe } from '@eustrosoft-front/core';
 import { MatSort, MatSortModule } from '@angular/material/sort';
-import { FileSystemObject } from '../../models/file-system-object.interface';
+import {
+  ExplorerFsObjectTypes,
+  FileSystemObject,
+} from '@eustrosoft-front/explorer-lib';
 import { FilesystemTableService } from '../../services/filesystem-table.service';
 import { TranslateModule } from '@ngx-translate/core';
-import { FilesDropZoneDirective } from '@eustrosoft-front/common-ui';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { NgIf, NgSwitch, NgSwitchCase } from '@angular/common';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTableModule } from '@angular/material/table';
-import { ExplorerFsObjectTypes } from '@eustrosoft-front/explorer-lib';
+import { FilesDropZoneDirective } from '../../directives/files-drop-zone.directive';
 
 @Component({
   selector: 'eustrosoft-front-filesystem-table',
@@ -55,6 +57,7 @@ export class FilesystemTableComponent implements OnChanges, AfterViewInit {
   @Input() content!: FileSystemObject[];
   @Output() openClicked = new EventEmitter<FileSystemObject>();
   @Output() downloadClicked = new EventEmitter<FileSystemObject[]>();
+  @Output() previewClicked = new EventEmitter<FileSystemObject>();
   @Output() shareClicked = new EventEmitter<FileSystemObject[]>();
   @Output() renameClicked = new EventEmitter<FileSystemObject>();
   @Output() moveClicked = new EventEmitter<FileSystemObject[]>();
@@ -68,6 +71,7 @@ export class FilesystemTableComponent implements OnChanges, AfterViewInit {
 
   @ViewChild(MatSort) sort!: MatSort;
 
+  protected readonly filesystemTableService = inject(FilesystemTableService);
   protected readonly fsObjTypes = ExplorerFsObjectTypes;
   protected readonly displayedColumns: string[] = [
     'select',
@@ -77,7 +81,6 @@ export class FilesystemTableComponent implements OnChanges, AfterViewInit {
     'securityLevel',
     'actions',
   ];
-  protected readonly filesystemTableService = inject(FilesystemTableService);
 
   ngAfterViewInit(): void {
     this.filesystemTableService.dataSource.sort = this.sort;

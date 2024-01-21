@@ -109,6 +109,14 @@
             <mat-icon>download</mat-icon>
             <span>{{ 'EXPLORER.DOWNLOAD_BUTTON_TEXT' | translate }}</span>
           </button>
+          <button
+            *ngIf="content[i].previewable"
+            (click)="previewClicked.emit(content[i])"
+            mat-menu-item
+          >
+            <mat-icon>preview</mat-icon>
+            <span>{{ 'EXPLORER.PREVIEW_BUTTON_TEXT' | translate }}</span>
+          </button>
           <button (click)="shareClicked.emit([content[i]])" mat-menu-item>
             <mat-icon>share</mat-icon>
             <span>{{ 'EXPLORER.SHARE_BUTTON_TEXT' | translate }}</span>

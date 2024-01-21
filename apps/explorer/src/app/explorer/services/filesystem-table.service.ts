@@ -7,7 +7,7 @@
 
 import { Injectable } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { FileSystemObject } from '../models/file-system-object.interface';
+import { FileSystemObject } from '@eustrosoft-front/explorer-lib';
 import { SelectionModel } from '@angular/cdk/collections';
 
 @Injectable({ providedIn: 'root' })

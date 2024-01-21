@@ -15,7 +15,6 @@ export * from './lib/constants/enums/input-errors.enum';
 export * from './lib/components/file-list/file-list.component';
 export * from './lib/components/input-file/input-file.component';
 export * from './lib/components/preloader/preloader.component';
-export * from './lib/directives/files-drop-zone.directive';
 export * from './lib/directives/hover-shadow.directive';
 export * from './lib/directives/hover-cursor.directive';
 export * from './lib/components/progress-bar/progress-bar.component';

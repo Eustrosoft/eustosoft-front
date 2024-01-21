@@ -62,7 +62,17 @@ import { UploadOverlayComponent } from './components/upload-overlay/upload-overl
 import { ExplorerUploadItemFormFactoryService } from './services/explorer-upload-item-form-factory.service';
 import { UploadItemState } from './constants/enums/uploading-state.enum';
 import { UploadDialogComponent } from './components/upload-dialog/upload-dialog.component';
-import { FileSystemObject } from './models/file-system-object.interface';
+import {
+  DeleteRequest,
+  DeleteResponse,
+  ExplorerDownloadParams,
+  ExplorerFsObjectTypes,
+  ExplorerRequestActions,
+  FileSystemObject,
+  MoveCopyRequest,
+  MoveCopyResponse,
+  UploadItemForm,
+} from '@eustrosoft-front/explorer-lib';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { AsyncPipe, DOCUMENT, NgIf } from '@angular/common';
 import { ShareDialogComponent } from './components/share-dialog/share-dialog.component';
@@ -77,16 +87,6 @@ import { BreadcrumbsComponent } from './components/breadcrumbs/breadcrumbs.compo
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
-import {
-  DeleteRequest,
-  DeleteResponse,
-  ExplorerDownloadParams,
-  ExplorerFsObjectTypes,
-  ExplorerRequestActions,
-  MoveCopyRequest,
-  MoveCopyResponse,
-  UploadItemForm,
-} from '@eustrosoft-front/explorer-lib';
 import { SecurityLevels } from '@eustrosoft-front/security';
 
 @Component({
@@ -145,7 +145,9 @@ export class ExplorerComponent implements OnInit, OnDestroy {
   private readonly teardownUpload$ = new Subject<void>();
 
   protected readonly refresh$ = new Subject<void>();
-  protected readonly path$ = new BehaviorSubject<string>('/');
+  protected readonly path$ = new BehaviorSubject<string>(
+    this.explorerPathService.getLastPathState(),
+  );
   protected readonly currentFolder$ = new BehaviorSubject<
     FileSystemObject | undefined
   >(undefined);
@@ -162,7 +164,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
     this.refresh$.asObservable().pipe(startWith(undefined)),
   ]).pipe(
     switchMap(([path]) => {
-      this.explorerPathService.updateLastPathState(path);
+      this.explorerPathService.setLastPathState(path);
       return this.explorerService.getContents(path).pipe(
         // startWith({ isLoading: true, isError: false, content: undefined })
         catchError((err: HttpErrorResponse) => {
@@ -201,7 +203,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
           (queryPath): queryPath is string => typeof queryPath !== 'undefined',
         ),
         tap((path) => {
-          this.explorerPathService.updateLastPathState(path);
+          this.explorerPathService.setLastPathState(path);
           this.clearQueryParams();
           this.path$.next(path);
         }),
@@ -522,6 +524,18 @@ export class ExplorerComponent implements OnInit, OnDestroy {
         }),
         catchError((err) => this.explorerService.handleError(err)),
         takeUntil(this.destroy$),
+      )
+      .subscribe();
+  }
+
+  openPreview(row: FileSystemObject): void {
+    this.explorerService
+      .makeDownloadLink(row.fullPath, ExplorerDownloadParams.PATH)
+      .pipe(
+        tap((link) => {
+          this.router.navigate(['pdf-preview'], { state: { link } });
+        }),
+        take(1),
       )
       .subscribe();
   }

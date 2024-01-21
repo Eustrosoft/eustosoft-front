@@ -5,7 +5,7 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-import { FileSystemObject } from '../../models/file-system-object.interface';
+import { FileSystemObject } from '@eustrosoft-front/explorer-lib';
 
 export interface MoveCopyDialogData {
   title: string;

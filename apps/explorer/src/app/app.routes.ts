@@ -9,6 +9,7 @@ import { Route } from '@angular/router';
 import { ExplorerComponent } from './explorer/explorer.component';
 import { authenticationGuard } from '@eustrosoft-front/security';
 import { LoginPageComponent } from './login-page/login-page.component';
+import { PdfPreviewComponent } from './explorer/components/pdf-preview/pdf-preview.component';
 
 export const appRoutes: Route[] = [
   {
@@ -24,6 +25,12 @@ export const appRoutes: Route[] = [
         pathMatch: 'full',
         title: 'TIS | Explorer',
         component: ExplorerComponent,
+      },
+      {
+        path: 'pdf-preview',
+        pathMatch: 'full',
+        title: 'TIS | Explorer',
+        component: PdfPreviewComponent,
       },
     ],
   },

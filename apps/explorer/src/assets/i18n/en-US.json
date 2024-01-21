@@ -26,6 +26,7 @@
     "MOVE_TO_BUTTON_TEXT": "Move to",
     "DELETE_BUTTON_TEXT": "Delete",
     "DOWNLOAD_BUTTON_TEXT": "Download",
+    "PREVIEW_BUTTON_TEXT": "Preview",
     "SHARE_BUTTON_TEXT": "Share",
     "RENAME_BUTTON_TEXT": "Rename",
     "NAME_COLUMN_TEXT": "Name",
@@ -129,7 +130,9 @@
       "SECURITY_LEVEL_OPTIONS_FETCH_ERROR": "Error fetching security levels",
       "FILESYSTEM_OBJECTS_FETCH_ERROR": "Error fetching filesystem contents",
       "MOVE_FILE_ALREADY_EXISTS_ERROR": "Selected element already exist in this folder",
-      "MOVE_SAME_NAME_ERROR": "This directory already contains folder with same name"
+      "MOVE_SAME_NAME_ERROR": "This directory already contains folder with same name",
+      "ERROR_FETCHING_DATA": "Unable to show preview. Can't get data from server",
+      "FILE_LINK_ERROR": "Unable to show preview. Invalid file link provided"
     }
   }
 }

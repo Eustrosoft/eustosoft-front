@@ -1,0 +1,27 @@
+<!--
+  ~ Copyright (c) 2024. IdrisovII & EustroSoft.org
+  ~
+  ~ This file is part of eustrosoft-front project.
+  ~ See the LICENSE file at the project root for licensing information.
+  -->
+
+<ng-container *ngIf="{ data: pdfLoad$ | async } as vm">
+  <ng-container *ngIf="vm.data?.isLoading && !vm.data?.isError">
+    <eustrosoft-front-preloader
+      class="flex flex-auto align-items-center justify-content-center"
+    ></eustrosoft-front-preloader>
+  </ng-container>
+  <ng-container *ngIf="vm.data?.isError">
+    <div class="flex flex-auto align-items-center justify-content-center">
+      <h1 class="text-align-center">
+        {{ vm.data?.errorText ?? '' | translate }}
+      </h1>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="!vm.data?.isError && vm.data?.pdfSrc as pdfSrc">
+    <ng2-pdfjs-viewer
+      [pdfSrc]="pdfSrc"
+      class="flex-auto overflow-auto"
+    ></ng2-pdfjs-viewer>
+  </ng-container>
+</ng-container>

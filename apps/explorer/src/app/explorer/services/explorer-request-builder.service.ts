@@ -13,12 +13,12 @@ import {
   SupportedLanguages,
 } from '@eustrosoft-front/core';
 import { Observable, of } from 'rxjs';
-import { FileSystemObject } from '../models/file-system-object.interface';
 import {
   CreateRequest,
   DeleteRequest,
   DownloadTicketRequest,
   ExplorerRequestActions,
+  FileSystemObject,
   MoveCopyRequest,
   MoveRequest,
   UploadHexRequest,
