@@ -5,11 +5,9 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-import { MsgChatStatus } from '@eustrosoft-front/msg-lib';
-
 export interface DicValue {
   dic: string;
-  code: MsgChatStatus;
+  code: string;
   value: string;
   descr: string;
 }
