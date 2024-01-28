@@ -8,8 +8,8 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   inject,
-  OnDestroy,
   OnInit,
   ViewChild,
 } from '@angular/core';
@@ -88,6 +88,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { SecurityLevels } from '@eustrosoft-front/security';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'eustrosoft-front-explorer',
@@ -109,7 +110,7 @@ import { SecurityLevels } from '@eustrosoft-front/security';
     TranslateModule,
   ],
 })
-export class ExplorerComponent implements OnInit, OnDestroy {
+export class ExplorerComponent implements OnInit {
   @ViewChild(InputFileComponent) inputFileComponent!: InputFileComponent;
   @ViewChild(UploadOverlayComponent)
   uploadOverlayComponent!: UploadOverlayComponent;
@@ -125,6 +126,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
     ExplorerUploadItemsService,
   );
   private readonly snackBar = inject(MatSnackBar);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
   private readonly translateService = inject(TranslateService);
@@ -139,7 +141,6 @@ export class ExplorerComponent implements OnInit, OnDestroy {
   protected readonly filesystemTableService = inject(FilesystemTableService);
   protected readonly isSm = this.breakpointsService.isSm();
 
-  private readonly destroy$ = new Subject<void>();
   private readonly startUpload$ = new Subject<void>();
   private readonly fileUploadCancelled$ = new Subject<void>();
   private readonly teardownUpload$ = new Subject<void>();
@@ -207,7 +208,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
           this.clearQueryParams();
           this.path$.next(path);
         }),
-        takeUntil(this.destroy$),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
   }
@@ -249,11 +250,6 @@ export class ExplorerComponent implements OnInit, OnDestroy {
       }),
       repeat(),
     );
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
   }
 
   open(fsElem: FileSystemObject): void {
@@ -523,7 +519,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
           this.document.location.href = url;
         }),
         catchError((err) => this.explorerService.handleError(err)),
-        takeUntil(this.destroy$),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
   }

@@ -9,12 +9,12 @@ import {
   AfterViewInit,
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   ElementRef,
   EventEmitter,
   inject,
   Input,
   OnChanges,
-  OnDestroy,
   OnInit,
   Output,
   SimpleChanges,
@@ -27,8 +27,6 @@ import {
   distinctUntilChanged,
   filter,
   fromEvent,
-  Subject,
-  takeUntil,
   tap,
 } from 'rxjs';
 import { MsgSubjectsService } from '../../services/msg-subjects.service';
@@ -41,6 +39,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { NgIf } from '@angular/common';
 import { TextFieldModule } from '@angular/cdk/text-field';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'eustrosoft-front-chat-message-input',
@@ -61,7 +60,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
   ],
 })
 export class ChatMessageInputComponent
-  implements OnInit, OnChanges, AfterViewInit, OnDestroy
+  implements OnInit, OnChanges, AfterViewInit
 {
   @Input() label!: string;
   @Input() placeholder!: string;
@@ -78,7 +77,7 @@ export class ChatMessageInputComponent
 
   private readonly el = inject(ElementRef);
   private readonly msgSubjectsService = inject(MsgSubjectsService);
-  private readonly destroy$ = new Subject<void>();
+  private readonly destroyRef = inject(DestroyRef);
 
   protected control = new FormControl('', {
     nonNullable: true,
@@ -93,7 +92,7 @@ export class ChatMessageInputComponent
         debounceTime(300),
         distinctUntilChanged(),
         tap(() => this.submitMessage()),
-        takeUntil(this.destroy$),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
 
@@ -122,12 +121,6 @@ export class ChatMessageInputComponent
   ngAfterViewInit(): void {
     this.focusOnInput();
   }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
-
   submitMessage(): void {
     if (this.control.value.length === 0 && this.messageInEdit) {
       this.messageDeleted.emit(this.messageInEdit as ChatMessage);
