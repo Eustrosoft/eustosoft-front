@@ -42,3 +42,4 @@ Thumbs.db
 # Cache
 .angular
 .nx/cache
+.env*

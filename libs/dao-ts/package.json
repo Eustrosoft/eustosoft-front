@@ -1,0 +1,15 @@
+{
+  "name": "@eustrosoft-front/dao-ts",
+  "version": "0.0.32",
+  "description": "",
+  "main": "./src/index.js",
+  "type": "commonjs",
+  "types": "./src/index.d.ts",
+  "scripts": {
+    "publish": "npm publish"
+  },
+  "dependencies": {
+    "axios": "^1.6.7",
+    "tslib": "^2.3.0"
+  }
+}
