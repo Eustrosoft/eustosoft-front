@@ -29,7 +29,10 @@ export function cookiesInterceptor(): Parameters<
   AxiosInterceptorManager<AxiosResponse>['use']
 > {
   const onFulfilled = (response: AxiosResponse) => {
-    const cookies = response.headers['set-cookie'] ?? [];
+    if (!response.headers['set-cookie']) {
+      return response;
+    }
+    const cookies = response.headers['set-cookie'];
     axios.defaults.headers.common['Cookie'] = cookies.join('; ');
     return response;
   };

@@ -4,7 +4,6 @@ import { DaoConfig } from '../core/config/DaoConfig';
 
 export class DispatchService {
   private static instance: DispatchService | undefined = undefined;
-  private abortController = new AbortController();
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   private constructor() {}
@@ -18,7 +17,7 @@ export class DispatchService {
 
   async dispatch<Req, Res>(
     body: QtisRequestResponseInterface<Req>,
-    abortSignal: AbortSignal = this.abortController.signal,
+    abortSignal: AbortSignal,
   ): Promise<AxiosResponse<QtisRequestResponseInterface<Res>>> {
     const apiUrl = DaoConfig.getInstance().apiUrl;
     // When on localhost -> http://localhost:4201/api/dispatch
@@ -31,10 +30,6 @@ export class DispatchService {
     >(apiUrl, body, {
       signal: abortSignal,
     });
-  }
-
-  abortRequest(reason: unknown): void {
-    this.abortController.abort(reason);
   }
 
   getAxiosInstance(): AxiosStatic {

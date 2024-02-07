@@ -9,13 +9,13 @@ import { DispatchService } from '../services/DispatchService';
 import { SubsystemsEnum } from '../constants/enums/subsystems.enum';
 import { AuthActionsEnum } from '../constants/enums/auth-actions.enum';
 import { SupportedLanguagesEnum } from '../constants/enums/supported-languages.enum';
-import { AuthLoginRequest } from '../core/interfaces/auth/auth-login-request.interface';
 import { AuthLoginLogoutResponse } from '../core/interfaces/auth/auth-login-logout-response.interface';
-import { QtisRequestResponseInterface } from '../core/interfaces/qtis-req-res.interface';
 import { AuthLogoutRequest } from '../core/interfaces/auth/auth-logout-request.interface';
 import { PingRequest } from '../core/interfaces/auth/ping-request.interface';
 import { PingResponse } from '../core/interfaces/auth/ping-response.interface';
-import { AxiosResponse } from 'axios';
+import { requestFactoryFunction } from '../utils/request-factory.function';
+import { AuthLoginRequest } from '../core/interfaces/auth/auth-login-request.interface';
+import { RequestFactoryInterface } from '../core/interfaces/request-factory.interface';
 
 export class QSystem {
   private dispatchService: DispatchService;
@@ -26,16 +26,11 @@ export class QSystem {
     this.dispatchService = dispatchService;
   }
 
-  async login(
+  login(
     login: string,
     password: string,
-  ): Promise<
-    AxiosResponse<QtisRequestResponseInterface<AuthLoginLogoutResponse>>
-  > {
-    return await this.dispatchService.dispatch<
-      AuthLoginRequest,
-      AuthLoginLogoutResponse
-    >({
+  ): RequestFactoryInterface<AuthLoginLogoutResponse> {
+    return requestFactoryFunction<AuthLoginRequest, AuthLoginLogoutResponse>({
       r: [
         {
           s: SubsystemsEnum.LOGIN,
@@ -49,13 +44,8 @@ export class QSystem {
     });
   }
 
-  async logout(): Promise<
-    AxiosResponse<QtisRequestResponseInterface<AuthLoginLogoutResponse>>
-  > {
-    return await this.dispatchService.dispatch<
-      AuthLogoutRequest,
-      AuthLoginLogoutResponse
-    >({
+  logout(): RequestFactoryInterface<AuthLoginLogoutResponse> {
+    return requestFactoryFunction<AuthLogoutRequest, AuthLoginLogoutResponse>({
       r: [
         {
           s: SubsystemsEnum.LOGIN,
@@ -67,10 +57,8 @@ export class QSystem {
     });
   }
 
-  async ping(): Promise<
-    AxiosResponse<QtisRequestResponseInterface<PingResponse>>
-  > {
-    return await this.dispatchService.dispatch<PingRequest, PingResponse>({
+  ping(): RequestFactoryInterface<PingResponse> {
+    return requestFactoryFunction<PingRequest, PingResponse>({
       r: [
         {
           s: SubsystemsEnum.PING,

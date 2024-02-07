@@ -28,20 +28,22 @@ describe('Auth module', () => {
   const login = env.AUTH_LOGIN!;
   const password = env.AUTH_PASSWORD!;
   const fullName = env.AUTH_FULLNAME!;
-  const dispatcherService = DispatchService.getInstance();
-  const axiosInstance = dispatcherService.getAxiosInstance();
+  const dispatchService = DispatchService.getInstance();
+  const qSys = new QSystem(dispatchService);
+  const axiosInstance = dispatchService.getAxiosInstance();
   axiosInstance.defaults.httpsAgent = new Agent({ rejectUnauthorized: false });
-  const qSys = new QSystem(dispatcherService);
 
   test('login request successful', async () => {
-    const response = await qSys.login(login, password);
+    const request = qSys.login(login, password);
+    const response = await request.makeRequest();
     const data = response.data;
     expect(data.r[0].m).toBe('Login success!');
     expect(data.r[0].e).toBe(0);
   });
 
   test('login request unsuccessful', async () => {
-    const response = await qSys.login('123', '');
+    const request = qSys.login('123', '');
+    const response = await request.makeRequest();
     const data = response.data;
     expect(data.r[0].m).toBe(
       'FATAL: password authentication failed for user "123"',
@@ -50,8 +52,8 @@ describe('Auth module', () => {
   });
 
   test('ping request', async () => {
-    await qSys.login(login, password);
-    const response = await qSys.ping();
+    const request = qSys.ping();
+    const response = await request.makeRequest();
     const data = response.data;
     expect(data.r[0].m).toBe('Ok');
     expect(data.r[0].fullName).toBe(fullName);
