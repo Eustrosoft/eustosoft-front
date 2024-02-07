@@ -6,27 +6,32 @@
  */
 
 import { QSystem } from '../lib/qsys/QSystem';
-import { DispatchServiceStub } from './stubs/DispatchService.stub';
 import { env } from 'process';
+import { DaoConfig } from '../lib/core/config/DaoConfig';
+import { isNullOrUndefinedOrEmpty } from '../lib/utils/is-empty.function';
+import { DispatchService } from '../lib/services/DispatchService';
+import { Agent } from 'https';
 
 describe('Auth module', () => {
-  const DispatcherServiceStub = new DispatchServiceStub();
-  const qSys = new QSystem(DispatcherServiceStub);
-  const login = env.AUTH_LOGIN;
-  const password = env.AUTH_PASSWORD;
-  const fullName = env.AUTH_FULLNAME;
   if (
-    login === null ||
-    login === undefined ||
-    password === null ||
-    password === undefined ||
-    fullName === null ||
-    fullName === undefined
+    isNullOrUndefinedOrEmpty(env.AUTH_LOGIN) ||
+    isNullOrUndefinedOrEmpty(env.AUTH_PASSWORD) ||
+    isNullOrUndefinedOrEmpty(env.AUTH_FULLNAME) ||
+    isNullOrUndefinedOrEmpty(env.API_URL)
   ) {
     throw new Error(
-      'env.AUTH_LOGIN or env.AUTH_PASSWORD is missing. Configure .env.test file in lib root folder',
+      'One or more required environment variables are missing: AUTH_LOGIN, AUTH_PASSWORD, AUTH_FULLNAME, API_URL. ' +
+        'Configure .env.test file in the lib root folder using .env.example file.',
     );
   }
+  DaoConfig.getInstance().apiUrl = env.API_URL!;
+  const login = env.AUTH_LOGIN!;
+  const password = env.AUTH_PASSWORD!;
+  const fullName = env.AUTH_FULLNAME!;
+  const dispatcherService = DispatchService.getInstance();
+  const axiosInstance = dispatcherService.getAxiosInstance();
+  axiosInstance.defaults.httpsAgent = new Agent({ rejectUnauthorized: false });
+  const qSys = new QSystem(dispatcherService);
 
   test('login request successful', async () => {
     const response = await qSys.login(login, password);

@@ -15,12 +15,14 @@ import { QtisRequestResponseInterface } from '../core/interfaces/qtis-req-res.in
 import { AuthLogoutRequest } from '../core/interfaces/auth/auth-logout-request.interface';
 import { PingRequest } from '../core/interfaces/auth/ping-request.interface';
 import { PingResponse } from '../core/interfaces/auth/ping-response.interface';
-import axios, { AxiosResponse } from 'axios';
+import { AxiosResponse } from 'axios';
 
 export class QSystem {
   private dispatchService: DispatchService;
 
-  constructor(dispatchService: DispatchService = new DispatchService()) {
+  constructor(
+    dispatchService: DispatchService = DispatchService.getInstance(),
+  ) {
     this.dispatchService = dispatchService;
   }
 
@@ -30,7 +32,7 @@ export class QSystem {
   ): Promise<
     AxiosResponse<QtisRequestResponseInterface<AuthLoginLogoutResponse>>
   > {
-    const response = await this.dispatchService.dispatch<
+    return await this.dispatchService.dispatch<
       AuthLoginRequest,
       AuthLoginLogoutResponse
     >({
@@ -45,10 +47,6 @@ export class QSystem {
       ],
       t: 0,
     });
-    const cookies = response.headers['set-cookie'] ?? [];
-    axios.defaults.headers.common['Cookie'] = cookies.join('; ');
-
-    return response;
   }
 
   async logout(): Promise<
