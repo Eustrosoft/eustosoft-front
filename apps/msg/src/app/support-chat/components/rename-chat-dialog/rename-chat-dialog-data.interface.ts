@@ -5,6 +5,6 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-export interface RenameChatDialogDataInterface {
+export interface RenameChatDialogData {
   currentChatSubject: string;
 }

@@ -7,7 +7,7 @@
 
 import { inject, Injectable } from '@angular/core';
 import {
-  QtisRequestResponseInterface,
+  QtisRequestResponse,
   Subsystems,
   SupportedLanguages,
 } from '@eustrosoft-front/core';
@@ -28,7 +28,7 @@ export class RequestBuilderService {
 
   buildQuery(
     forms: FormArray<FormGroup<SingleRequestForm>>,
-  ): Observable<QtisRequestResponseInterface<FileRequest | SqlRequest>> {
+  ): Observable<QtisRequestResponse<FileRequest | SqlRequest>> {
     const requests = forms.controls.map(
       (control: FormGroup<SingleRequestForm>) => {
         switch (control.value.queryType as DispatcherQueryTypes) {

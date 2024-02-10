@@ -8,7 +8,7 @@
 import { Observable } from 'rxjs';
 import { Option } from '@eustrosoft-front/common-ui';
 
-export interface CreateChatDialogDataInterface {
+export interface CreateChatDialogData {
   securityLevelOptions$: Observable<Option[]>;
   scopeOptions$: Observable<Option[]>;
 }

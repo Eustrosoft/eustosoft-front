@@ -58,7 +58,7 @@
 В данной бибилиотеке описан базис JSON протокола взаимодействия `Qtis`
 
 ```ts
-export interface QtisRequestResponseInterface<T> {
+export interface QtisRequestResponse<T> {
   r: T[];
   t: number;
 }
@@ -101,8 +101,8 @@ export class RequestService {
   private http = inject(HttpClient);
   private config = inject(APP_CONFIG);
 
-  dispatch<Req, Res>(body: QtisRequestResponseInterface<Req>): Observable<QtisRequestResponseInterface<Res>> {
-    return this.config.pipe(switchMap((config) => this.http.post<QtisRequestResponseInterface<Res>>(`${config.apiUrl}/dispatch`, body)));
+  dispatch<Req, Res>(body: QtisRequestResponse<Req>): Observable<QtisRequestResponse<Res>> {
+    return this.config.pipe(switchMap((config) => this.http.post<QtisRequestResponse<Res>>(`${config.apiUrl}/dispatch`, body)));
   }
 }
 ```

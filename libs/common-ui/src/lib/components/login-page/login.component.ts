@@ -31,7 +31,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { InputError } from '../../interfaces/input-error.interface';
 import { InputErrors } from '../../constants/enums/input-errors.enum';
 import { LoginDialogComponent } from '../login-dialog/login-dialog.component';
-import { LoginDialogDataInterface } from '../login-dialog/login-dialog-data.interface';
+import { LoginDialogData } from '../login-dialog/login-dialog-data.interface';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { InputTypes, LoginForm } from '@eustrosoft-front/core';
 import { BreakpointsService } from '../../services/breakpoints.service';
@@ -118,7 +118,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     this.loginDialogRef = this.dialog.open<
       LoginDialogComponent,
-      LoginDialogDataInterface,
+      LoginDialogData,
       void
     >(LoginDialogComponent, {
       data: {

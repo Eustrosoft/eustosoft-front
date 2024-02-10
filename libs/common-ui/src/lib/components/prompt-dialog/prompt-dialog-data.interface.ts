@@ -5,7 +5,7 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-export interface PromptDialogDataInterface {
+export interface PromptDialogData {
   title: string;
   text: string;
   cancelButtonText: string;

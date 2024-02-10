@@ -5,7 +5,7 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-export interface CreateChatDialogReturnDataInterface {
+export interface CreateChatDialogReturnData {
   subject: string;
   message: string;
   securityLevel: string | undefined;

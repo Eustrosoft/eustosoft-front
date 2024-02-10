@@ -15,10 +15,7 @@ import {
   startWith,
   switchMap,
 } from 'rxjs';
-import {
-  DispatchService,
-  QtisRequestResponseInterface,
-} from '@eustrosoft-front/core';
+import { DispatchService, QtisRequestResponse } from '@eustrosoft-front/core';
 import { MsgRequestBuilderService } from './msg-request-builder.service';
 import {
   ChatMessage,
@@ -36,11 +33,11 @@ export class MsgMapperService {
     messages: ChatMessage[] | undefined;
   }> {
     return this.msgRequestBuilderService.buildViewChatRequest(zoid).pipe(
-      switchMap((req: QtisRequestResponseInterface<ViewChatRequest>) =>
+      switchMap((req: QtisRequestResponse<ViewChatRequest>) =>
         this.dispatchService
           .dispatch<ViewChatRequest, ViewChatResponse>(req)
           .pipe(
-            map((response: QtisRequestResponseInterface<ViewChatResponse>) =>
+            map((response: QtisRequestResponse<ViewChatResponse>) =>
               response.r.flatMap((r: ViewChatResponse) => r.messages),
             ),
             switchMap((messages: ChatMessage[]) =>
@@ -63,11 +60,11 @@ export class MsgMapperService {
     messages: ChatMessage[] | undefined;
   }> {
     return this.msgRequestBuilderService.buildViewChatRequest(zoid).pipe(
-      switchMap((req: QtisRequestResponseInterface<ViewChatRequest>) =>
+      switchMap((req: QtisRequestResponse<ViewChatRequest>) =>
         this.dispatchService
           .dispatch<ViewChatRequest, ViewChatResponse>(req)
           .pipe(
-            map((response: QtisRequestResponseInterface<ViewChatResponse>) =>
+            map((response: QtisRequestResponse<ViewChatResponse>) =>
               response.r.flatMap((r: ViewChatResponse) => r.messages),
             ),
             switchMap((messages: ChatMessage[]) =>

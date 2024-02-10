@@ -11,10 +11,7 @@ import {
   HttpErrorResponse,
   HttpHeaders,
 } from '@angular/common/http';
-import {
-  DispatchService,
-  QtisRequestResponseInterface,
-} from '@eustrosoft-front/core';
+import { DispatchService, QtisRequestResponse } from '@eustrosoft-front/core';
 import {
   catchError,
   combineLatest,
@@ -124,11 +121,11 @@ export class ExplorerService {
       switchMap((path) =>
         this.explorerRequestBuilderService.buildViewRequest(path),
       ),
-      switchMap((request: QtisRequestResponseInterface<ViewRequest>) =>
+      switchMap((request: QtisRequestResponse<ViewRequest>) =>
         this.dispatchService
           .dispatch<ViewRequest, ViewResponse>(request)
           .pipe(
-            map((response: QtisRequestResponseInterface<ViewResponse>) =>
+            map((response: QtisRequestResponse<ViewResponse>) =>
               response.r.flatMap((r: ViewResponse) => r.content),
             ),
           ),
@@ -166,12 +163,12 @@ export class ExplorerService {
   }
 
   uploadHexChunks(
-    body: QtisRequestResponseInterface<UploadHexRequest>,
+    body: QtisRequestResponse<UploadHexRequest>,
     headers: { [p: string]: string | string[] },
-  ): Observable<QtisRequestResponseInterface<UploadResponse>> {
+  ): Observable<QtisRequestResponse<UploadResponse>> {
     return this.config.pipe(
       switchMap((config) =>
-        this.http.post<QtisRequestResponseInterface<UploadResponse>>(
+        this.http.post<QtisRequestResponse<UploadResponse>>(
           `${config.apiUrl}/dispatch`,
           body,
           {
@@ -188,7 +185,7 @@ export class ExplorerService {
     type: ExplorerFsObjectTypes,
     description: string = '',
     securityLevel: string | undefined = undefined,
-  ): Observable<QtisRequestResponseInterface<CreateResponse>> {
+  ): Observable<QtisRequestResponse<CreateResponse>> {
     const params: Omit<CreateRequest, 's' | 'l' | 'r'> = {
       path,
       type,
@@ -199,7 +196,7 @@ export class ExplorerService {
       params.securityLevel = +securityLevel;
     }
     return this.explorerRequestBuilderService.buildCreateRequest(params).pipe(
-      switchMap((body: QtisRequestResponseInterface<CreateRequest>) =>
+      switchMap((body: QtisRequestResponse<CreateRequest>) =>
         this.dispatchService.dispatch<CreateRequest, CreateResponse>(body),
       ),
       catchError((err) => this.handleError(err)),
@@ -209,7 +206,7 @@ export class ExplorerService {
   move(
     row: FileSystemObject,
     data: RenameDialogReturnData,
-  ): Observable<QtisRequestResponseInterface<MoveResponse>> {
+  ): Observable<QtisRequestResponse<MoveResponse>> {
     return of(row.fullPath).pipe(
       switchMap((fullPath) =>
         of(this.explorerPathService.getFullPathToLastFolder(fullPath)),
@@ -230,7 +227,7 @@ export class ExplorerService {
           ),
         ),
       ),
-      switchMap((body: QtisRequestResponseInterface<MoveRequest>) =>
+      switchMap((body: QtisRequestResponse<MoveRequest>) =>
         this.dispatchService.dispatch<MoveRequest, MoveResponse>(body),
       ),
       catchError((err) => this.handleError(err)),

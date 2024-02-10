@@ -8,7 +8,7 @@
 import { inject, Injectable } from '@angular/core';
 import {
   DispatchService,
-  QtisRequestResponseInterface,
+  QtisRequestResponse,
   Subsystems,
   SupportedLanguages,
 } from '@eustrosoft-front/core';
@@ -36,7 +36,7 @@ import { Scopes } from '../constants/enums/scopes.enum';
 export class SamService {
   private dispatchService = inject(DispatchService);
 
-  getUserId(): Observable<QtisRequestResponseInterface<UserIdResponse>> {
+  getUserId(): Observable<QtisRequestResponse<UserIdResponse>> {
     return this.dispatchService.dispatch<UserIdRequest, UserIdResponse>({
       r: [
         {
@@ -49,7 +49,7 @@ export class SamService {
     });
   }
 
-  getUserLogin(): Observable<QtisRequestResponseInterface<UserLoginResponse>> {
+  getUserLogin(): Observable<QtisRequestResponse<UserLoginResponse>> {
     return this.dispatchService.dispatch<UserLoginRequest, UserLoginResponse>({
       r: [
         {
@@ -62,7 +62,7 @@ export class SamService {
     });
   }
 
-  getUserLang(): Observable<QtisRequestResponseInterface<UserLangResponse>> {
+  getUserLang(): Observable<QtisRequestResponse<UserLangResponse>> {
     return this.dispatchService.dispatch<UserLangRequest, UserLangResponse>({
       r: [
         {
@@ -75,7 +75,7 @@ export class SamService {
     });
   }
 
-  getUserSlvl(): Observable<QtisRequestResponseInterface<UserSlvlResponse>> {
+  getUserSlvl(): Observable<QtisRequestResponse<UserSlvlResponse>> {
     return this.dispatchService.dispatch<UserSlvlRequest, UserSlvlResponse>({
       r: [
         {
@@ -89,7 +89,7 @@ export class SamService {
   }
 
   getUserAvailableSlvl(): Observable<
-    QtisRequestResponseInterface<UserAvailableSlvlResponse>
+    QtisRequestResponse<UserAvailableSlvlResponse>
   > {
     return this.dispatchService.dispatch<
       UserAvailableSlvlRequest,
@@ -108,7 +108,7 @@ export class SamService {
 
   getUserAvailableScope(
     type: Scopes,
-  ): Observable<QtisRequestResponseInterface<UserAvailableScopesResponse>> {
+  ): Observable<QtisRequestResponse<UserAvailableScopesResponse>> {
     return this.dispatchService.dispatch<
       UserAvailableScopesRequest,
       UserAvailableScopesResponse

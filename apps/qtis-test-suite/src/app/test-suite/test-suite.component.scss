@@ -1,0 +1,5 @@
+@use 'libs/common-ui/src/lib/styles/utilities';
+
+:host {
+  @extend .flex, .flex-auto, .flex-column, .g-3, .m-3;
+}

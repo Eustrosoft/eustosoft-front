@@ -35,12 +35,9 @@ import {
 } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateChatDialogComponent } from './components/create-chat-dialog/create-chat-dialog.component';
-import { CreateChatDialogDataInterface } from './components/create-chat-dialog/create-chat-dialog-data.interface';
-import { CreateChatDialogReturnDataInterface } from './components/create-chat-dialog/create-chat-dialog-return-data.interface';
-import {
-  DispatchService,
-  QtisRequestResponseInterface,
-} from '@eustrosoft-front/core';
+import { CreateChatDialogData } from './components/create-chat-dialog/create-chat-dialog-data.interface';
+import { CreateChatDialogReturnData } from './components/create-chat-dialog/create-chat-dialog-return-data.interface';
+import { DispatchService, QtisRequestResponse } from '@eustrosoft-front/core';
 import { MsgRequestBuilderService } from './services/msg-request-builder.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -50,11 +47,11 @@ import {
   Option,
   PreloaderComponent,
   PromptDialogComponent,
-  PromptDialogDataInterface,
+  PromptDialogData,
 } from '@eustrosoft-front/common-ui';
 import { RenameChatDialogComponent } from './components/rename-chat-dialog/rename-chat-dialog.component';
-import { RenameChatDialogDataInterface } from './components/rename-chat-dialog/rename-chat-dialog-data.interface';
-import { RenameChatDialogReturnDataInterface } from './components/rename-chat-dialog/rename-chat-dialog-return-data.interface';
+import { RenameChatDialogData } from './components/rename-chat-dialog/rename-chat-dialog-data.interface';
+import { RenameChatDialogReturnData } from './components/rename-chat-dialog/rename-chat-dialog-return-data.interface';
 import { MsgDictionaryService } from './services/msg-dictionary.service';
 import { MsgSubjectsService } from './services/msg-subjects.service';
 import { MsgSubjects } from './contants/enums/msg-subjects.enum';
@@ -137,13 +134,13 @@ export class SupportChatComponent implements OnInit, OnDestroy {
             statuses,
           })
           .pipe(
-            switchMap((req: QtisRequestResponseInterface<ViewChatsRequest>) =>
+            switchMap((req: QtisRequestResponse<ViewChatsRequest>) =>
               this.dispatchService.dispatch<
                 ViewChatsRequest,
                 ViewChatsResponse
               >(req),
             ),
-            map((response: QtisRequestResponseInterface<ViewChatsResponse>) =>
+            map((response: QtisRequestResponse<ViewChatsResponse>) =>
               response.r.flatMap((r: ViewChatsResponse) => r.chats),
             ),
             switchMap((chats: Chat[]) =>
@@ -161,16 +158,14 @@ export class SupportChatComponent implements OnInit, OnDestroy {
               statuses: this.fetchChatsByStatuses$.getValue(),
             }),
           ),
-          switchMap(
-            (req: QtisRequestResponseInterface<UpdateChatListRequest>) =>
-              this.dispatchService.dispatch<
-                UpdateChatListRequest,
-                UpdateChatListResponse
-              >(req),
+          switchMap((req: QtisRequestResponse<UpdateChatListRequest>) =>
+            this.dispatchService.dispatch<
+              UpdateChatListRequest,
+              UpdateChatListResponse
+            >(req),
           ),
-          map(
-            (response: QtisRequestResponseInterface<UpdateChatListResponse>) =>
-              response.r.flatMap((r: UpdateChatListResponse) => r.chats),
+          map((response: QtisRequestResponse<UpdateChatListResponse>) =>
+            response.r.flatMap((r: UpdateChatListResponse) => r.chats),
           ),
         ),
       ),
@@ -325,8 +320,8 @@ export class SupportChatComponent implements OnInit, OnDestroy {
   createNewChat(): void {
     const dialogRef = this.dialog.open<
       CreateChatDialogComponent,
-      CreateChatDialogDataInterface,
-      CreateChatDialogReturnDataInterface
+      CreateChatDialogData,
+      CreateChatDialogReturnData
     >(CreateChatDialogComponent, {
       data: {
         securityLevelOptions$: this.securityLevelOptions$,
@@ -340,7 +335,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
     dialogRef.componentInstance.formSubmitted
       .pipe(
         filter(
-          (data): data is CreateChatDialogReturnDataInterface =>
+          (data): data is CreateChatDialogReturnData =>
             typeof data !== 'undefined',
         ),
         switchMap((content) => {
@@ -482,7 +477,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
           >(request),
         ),
         map(
-          (response: QtisRequestResponseInterface<ChangeChatStatusResponse>) =>
+          (response: QtisRequestResponse<ChangeChatStatusResponse>) =>
             response.r[0].e,
         ),
         tap((hasError) => {
@@ -517,7 +512,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
           >(request),
         ),
         map(
-          (response: QtisRequestResponseInterface<ChangeChatStatusResponse>) =>
+          (response: QtisRequestResponse<ChangeChatStatusResponse>) =>
             response.r[0].e,
         ),
         tap((hasError) => {
@@ -534,8 +529,8 @@ export class SupportChatComponent implements OnInit, OnDestroy {
   renameChat(chat: Chat): void {
     const dialogRef = this.dialog.open<
       RenameChatDialogComponent,
-      RenameChatDialogDataInterface,
-      RenameChatDialogReturnDataInterface
+      RenameChatDialogData,
+      RenameChatDialogReturnData
     >(RenameChatDialogComponent, {
       data: {
         currentChatSubject: chat.subject,
@@ -547,7 +542,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
       .afterClosed()
       .pipe(
         filter(
-          (data): data is RenameChatDialogReturnDataInterface =>
+          (data): data is RenameChatDialogReturnData =>
             typeof data !== 'undefined',
         ),
         switchMap((data) =>
@@ -578,7 +573,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
   deleteChat(chat: Chat): void {
     const dialogRef = this.dialog.open<
       PromptDialogComponent,
-      PromptDialogDataInterface,
+      PromptDialogData,
       boolean
     >(PromptDialogComponent, {
       data: {

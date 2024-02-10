@@ -1,7 +1,7 @@
 import { AxiosResponse } from 'axios';
-import { QtisRequestResponseInterface } from './qtis-req-res.interface';
+import { QtisRequestResponse } from './qtis-req-res.interface';
 
-export interface RequestFactoryInterface<T> {
+export interface RequestFactory<T> {
   cancelRequest: () => void;
-  makeRequest: () => Promise<AxiosResponse<QtisRequestResponseInterface<T>>>;
+  makeRequest: () => Promise<AxiosResponse<QtisRequestResponse<T>>>;
 }

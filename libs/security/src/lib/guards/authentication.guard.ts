@@ -10,7 +10,7 @@ import { Router, UrlTree } from '@angular/router';
 import { catchError, delay, Observable, of, switchMap } from 'rxjs';
 import { AuthenticationService } from '../services/authentication.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { QtisRequestResponseInterface } from '@eustrosoft-front/core';
+import { QtisRequestResponse } from '@eustrosoft-front/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { PingResponse } from '@eustrosoft-front/login-lib';
 
@@ -23,7 +23,7 @@ export const authenticationGuard = (): Observable<UrlTree | boolean> => {
 
   // TODO локализация ошибок
   return authenticationService.getAuthenticationInfo().pipe(
-    switchMap((pingResponse: QtisRequestResponseInterface<PingResponse>) => {
+    switchMap((pingResponse: QtisRequestResponse<PingResponse>) => {
       if (pingResponse.r[0].e !== 0) {
         snackBar.open('Authenticate in order to access this page', 'Close');
         return of(router.createUrlTree(['login'])).pipe(delay(2000));

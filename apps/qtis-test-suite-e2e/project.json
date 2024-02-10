@@ -1,0 +1,30 @@
+{
+  "name": "qtis-test-suite-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/qtis-test-suite-e2e/src",
+  "targets": {
+    "e2e": {
+      "executor": "@nx/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/qtis-test-suite-e2e/cypress.config.ts",
+        "testingType": "e2e",
+        "devServerTarget": "qtis-test-suite:serve:development"
+      },
+      "configurations": {
+        "production": {
+          "devServerTarget": "qtis-test-suite:serve:production"
+        },
+        "ci": {
+          "devServerTarget": "qtis-test-suite:serve-static"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
+    }
+  },
+  "tags": [],
+  "implicitDependencies": ["qtis-test-suite"]
+}

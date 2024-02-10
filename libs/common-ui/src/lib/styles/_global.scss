@@ -6,6 +6,7 @@
  */
 @use 'libs/common-ui/src/lib/styles/mixins' as mixins;
 @use 'libs/common-ui/src/lib/styles/variables' as vars;
+@use 'libs/common-ui/src/lib/styles/utilities' as utils;
 
 body {
   font-family: 'Roboto', sans-serif;
@@ -20,3 +21,9 @@ body {
     map-get(vars.$blue-palette, A400)
   );
 }
+
+.wrapper {
+  @extend .flex, .flex-column;
+  height: 100svh;
+}
+

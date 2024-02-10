@@ -49,10 +49,7 @@ import {
   SqlResponse,
   Table,
 } from '@eustrosoft-front/dispatcher-lib';
-import {
-  DispatchService,
-  QtisRequestResponseInterface,
-} from '@eustrosoft-front/core';
+import { DispatchService, QtisRequestResponse } from '@eustrosoft-front/core';
 
 @Component({
   selector: 'eustrosoft-front-requests',
@@ -104,7 +101,7 @@ export class RequestsComponent implements OnInit {
 
   tables: Table[][] = [];
 
-  requestResult$!: Observable<QtisRequestResponseInterface<SqlResponse> | null>;
+  requestResult$!: Observable<QtisRequestResponse<SqlResponse> | null>;
   isResultLoading = new BehaviorSubject<boolean>(false);
 
   constructor(
@@ -131,7 +128,7 @@ export class RequestsComponent implements OnInit {
             query,
           ),
         ),
-        map((response: QtisRequestResponseInterface<SqlResponse>) => {
+        map((response: QtisRequestResponse<SqlResponse>) => {
           this.tables = response.r.map((res: SqlResponse) =>
             res.r.map((result: DispatcherTableResult) => {
               return {

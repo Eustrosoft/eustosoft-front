@@ -7,6 +7,6 @@
 
 import { TemplateRef } from '@angular/core';
 
-export interface LoginDialogDataInterface {
+export interface LoginDialogData {
   template: TemplateRef<unknown>;
 }

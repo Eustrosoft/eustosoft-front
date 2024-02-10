@@ -8,7 +8,7 @@
 import { inject, Injectable } from '@angular/core';
 import {
   DispatchService,
-  QtisRequestResponseInterface,
+  QtisRequestResponse,
   Subsystems,
   SupportedLanguages,
 } from '@eustrosoft-front/core';
@@ -29,7 +29,7 @@ import { DicValue } from '../interfaces/dic-value.interface';
 export class DicService {
   private dispatchService = inject(DispatchService);
 
-  getDictionaries(): Observable<QtisRequestResponseInterface<DicsResponse>> {
+  getDictionaries(): Observable<QtisRequestResponse<DicsResponse>> {
     return this.dispatchService.dispatch<DicRequest, DicsResponse>({
       r: [
         {
@@ -44,7 +44,7 @@ export class DicService {
 
   getDicValues(
     dic: Dictionaries,
-  ): Observable<QtisRequestResponseInterface<DicValuesResponse>> {
+  ): Observable<QtisRequestResponse<DicValuesResponse>> {
     return this.dispatchService.dispatch<DicValuesRequest, DicValuesResponse>({
       r: [
         {
@@ -63,7 +63,7 @@ export class DicService {
     mapFunc: (value: DicValue) => T,
   ): Observable<T[]> {
     return this.getDicValues(dic).pipe(
-      map((response: QtisRequestResponseInterface<DicValuesResponse>) =>
+      map((response: QtisRequestResponse<DicValuesResponse>) =>
         response.r.flatMap((r: DicValuesResponse) => r.values).map(mapFunc),
       ),
     );

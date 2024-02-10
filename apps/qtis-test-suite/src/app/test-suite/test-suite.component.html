@@ -1,0 +1,73 @@
+<div class="flex g-3">
+  <button mat-raised-button color="primary" type="button">
+    <mat-icon>play_arrow</mat-icon> Run All
+  </button>
+  <button
+    mat-stroked-button
+    color="primary"
+    type="button"
+    (click)="accordion.openAll()"
+  >
+    Expand All
+  </button>
+  <button
+    mat-stroked-button
+    color="primary"
+    type="button"
+    (click)="accordion.closeAll()"
+  >
+    Collapse All
+  </button>
+</div>
+<mat-accordion class="example-headers-align" [multi]="true">
+  <mat-expansion-panel
+    *ngFor="let test of qtisApiService.apiTests; let index = index"
+  >
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <button
+          mat-icon-button
+          color="primary"
+          type="button"
+          (click)="performTest($event, index)"
+        >
+          <mat-icon>play_arrow</mat-icon>
+        </button>
+      </mat-panel-title>
+      <mat-panel-description>
+        {{ test.description }}
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <!--    qwrqwrwr-->
+  </mat-expansion-panel>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title> Destination </mat-panel-title>
+      <mat-panel-description>
+        Type the country name
+        <mat-icon>map</mat-icon>
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <mat-form-field>
+      <mat-label>Country</mat-label>
+      <input matInput />
+    </mat-form-field>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title> Day of the trip </mat-panel-title>
+      <mat-panel-description>
+        Inform the date you wish to travel
+        <mat-icon>date_range</mat-icon>
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <mat-form-field>
+      <mat-label>Country</mat-label>
+      <input matInput />
+    </mat-form-field>
+  </mat-expansion-panel>
+</mat-accordion>

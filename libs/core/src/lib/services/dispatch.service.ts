@@ -9,7 +9,7 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { APP_CONFIG, Config } from '@eustrosoft-front/config';
 import { Observable, switchMap } from 'rxjs';
-import { QtisRequestResponseInterface } from '../interfaces/qtis-req-res.interface';
+import { QtisRequestResponse } from '../interfaces/qtis-req-res.interface';
 
 @Injectable({ providedIn: 'root' })
 export class DispatchService {
@@ -17,11 +17,11 @@ export class DispatchService {
   private config = inject(APP_CONFIG);
 
   dispatch<Req, Res>(
-    body: QtisRequestResponseInterface<Req>,
-  ): Observable<QtisRequestResponseInterface<Res>> {
+    body: QtisRequestResponse<Req>,
+  ): Observable<QtisRequestResponse<Res>> {
     return this.config.pipe(
       switchMap((config: Config) =>
-        this.http.post<QtisRequestResponseInterface<Res>>(
+        this.http.post<QtisRequestResponse<Res>>(
           `${config.apiUrl}/dispatch`,
           body,
         ),

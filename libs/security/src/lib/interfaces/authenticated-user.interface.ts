@@ -5,7 +5,7 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-export interface AuthenticatedUserInterface {
+export interface AuthenticatedUser {
   userId: number;
   userFullName: string;
   userLogin: string;

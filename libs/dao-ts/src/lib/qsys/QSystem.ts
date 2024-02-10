@@ -15,7 +15,7 @@ import { PingRequest } from '../core/interfaces/auth/ping-request.interface';
 import { PingResponse } from '../core/interfaces/auth/ping-response.interface';
 import { requestFactoryFunction } from '../utils/request-factory.function';
 import { AuthLoginRequest } from '../core/interfaces/auth/auth-login-request.interface';
-import { RequestFactoryInterface } from '../core/interfaces/request-factory.interface';
+import { RequestFactory } from '../core/interfaces/request-factory.interface';
 
 export class QSystem {
   private dispatchService: DispatchService;
@@ -29,7 +29,7 @@ export class QSystem {
   login(
     login: string,
     password: string,
-  ): RequestFactoryInterface<AuthLoginLogoutResponse> {
+  ): RequestFactory<AuthLoginLogoutResponse> {
     return requestFactoryFunction<AuthLoginRequest, AuthLoginLogoutResponse>({
       r: [
         {
@@ -44,7 +44,7 @@ export class QSystem {
     });
   }
 
-  logout(): RequestFactoryInterface<AuthLoginLogoutResponse> {
+  logout(): RequestFactory<AuthLoginLogoutResponse> {
     return requestFactoryFunction<AuthLogoutRequest, AuthLoginLogoutResponse>({
       r: [
         {
@@ -57,7 +57,7 @@ export class QSystem {
     });
   }
 
-  ping(): RequestFactoryInterface<PingResponse> {
+  ping(): RequestFactory<PingResponse> {
     return requestFactoryFunction<PingRequest, PingResponse>({
       r: [
         {

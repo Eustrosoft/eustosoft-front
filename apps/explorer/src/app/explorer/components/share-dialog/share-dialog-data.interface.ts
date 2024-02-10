@@ -7,7 +7,7 @@
 
 import { Observable } from 'rxjs';
 
-export interface ShareDialogDataInterface {
+export interface ShareDialogData {
   shareLinkObs$: Observable<string>;
   shareOWikiLinkObs$: Observable<string>;
 }

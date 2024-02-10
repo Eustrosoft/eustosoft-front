@@ -8,7 +8,7 @@
 import { Injectable } from '@angular/core';
 import {
   crc32,
-  QtisRequestResponseInterface,
+  QtisRequestResponse,
   Subsystems,
   SupportedLanguages,
 } from '@eustrosoft-front/core';
@@ -35,7 +35,7 @@ export class ExplorerRequestBuilderService {
     totalChunks: number,
     uint8Array: Uint8Array,
     path: string = '/',
-  ): QtisRequestResponseInterface<UploadRequest> {
+  ): QtisRequestResponse<UploadRequest> {
     return {
       r: [
         {
@@ -63,7 +63,7 @@ export class ExplorerRequestBuilderService {
     chunkIndex: number,
     totalChunks: number,
     path: string = '/',
-  ): QtisRequestResponseInterface<UploadRequest> {
+  ): QtisRequestResponse<UploadRequest> {
     return {
       r: [
         {
@@ -94,7 +94,7 @@ export class ExplorerRequestBuilderService {
     securityLevel?: string,
     description?: string,
     path: string = '/',
-  ): QtisRequestResponseInterface<UploadHexRequest> {
+  ): QtisRequestResponse<UploadHexRequest> {
     const params: UploadHexRequest['parameters'] = {
       hexString: chunk,
       name: filename ?? file.name,
@@ -128,7 +128,7 @@ export class ExplorerRequestBuilderService {
     to: string[],
     description: string | undefined = undefined,
     action: ExplorerRequestActions = ExplorerRequestActions.MOVE,
-  ): Observable<QtisRequestResponseInterface<MoveRequest>> {
+  ): Observable<QtisRequestResponse<MoveRequest>> {
     switch (action) {
       case ExplorerRequestActions.RENAME: {
         return of({
@@ -168,7 +168,7 @@ export class ExplorerRequestBuilderService {
     from: FileSystemObject[],
     to: string[],
     action: ExplorerRequestActions,
-  ): Observable<QtisRequestResponseInterface<MoveCopyRequest>> {
+  ): Observable<QtisRequestResponse<MoveCopyRequest>> {
     return of({
       r: from.map(
         (obj: FileSystemObject, i: number) =>
@@ -184,9 +184,7 @@ export class ExplorerRequestBuilderService {
     });
   }
 
-  buildViewRequest(
-    path: string,
-  ): Observable<QtisRequestResponseInterface<ViewRequest>> {
+  buildViewRequest(path: string): Observable<QtisRequestResponse<ViewRequest>> {
     return of({
       r: [
         {
@@ -202,7 +200,7 @@ export class ExplorerRequestBuilderService {
 
   buildCreateRequest(
     params: Omit<CreateRequest, 's' | 'l' | 'r'>,
-  ): Observable<QtisRequestResponseInterface<CreateRequest>> {
+  ): Observable<QtisRequestResponse<CreateRequest>> {
     return of({
       r: [
         {
@@ -218,7 +216,7 @@ export class ExplorerRequestBuilderService {
 
   buildDeleteRequests(
     rows: FileSystemObject[],
-  ): Observable<QtisRequestResponseInterface<DeleteRequest>> {
+  ): Observable<QtisRequestResponse<DeleteRequest>> {
     return of({
       r: rows.map(
         (row: FileSystemObject) =>
@@ -235,7 +233,7 @@ export class ExplorerRequestBuilderService {
 
   buildDownloadTicketRequests(
     rows: FileSystemObject[],
-  ): Observable<QtisRequestResponseInterface<DownloadTicketRequest>> {
+  ): Observable<QtisRequestResponse<DownloadTicketRequest>> {
     return of({
       r: rows.map(
         (row: FileSystemObject) =>

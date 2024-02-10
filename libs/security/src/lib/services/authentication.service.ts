@@ -20,12 +20,12 @@ import {
 import { HttpErrorResponse } from '@angular/common/http';
 import {
   DispatchService,
-  QtisRequestResponseInterface,
+  QtisRequestResponse,
   Subsystems,
   SupportedLanguages,
 } from '@eustrosoft-front/core';
 import { SamService } from './sam.service';
-import { AuthenticatedUserInterface } from '../interfaces/authenticated-user.interface';
+import { AuthenticatedUser } from '../interfaces/authenticated-user.interface';
 import { PingRequest, PingResponse } from '@eustrosoft-front/login-lib';
 
 @Injectable({ providedIn: 'root' })
@@ -34,7 +34,7 @@ export class AuthenticationService {
   private samService = inject(SamService);
 
   isAuthenticated$ = new BehaviorSubject<boolean>(false);
-  userInfo$ = new BehaviorSubject<AuthenticatedUserInterface>({
+  userInfo$ = new BehaviorSubject<AuthenticatedUser>({
     userAvailableSlvl: '',
     userLang: '',
     userLogin: '',
@@ -43,9 +43,7 @@ export class AuthenticationService {
     userFullName: '',
   });
 
-  getAuthenticationInfo(): Observable<
-    QtisRequestResponseInterface<PingResponse>
-  > {
+  getAuthenticationInfo(): Observable<QtisRequestResponse<PingResponse>> {
     return combineLatest([
       this.dispatchService.dispatch<PingRequest, PingResponse>({
         r: [
@@ -55,7 +53,7 @@ export class AuthenticationService {
           },
         ],
         t: 0,
-      } as QtisRequestResponseInterface<PingRequest>),
+      } as QtisRequestResponse<PingRequest>),
       this.samService.getUserId().pipe(map((res) => +res.r[0].data)),
       this.samService.getUserLogin().pipe(map((res) => res.r[0].data)),
       this.samService.getUserLang().pipe(map((res) => res.r[0].data)),

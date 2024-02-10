@@ -18,7 +18,7 @@ import {
   InputFileComponent,
   PreloaderComponent,
   PromptDialogComponent,
-  PromptDialogDataInterface,
+  PromptDialogData,
 } from '@eustrosoft-front/common-ui';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
@@ -39,10 +39,7 @@ import {
   takeUntil,
   tap,
 } from 'rxjs';
-import {
-  DispatchService,
-  QtisRequestResponseInterface,
-} from '@eustrosoft-front/core';
+import { DispatchService, QtisRequestResponse } from '@eustrosoft-front/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ExplorerRequestBuilderService } from './services/explorer-request-builder.service';
@@ -76,7 +73,7 @@ import {
 import { Clipboard } from '@angular/cdk/clipboard';
 import { AsyncPipe, DOCUMENT, NgIf } from '@angular/common';
 import { ShareDialogComponent } from './components/share-dialog/share-dialog.component';
-import { ShareDialogDataInterface } from './components/share-dialog/share-dialog-data.interface';
+import { ShareDialogData } from './components/share-dialog/share-dialog-data.interface';
 import { RenameDialogComponent } from './components/rename-dialog/rename-dialog.component';
 import { RenameDialogData } from './components/rename-dialog/rename-dialog-data.interface';
 import { RenameDialogReturnData } from './components/rename-dialog/rename-dialog-return-data.interface';
@@ -473,7 +470,7 @@ export class ExplorerComponent implements OnInit {
   delete(rows: FileSystemObject[]): void {
     const dialogRef = this.dialog.open<
       PromptDialogComponent,
-      PromptDialogDataInterface,
+      PromptDialogData,
       boolean
     >(PromptDialogComponent, {
       data: {
@@ -498,7 +495,7 @@ export class ExplorerComponent implements OnInit {
         switchMap(() =>
           this.explorerRequestBuilderService.buildDeleteRequests(rows),
         ),
-        switchMap((body: QtisRequestResponseInterface<DeleteRequest>) =>
+        switchMap((body: QtisRequestResponse<DeleteRequest>) =>
           this.dispatchService.dispatch<DeleteRequest, DeleteResponse>(body),
         ),
         tap(() => {
@@ -545,7 +542,7 @@ export class ExplorerComponent implements OnInit {
 
     const dialogRef = this.dialog.open<
       ShareDialogComponent,
-      ShareDialogDataInterface,
+      ShareDialogData,
       string
     >(ShareDialogComponent, {
       data: {

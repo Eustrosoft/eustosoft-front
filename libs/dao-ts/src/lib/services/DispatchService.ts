@@ -1,5 +1,5 @@
 import axios, { AxiosResponse, AxiosStatic } from 'axios';
-import { QtisRequestResponseInterface } from '../core/interfaces/qtis-req-res.interface';
+import { QtisRequestResponse } from '../core/interfaces/qtis-req-res.interface';
 import { DaoConfig } from '../core/config/DaoConfig';
 
 export class DispatchService {
@@ -16,17 +16,17 @@ export class DispatchService {
   }
 
   async dispatch<Req, Res>(
-    body: QtisRequestResponseInterface<Req>,
+    body: QtisRequestResponse<Req>,
     abortSignal: AbortSignal,
-  ): Promise<AxiosResponse<QtisRequestResponseInterface<Res>>> {
+  ): Promise<AxiosResponse<QtisRequestResponse<Res>>> {
     const apiUrl = DaoConfig.getInstance().apiUrl;
     // When on localhost -> http://localhost:4201/api/dispatch
     // When on prod -> https://dev37.qxyz.ru/api/dispatch
 
     return await axios.post<
-      QtisRequestResponseInterface<Res>,
-      AxiosResponse<QtisRequestResponseInterface<Res>>,
-      QtisRequestResponseInterface<Req>
+      QtisRequestResponse<Res>,
+      AxiosResponse<QtisRequestResponse<Res>>,
+      QtisRequestResponse<Req>
     >(apiUrl, body, {
       signal: abortSignal,
     });

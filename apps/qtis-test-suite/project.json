@@ -1,0 +1,136 @@
+{
+  "name": "qtis-test-suite",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/qtis-test-suite/src",
+  "prefix": "eustrosoft-front",
+  "targets": {
+    "build": {
+      "executor": "@angular-devkit/build-angular:browser",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/qtis-test-suite",
+        "index": "apps/qtis-test-suite/src/index.html",
+        "main": "apps/qtis-test-suite/src/main.ts",
+        "baseHref": "/qtis-test-suite/",
+        "polyfills": ["zone.js"],
+        "tsConfig": "apps/qtis-test-suite/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [
+          "apps/qtis-test-suite/src/favicon.ico",
+          "apps/qtis-test-suite/src/assets"
+        ],
+        "styles": [
+          "@angular/material/prebuilt-themes/deeppurple-amber.css",
+          "apps/qtis-test-suite/src/styles.scss"
+        ],
+        "scripts": []
+      },
+      "configurations": {
+        "production": {
+          "baseHref": "./",
+          "assets": [
+            "apps/explorer/src/favicon.ico",
+            {
+              "glob": "config.json",
+              "input": "libs/config/src/lib/configurations/prod",
+              "output": "/"
+            },
+            {
+              "glob": "*.json",
+              "input": "apps/qtis-test-suite/src/assets/i18n",
+              "output": "/assets/i18n/"
+            }
+          ],
+          "outputHashing": "all",
+          "optimization": true,
+          "sourceMap": false,
+          "namedChunks": false,
+          "aot": true,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "buildOptimizer": true
+        },
+        "stage": {
+          "baseHref": "./",
+          "assets": [
+            "apps/qtis-test-suite/src/favicon.ico",
+            {
+              "glob": "config.json",
+              "input": "libs/config/src/lib/configurations/stage",
+              "output": "/"
+            },
+            {
+              "glob": "*.json",
+              "input": "apps/qtis-test-suite/src/assets/i18n",
+              "output": "/assets/i18n/"
+            }
+          ]
+        },
+        "development": {
+          "assets": [
+            "apps/qtis-test-suite/src/favicon.ico",
+            {
+              "glob": "config.json",
+              "input": "libs/config/src/lib/configurations/dev",
+              "output": "/"
+            },
+            {
+              "glob": "*.json",
+              "input": "apps/qtis-test-suite/src/assets/i18n",
+              "output": "/assets/i18n/"
+            }
+          ],
+          "buildOptimizer": false,
+          "optimization": false,
+          "vendorChunk": true,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "executor": "@angular-devkit/build-angular:dev-server",
+      "options": {
+        "port": 4204
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "qtis-test-suite:build:production"
+        },
+        "development": {
+          "proxyConfig": "proxy.conf.js",
+          "buildTarget": "qtis-test-suite:build:development"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "buildTarget": "qtis-test-suite:build"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/qtis-test-suite/jest.config.ts"
+      }
+    },
+    "serve-static": {
+      "executor": "@nx/web:file-server",
+      "options": {
+        "buildTarget": "qtis-test-suite:build",
+        "staticFilePath": "dist/apps/qtis-test-suite/browser"
+      }
+    }
+  },
+  "tags": []
+}

@@ -7,17 +7,17 @@
 
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { LoginDialogDataInterface } from './login-dialog-data.interface';
+import { LoginDialogData } from './login-dialog-data.interface';
 import { NgTemplateOutlet } from '@angular/common';
 
 @Component({
-    selector: 'eustrosoft-front-login-dialog',
-    templateUrl: './login-dialog.component.html',
-    styleUrls: ['./login-dialog.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [NgTemplateOutlet],
+  selector: 'eustrosoft-front-login-dialog',
+  templateUrl: './login-dialog.component.html',
+  styleUrls: ['./login-dialog.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [NgTemplateOutlet],
 })
 export class LoginDialogComponent {
-  data = inject<LoginDialogDataInterface>(MAT_DIALOG_DATA);
+  data = inject<LoginDialogData>(MAT_DIALOG_DATA);
 }

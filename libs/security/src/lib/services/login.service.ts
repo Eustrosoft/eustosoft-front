@@ -10,7 +10,7 @@ import { Observable, tap } from 'rxjs';
 import { AuthenticationService } from './authentication.service';
 import {
   DispatchService,
-  QtisRequestResponseInterface,
+  QtisRequestResponse,
   Subsystems,
   SupportedLanguages,
 } from '@eustrosoft-front/core';
@@ -29,7 +29,7 @@ export class LoginService {
   login(
     login: string,
     password: string,
-  ): Observable<QtisRequestResponseInterface<LoginLogoutResponse>> {
+  ): Observable<QtisRequestResponse<LoginLogoutResponse>> {
     return this.dispatchService
       .dispatch<LoginRequest, LoginLogoutResponse>({
         r: [
@@ -42,7 +42,7 @@ export class LoginService {
           },
         ],
         t: 0,
-      } as QtisRequestResponseInterface<LoginRequest>)
+      } as QtisRequestResponse<LoginRequest>)
       .pipe(
         tap((v) => {
           this.authenticationService.isAuthenticated$.next(v.r[0].e === 0);
@@ -50,7 +50,7 @@ export class LoginService {
       );
   }
 
-  logout(): Observable<QtisRequestResponseInterface<LoginLogoutResponse>> {
+  logout(): Observable<QtisRequestResponse<LoginLogoutResponse>> {
     return this.dispatchService
       .dispatch<LogoutRequest, LoginLogoutResponse>({
         r: [
@@ -61,7 +61,7 @@ export class LoginService {
           },
         ],
         t: 0,
-      } as QtisRequestResponseInterface<LogoutRequest>)
+      } as QtisRequestResponse<LogoutRequest>)
       .pipe(
         tap(() => {
           this.authenticationService.isAuthenticated$.next(false);

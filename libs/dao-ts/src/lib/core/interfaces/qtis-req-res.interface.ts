@@ -5,7 +5,7 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-export interface QtisRequestResponseInterface<T> {
+export interface QtisRequestResponse<T> {
   r: T[];
   t: number;
 }

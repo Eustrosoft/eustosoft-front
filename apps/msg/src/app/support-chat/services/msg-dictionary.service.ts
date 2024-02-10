@@ -14,7 +14,7 @@ import {
   DicValuesResponse,
 } from '@eustrosoft-front/dic';
 import { map, Observable } from 'rxjs';
-import { QtisRequestResponseInterface } from '@eustrosoft-front/core';
+import { QtisRequestResponse } from '@eustrosoft-front/core';
 import { Option } from '@eustrosoft-front/common-ui';
 import {
   SamService,
@@ -32,7 +32,7 @@ export class MsgDictionaryService {
     return this.dicService
       .getDicValues(Dictionaries.MSG_CHANNEL_STATUS)
       .pipe(
-        map((response: QtisRequestResponseInterface<DicValuesResponse>) =>
+        map((response: QtisRequestResponse<DicValuesResponse>) =>
           response.r.flatMap((r: DicValuesResponse) => r.values),
         ),
       );
@@ -47,9 +47,8 @@ export class MsgDictionaryService {
 
   getScopeOptions(): Observable<Option[]> {
     return this.samService.getUserAvailableScope(Scopes.MSGC).pipe(
-      map(
-        (response: QtisRequestResponseInterface<UserAvailableScopesResponse>) =>
-          response.r.flatMap((r) => r.zsid),
+      map((response: QtisRequestResponse<UserAvailableScopesResponse>) =>
+        response.r.flatMap((r) => r.zsid),
       ),
       map((values) =>
         values.map((value) => ({

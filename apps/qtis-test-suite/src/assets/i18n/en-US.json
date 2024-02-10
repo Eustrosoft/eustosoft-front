@@ -1,0 +1,19 @@
+{
+  "HEADER": {
+    "TITLE": "TIS Apps",
+    "APP_NAME": "Qtis Test Suite",
+    "APPS_BUTTON_TEXT": "Apps",
+    "APPS": {
+      "LOGIN": "Login",
+      "DISPATCHER": "Dispatcher",
+      "ALL_APPS_PAGE": "All apps page"
+    }
+  },
+  "LOGIN_PAGE": {
+    "AUTHENTICATION_HEADING": "Authentication",
+    "LOGIN_LABEL": "Login",
+    "PASSWORD_LABEL": "Password",
+    "SUBMIT_BUTTON_TEXT": "Log In"
+  },
+  "QTIS_TEST_SUITE": {}
+}

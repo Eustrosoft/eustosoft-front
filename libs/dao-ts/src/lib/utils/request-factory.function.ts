@@ -6,12 +6,12 @@
  */
 
 import { DispatchService } from '../services/DispatchService';
-import { QtisRequestResponseInterface } from '../core/interfaces/qtis-req-res.interface';
-import { RequestFactoryInterface } from '../core/interfaces/request-factory.interface';
+import { QtisRequestResponse } from '../core/interfaces/qtis-req-res.interface';
+import { RequestFactory } from '../core/interfaces/request-factory.interface';
 
 export function requestFactoryFunction<Req, Res>(
-  body: QtisRequestResponseInterface<Req>,
-): RequestFactoryInterface<Res> {
+  body: QtisRequestResponse<Req>,
+): RequestFactory<Res> {
   const controller = new AbortController();
   const { signal } = controller;
   const dispatchService = DispatchService.getInstance();
