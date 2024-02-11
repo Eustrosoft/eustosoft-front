@@ -6,9 +6,12 @@
  */
 
 import { ApiTestCase } from './test-case.interface';
-import { AuthLoginLogoutResponse } from '@eustrosoft-front/dao-ts';
+import {
+  AuthLoginLogoutResponse,
+  PingResponse,
+} from '@eustrosoft-front/dao-ts';
 
 export type TestCasesTuple = [
   ApiTestCase<AuthLoginLogoutResponse>,
-  // ApiTestCase<PingResponse>,
+  ApiTestCase<PingResponse>,
 ];

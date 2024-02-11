@@ -1,14 +1,23 @@
 import { Observable, Subject } from 'rxjs';
-import { RequestFactory } from '@eustrosoft-front/dao-ts';
+import { QtisRequestResponse, RequestFactory } from '@eustrosoft-front/dao-ts';
+
+export enum CompareResult {
+  OK = 'OK',
+  FAIL = 'FAIL',
+}
+
+export type ResponseObs<T> = {
+  isLoading: boolean;
+  isError: boolean;
+  response: QtisRequestResponse<T> | undefined;
+  compareResult: CompareResult | undefined;
+};
 
 export interface ApiTestCase<T> {
   title: string;
   description: string;
-  start$: Subject<void>;
-  abort$: Subject<void>;
-  request$: RequestFactory<T>;
-  response$: Observable<T>;
-  expectedResponse: T;
-  comparator: () => boolean;
-  result: string;
+  abort: () => void;
+  requestFactory: RequestFactory<T>;
+  response$: Observable<ResponseObs<T>>;
+  start: Subject<void>;
 }

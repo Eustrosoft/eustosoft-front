@@ -1,5 +1,10 @@
 <div class="flex g-3">
-  <button mat-raised-button color="primary" type="button">
+  <button
+    mat-raised-button
+    color="primary"
+    type="button"
+    (click)="runTestCasesSequentially()"
+  >
     <mat-icon>play_arrow</mat-icon> Run All
   </button>
   <button
@@ -19,55 +24,70 @@
     Collapse All
   </button>
 </div>
-<mat-accordion class="example-headers-align" [multi]="true">
-  <mat-expansion-panel
-    *ngFor="let test of qtisApiService.apiTests; let index = index"
-  >
-    <mat-expansion-panel-header>
-      <mat-panel-title>
-        <button
-          mat-icon-button
-          color="primary"
-          type="button"
-          (click)="performTest($event, index)"
-        >
-          <mat-icon>play_arrow</mat-icon>
-        </button>
-      </mat-panel-title>
-      <mat-panel-description>
-        {{ test.description }}
-      </mat-panel-description>
-    </mat-expansion-panel-header>
-    <!--    qwrqwrwr-->
-  </mat-expansion-panel>
+<mat-accordion [multi]="true">
+  <ng-container *ngFor="let test of apiTests; let index = index">
+    <ng-container *ngIf="{ res: test.response$ | async } as vm">
+      <mat-expansion-panel #expansionPanel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <button
+              mat-icon-button
+              color="primary"
+              type="button"
+              (click)="
+                $event.stopPropagation();
+                test.start.next();
+                expansionPanel.open()
+              "
+            >
+              <mat-icon>play_arrow</mat-icon>
+            </button>
+            <button
+              *ngIf="vm.res?.isLoading"
+              mat-icon-button
+              color="primary"
+              type="button"
+              (click)="$event.stopPropagation(); test.abort()"
+            >
+              <mat-icon>stop</mat-icon>
+            </button>
+          </mat-panel-title>
+          <mat-panel-description>
+            <mat-chip-set [ngSwitch]="vm.res?.compareResult" class="me-2">
+              <mat-chip
+                *ngSwitchCase="CompareResult.OK"
+                (click)="$event.stopPropagation()"
+                highlighted
+              >
+                OK
+              </mat-chip>
+              <mat-chip
+                *ngSwitchCase="CompareResult.FAIL"
+                (click)="$event.stopPropagation()"
+                color="warn"
+                highlighted
+              >
+                FAIL
+              </mat-chip>
+              <mat-chip *ngSwitchDefault (click)="$event.stopPropagation()">
+                Not executed
+              </mat-chip>
+            </mat-chip-set>
 
-  <mat-expansion-panel>
-    <mat-expansion-panel-header>
-      <mat-panel-title> Destination </mat-panel-title>
-      <mat-panel-description>
-        Type the country name
-        <mat-icon>map</mat-icon>
-      </mat-panel-description>
-    </mat-expansion-panel-header>
+            <span>{{ test.description }}</span>
+          </mat-panel-description>
+        </mat-expansion-panel-header>
 
-    <mat-form-field>
-      <mat-label>Country</mat-label>
-      <input matInput />
-    </mat-form-field>
-  </mat-expansion-panel>
-
-  <mat-expansion-panel>
-    <mat-expansion-panel-header>
-      <mat-panel-title> Day of the trip </mat-panel-title>
-      <mat-panel-description>
-        Inform the date you wish to travel
-        <mat-icon>date_range</mat-icon>
-      </mat-panel-description>
-    </mat-expansion-panel-header>
-
-    <mat-form-field>
-      <mat-label>Country</mat-label>
-      <input matInput />
-    </mat-form-field>
-  </mat-expansion-panel>
+        <ng-container *ngIf="vm.res?.isLoading && !vm.res?.isError">
+          <span>Loading...</span>
+        </ng-container>
+        <ng-container *ngIf="vm.res?.isError">
+          <span>Error occurred</span>
+        </ng-container>
+        <ng-container *ngIf="vm.res?.response as response">
+          <pre>{{ response | json }}</pre>
+        </ng-container>
+      </mat-expansion-panel>
+    </ng-container>
+  </ng-container>
 </mat-accordion>
