@@ -10,5 +10,9 @@ import { InjectionToken } from '@angular/core';
 import { Observable } from 'rxjs';
 
 export const APP_CONFIG = new InjectionToken<Observable<Config>>(
-  'Application configurations (environment)',
+  'Observable of application configuration (environment)',
+);
+
+export const APP_CONFIG_SYNC = new InjectionToken<Config>(
+  'Application configuration (environment)',
 );

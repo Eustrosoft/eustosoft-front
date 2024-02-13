@@ -5,10 +5,7 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-import {
-  cookiesInterceptor,
-  withCredentialsInterceptor,
-} from '../interceptors/interceptors';
+import { withCredentialsInterceptor } from '../interceptors/interceptors';
 import axios from 'axios';
 
 export class DaoConfig {
@@ -36,6 +33,5 @@ export class DaoConfig {
 
   private setupDefaultInterceptors(): void {
     axios.interceptors.request.use(...withCredentialsInterceptor());
-    axios.interceptors.response.use(...cookiesInterceptor());
   }
 }

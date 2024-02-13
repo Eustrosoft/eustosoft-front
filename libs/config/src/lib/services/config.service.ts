@@ -7,7 +7,14 @@
 
 import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { catchError, Observable, shareReplay, throwError } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  Observable,
+  shareReplay,
+  tap,
+  throwError,
+} from 'rxjs';
 import { Config } from '../interfaces/config.interface';
 import { APP_BASE_HREF, DOCUMENT } from '@angular/common';
 
@@ -25,12 +32,20 @@ export class ConfigService {
     this.document.location.origin
   }/config.json?${Date.now()}`;
 
-  private mainConfig = this.http
-    .get<Config>(this.configUrl)
-    .pipe(shareReplay(1));
-  private backupConfig = this.http
-    .get<Config>(this.backupConfigUrl)
-    .pipe(shareReplay(1));
+  private configSync = new BehaviorSubject<Config | undefined>(undefined);
+
+  private mainConfig = this.http.get<Config>(this.configUrl).pipe(
+    tap((cnf) => {
+      this.configSync.next(cnf);
+    }),
+    shareReplay(1),
+  );
+  private backupConfig = this.http.get<Config>(this.backupConfigUrl).pipe(
+    tap((cnf) => {
+      this.configSync.next(cnf);
+    }),
+    shareReplay(1),
+  );
 
   getConfig(): Observable<Config> {
     return this.mainConfig.pipe(
@@ -56,5 +71,13 @@ export class ConfigService {
         );
       }),
     );
+  }
+
+  getConfigSync(): Config {
+    const value = this.configSync.getValue();
+    if (!value) {
+      throw new Error('Config is undefined');
+    }
+    return value;
   }
 }

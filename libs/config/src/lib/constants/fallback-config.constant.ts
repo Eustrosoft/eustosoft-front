@@ -9,7 +9,7 @@ import { Config } from '../interfaces/config.interface';
 
 export const FallbackConfig: Config = {
   production: true,
-  apiUrl: 'http://fudo.eustrosoft.org:8080/eustrosofthandler_war/api',
+  apiUrl: 'http://fudo.eustrosoft.org:8080/eustrosofthandler_war/api/dispatch',
   shareUrl: 'https://dev37.qxyz.ru/ftpub',
   shareOWikiUrl: 'ftpub:',
   apps: [

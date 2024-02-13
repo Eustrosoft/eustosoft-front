@@ -169,7 +169,7 @@ export class ExplorerService {
     return this.config.pipe(
       switchMap((config) =>
         this.http.post<QtisRequestResponse<UploadResponse>>(
-          `${config.apiUrl}/dispatch`,
+          config.apiUrl,
           body,
           {
             headers: new HttpHeaders(headers),

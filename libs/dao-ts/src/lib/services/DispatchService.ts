@@ -20,9 +20,6 @@ export class DispatchService {
     abortSignal: AbortSignal,
   ): Promise<AxiosResponse<QtisRequestResponse<Res>>> {
     const apiUrl = DaoConfig.getInstance().apiUrl;
-    // When on localhost -> http://localhost:4201/api/dispatch
-    // When on prod -> https://dev37.qxyz.ru/api/dispatch
-
     return await axios.post<
       QtisRequestResponse<Res>,
       AxiosResponse<QtisRequestResponse<Res>>,

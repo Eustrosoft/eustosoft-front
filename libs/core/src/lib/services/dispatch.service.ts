@@ -21,10 +21,7 @@ export class DispatchService {
   ): Observable<QtisRequestResponse<Res>> {
     return this.config.pipe(
       switchMap((config: Config) =>
-        this.http.post<QtisRequestResponse<Res>>(
-          `${config.apiUrl}/dispatch`,
-          body,
-        ),
+        this.http.post<QtisRequestResponse<Res>>(config.apiUrl, body),
       ),
     );
   }

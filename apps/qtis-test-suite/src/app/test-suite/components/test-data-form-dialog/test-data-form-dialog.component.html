@@ -1,0 +1,43 @@
+<!--
+  ~ Copyright (c) 2023-2024. IdrisovII & EustroSoft.org
+  ~
+  ~ This file is part of eustrosoft-front project.
+  ~ See the LICENSE file at the project root for licensing information.
+  -->
+
+<div class="flex flex-column g-3">
+  <h1 class="m-0 px-3 pb-0" mat-dialog-title>Test Data</h1>
+
+  <div class="flex flex-column g-3 px-3 py-0">
+    <mat-form-field [appearance]="'outline'" [subscriptSizing]="'dynamic'">
+      <mat-label> Login </mat-label>
+      <input [formControl]="qtisTestFormService.form.controls.login" matInput />
+    </mat-form-field>
+    <mat-form-field [appearance]="'outline'" [subscriptSizing]="'dynamic'">
+      <mat-label> Password </mat-label>
+      <input
+        [formControl]="qtisTestFormService.form.controls.password"
+        matInput
+      />
+    </mat-form-field>
+    <mat-form-field [appearance]="'outline'" [subscriptSizing]="'dynamic'">
+      <mat-label> FS Path </mat-label>
+      <input
+        [formControl]="qtisTestFormService.form.controls.fsPath"
+        matInput
+      />
+    </mat-form-field>
+  </div>
+  <div class="flex g-2 px-3 pb-3 pt-0" [align]="'end'" mat-dialog-actions>
+    <button mat-flat-button type="button" (click)="reject()">Cancel</button>
+    <button
+      mat-flat-button
+      type="button"
+      color="primary"
+      [disabled]="qtisTestFormService.form.invalid"
+      (click)="resolve()"
+    >
+      OK
+    </button>
+  </div>
+</div>

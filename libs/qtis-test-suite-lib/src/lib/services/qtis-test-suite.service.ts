@@ -1,28 +1,47 @@
 import { inject, Injectable } from '@angular/core';
 import { DAO_QSYS } from '../di/dao.token';
-import { catchError, from, map, of, startWith, Subject, switchMap } from 'rxjs';
+import {
+  catchError,
+  from,
+  map,
+  of,
+  shareReplay,
+  startWith,
+  Subject,
+  switchMap,
+} from 'rxjs';
 import { TestCasesTuple } from '../interfaces/test-cases-tuple.type';
-import { ApiTestCase, CompareResult } from '../interfaces/test-case.interface';
+import {
+  ApiTestCase,
+  ResponseObs,
+  TestResult,
+} from '../interfaces/test-case.interface';
 import {
   AuthLoginLogoutResponse,
   AxiosResponse,
+  CanceledError,
+  FsViewResponse,
   PingResponse,
   RequestFactory,
 } from '@eustrosoft-front/dao-ts';
 import { QtisRequestResponse } from '@eustrosoft-front/core';
+import { QtisTestFormService } from './qtis-test-form.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class QtisApiService {
+export class QtisTestSuiteService {
   private readonly qSys = inject(DAO_QSYS);
+  private readonly qtisTestFormService = inject(QtisTestFormService);
 
-  makeTestList(formValue: { login: string; password: string }): TestCasesTuple {
+  makeTestList(
+    formValue: ReturnType<typeof this.qtisTestFormService.form.getRawValue>,
+  ): TestCasesTuple {
     return [
       // TODO Сделать реальные comparator функции
       this.createTestCase<AuthLoginLogoutResponse>(
         'Login',
-        'Login with correct data',
+        'Login request',
         this.qSys.login(formValue.login, formValue.password),
         () => false,
         new Subject<void>(),
@@ -34,10 +53,17 @@ export class QtisApiService {
         () => true,
         new Subject<void>(),
       ),
+      this.createTestCase<FsViewResponse>(
+        'List FS objects',
+        'List filesystem objects',
+        this.qSys.listFs(formValue.fsPath),
+        () => true,
+        new Subject<void>(),
+      ),
     ];
   }
 
-  createTestCase<T>(
+  private createTestCase<T>(
     title: string,
     description: string,
     requestFactory: RequestFactory<T>,
@@ -46,38 +72,45 @@ export class QtisApiService {
   ): ApiTestCase<T> {
     const abort = requestFactory.cancelRequest;
 
+    const baseResponse: ResponseObs<T> = {
+      isLoading: false,
+      isError: false,
+      isCanceled: false,
+      response: undefined,
+      testResult: undefined,
+    };
+
     const response$ = start.asObservable().pipe(
       switchMap(() =>
         from(requestFactory.makeRequest()).pipe(
           map((res) => {
             const isSuccess = comparator(res);
             return {
-              isLoading: false,
-              isError: false,
+              ...baseResponse,
               response: res.data,
-              compareResult: isSuccess ? CompareResult.OK : CompareResult.FAIL,
+              testResult: isSuccess ? TestResult.OK : TestResult.FAIL,
             };
           }),
           startWith({
+            ...baseResponse,
             isLoading: true,
-            isError: false,
-            response: undefined,
-            compareResult: undefined,
           }),
           catchError((err) => {
-            // TODO
-            //  Добавить свойство isCanceled и обработчик ошибки через switch
-            //  Так как если отменили - это не ошибка
-            console.error(err);
+            if (err instanceof CanceledError) {
+              return of({
+                ...baseResponse,
+                isCanceled: true,
+                testResult: TestResult.CANCELED,
+              });
+            }
             return of({
-              isLoading: false,
+              ...baseResponse,
               isError: true,
-              response: undefined,
-              compareResult: undefined,
             });
           }),
         ),
       ),
+      shareReplay(1),
     );
 
     return { title, description, abort, requestFactory, response$, start };

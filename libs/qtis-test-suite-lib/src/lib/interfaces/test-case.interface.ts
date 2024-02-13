@@ -1,16 +1,18 @@
 import { Observable, Subject } from 'rxjs';
 import { QtisRequestResponse, RequestFactory } from '@eustrosoft-front/dao-ts';
 
-export enum CompareResult {
+export enum TestResult {
   OK = 'OK',
   FAIL = 'FAIL',
+  CANCELED = 'CANCELED',
 }
 
 export type ResponseObs<T> = {
   isLoading: boolean;
   isError: boolean;
+  isCanceled: boolean;
   response: QtisRequestResponse<T> | undefined;
-  compareResult: CompareResult | undefined;
+  testResult: TestResult | undefined;
 };
 
 export interface ApiTestCase<T> {
