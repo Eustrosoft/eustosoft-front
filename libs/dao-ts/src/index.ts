@@ -9,6 +9,8 @@ export * from './lib/core/interfaces/auth/auth-logout-request.interface';
 export * from './lib/core/interfaces/auth/auth-login-logout-response.interface';
 export * from './lib/core/interfaces/fs/fs-view-request.interface';
 export * from './lib/core/interfaces/fs/fs-view-response.interface';
+export * from './lib/core/interfaces/fs/fs-upload-hex-request.interface';
+export * from './lib/core/interfaces/fs/fs-upload-hex-response.interface';
 export * from './lib/core/interfaces/qtis-req-res.interface';
 export * from './lib/core/interfaces/request-factory.interface';
 export * from './lib/constants/enums/subsystems.enum';

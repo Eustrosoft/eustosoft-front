@@ -17,13 +17,6 @@ $snackbar-theme-styles: (
 
 @include mdc-snackbar-theme.theme-styles($snackbar-theme-styles);
 
-// TODO Handle with subscriptSizing input of <mat-form-field>
-.hide-subscript-wrapper {
-  .mat-mdc-form-field-subscript-wrapper {
-    display: none;
-  }
-}
-
 .cdk-global-scrollblock {
   overflow-y: hidden;
 }

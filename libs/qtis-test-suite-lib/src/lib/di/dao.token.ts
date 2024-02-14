@@ -6,6 +6,7 @@
  */
 
 import { InjectionToken } from '@angular/core';
-import { QSystem } from '@eustrosoft-front/dao-ts';
+import { Fs, QSystem } from '@eustrosoft-front/dao-ts';
 
 export const DAO_QSYS = new InjectionToken<QSystem>('DAO QSystem Class');
+export const DAO_FS = new InjectionToken<Fs>('DAO Fs Class');

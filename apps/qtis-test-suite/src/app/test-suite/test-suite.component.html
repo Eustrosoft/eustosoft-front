@@ -1,4 +1,4 @@
-<div class="flex g-3">
+<div class="flex flex-wrap g-3">
   <button
     mat-raised-button
     color="primary"
@@ -91,9 +91,6 @@
                   highlighted
                 >
                   CANCELED
-                </mat-chip>
-                <mat-chip *ngSwitchDefault (click)="$event.stopPropagation()">
-                  Not executed
                 </mat-chip>
               </mat-chip-set>
 

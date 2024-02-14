@@ -1,5 +1,5 @@
 import { Observable, Subject } from 'rxjs';
-import { QtisRequestResponse, RequestFactory } from '@eustrosoft-front/dao-ts';
+import { QtisRequestResponse } from '@eustrosoft-front/dao-ts';
 
 export enum TestResult {
   OK = 'OK',
@@ -19,7 +19,6 @@ export interface ApiTestCase<T> {
   title: string;
   description: string;
   abort: () => void;
-  requestFactory: RequestFactory<T>;
   response$: Observable<ResponseObs<T>>;
   start: Subject<void>;
 }

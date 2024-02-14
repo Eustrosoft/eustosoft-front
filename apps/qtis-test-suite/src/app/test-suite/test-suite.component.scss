@@ -1,5 +1,12 @@
 @use 'libs/common-ui/src/lib/styles/utilities';
+@use '@material/snackbar/snackbar-theme' as mdc-snackbar-theme;
 
 :host {
   @extend .flex, .flex-auto, .flex-column, .g-3, .m-3;
+
+  ::ng-deep {
+    .mat-expansion-panel-header-title {
+      flex-grow: 0;
+    }
+  }
 }

@@ -16,9 +16,6 @@ import { PingResponse } from '../core/interfaces/auth/ping-response.interface';
 import { requestFactoryFunction } from '../utils/request-factory.function';
 import { AuthLoginRequest } from '../core/interfaces/auth/auth-login-request.interface';
 import { RequestFactory } from '../core/interfaces/request-factory.interface';
-import { FsViewResponse } from '../core/interfaces/fs/fs-view-response.interface';
-import { FsViewRequest } from '../core/interfaces/fs/fs-view-request.interface';
-import { FsActionsEnum } from '../constants/enums/fs-actions.enum';
 
 export class QSystem {
   private dispatchService: DispatchService;
@@ -66,20 +63,6 @@ export class QSystem {
         {
           s: SubsystemsEnum.PING,
           l: SupportedLanguagesEnum.EN_US,
-        },
-      ],
-      t: 0,
-    });
-  }
-
-  listFs(path: string = '/'): RequestFactory<FsViewResponse> {
-    return requestFactoryFunction<FsViewRequest, FsViewResponse>({
-      r: [
-        {
-          s: SubsystemsEnum.CMS,
-          r: FsActionsEnum.VIEW,
-          l: SupportedLanguagesEnum.EN_US,
-          path,
         },
       ],
       t: 0,

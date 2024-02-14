@@ -25,6 +25,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { QtisTestFormService } from '@eustrosoft-front/qtis-test-suite-lib';
+import {
+  FileListComponent,
+  InputFileComponent,
+} from '@eustrosoft-front/common-ui';
 
 @Component({
   selector: 'eustrosoft-front-test-data-form-dialog',
@@ -44,6 +48,8 @@ import { QtisTestFormService } from '@eustrosoft-front/qtis-test-suite-lib';
     MatButtonModule,
     AsyncPipe,
     TranslateModule,
+    InputFileComponent,
+    FileListComponent,
   ],
 })
 export class TestDataFormDialogComponent {

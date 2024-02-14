@@ -11,4 +11,5 @@ export interface TestDataFormInterface {
   login: FormControl<string>;
   password: FormControl<string>;
   fsPath: FormControl<string>;
+  files: FormControl<File[]>;
 }

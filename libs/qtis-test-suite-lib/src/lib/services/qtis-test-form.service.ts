@@ -13,6 +13,7 @@ export class QtisTestFormService {
       login: this.fb.nonNullable.control('123'),
       password: this.fb.nonNullable.control('123'),
       fsPath: this.fb.nonNullable.control('/'),
+      files: this.fb.nonNullable.control<File[]>([]),
     },
   );
 }

@@ -55,7 +55,6 @@ export class TestSuiteComponent implements OnInit {
   protected readonly TestResult = TestResult;
   @ViewChild(MatAccordion) accordion!: MatAccordion;
 
-  // TODO Сделать форму для ввода тестовых данных
   protected apiTests = signal<TestCasesTuple | undefined>(undefined);
 
   ngOnInit(): void {
@@ -72,7 +71,6 @@ export class TestSuiteComponent implements OnInit {
     }
     for (const test of this.apiTests()!) {
       test.start.next();
-      this.accordion.openAll();
     }
   }
 

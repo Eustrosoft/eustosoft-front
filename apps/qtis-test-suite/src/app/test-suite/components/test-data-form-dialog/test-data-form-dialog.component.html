@@ -27,6 +27,12 @@
         matInput
       />
     </mat-form-field>
+    <eustrosoft-front-input-file
+      [control]="qtisTestFormService.form.controls.files"
+    ></eustrosoft-front-input-file>
+    <eustrosoft-front-file-list
+      [files]="qtisTestFormService.form.controls.files.value"
+    ></eustrosoft-front-file-list>
   </div>
   <div class="flex g-2 px-3 pb-3 pt-0" [align]="'end'" mat-dialog-actions>
     <button mat-flat-button type="button" (click)="reject()">Cancel</button>
