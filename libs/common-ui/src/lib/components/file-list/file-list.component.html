@@ -5,7 +5,11 @@
   ~ See the LICENSE file at the project root for licensing information.
   -->
 
-<cdk-virtual-scroll-viewport itemSize="5" [ngClass]="classesForVirtualViewport">
+<cdk-virtual-scroll-viewport
+  itemSize="48"
+  [ngClass]="classesForVirtualViewport"
+  [style]="stylesForVirtualViewport"
+>
   <div
     *ngFor="let file of files; let i = index"
     [ngClass]="classesForList"

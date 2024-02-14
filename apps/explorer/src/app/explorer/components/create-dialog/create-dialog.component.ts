@@ -11,39 +11,49 @@ import {
   HostListener,
   inject,
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogActions } from '@angular/material/dialog';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogActions,
+  MatDialogRef,
+  MatDialogTitle,
+} from '@angular/material/dialog';
 import { CreateDialogData } from './create-dialog-data.interface';
 import { CreateDialogReturnData } from './create-dialog-return-data.interface';
 import { CreateDialogForm } from './create-dialog-form.interface';
-import { ExplorerDictionaryService } from '../../services/explorer-dictionary.service';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MatButtonModule } from '@angular/material/button';
-import { NgFor, AsyncPipe } from '@angular/common';
+import { AsyncPipe, NgFor } from '@angular/common';
 import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { CachedDictionaryService } from '@eustrosoft-front/dic';
 
 @Component({
-    selector: 'eustrosoft-front-create-fs-object-dialog',
-    templateUrl: './create-dialog.component.html',
-    styleUrls: ['./create-dialog.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [
-        MatDialogTitle,
-        MatFormFieldModule,
-        MatInputModule,
-        ReactiveFormsModule,
-        MatSelectModule,
-        MatOptionModule,
-        NgFor,
-        MatDialogActions,
-        MatButtonModule,
-        AsyncPipe,
-        TranslateModule,
-    ],
+  selector: 'eustrosoft-front-create-fs-object-dialog',
+  templateUrl: './create-dialog.component.html',
+  styleUrls: ['./create-dialog.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatDialogTitle,
+    MatFormFieldModule,
+    MatInputModule,
+    ReactiveFormsModule,
+    MatSelectModule,
+    MatOptionModule,
+    NgFor,
+    MatDialogActions,
+    MatButtonModule,
+    AsyncPipe,
+    TranslateModule,
+  ],
 })
 export class CreateDialogComponent {
   private readonly dialogRef = inject<
@@ -51,11 +61,9 @@ export class CreateDialogComponent {
   >(MatDialogRef<CreateDialogComponent>);
   private readonly translateService = inject(TranslateService);
   private readonly fb = inject(FormBuilder);
-  private readonly explorerDictionaryService = inject(
-    ExplorerDictionaryService,
-  );
+  private readonly cachedDictionaryService = inject(CachedDictionaryService);
   protected readonly securityLevelOptions$ =
-    this.explorerDictionaryService.securityOptions$;
+    this.cachedDictionaryService.securityOptions$;
 
   protected data = inject<CreateDialogData>(MAT_DIALOG_DATA);
   protected form: FormGroup<CreateDialogForm> = this.fb.nonNullable.group({

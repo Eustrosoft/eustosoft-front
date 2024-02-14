@@ -28,7 +28,6 @@ import {
   OriginReplaceString,
 } from '@eustrosoft-front/config';
 import { ExplorerRequestBuilderService } from './explorer-request-builder.service';
-import { ExplorerDictionaryService } from './explorer-dictionary.service';
 import {
   CreateRequest,
   CreateResponse,
@@ -47,6 +46,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ExplorerPathService } from './explorer-path.service';
 import { RenameDialogReturnData } from '../components/rename-dialog/rename-dialog-return-data.interface';
 import { DOCUMENT } from '@angular/common';
+import { CachedDictionaryService } from '@eustrosoft-front/dic';
 
 @Injectable({ providedIn: 'root' })
 export class ExplorerService {
@@ -56,9 +56,7 @@ export class ExplorerService {
     ExplorerRequestBuilderService,
   );
   private readonly dispatchService = inject(DispatchService);
-  private readonly explorerDictionaryService = inject(
-    ExplorerDictionaryService,
-  );
+  private readonly cachedDictionaryService = inject(CachedDictionaryService);
   private readonly snackBar = inject(MatSnackBar);
   private readonly explorerPathService = inject(ExplorerPathService);
   private readonly document = inject(DOCUMENT);
@@ -133,7 +131,7 @@ export class ExplorerService {
       switchMap((contents) =>
         combineLatest([
           of(contents),
-          this.explorerDictionaryService.securityOptions$,
+          this.cachedDictionaryService.securityOptions$,
         ]).pipe(
           switchMap(([contents, securityLevelOptions]) => {
             const cont = contents.map<FileSystemObject>((obj) => {

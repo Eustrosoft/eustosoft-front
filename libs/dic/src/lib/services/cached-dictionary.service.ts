@@ -6,16 +6,14 @@
  */
 
 import { inject, Injectable } from '@angular/core';
-import {
-  DicMapperService,
-  DicService,
-  Dictionaries,
-} from '@eustrosoft-front/dic';
 import { Observable, shareReplay } from 'rxjs';
 import { Option } from '@eustrosoft-front/common-ui';
+import { DicMapperService } from './dic-mapper.service';
+import { DicService } from './dic.service';
+import { Dictionaries } from '../contants/enums/dictionaries.enum';
 
 @Injectable({ providedIn: 'root' })
-export class ExplorerDictionaryService {
+export class CachedDictionaryService {
   private dicService = inject(DicService);
   private dicMapperService = inject(DicMapperService);
 

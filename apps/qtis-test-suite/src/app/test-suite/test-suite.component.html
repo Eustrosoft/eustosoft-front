@@ -108,7 +108,7 @@
             <span>Test execution canceled</span>
           </ng-container>
           <ng-container *ngIf="vm.res?.response as response">
-            <pre>{{ response | json }}</pre>
+            <pre class="overflow-auto">{{ response | json }}</pre>
           </ng-container>
         </mat-expansion-panel>
       </ng-container>

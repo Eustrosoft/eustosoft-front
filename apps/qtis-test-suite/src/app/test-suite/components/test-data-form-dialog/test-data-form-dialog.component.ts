@@ -8,8 +8,10 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   HostListener,
   inject,
+  OnInit,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import {
@@ -29,6 +31,9 @@ import {
   FileListComponent,
   InputFileComponent,
 } from '@eustrosoft-front/common-ui';
+import { CachedDictionaryService } from '@eustrosoft-front/dic';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { tap } from 'rxjs';
 
 @Component({
   selector: 'eustrosoft-front-test-data-form-dialog',
@@ -52,16 +57,31 @@ import {
     FileListComponent,
   ],
 })
-export class TestDataFormDialogComponent {
+export class TestDataFormDialogComponent implements OnInit {
   private readonly dialogRef = inject<
     MatDialogRef<TestDataFormDialogComponent>
   >(MatDialogRef<TestDataFormDialogComponent>);
+  private readonly destroyRef = inject(DestroyRef);
   protected readonly qtisTestFormService = inject(QtisTestFormService);
+  protected readonly cachedDictionaryService = inject(CachedDictionaryService);
 
   @HostListener('keydown.enter', ['$event'])
   onEnterKeydown(e: KeyboardEvent): void {
     e.stopPropagation();
     this.dialogRef.close();
+  }
+
+  ngOnInit(): void {
+    this.qtisTestFormService.form.controls.files.valueChanges
+      .pipe(
+        tap((files) => {
+          this.qtisTestFormService.form.controls.filename.patchValue(
+            files[0].name,
+          );
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
   }
 
   reject(): void {

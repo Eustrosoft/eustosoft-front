@@ -21,18 +21,61 @@
       />
     </mat-form-field>
     <mat-form-field [appearance]="'outline'" [subscriptSizing]="'dynamic'">
-      <mat-label> FS Path </mat-label>
+      <mat-label> FS List Path </mat-label>
       <input
-        [formControl]="qtisTestFormService.form.controls.fsPath"
+        [formControl]="qtisTestFormService.form.controls.fsListPath"
         matInput
       />
     </mat-form-field>
-    <eustrosoft-front-input-file
-      [control]="qtisTestFormService.form.controls.files"
-    ></eustrosoft-front-input-file>
-    <eustrosoft-front-file-list
-      [files]="qtisTestFormService.form.controls.files.value"
-    ></eustrosoft-front-file-list>
+    <mat-form-field [appearance]="'outline'" [subscriptSizing]="'dynamic'">
+      <mat-label> FS Upload Path </mat-label>
+      <input
+        [formControl]="qtisTestFormService.form.controls.fileUploadPath"
+        matInput
+      />
+    </mat-form-field>
+    <mat-form-field [appearance]="'outline'" [subscriptSizing]="'dynamic'">
+      <mat-label> Filename For Upload </mat-label>
+      <input
+        [formControl]="qtisTestFormService.form.controls.filename"
+        matInput
+      />
+    </mat-form-field>
+    <mat-form-field [appearance]="'outline'" [subscriptSizing]="'dynamic'">
+      <mat-label> File Security Level </mat-label>
+      <mat-select
+        [formControl]="qtisTestFormService.form.controls.fileSecurityLevel"
+      >
+        <mat-option></mat-option>
+        <mat-option
+          *ngFor="
+            let option of (cachedDictionaryService.securityOptions$ | async) ||
+              []
+          "
+          [value]="option.value"
+          [disabled]="option.disabled"
+        >
+          {{ option.displayText }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field [appearance]="'outline'" [subscriptSizing]="'dynamic'">
+      <mat-label> File Description </mat-label>
+      <input
+        [formControl]="qtisTestFormService.form.controls.fileDescription"
+        matInput
+      />
+    </mat-form-field>
+    <div class="flex g-3 align-items-center">
+      <eustrosoft-front-input-file
+        [control]="qtisTestFormService.form.controls.files"
+      ></eustrosoft-front-input-file>
+      <eustrosoft-front-file-list
+        [files]="qtisTestFormService.form.controls.files.value"
+        [stylesForVirtualViewport]="{ height: '50px' }"
+        class="flex-auto"
+      ></eustrosoft-front-file-list>
+    </div>
   </div>
   <div class="flex g-2 px-3 pb-3 pt-0" [align]="'end'" mat-dialog-actions>
     <button mat-flat-button type="button" (click)="reject()">Cancel</button>

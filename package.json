@@ -6,8 +6,8 @@
     "start:login": "npx nx run login:serve",
     "start:dispatcher": "npx nx run dispatcher:serve",
     "start:explorer": "npx nx run explorer:serve",
-    "build:all:stage": "npx nx run-many --target=build --configuration=stage --projects=login,dispatcher,explorer,msg --parallel=4",
-    "build:all:production": "npx nx run-many --target=build --configuration=production --projects=login,dispatcher,explorer,msg --parallel=4",
+    "build:all:stage": "npx nx run-many --target=build --configuration=stage --projects=login,dispatcher,explorer,msg,qtis-test-suite --parallel=3",
+    "build:all:production": "npx nx run-many --target=build --configuration=production --projects=login,dispatcher,explorer,msg,qtis-test-suite --parallel=3",
     "nx:graph": "npx nx graph",
     "prepare": "husky install"
   },

@@ -30,7 +30,7 @@
         "production": {
           "baseHref": "./",
           "assets": [
-            "apps/explorer/src/favicon.ico",
+            "apps/qtis-test-suite/src/favicon.ico",
             {
               "glob": "config.json",
               "input": "libs/config/src/lib/configurations/prod",

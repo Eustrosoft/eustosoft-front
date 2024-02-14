@@ -10,6 +10,10 @@ import { FormControl } from '@angular/forms';
 export interface TestDataFormInterface {
   login: FormControl<string>;
   password: FormControl<string>;
-  fsPath: FormControl<string>;
+  fsListPath: FormControl<string>;
+  fileUploadPath: FormControl<string>;
+  filename: FormControl<string>;
+  fileSecurityLevel: FormControl<string | undefined>;
+  fileDescription: FormControl<string>;
   files: FormControl<File[]>;
 }

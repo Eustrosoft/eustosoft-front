@@ -17,7 +17,6 @@ import { catchError, EMPTY, Observable, shareReplay, tap } from 'rxjs';
 import { Option, ProgressBarComponent } from '@eustrosoft-front/common-ui';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { ExplorerDictionaryService } from '../../services/explorer-dictionary.service';
 import { FormArray, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ExplorerUploadItemsService } from '../../services/explorer-upload-items.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -34,6 +33,7 @@ import {
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { UploadItemForm } from '@eustrosoft-front/explorer-lib';
+import { CachedDictionaryService } from '@eustrosoft-front/dic';
 
 @Component({
   selector: 'eustrosoft-front-upload-overlay',
@@ -63,7 +63,7 @@ import { UploadItemForm } from '@eustrosoft-front/explorer-lib';
 export class UploadOverlayComponent {
   private snackBar = inject(MatSnackBar);
   private translateService = inject(TranslateService);
-  private explorerDictionaryService = inject(ExplorerDictionaryService);
+  private cachedDictionaryService = inject(CachedDictionaryService);
   private explorerUploadItemsService = inject(ExplorerUploadItemsService);
 
   @Output() startUpload = new EventEmitter<void>();
@@ -106,7 +106,7 @@ export class UploadOverlayComponent {
       }),
     );
 
-  securityLevelOptions$: Observable<Option[]> = this.explorerDictionaryService
+  securityLevelOptions$: Observable<Option[]> = this.cachedDictionaryService
     .getSecurityLevelOptions()
     .pipe(
       shareReplay(1),

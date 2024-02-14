@@ -26,8 +26,14 @@ import {
   PingResponse,
   RequestFactory,
 } from '@eustrosoft-front/dao-ts';
-import { QtisRequestResponse } from '@eustrosoft-front/core';
+import {
+  isNullOrUndefinedOrEmpty,
+  MimeTypes,
+  QtisRequestResponse,
+} from '@eustrosoft-front/core';
 import { QtisTestFormService } from './qtis-test-form.service';
+import { SecurityLevels } from '@eustrosoft-front/security';
+import { makeFile } from '../functions/make-file.function';
 
 @Injectable({
   providedIn: 'root',
@@ -40,11 +46,11 @@ export class QtisTestSuiteService {
   makeTestList(
     formValue: ReturnType<typeof this.qtisTestFormService.form.getRawValue>,
   ): TestCasesTuple {
-    const byteArray = new Uint8Array(2 * 1024 * 1024); // 2MB
-    // Create a Blob from the byte array
-    const blob = new Blob([byteArray], { type: 'application/octet-stream' });
-    // Create a File from the Blob
-    const file = new File([blob], 'example.txt', { type: 'text/plain' });
+    const mockFile = makeFile(
+      'hardcoded-mock-file',
+      'txt',
+      MimeTypes.ApplicationOctetStream,
+    );
 
     return [
       // TODO Сделать реальные comparator функции
@@ -65,7 +71,7 @@ export class QtisTestSuiteService {
       this.createTestCase<FsViewResponse>(
         'List FS objects',
         'List filesystem objects',
-        this.fs.listFs(formValue.fsPath),
+        this.fs.listFs(formValue.fsListPath),
         () => true,
         new Subject<void>(),
       ),
@@ -73,8 +79,20 @@ export class QtisTestSuiteService {
         'Upload files',
         'Upload files',
         this.fs.uploadFiles(
-          [{ file, filename: '123', securityLevel: 31, description: '5555' }],
-          '/LOCAL/pub/test-2024-02-05',
+          [
+            {
+              file: formValue?.files[0] ?? mockFile,
+              filename: isNullOrUndefinedOrEmpty(formValue.filename)
+                ? formValue.files[0]?.name
+                : formValue.filename,
+              securityLevel:
+                typeof formValue.fileSecurityLevel === 'undefined'
+                  ? +SecurityLevels.PUBLIC
+                  : +formValue.fileSecurityLevel,
+              description: formValue.fileDescription,
+            },
+          ],
+          formValue.fileUploadPath,
         ),
         () => true,
         new Subject<void>(),

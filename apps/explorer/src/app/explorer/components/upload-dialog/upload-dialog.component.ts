@@ -16,7 +16,6 @@ import { FormArray, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { UploadItemState } from '../../constants/enums/uploading-state.enum';
 import { map, Observable, shareReplay, tap } from 'rxjs';
 import { ExplorerUploadItemsService } from '../../services/explorer-upload-items.service';
-import { ExplorerDictionaryService } from '../../services/explorer-dictionary.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ProgressBarComponent } from '@eustrosoft-front/common-ui';
@@ -39,6 +38,7 @@ import {
 import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import { UploadItemForm } from '@eustrosoft-front/explorer-lib';
 import { SecurityLevels } from '@eustrosoft-front/security';
+import { CachedDictionaryService } from '@eustrosoft-front/dic';
 
 @Component({
   selector: 'eustrosoft-front-upload-dialog',
@@ -80,14 +80,12 @@ export class UploadDialogComponent {
   private readonly explorerUploadItemsService = inject(
     ExplorerUploadItemsService,
   );
-  private readonly explorerDictionaryService = inject(
-    ExplorerDictionaryService,
-  );
+  private readonly cachedDictionaryService = inject(CachedDictionaryService);
   private readonly snackBar = inject(MatSnackBar);
   private readonly translateService = inject(TranslateService);
   protected readonly UploadingState = UploadItemState;
   protected readonly securityLevelOptions$ =
-    this.explorerDictionaryService.securityOptions$;
+    this.cachedDictionaryService.securityOptions$;
 
   protected startUploadButtonText =
     'EXPLORER.UPLOAD_DIALOG.START_UPLOAD_BUTTON_TEXT';
