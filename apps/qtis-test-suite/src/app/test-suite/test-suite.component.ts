@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
-  OnInit,
   signal,
   ViewChild,
 } from '@angular/core';
@@ -14,7 +13,6 @@ import { MatInputModule } from '@angular/material/input';
 import { TranslateModule } from '@ngx-translate/core';
 import { MatMenuModule } from '@angular/material/menu';
 import {
-  QtisTestFormService,
   QtisTestSuiteService,
   TestCasesTuple,
   TestResult,
@@ -24,9 +22,9 @@ import {
   BreakpointsService,
   PreloaderComponent,
 } from '@eustrosoft-front/common-ui';
-import { MatDialog } from '@angular/material/dialog';
-import { TestDataFormDialogComponent } from './components/test-data-form-dialog/test-data-form-dialog.component';
-import { take, tap } from 'rxjs';
+import { MatTabsModule } from '@angular/material/tabs';
+import { TestDataFormComponent } from './components/test-data-form/test-data-form.component';
+import { FsTestsComponent } from './components/fs-tests/fs-tests.component';
 
 @Component({
   selector: 'eustrosoft-front-test-suite',
@@ -41,15 +39,16 @@ import { take, tap } from 'rxjs';
     MatMenuModule,
     MatChipsModule,
     PreloaderComponent,
+    MatTabsModule,
+    TestDataFormComponent,
+    FsTestsComponent,
   ],
   templateUrl: './test-suite.component.html',
   styleUrl: './test-suite.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TestSuiteComponent implements OnInit {
+export class TestSuiteComponent {
   private readonly qtisTestSuiteService = inject(QtisTestSuiteService);
-  private readonly qtisTestFormService = inject(QtisTestFormService);
-  private readonly dialog = inject(MatDialog);
   private readonly breakpointsService = inject(BreakpointsService);
   protected readonly isSm = this.breakpointsService.isSm();
   protected readonly TestResult = TestResult;
@@ -57,12 +56,9 @@ export class TestSuiteComponent implements OnInit {
 
   protected apiTests = signal<TestCasesTuple | undefined>(undefined);
 
-  ngOnInit(): void {
-    this.apiTests.set(
-      this.qtisTestSuiteService.makeTestList(
-        this.qtisTestFormService.form.getRawValue(),
-      ),
-    );
+  runFsTests(event: MouseEvent): void {
+    event.stopPropagation();
+    this.qtisTestSuiteService.runFsTests();
   }
 
   runAllTestCasesSimultaneously(): void {
@@ -72,28 +68,5 @@ export class TestSuiteComponent implements OnInit {
     for (const test of this.apiTests()!) {
       test.start.next();
     }
-  }
-
-  openTestDataFormDialog(): void {
-    const dialogRef = this.dialog.open<TestDataFormDialogComponent>(
-      TestDataFormDialogComponent,
-      {
-        minWidth: this.isSm ? '90vw' : '50vw',
-      },
-    );
-
-    dialogRef
-      .afterClosed()
-      .pipe(
-        tap(() => {
-          this.apiTests.set(
-            this.qtisTestSuiteService.makeTestList(
-              this.qtisTestFormService.form.getRawValue(),
-            ),
-          );
-        }),
-        take(1),
-      )
-      .subscribe();
   }
 }

@@ -1,0 +1,103 @@
+<!--
+  ~ Copyright (c) 2023-2024. IdrisovII & EustroSoft.org
+  ~
+  ~ This file is part of eustrosoft-front project.
+  ~ See the LICENSE file at the project root for licensing information.
+  -->
+<mat-checkbox [formControl]="qtisTestFormService.form.controls.showResponses">
+  Show responses
+</mat-checkbox>
+<div class="flex g-3">
+  <mat-form-field
+    [appearance]="'outline'"
+    [subscriptSizing]="'dynamic'"
+    class="flex-auto"
+  >
+    <mat-label> Test User Login </mat-label>
+    <input [formControl]="qtisTestFormService.form.controls.login" matInput />
+  </mat-form-field>
+  <mat-form-field
+    [appearance]="'outline'"
+    [subscriptSizing]="'dynamic'"
+    class="flex-auto"
+  >
+    <mat-label> Test User Password </mat-label>
+    <input
+      [formControl]="qtisTestFormService.form.controls.password"
+      [type]="'password'"
+      matInput
+    />
+  </mat-form-field>
+</div>
+<div class="flex g-3">
+  <mat-form-field
+    [appearance]="'outline'"
+    [subscriptSizing]="'dynamic'"
+    class="flex-auto"
+  >
+    <mat-label> Folder For Tests </mat-label>
+    <input
+      [formControl]="qtisTestFormService.form.controls.folderForTests"
+      matInput
+    />
+  </mat-form-field>
+  <mat-form-field
+    [appearance]="'outline'"
+    [subscriptSizing]="'dynamic'"
+    class="flex-auto"
+  >
+    <mat-label> Folder Description </mat-label>
+    <input
+      [formControl]="qtisTestFormService.form.controls.folderDescription"
+      matInput
+    />
+  </mat-form-field>
+</div>
+<mat-form-field
+  [hintLabel]="SecurityLevels | json"
+  [appearance]="'outline'"
+  [subscriptSizing]="'dynamic'"
+>
+  <mat-label> Folder Security Level </mat-label>
+  <input
+    [formControl]="qtisTestFormService.form.controls.folderSecurityLevel"
+    [type]="'number'"
+    matInput
+  />
+</mat-form-field>
+<div class="flex g-3">
+  <mat-form-field
+    [appearance]="'outline'"
+    [subscriptSizing]="'dynamic'"
+    class="flex-auto"
+  >
+    <mat-label> Filename For Upload </mat-label>
+    <input
+      [formControl]="qtisTestFormService.form.controls.filename"
+      matInput
+    />
+  </mat-form-field>
+  <mat-form-field
+    [appearance]="'outline'"
+    [subscriptSizing]="'dynamic'"
+    class="flex-auto"
+  >
+    <mat-label> FS Upload Path </mat-label>
+    <input
+      [formControl]="qtisTestFormService.form.controls.fileUploadPath"
+      matInput
+    />
+  </mat-form-field>
+</div>
+
+<div class="flex g-3 align-items-center">
+  <eustrosoft-front-input-file
+    [control]="qtisTestFormService.form.controls.files"
+  ></eustrosoft-front-input-file>
+  <eustrosoft-front-file-list
+    [files]="qtisTestFormService.form.controls.files.value"
+    [stylesForVirtualViewport]="{ height: '50px' }"
+    (deleteFile)="deleteFile($event)"
+    class="flex-auto"
+  ></eustrosoft-front-file-list>
+</div>

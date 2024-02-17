@@ -33,7 +33,9 @@ import {
 } from 'rxjs';
 import {
   ExplorerFsObjectTypes,
+  ExplorerService,
   FileSystemObject,
+  MoveCopyDialogData,
 } from '@eustrosoft-front/explorer-lib';
 import {
   MatListModule,
@@ -41,8 +43,6 @@ import {
   MatSelectionList,
 } from '@angular/material/list';
 import { Stack } from '../../classes/Stack';
-import { MoveCopyDialogData } from './move-copy-dialog-data.interface';
-import { ExplorerService } from '../../services/explorer.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { PreloaderComponent } from '@eustrosoft-front/common-ui';

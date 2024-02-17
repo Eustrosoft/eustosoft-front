@@ -3,10 +3,4 @@
 
 :host {
   @extend .flex, .flex-auto, .flex-column, .g-3, .m-3;
-
-  ::ng-deep {
-    .mat-expansion-panel-header-title {
-      flex-grow: 0;
-    }
-  }
 }

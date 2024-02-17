@@ -5,8 +5,8 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-export interface Option {
-  value: unknown;
+export interface Option<T = unknown> {
+  value: T;
   displayText: string;
   disabled: boolean;
 }

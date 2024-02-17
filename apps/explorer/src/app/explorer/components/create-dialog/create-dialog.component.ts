@@ -23,9 +23,11 @@ import {
   MatDialogRef,
   MatDialogTitle,
 } from '@angular/material/dialog';
-import { CreateDialogData } from './create-dialog-data.interface';
-import { CreateDialogReturnData } from './create-dialog-return-data.interface';
-import { CreateDialogForm } from './create-dialog-form.interface';
+import {
+  CreateDialogData,
+  CreateDialogForm,
+  CreateDialogReturnData,
+} from '@eustrosoft-front/explorer-lib';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MatButtonModule } from '@angular/material/button';
 import { AsyncPipe, NgFor } from '@angular/common';

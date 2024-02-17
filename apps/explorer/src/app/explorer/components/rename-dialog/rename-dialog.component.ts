@@ -11,31 +11,38 @@ import {
   HostListener,
   inject,
 } from '@angular/core';
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogActions } from '@angular/material/dialog';
-import { RenameDialogData } from './rename-dialog-data.interface';
-import { RenameDialogForm } from './rename-dialog-form.interface';
-import { RenameDialogReturnData } from './rename-dialog-return-data.interface';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogActions,
+  MatDialogRef,
+  MatDialogTitle,
+} from '@angular/material/dialog';
+import {
+  RenameDialogData,
+  RenameDialogForm,
+  RenameDialogReturnData,
+} from '@eustrosoft-front/explorer-lib';
 import { TranslateModule } from '@ngx-translate/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
-    selector: 'eustrosoft-front-create-fs-object-dialog',
-    templateUrl: './rename-dialog.component.html',
-    styleUrls: ['./rename-dialog.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [
-        MatDialogTitle,
-        MatFormFieldModule,
-        MatInputModule,
-        ReactiveFormsModule,
-        MatDialogActions,
-        MatButtonModule,
-        TranslateModule,
-    ],
+  selector: 'eustrosoft-front-create-fs-object-dialog',
+  templateUrl: './rename-dialog.component.html',
+  styleUrls: ['./rename-dialog.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatDialogTitle,
+    MatFormFieldModule,
+    MatInputModule,
+    ReactiveFormsModule,
+    MatDialogActions,
+    MatButtonModule,
+    TranslateModule,
+  ],
 })
 export class RenameDialogComponent {
   private readonly dialogRef = inject<

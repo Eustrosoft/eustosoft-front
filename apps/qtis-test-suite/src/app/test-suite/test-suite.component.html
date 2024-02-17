@@ -1,11 +1,12 @@
 <div class="flex flex-wrap g-3">
-  <button
-    mat-raised-button
-    color="primary"
-    type="button"
-    (click)="openTestDataFormDialog()"
-  >
+  <button mat-raised-button color="primary" type="button">
     <mat-icon>data_object</mat-icon> Fill In Test Data
+  </button>
+  <button mat-stroked-button type="button">
+    <mat-icon>play_arrow</mat-icon> Run All Tests
+  </button>
+  <button mat-stroked-button type="button" (click)="runFsTests($event)">
+    <mat-icon>play_arrow</mat-icon> Run FS Tests
   </button>
   <ng-container *ngIf="apiTests()">
     <button
@@ -34,6 +35,28 @@
     </button>
   </ng-container>
 </div>
+<mat-tab-group dynamicHeight>
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon class="me-2">data_object</mat-icon>
+      Data For Tests
+    </ng-template>
+    <eustrosoft-front-test-data-form></eustrosoft-front-test-data-form>
+  </mat-tab>
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon class="me-2">folder</mat-icon>
+      FS
+    </ng-template>
+    <eustrosoft-front-fs-tests></eustrosoft-front-fs-tests>
+  </mat-tab>
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon class="me-2">send</mat-icon>
+      MSG
+    </ng-template>
+  </mat-tab>
+</mat-tab-group>
 <ng-container *ngIf="apiTests()">
   <mat-accordion [multi]="true">
     <ng-container *ngFor="let test of apiTests()!; let index = index">

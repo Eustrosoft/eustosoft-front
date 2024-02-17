@@ -11,17 +11,15 @@ export class QtisTestFormService {
 
   form: FormGroup<TestDataFormInterface> = this.fb.group<TestDataFormInterface>(
     {
-      login: this.fb.nonNullable.control('123'),
-      password: this.fb.nonNullable.control('123'),
-      fsListPath: this.fb.nonNullable.control('/'),
+      login: this.fb.nonNullable.control(''),
+      password: this.fb.nonNullable.control(''),
+      folderForTests: this.fb.nonNullable.control('/LOCAL/pub'),
       fileUploadPath: this.fb.nonNullable.control('/LOCAL/pub/test-2024-02-05'),
       filename: this.fb.nonNullable.control('FilenameForUpload.txt'),
-      fileSecurityLevel: this.fb.nonNullable.control<string | undefined>({
-        value: SecurityLevels.PUBLIC,
-        disabled: false,
-      }),
-      fileDescription: this.fb.nonNullable.control('Test description'),
+      folderSecurityLevel: this.fb.nonNullable.control(+SecurityLevels.PUBLIC),
+      folderDescription: this.fb.nonNullable.control('Test description'),
       files: this.fb.nonNullable.control<File[]>([]),
+      showResponses: this.fb.nonNullable.control(true),
     },
   );
 }

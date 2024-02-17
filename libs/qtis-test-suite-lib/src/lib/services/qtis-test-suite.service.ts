@@ -1,216 +1,261 @@
 import { inject, Injectable } from '@angular/core';
-import { DAO_FS, DAO_QSYS } from '../di/dao.token';
+import { QtisTestFormService } from './qtis-test-form.service';
 import {
   catchError,
   concatMap,
-  from,
+  finalize,
+  iif,
   map,
+  Observable,
   of,
-  shareReplay,
   startWith,
   Subject,
   switchMap,
+  throwError,
 } from 'rxjs';
-import { TestCasesTuple } from '../interfaces/test-cases-tuple.type';
+import { LoginService } from '@eustrosoft-front/security';
+import { HttpErrorResponse } from '@angular/common/http';
+import { TestCaseResult } from '../interfaces/test-case-result.interface';
+import { TestResult } from '../interfaces/test-case.interface';
 import {
-  ApiTestCase,
-  ResponseObs,
-  TestResult,
-} from '../interfaces/test-case.interface';
-import {
-  AuthLoginLogoutResponse,
-  AxiosResponse,
-  CanceledError,
-  FsUploadHexResponse,
-  FsViewResponse,
-  PingResponse,
-  RequestFactory,
-} from '@eustrosoft-front/dao-ts';
-import {
-  isNullOrUndefinedOrEmpty,
-  MimeTypes,
-  QtisRequestResponse,
-} from '@eustrosoft-front/core';
-import { QtisTestFormService } from './qtis-test-form.service';
-import { SecurityLevels } from '@eustrosoft-front/security';
-import { makeFile } from '../functions/make-file.function';
+  ExplorerFsObjectTypes,
+  ExplorerService,
+} from '@eustrosoft-front/explorer-lib';
+import { isArrayNotEmpty } from '../functions/is-array-not-empty.function';
+import { QtisRequestResponse } from '@eustrosoft-front/core';
+import { LoginLogoutResponse } from '@eustrosoft-front/login-lib';
 
 @Injectable({
   providedIn: 'root',
 })
 export class QtisTestSuiteService {
-  private readonly qSys = inject(DAO_QSYS);
-  private readonly fs = inject(DAO_FS);
   private readonly qtisTestFormService = inject(QtisTestFormService);
+  private readonly explorerService = inject(ExplorerService);
+  private readonly loginService = inject(LoginService);
+  private readonly runFsTestsSubject = new Subject<void>();
 
-  makeTestList(
-    formValue: ReturnType<typeof this.qtisTestFormService.form.getRawValue>,
-  ): TestCasesTuple {
-    const mockFile = makeFile(
-      'hardcoded-mock-file',
-      'txt',
-      MimeTypes.ApplicationOctetStream,
-    );
-
-    return [
-      // TODO Сделать реальные comparator функции
-      this.createTestCase<AuthLoginLogoutResponse>(
-        'Login',
-        'Login request',
-        this.qSys.login(formValue.login, formValue.password),
-        () => false,
-        new Subject<void>(),
-      ),
-      this.createTestCase<PingResponse>(
-        'Ping',
-        'Ping request',
-        this.qSys.ping(),
-        () => true,
-        new Subject<void>(),
-      ),
-      this.createTestCase<FsViewResponse>(
-        'List FS objects',
-        'List filesystem objects',
-        this.fs.listFs(formValue.fsListPath),
-        () => true,
-        new Subject<void>(),
-      ),
-      this.createUploadFilesTestCase(
-        'Upload files',
-        'Upload files',
-        this.fs.uploadFiles(
-          [
-            {
-              file: formValue?.files[0] ?? mockFile,
-              filename: isNullOrUndefinedOrEmpty(formValue.filename)
-                ? formValue.files[0]?.name
-                : formValue.filename,
-              securityLevel:
-                typeof formValue.fileSecurityLevel === 'undefined'
-                  ? +SecurityLevels.PUBLIC
-                  : +formValue.fileSecurityLevel,
-              description: formValue.fileDescription,
-            },
-          ],
-          formValue.fileUploadPath,
-        ),
-        () => true,
-        new Subject<void>(),
-      ),
-    ];
+  runFsTests(): void {
+    this.runFsTestsSubject.next();
   }
 
-  private createTestCase<T>(
-    title: string,
-    description: string,
-    requestFactory: RequestFactory<T>,
-    comparator: (response: AxiosResponse<QtisRequestResponse<T>>) => boolean,
-    start: Subject<void>,
-  ): ApiTestCase<T> {
-    const abort = requestFactory.cancelRequest;
-
-    const baseResponse: ResponseObs<T> = {
-      isLoading: false,
-      isError: false,
-      isCanceled: false,
-      response: undefined,
-      testResult: undefined,
-    };
-
-    const response$ = start.asObservable().pipe(
-      switchMap(() =>
-        from(requestFactory.makeRequest()).pipe(
-          map((res) => {
-            const isSuccess = comparator(res);
-            return {
-              ...baseResponse,
-              response: res.data,
-              testResult: isSuccess ? TestResult.OK : TestResult.FAIL,
-            };
-          }),
-          startWith({
-            ...baseResponse,
-            isLoading: true,
-          }),
-          catchError((err) => {
-            if (err instanceof CanceledError) {
-              return of({
-                ...baseResponse,
-                isCanceled: true,
-                testResult: TestResult.CANCELED,
-              });
-            }
-            return of({
-              ...baseResponse,
-              isError: true,
-            });
-          }),
-        ),
-      ),
-      shareReplay(1),
-    );
-
-    return { title, description, abort, response$, start };
+  runFsTests$(): Observable<void> {
+    return this.runFsTestsSubject.asObservable();
   }
 
-  private createUploadFilesTestCase(
-    title: string,
-    description: string,
-    factories: Promise<RequestFactory<FsUploadHexResponse>[]>,
-    comparator: (
-      response: AxiosResponse<QtisRequestResponse<FsUploadHexResponse>>,
-    ) => boolean,
-    start: Subject<void>,
-  ): ApiTestCase<FsUploadHexResponse> {
-    const abort = async () => {
-      const fts = await factories;
-      fts.forEach((ft) => ft.cancelRequest());
-    };
-
-    const baseResponse: ResponseObs<FsUploadHexResponse> = {
-      isLoading: false,
-      isError: false,
-      isCanceled: false,
-      response: undefined,
-      testResult: undefined,
-    };
-
-    const response$ = start.asObservable().pipe(
+  executeFsTests(): Observable<{
+    isLoading: boolean;
+    isError: boolean;
+    results: TestCaseResult[] | undefined;
+  }> {
+    // login -> create folder -> check if folder created with correct security level and description
+    // -> create folder inside created folder -> upload file to nested folder
+    // -> rename file -> copy to parent folder -> delete from child folder
+    const testData = this.qtisTestFormService.form.getRawValue();
+    return of(true).pipe(
       switchMap(() =>
-        from(factories).pipe(
-          concatMap((factories) => from(factories)),
-          concatMap((factory) =>
-            from(factory.makeRequest()).pipe(
-              map((res) => {
-                const isSuccess = comparator(res);
-                return {
-                  ...baseResponse,
-                  response: res.data,
-                  testResult: isSuccess ? TestResult.OK : TestResult.FAIL,
-                };
-              }),
-              startWith({
-                ...baseResponse,
-                isLoading: true,
-              }),
-              catchError((err) => {
-                if (err instanceof CanceledError) {
-                  return of({
-                    ...baseResponse,
-                    isCanceled: true,
-                    testResult: TestResult.CANCELED,
-                  });
-                }
-                return of({
-                  ...baseResponse,
-                  isError: true,
-                });
-              }),
+        this.loginService.login(testData.login, testData.password).pipe(
+          map<QtisRequestResponse<LoginLogoutResponse>, TestCaseResult[]>(
+            (response) => [
+              {
+                title: 'Login',
+                description:
+                  'Login with Test User Login and Test User Password',
+                response,
+                result: TestResult.OK,
+              },
+            ],
+          ),
+          catchError((err: HttpErrorResponse) =>
+            throwError(() => [
+              {
+                title: 'Login',
+                description: 'Login',
+                responseStatus: `${err.status} ${err.statusText}`,
+                response: err.error ?? '',
+                errorText: 'Cant execute next tests without login',
+                result: TestResult.FAIL,
+              },
+            ]),
+          ),
+        ),
+      ),
+      concatMap((testResults) => {
+        const folderName = `test-folder-${Date.now()}`;
+        return this.explorerService
+          .create(
+            testData.folderForTests,
+            folderName,
+            ExplorerFsObjectTypes.DIRECTORY,
+            testData.folderDescription,
+            testData.folderSecurityLevel.toString(),
+          )
+          .pipe(
+            concatMap(() =>
+              this.explorerService.getContents(testData.folderForTests).pipe(
+                concatMap((response) => {
+                  const createdFolder = response?.content?.find(
+                    (item) => item.fileName === folderName,
+                  );
+                  let result: TestCaseResult[] = [];
+                  if (createdFolder === undefined) {
+                    return throwError(() => [
+                      ...testResults,
+                      {
+                        title: `Create folder in ${testData.folderForTests}`,
+                        description: 'Check if directory was created',
+                        response: response,
+                        errorText:
+                          'Cant execute next tests without created directory',
+                        result: TestResult.FAIL,
+                      },
+                    ]);
+                  }
+                  result = [
+                    ...result,
+                    {
+                      title: `Create folder in ${testData.folderForTests}`,
+                      description: 'Check if directory was created',
+                      response: response.content,
+                      result: TestResult.OK,
+                    },
+                  ];
+                  result = [
+                    ...result,
+                    {
+                      title: 'Check description',
+                      description: `Check if description of ${testData.folderForTests}/${folderName} equals ${testData.folderDescription}`,
+                      response: response.content,
+                      result:
+                        createdFolder.description === testData.folderDescription
+                          ? TestResult.OK
+                          : TestResult.FAIL,
+                    },
+                  ];
+                  result = [
+                    ...result,
+                    {
+                      title: 'Check security level',
+                      description: `Check if securityLevel of ${testData.folderForTests}/${folderName} equals ${testData.folderSecurityLevel}`,
+                      response: response.content,
+                      result:
+                        Number(createdFolder.securityLevel.value) ===
+                        testData.folderSecurityLevel
+                          ? TestResult.OK
+                          : TestResult.FAIL,
+                    },
+                  ];
+                  return of([...testResults, ...result]);
+                }),
+              ),
+            ),
+          );
+      }),
+      concatMap((testResults) =>
+        this.explorerService.getContents(testData.folderForTests).pipe(
+          switchMap((list) =>
+            iif(
+              () => isArrayNotEmpty(list.content),
+              of([
+                ...testResults,
+                {
+                  title: 'List Directory Contents',
+                  description: '',
+                  response: list.content,
+                  result: TestResult.OK,
+                },
+              ]),
+              of([
+                ...testResults,
+                {
+                  title: 'Login',
+                  description: 'Login',
+                  response: list.content,
+                  result: TestResult.FAIL,
+                },
+              ]),
             ),
           ),
         ),
       ),
+      map((results) => ({
+        isLoading: false,
+        isError: false,
+        results,
+      })),
+      startWith({
+        isLoading: true,
+        isError: false,
+        results: undefined,
+      }),
+      catchError((results: TestCaseResult[]) =>
+        of({
+          isLoading: false,
+          isError: true,
+          results,
+        }),
+      ),
+      // takeUntil(this.fatalError$),
+      finalize(() => {
+        console.warn('finalize');
+      }),
+      // repeat(),
     );
-    return { title, description, abort, response$, start };
   }
+
+  // makeTestList(
+  //   formValue: ReturnType<typeof this.qtisTestFormService.form.getRawValue>,
+  // ): TestCasesTuple;
+  //
+  // private createTestCase<T>(
+  //   title: string,
+  //   description: string,
+  //   requestFactory: RequestFactory<T>,
+  //   comparator: (response: QtisRequestResponse<T>) => boolean,
+  //   start: Subject<void>,
+  // ): ApiTestCase<T> {
+  //   const abort = requestFactory.cancelRequest;
+  //
+  //   const baseResponse: ResponseObs<T> = {
+  //     isLoading: false,
+  //     isError: false,
+  //     isCanceled: false,
+  //     response: undefined,
+  //     testResult: undefined,
+  //   };
+  //
+  //   const response$ = start.asObservable().pipe(
+  //     switchMap(() =>
+  //       from(requestFactory.makeRequest()).pipe(
+  //         map((res) => {
+  //           const isSuccess = comparator(res);
+  //           return {
+  //             ...baseResponse,
+  //             response: res.data,
+  //             testResult: isSuccess ? TestResult.OK : TestResult.FAIL,
+  //           };
+  //         }),
+  //         startWith({
+  //           ...baseResponse,
+  //           isLoading: true,
+  //         }),
+  //         catchError((err) => {
+  //           if (err instanceof CanceledError) {
+  //             return of({
+  //               ...baseResponse,
+  //               isCanceled: true,
+  //               testResult: TestResult.CANCELED,
+  //             });
+  //           }
+  //           return of({
+  //             ...baseResponse,
+  //             isError: true,
+  //           });
+  //         }),
+  //       ),
+  //     ),
+  //     shareReplay(1),
+  //   );
+  //
+  //   return { title, description, abort, response$, start };
+  // }
 }

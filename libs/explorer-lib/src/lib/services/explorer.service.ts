@@ -6,7 +6,7 @@
  */
 
 import { inject, Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse } from '@angular/common/http';
 import { DispatchService, QtisRequestResponse } from '@eustrosoft-front/core';
 import {
   catchError,
@@ -26,25 +26,26 @@ import {
 import { ExplorerRequestBuilderService } from './explorer-request-builder.service';
 import {
   CreateRequest,
-  CreateResponse,
-  ExplorerDownloadParams,
-  ExplorerFsObjectTypes,
-  ExplorerRequestActions,
-  FileSystemObject,
   MoveRequest,
-  MoveResponse,
   ViewRequest,
+} from '../interfaces/explorer-request.interface';
+import {
+  CreateResponse,
+  MoveResponse,
   ViewResponse,
-} from '@eustrosoft-front/explorer-lib';
+} from '../interfaces/explorer-response.interface';
+import { ExplorerDownloadParams } from '../constants/enums/explorer-download-params.enum';
+import { ExplorerFsObjectTypes } from '../constants/enums/explorer-fs-object-types.enum';
+import { ExplorerRequestActions } from '../constants/enums/explorer-actions.enum';
+import { FileSystemObject } from '../interfaces/file-system-object.interface';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ExplorerPathService } from './explorer-path.service';
-import { RenameDialogReturnData } from '../components/rename-dialog/rename-dialog-return-data.interface';
+import { RenameDialogReturnData } from '../interfaces/rename-dialog/rename-dialog-return-data.interface';
 import { DOCUMENT } from '@angular/common';
 import { CachedDictionaryService } from '@eustrosoft-front/dic';
 
 @Injectable({ providedIn: 'root' })
 export class ExplorerService {
-  private readonly http = inject(HttpClient);
   private readonly config = inject(APP_CONFIG);
   private readonly explorerRequestBuilderService = inject(
     ExplorerRequestBuilderService,

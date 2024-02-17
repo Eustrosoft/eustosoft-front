@@ -42,43 +42,43 @@ import {
 import { DispatchService, QtisRequestResponse } from '@eustrosoft-front/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ExplorerRequestBuilderService } from './services/explorer-request-builder.service';
-import { ExplorerService } from './services/explorer.service';
-import { MatDialog } from '@angular/material/dialog';
-import { CreateDialogComponent } from './components/create-dialog/create-dialog.component';
-import { CreateDialogData } from './components/create-dialog/create-dialog-data.interface';
-import { ExplorerPathService } from './services/explorer-path.service';
-import { SelectionChange } from '@angular/cdk/collections';
-import { MoveCopyDialogComponent } from './components/move-copy-dialog/move-copy-dialog.component';
-import { MoveCopyDialogData } from './components/move-copy-dialog/move-copy-dialog-data.interface';
-import { HttpErrorResponse } from '@angular/common/http';
-import { ExplorerUploadService } from './services/explorer-upload.service';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { ExplorerUploadItemsService } from './services/explorer-upload-items.service';
-import { UploadOverlayComponent } from './components/upload-overlay/upload-overlay.component';
-import { ExplorerUploadItemFormFactoryService } from './services/explorer-upload-item-form-factory.service';
-import { UploadItemState } from './constants/enums/uploading-state.enum';
-import { UploadDialogComponent } from './components/upload-dialog/upload-dialog.component';
 import {
+  CreateDialogData,
+  CreateDialogReturnData,
   DeleteRequest,
   DeleteResponse,
   ExplorerDownloadParams,
   ExplorerFsObjectTypes,
+  ExplorerPathService,
   ExplorerRequestActions,
+  ExplorerRequestBuilderService,
+  ExplorerService,
+  ExplorerUploadItemFormFactoryService,
+  ExplorerUploadItemsService,
+  ExplorerUploadService,
   FileSystemObject,
+  FilesystemTableService,
+  MoveCopyDialogData,
   MoveCopyRequest,
   MoveCopyResponse,
+  RenameDialogData,
+  RenameDialogReturnData,
+  ShareDialogData,
   UploadItemForm,
+  UploadItemState,
 } from '@eustrosoft-front/explorer-lib';
+import { MatDialog } from '@angular/material/dialog';
+import { CreateDialogComponent } from './components/create-dialog/create-dialog.component';
+import { SelectionChange } from '@angular/cdk/collections';
+import { MoveCopyDialogComponent } from './components/move-copy-dialog/move-copy-dialog.component';
+import { HttpErrorResponse } from '@angular/common/http';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { UploadOverlayComponent } from './components/upload-overlay/upload-overlay.component';
+import { UploadDialogComponent } from './components/upload-dialog/upload-dialog.component';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { AsyncPipe, DOCUMENT, NgIf } from '@angular/common';
 import { ShareDialogComponent } from './components/share-dialog/share-dialog.component';
-import { ShareDialogData } from './components/share-dialog/share-dialog-data.interface';
 import { RenameDialogComponent } from './components/rename-dialog/rename-dialog.component';
-import { RenameDialogData } from './components/rename-dialog/rename-dialog-data.interface';
-import { RenameDialogReturnData } from './components/rename-dialog/rename-dialog-return-data.interface';
-import { FilesystemTableService } from './services/filesystem-table.service';
-import { CreateDialogReturnData } from './components/create-dialog/create-dialog-return-data.interface';
 import { FilesystemTableComponent } from './components/filesystem-table/filesystem-table.component';
 import { BreadcrumbsComponent } from './components/breadcrumbs/breadcrumbs.component';
 import { MatIconModule } from '@angular/material/icon';

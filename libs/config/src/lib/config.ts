@@ -7,7 +7,7 @@
 
 import { Provider } from '@angular/core';
 import { APP_BASE_HREF, PlatformLocation } from '@angular/common';
-import { APP_CONFIG, APP_CONFIG_SYNC } from './di/config.token';
+import { APP_CONFIG } from './di/config.token';
 import { ConfigService } from './services/config.service';
 
 export function provideConfigLib(): Provider[] {
@@ -20,12 +20,6 @@ export function provideConfigLib(): Provider[] {
     {
       provide: APP_CONFIG,
       useFactory: (configService: ConfigService) => configService.getConfig(),
-      deps: [ConfigService],
-    },
-    {
-      provide: APP_CONFIG_SYNC,
-      useFactory: (configService: ConfigService) =>
-        configService.getConfigSync(),
       deps: [ConfigService],
     },
   ];

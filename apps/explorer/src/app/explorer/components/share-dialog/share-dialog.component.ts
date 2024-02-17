@@ -19,7 +19,7 @@ import {
   MatDialogRef,
   MatDialogTitle,
 } from '@angular/material/dialog';
-import { ShareDialogData } from './share-dialog-data.interface';
+import { ShareDialogData } from '@eustrosoft-front/explorer-lib';
 import { TranslateModule } from '@ngx-translate/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';

@@ -12,13 +12,16 @@ import {
   inject,
   Output,
 } from '@angular/core';
-import { UploadItemState } from '../../constants/enums/uploading-state.enum';
+import {
+  ExplorerUploadItemsService,
+  UploadItemForm,
+  UploadItemState,
+} from '@eustrosoft-front/explorer-lib';
 import { catchError, EMPTY, Observable, shareReplay, tap } from 'rxjs';
 import { Option, ProgressBarComponent } from '@eustrosoft-front/common-ui';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { FormArray, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { ExplorerUploadItemsService } from '../../services/explorer-upload-items.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatInputModule } from '@angular/material/input';
 import { MatOptionModule } from '@angular/material/core';
@@ -32,7 +35,6 @@ import {
 } from '@angular/cdk/scrolling';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { UploadItemForm } from '@eustrosoft-front/explorer-lib';
 import { CachedDictionaryService } from '@eustrosoft-front/dic';
 
 @Component({

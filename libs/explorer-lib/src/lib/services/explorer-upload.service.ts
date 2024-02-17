@@ -18,16 +18,13 @@ import {
   toArray,
 } from 'rxjs';
 import { ExplorerRequestBuilderService } from './explorer-request-builder.service';
-import { ExplorerService } from './explorer.service';
 import { UploadItemState } from '../constants/enums/uploading-state.enum';
 import { ExplorerUploadItemsService } from './explorer-upload-items.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import {
-  FileReaderService,
-  UploadHexRequest,
-  UploadItemForm,
-  UploadResponse,
-} from '@eustrosoft-front/explorer-lib';
+import { FileReaderService } from './file-reader.service';
+import { UploadHexRequest } from '../interfaces/explorer-request.interface';
+import { UploadItemForm } from '../interfaces/upload-item-form.interface';
+import { UploadResponse } from '../interfaces/explorer-response.interface';
 import { DispatchService } from '@eustrosoft-front/core';
 
 @Injectable({ providedIn: 'root' })
@@ -36,7 +33,6 @@ export class ExplorerUploadService {
   private readonly explorerRequestBuilderService = inject(
     ExplorerRequestBuilderService,
   );
-  private readonly explorerService = inject(ExplorerService);
   private readonly dispatchService = inject(DispatchService);
   private readonly explorerUploadItemsService = inject(
     ExplorerUploadItemsService,

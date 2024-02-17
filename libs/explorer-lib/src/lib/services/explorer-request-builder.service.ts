@@ -17,14 +17,14 @@ import {
   CreateRequest,
   DeleteRequest,
   DownloadTicketRequest,
-  ExplorerRequestActions,
-  FileSystemObject,
   MoveCopyRequest,
   MoveRequest,
   UploadHexRequest,
   UploadRequest,
   ViewRequest,
-} from '@eustrosoft-front/explorer-lib';
+} from '../interfaces/explorer-request.interface';
+import { ExplorerRequestActions } from '../constants/enums/explorer-actions.enum';
+import { FileSystemObject } from '../interfaces/file-system-object.interface';
 
 @Injectable({ providedIn: 'root' })
 export class ExplorerRequestBuilderService {

@@ -13,9 +13,12 @@ import {
   Output,
 } from '@angular/core';
 import { FormArray, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { UploadItemState } from '../../constants/enums/uploading-state.enum';
+import {
+  ExplorerUploadItemsService,
+  UploadItemForm,
+  UploadItemState,
+} from '@eustrosoft-front/explorer-lib';
 import { map, Observable, shareReplay, tap } from 'rxjs';
-import { ExplorerUploadItemsService } from '../../services/explorer-upload-items.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ProgressBarComponent } from '@eustrosoft-front/common-ui';
@@ -36,7 +39,6 @@ import {
   MatDialogTitle,
 } from '@angular/material/dialog';
 import { AsyncPipe, NgFor, NgIf } from '@angular/common';
-import { UploadItemForm } from '@eustrosoft-front/explorer-lib';
 import { SecurityLevels } from '@eustrosoft-front/security';
 import { CachedDictionaryService } from '@eustrosoft-front/dic';
 

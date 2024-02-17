@@ -21,8 +21,8 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import {
   ExplorerFsObjectTypes,
   FileSystemObject,
+  FilesystemTableService,
 } from '@eustrosoft-front/explorer-lib';
-import { FilesystemTableService } from '../../services/filesystem-table.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';

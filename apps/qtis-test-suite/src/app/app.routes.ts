@@ -6,25 +6,13 @@
  */
 
 import { Route } from '@angular/router';
-import { authenticationGuard } from '@eustrosoft-front/security';
-import { LoginPageComponent } from './login-page/login-page.component';
 import { TestSuiteComponent } from './test-suite/test-suite.component';
 
 export const appRoutes: Route[] = [
   {
-    path: 'login',
-    component: LoginPageComponent,
-  },
-  {
     path: '',
-    canActivate: [authenticationGuard],
-    children: [
-      {
-        path: '',
-        pathMatch: 'full',
-        title: 'TIS | Test Suite',
-        component: TestSuiteComponent,
-      },
-    ],
+    pathMatch: 'full',
+    title: 'TIS | Test Suite',
+    component: TestSuiteComponent,
   },
 ];

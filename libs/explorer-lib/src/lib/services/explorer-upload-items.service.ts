@@ -7,7 +7,7 @@
 
 import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { UploadItemForm } from '@eustrosoft-front/explorer-lib';
+import { UploadItemForm } from '../interfaces/upload-item-form.interface';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 
 @Injectable({ providedIn: 'root' })
