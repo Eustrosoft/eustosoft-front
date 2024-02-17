@@ -6,11 +6,7 @@
  */
 
 import { inject, Injectable } from '@angular/core';
-import {
-  HttpClient,
-  HttpErrorResponse,
-  HttpHeaders,
-} from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { DispatchService, QtisRequestResponse } from '@eustrosoft-front/core';
 import {
   catchError,
@@ -37,8 +33,6 @@ import {
   FileSystemObject,
   MoveRequest,
   MoveResponse,
-  UploadHexRequest,
-  UploadResponse,
   ViewRequest,
   ViewResponse,
 } from '@eustrosoft-front/explorer-lib';
@@ -155,23 +149,6 @@ export class ExplorerService {
             });
             return of({ isLoading: false, isError: false, content: cont });
           }),
-        ),
-      ),
-    );
-  }
-
-  uploadHexChunks(
-    body: QtisRequestResponse<UploadHexRequest>,
-    headers: { [p: string]: string | string[] },
-  ): Observable<QtisRequestResponse<UploadResponse>> {
-    return this.config.pipe(
-      switchMap((config) =>
-        this.http.post<QtisRequestResponse<UploadResponse>>(
-          config.apiUrl,
-          body,
-          {
-            headers: new HttpHeaders(headers),
-          },
         ),
       ),
     );

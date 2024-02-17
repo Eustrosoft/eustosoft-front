@@ -24,8 +24,11 @@ import { ExplorerUploadItemsService } from './explorer-upload-items.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import {
   FileReaderService,
+  UploadHexRequest,
   UploadItemForm,
+  UploadResponse,
 } from '@eustrosoft-front/explorer-lib';
+import { DispatchService } from '@eustrosoft-front/core';
 
 @Injectable({ providedIn: 'root' })
 export class ExplorerUploadService {
@@ -34,6 +37,7 @@ export class ExplorerUploadService {
     ExplorerRequestBuilderService,
   );
   private readonly explorerService = inject(ExplorerService);
+  private readonly dispatchService = inject(DispatchService);
   private readonly explorerUploadItemsService = inject(
     ExplorerUploadItemsService,
   );
@@ -71,7 +75,10 @@ export class ExplorerUploadService {
                     of(item.file),
                     of(item.chunks),
                     of(currentChunk),
-                    this.explorerService.uploadHexChunks(request, {}),
+                    this.dispatchService.dispatch<
+                      UploadHexRequest,
+                      UploadResponse
+                    >(request),
                   ]);
                 }),
                 tap(([items, file, chunks, currentChunk]) => {
