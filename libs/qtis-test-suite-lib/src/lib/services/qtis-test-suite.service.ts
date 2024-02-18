@@ -5,21 +5,26 @@ import {
   concatMap,
   finalize,
   iif,
+  interval,
   map,
   Observable,
   of,
   startWith,
   Subject,
   switchMap,
+  takeUntil,
   throwError,
 } from 'rxjs';
-import { LoginService } from '@eustrosoft-front/security';
+import { LoginService, SecurityLevels } from '@eustrosoft-front/security';
 import { HttpErrorResponse } from '@angular/common/http';
 import { TestCaseResult } from '../interfaces/test-case-result.interface';
 import { TestResult } from '../interfaces/test-case.interface';
 import {
   ExplorerFsObjectTypes,
   ExplorerService,
+  ExplorerUploadItemFormFactoryService,
+  ExplorerUploadItemsService,
+  ExplorerUploadService,
 } from '@eustrosoft-front/explorer-lib';
 import { isArrayNotEmpty } from '../functions/is-array-not-empty.function';
 import { QtisRequestResponse } from '@eustrosoft-front/core';
@@ -31,8 +36,48 @@ import { LoginLogoutResponse } from '@eustrosoft-front/login-lib';
 export class QtisTestSuiteService {
   private readonly qtisTestFormService = inject(QtisTestFormService);
   private readonly explorerService = inject(ExplorerService);
+  private readonly explorerUploadService = inject(ExplorerUploadService);
+  private readonly explorerUploadItemsService = inject(
+    ExplorerUploadItemsService,
+  );
+  private readonly explorerUploadItemFormFactoryService = inject(
+    ExplorerUploadItemFormFactoryService,
+  );
   private readonly loginService = inject(LoginService);
   private readonly runFsTestsSubject = new Subject<void>();
+  private readonly teardownUploadSubject = new Subject<void>();
+  private readonly phrases = [
+    'Remembering USSR',
+    'Remembering Great Depression',
+    'Preventing Global Warming',
+    'Mastering the Art of Procrastination',
+    'Perfecting the Skill of Overthinking',
+    'Becoming a Professional Couch Potato',
+    'Embarking on the Quest for the Perfect Selfie',
+    'Exploring the Science of Snackology',
+    'Conquering the World',
+    'Pursuing Excellence in the Fine Art of Napping',
+    'Becoming a Connoisseur of Internet Memes',
+    'Juggling Responsibilities Like a Circus Performer',
+    'Meditation: Finding Inner Peace or Just Napping Sitting Up?',
+    'Solving First World Problems, One Complaint at a Time',
+    'The Zen of Procrastination: Why Do Today What You Can Do Tomorrow?',
+    'From Couch Potato to Couch Connoisseur: A Journey of Snacks and Streaming',
+    'The Fine Art of Avoiding Responsibilities: A Beginners Guide',
+    'Embracing the Chaos: Living in a World of Endless Notifications',
+    'Perfecting the Fine Art of Excuse-Making',
+    'Living Life on the Edge of the Bed: The Chronicles of Lazy Adventure',
+  ];
+
+  getPhraseObservable(): Observable<string> {
+    return interval(2000).pipe(
+      startWith(0),
+      map(() => {
+        const randomIndex = Math.floor(Math.random() * this.phrases.length);
+        return this.phrases[randomIndex];
+      }),
+    );
+  }
 
   runFsTests(): void {
     this.runFsTestsSubject.next();
@@ -40,6 +85,10 @@ export class QtisTestSuiteService {
 
   runFsTests$(): Observable<void> {
     return this.runFsTestsSubject.asObservable();
+  }
+
+  teardownUpload(): void {
+    this.teardownUploadSubject.next();
   }
 
   executeFsTests(): Observable<{
@@ -148,6 +197,112 @@ export class QtisTestSuiteService {
                 }),
               ),
             ),
+            concatMap((testResults) => {
+              if (testData.files.length === 0) {
+                return throwError(() => [
+                  ...testResults,
+                  {
+                    title: 'Upload file',
+                    description: 'Upload file to folder',
+                    errorText:
+                      'Cant proceed without a file. Attach a file in Data For Tests tab',
+                    result: TestResult.FAIL,
+                  },
+                ]);
+              }
+              const dateNow = Date.now();
+              const nestedFolderName = `nested-folder-${dateNow}`;
+              const uploadedFileName = `${dateNow}-${testData.fileName}`;
+              const folderPath = `${testData.folderForTests}/${folderName}`;
+              const fileUploadPath = `${testData.folderForTests}/${folderName}/${nestedFolderName}`;
+              return this.explorerService
+                .create(
+                  folderPath,
+                  nestedFolderName,
+                  ExplorerFsObjectTypes.DIRECTORY,
+                  testData.folderDescription,
+                  testData.folderSecurityLevel.toString(),
+                )
+                .pipe(
+                  concatMap(() => {
+                    const formArray =
+                      this.explorerUploadItemFormFactoryService.makeUploadItemsForm(
+                        testData.files,
+                        fileUploadPath,
+                        <SecurityLevels>testData.folderSecurityLevel.toString(),
+                      );
+                    const control = formArray.controls.find(
+                      (item) =>
+                        item.controls.filename.value === testData.fileName,
+                    );
+                    control?.patchValue(
+                      {
+                        ...control.value,
+                        filename: uploadedFileName,
+                      },
+                      { emitEvent: false },
+                    );
+                    this.explorerUploadItemsService.uploadItems$.next(
+                      formArray,
+                    );
+                    return this.explorerUploadService
+                      .uploadHexString(fileUploadPath)
+                      .pipe(
+                        takeUntil(this.teardownUploadSubject),
+                        catchError((err: HttpErrorResponse) =>
+                          throwError(() => [
+                            ...testResults,
+                            {
+                              title: 'Upload file',
+                              description: `Upload file to ${testData.folderForTests}/${folderName}/${nestedFolderName}`,
+                              responseStatus: `${err.status} ${err.statusText}`,
+                              response: err.error ?? '',
+                              errorText:
+                                'Cant execute next tests without uploaded file',
+                              result: TestResult.FAIL,
+                            },
+                          ]),
+                        ),
+                      );
+                  }),
+                  concatMap(() => {
+                    this.teardownUpload();
+                    return this.explorerService
+                      .getContents(
+                        `${testData.folderForTests}/${folderName}/${nestedFolderName}`,
+                      )
+                      .pipe(
+                        concatMap((response) => {
+                          const uploadedFile = response?.content?.find(
+                            (item) => item.fileName === uploadedFileName,
+                          );
+                          if (uploadedFile === undefined) {
+                            return throwError(() => [
+                              ...testResults,
+                              {
+                                title: 'Upload file',
+                                description: `Check if file was uploaded  to ${testData.folderForTests}/${folderName}/${nestedFolderName}`,
+                                response: response,
+                                errorText:
+                                  'Cant execute next tests without uploaded file',
+                                result: TestResult.FAIL,
+                              },
+                            ]);
+                          }
+                          return of([
+                            ...testResults,
+                            {
+                              title: 'Upload file',
+                              description: `Check if file was uploaded to ${testData.folderForTests}/${folderName}/${nestedFolderName}`,
+                              response: response.content,
+                              result: TestResult.OK,
+                            },
+                          ]);
+                        }),
+                      );
+                  }),
+                );
+            }),
           );
       }),
       concatMap((testResults) =>

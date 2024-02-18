@@ -8,13 +8,14 @@
 import { FormControl } from '@angular/forms';
 
 export interface TestDataFormInterface {
+  showResponses: FormControl<boolean>;
   login: FormControl<string>;
   password: FormControl<string>;
   folderForTests: FormControl<string>;
-  fileUploadPath: FormControl<string>;
-  filename: FormControl<string>;
   folderSecurityLevel: FormControl<number>;
   folderDescription: FormControl<string>;
+  fileName: FormControl<string>;
+  fileSecurityLevel: FormControl<number>;
+  fileDescription: FormControl<string>;
   files: FormControl<File[]>;
-  showResponses: FormControl<boolean>;
 }

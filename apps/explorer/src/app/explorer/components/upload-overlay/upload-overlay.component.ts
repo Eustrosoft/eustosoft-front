@@ -18,7 +18,7 @@ import {
   UploadItemState,
 } from '@eustrosoft-front/explorer-lib';
 import { catchError, EMPTY, Observable, shareReplay, tap } from 'rxjs';
-import { Option, ProgressBarComponent } from '@eustrosoft-front/common-ui';
+import { ProgressBarComponent } from '@eustrosoft-front/common-ui';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { FormArray, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -108,20 +108,18 @@ export class UploadOverlayComponent {
       }),
     );
 
-  securityLevelOptions$: Observable<Option[]> = this.cachedDictionaryService
-    .getSecurityLevelOptions()
-    .pipe(
-      shareReplay(1),
-      catchError(() => {
-        this.snackBar.open(
-          this.translateService.instant(
-            'EXPLORER.ERRORS.SECURITY_LEVEL_OPTIONS_FETCH_ERROR',
-          ),
-          'close',
-        );
-        return EMPTY;
-      }),
-    );
+  securityLevelOptions$ = this.cachedDictionaryService.securityOptions$.pipe(
+    shareReplay(1),
+    catchError(() => {
+      this.snackBar.open(
+        this.translateService.instant(
+          'EXPLORER.ERRORS.SECURITY_LEVEL_OPTIONS_FETCH_ERROR',
+        ),
+        'close',
+      );
+      return EMPTY;
+    }),
+  );
 
   openFolder(item: FormGroup<UploadItemForm>): void {
     this.openFileFolder.emit(item.controls.uploadItem.value.uploadPath);

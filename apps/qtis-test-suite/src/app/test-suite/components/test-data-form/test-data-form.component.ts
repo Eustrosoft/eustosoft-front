@@ -26,6 +26,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { AsyncPipe, JsonPipe } from '@angular/common';
 import { SecurityLevels } from '@eustrosoft-front/security';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'eustrosoft-front-test-data-form',
@@ -43,6 +44,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     AsyncPipe,
     JsonPipe,
     MatCheckboxModule,
+    MatTooltipModule,
   ],
 })
 export class TestDataFormComponent implements OnInit {
@@ -54,7 +56,7 @@ export class TestDataFormComponent implements OnInit {
     this.qtisTestFormService.form.controls.files.valueChanges
       .pipe(
         tap((files) => {
-          this.qtisTestFormService.form.controls.filename.patchValue(
+          this.qtisTestFormService.form.controls.fileName.patchValue(
             files[0]?.name,
           );
         }),

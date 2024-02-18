@@ -14,13 +14,10 @@
       <eustrosoft-front-preloader
         class="flex justify-content-center"
       ></eustrosoft-front-preloader>
+      <h2>{{ loadingThatWeDeserved$ | async }}</h2>
     </div>
   </ng-container>
-  <!--  <ng-container *ngIf="vm.tests?.isError">-->
-  <!--    <p>Error</p>-->
-  <!--  </ng-container>-->
   <ng-container *ngIf="vm.tests?.results as results">
-    {{ results | json }}
     <div class="flex g-3">
       <button
         mat-stroked-button

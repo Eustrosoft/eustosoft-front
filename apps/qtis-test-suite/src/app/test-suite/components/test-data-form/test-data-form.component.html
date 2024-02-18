@@ -35,7 +35,9 @@
     [subscriptSizing]="'dynamic'"
     class="flex-auto"
   >
-    <mat-label> Folder For Tests </mat-label>
+    <mat-label>
+      Folder For Tests (folder with timestamp will be created here)
+    </mat-label>
     <input
       [formControl]="qtisTestFormService.form.controls.folderForTests"
       matInput
@@ -52,28 +54,28 @@
       matInput
     />
   </mat-form-field>
+  <mat-form-field
+    [appearance]="'outline'"
+    [subscriptSizing]="'dynamic'"
+    [matTooltip]="SecurityLevels | json"
+  >
+    <mat-label> Folder Security Level </mat-label>
+    <input
+      [formControl]="qtisTestFormService.form.controls.folderSecurityLevel"
+      [type]="'number'"
+      matInput
+    />
+  </mat-form-field>
 </div>
-<mat-form-field
-  [hintLabel]="SecurityLevels | json"
-  [appearance]="'outline'"
-  [subscriptSizing]="'dynamic'"
->
-  <mat-label> Folder Security Level </mat-label>
-  <input
-    [formControl]="qtisTestFormService.form.controls.folderSecurityLevel"
-    [type]="'number'"
-    matInput
-  />
-</mat-form-field>
 <div class="flex g-3">
   <mat-form-field
     [appearance]="'outline'"
     [subscriptSizing]="'dynamic'"
     class="flex-auto"
   >
-    <mat-label> Filename For Upload </mat-label>
+    <mat-label> Filename (change filename on upload) </mat-label>
     <input
-      [formControl]="qtisTestFormService.form.controls.filename"
+      [formControl]="qtisTestFormService.form.controls.fileName"
       matInput
     />
   </mat-form-field>
@@ -82,14 +84,25 @@
     [subscriptSizing]="'dynamic'"
     class="flex-auto"
   >
-    <mat-label> FS Upload Path </mat-label>
+    <mat-label> File Description </mat-label>
     <input
-      [formControl]="qtisTestFormService.form.controls.fileUploadPath"
+      [formControl]="qtisTestFormService.form.controls.fileDescription"
+      matInput
+    />
+  </mat-form-field>
+  <mat-form-field
+    [appearance]="'outline'"
+    [subscriptSizing]="'dynamic'"
+    [matTooltip]="SecurityLevels | json"
+  >
+    <mat-label> File Security Level </mat-label>
+    <input
+      [formControl]="qtisTestFormService.form.controls.fileSecurityLevel"
+      [type]="'number'"
       matInput
     />
   </mat-form-field>
 </div>
-
 <div class="flex g-3 align-items-center">
   <eustrosoft-front-input-file
     [control]="qtisTestFormService.form.controls.files"

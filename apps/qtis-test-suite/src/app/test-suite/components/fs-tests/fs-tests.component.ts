@@ -52,6 +52,8 @@ export class FsTestsComponent {
     this.qtisTestFormService.form.controls.showResponses.valueChanges.pipe(
       startWith(true),
     );
+  protected readonly loadingThatWeDeserved$ =
+    this.qtisTestSuiteService.getPhraseObservable();
 
   @ViewChild(MatAccordion) accordion!: MatAccordion;
 }

@@ -20,12 +20,12 @@ import {
 import { ExplorerRequestBuilderService } from './explorer-request-builder.service';
 import { UploadItemState } from '../constants/enums/uploading-state.enum';
 import { ExplorerUploadItemsService } from './explorer-upload-items.service';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { FileReaderService } from './file-reader.service';
 import { UploadHexRequest } from '../interfaces/explorer-request.interface';
 import { UploadItemForm } from '../interfaces/upload-item-form.interface';
 import { UploadResponse } from '../interfaces/explorer-response.interface';
-import { DispatchService } from '@eustrosoft-front/core';
+import { DispatchService, QtisRequestResponse } from '@eustrosoft-front/core';
 
 @Injectable({ providedIn: 'root' })
 export class ExplorerUploadService {
@@ -39,7 +39,17 @@ export class ExplorerUploadService {
   );
   private readonly fb = inject(FormBuilder);
 
-  uploadHexString(path: string = '/'): Observable<unknown> {
+  uploadHexString(
+    path: string = '/',
+  ): Observable<
+    [
+      FormArray<FormGroup<UploadItemForm>>,
+      File,
+      string[],
+      number,
+      QtisRequestResponse<UploadResponse>,
+    ][]
+  > {
     return this.explorerUploadItemsService.uploadItems$.asObservable().pipe(
       switchMap((items) => combineLatest([from(items.controls), of(items)])),
       filter(

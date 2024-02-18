@@ -19,6 +19,7 @@ export class ExplorerUploadItemFormFactoryService {
     files: File[],
     uploadPath: string,
     defaultSecurityLevel: SecurityLevels,
+    defaultDescription = '',
   ): FormArray<FormGroup<UploadItemForm>> {
     return this.fb.array(
       files.map((file) =>
@@ -31,7 +32,7 @@ export class ExplorerUploadItemFormFactoryService {
             uploadPath,
           }),
           filename: this.fb.nonNullable.control(file.name),
-          description: this.fb.nonNullable.control(''),
+          description: this.fb.nonNullable.control(defaultDescription),
           securityLevel: this.fb.nonNullable.control({
             value: defaultSecurityLevel,
             disabled: false,
