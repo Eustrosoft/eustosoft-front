@@ -2,9 +2,8 @@ import { inject, Injectable } from '@angular/core';
 import { QtisTestFormService } from './qtis-test-form.service';
 import {
   catchError,
+  combineLatest,
   concatMap,
-  finalize,
-  iif,
   interval,
   map,
   Observable,
@@ -21,13 +20,18 @@ import { TestCaseResult } from '../interfaces/test-case-result.interface';
 import { TestResult } from '../interfaces/test-case.interface';
 import {
   ExplorerFsObjectTypes,
+  ExplorerRequestActions,
+  ExplorerRequestBuilderService,
   ExplorerService,
   ExplorerUploadItemFormFactoryService,
   ExplorerUploadItemsService,
   ExplorerUploadService,
+  MoveCopyRequest,
+  MoveCopyResponse,
+  MoveRequest,
+  MoveResponse,
 } from '@eustrosoft-front/explorer-lib';
-import { isArrayNotEmpty } from '../functions/is-array-not-empty.function';
-import { QtisRequestResponse } from '@eustrosoft-front/core';
+import { DispatchService, QtisRequestResponse } from '@eustrosoft-front/core';
 import { LoginLogoutResponse } from '@eustrosoft-front/login-lib';
 
 @Injectable({
@@ -43,6 +47,10 @@ export class QtisTestSuiteService {
   private readonly explorerUploadItemFormFactoryService = inject(
     ExplorerUploadItemFormFactoryService,
   );
+  private readonly explorerRequestBuilderService = inject(
+    ExplorerRequestBuilderService,
+  );
+  private readonly dispatchService = inject(DispatchService);
   private readonly loginService = inject(LoginService);
   private readonly runFsTestsSubject = new Subject<void>();
   private readonly teardownUploadSubject = new Subject<void>();
@@ -96,9 +104,8 @@ export class QtisTestSuiteService {
     isError: boolean;
     results: TestCaseResult[] | undefined;
   }> {
-    // login -> create folder -> check if folder created with correct security level and description
-    // -> create folder inside created folder -> upload file to nested folder
-    // -> rename file -> copy to parent folder -> delete from child folder
+    // TODO
+    // rename file in parent folder (bug, source file gets renamed, not copied one) -> move from child folder to parent -> delete original some file
     const testData = this.qtisTestFormService.form.getRawValue();
     return of(true).pipe(
       switchMap(() =>
@@ -129,7 +136,12 @@ export class QtisTestSuiteService {
         ),
       ),
       concatMap((testResults) => {
-        const folderName = `test-folder-${Date.now()}`;
+        const dateNow = Date.now();
+        const folderName = `test-folder-${dateNow}`;
+        const nestedFolderName = `nested-folder-${dateNow}`;
+        const uploadedFileName = `${dateNow}-${testData.fileName}`;
+        const folderPath = `${testData.folderForTests}/${folderName}`;
+        const fileUploadPath = `${testData.folderForTests}/${folderName}/${nestedFolderName}`;
         return this.explorerService
           .create(
             testData.folderForTests,
@@ -139,6 +151,20 @@ export class QtisTestSuiteService {
             testData.folderSecurityLevel.toString(),
           )
           .pipe(
+            catchError((err: HttpErrorResponse) =>
+              throwError(() => [
+                ...testResults,
+                {
+                  title: `Create folder ${folderName}`,
+                  description: 'Check if directory was created',
+                  responseStatus: `${err.status} ${err.statusText}`,
+                  response: err.error ?? '',
+                  errorText:
+                    'Cant execute next tests without created directory',
+                  result: TestResult.FAIL,
+                },
+              ]),
+            ),
             concatMap(() =>
               this.explorerService.getContents(testData.folderForTests).pipe(
                 concatMap((response) => {
@@ -172,7 +198,7 @@ export class QtisTestSuiteService {
                     ...result,
                     {
                       title: 'Check description',
-                      description: `Check if description of ${testData.folderForTests}/${folderName} equals ${testData.folderDescription}`,
+                      description: `Check if description of ${testData.folderForTests}/${folderName} equals "${testData.folderDescription}"`,
                       response: response.content,
                       result:
                         createdFolder.description === testData.folderDescription
@@ -210,11 +236,6 @@ export class QtisTestSuiteService {
                   },
                 ]);
               }
-              const dateNow = Date.now();
-              const nestedFolderName = `nested-folder-${dateNow}`;
-              const uploadedFileName = `${dateNow}-${testData.fileName}`;
-              const folderPath = `${testData.folderForTests}/${folderName}`;
-              const fileUploadPath = `${testData.folderForTests}/${folderName}/${nestedFolderName}`;
               return this.explorerService
                 .create(
                   folderPath,
@@ -224,6 +245,20 @@ export class QtisTestSuiteService {
                   testData.folderSecurityLevel.toString(),
                 )
                 .pipe(
+                  catchError((err: HttpErrorResponse) =>
+                    throwError(() => [
+                      ...testResults,
+                      {
+                        title: `Create folder ${nestedFolderName} in ${testData.folderForTests}`,
+                        description: 'Check if directory was created',
+                        responseStatus: `${err.status} ${err.statusText}`,
+                        response: err.error ?? '',
+                        errorText:
+                          'Cant execute next tests without created directory',
+                        result: TestResult.FAIL,
+                      },
+                    ]),
+                  ),
                   concatMap(() => {
                     const formArray =
                       this.explorerUploadItemFormFactoryService.makeUploadItemsForm(
@@ -239,6 +274,7 @@ export class QtisTestSuiteService {
                       {
                         ...control.value,
                         filename: uploadedFileName,
+                        description: testData.fileDescription,
                       },
                       { emitEvent: false },
                     );
@@ -281,7 +317,7 @@ export class QtisTestSuiteService {
                               ...testResults,
                               {
                                 title: 'Upload file',
-                                description: `Check if file was uploaded  to ${testData.folderForTests}/${folderName}/${nestedFolderName}`,
+                                description: `Check if file was uploaded to ${testData.folderForTests}/${folderName}/${nestedFolderName}`,
                                 response: response,
                                 errorText:
                                   'Cant execute next tests without uploaded file',
@@ -289,49 +325,175 @@ export class QtisTestSuiteService {
                               },
                             ]);
                           }
-                          return of([
-                            ...testResults,
-                            {
-                              title: 'Upload file',
-                              description: `Check if file was uploaded to ${testData.folderForTests}/${folderName}/${nestedFolderName}`,
-                              response: response.content,
-                              result: TestResult.OK,
-                            },
+                          return combineLatest([
+                            of([
+                              ...testResults,
+                              {
+                                title: 'Upload file',
+                                description: `Check if file was uploaded to ${testData.folderForTests}/${folderName}/${nestedFolderName}`,
+                                response: response.content,
+                                result: TestResult.OK,
+                              },
+                              {
+                                title: 'Check file description',
+                                description: `Check if description of ${uploadedFile.fileName} equals "${testData.fileDescription}"`,
+                                response: response.content,
+                                result:
+                                  uploadedFile.description ===
+                                  testData.fileDescription
+                                    ? TestResult.OK
+                                    : TestResult.FAIL,
+                              },
+                              {
+                                title: 'Check security level',
+                                description: `Check if securityLevel of ${uploadedFile.fileName} equals ${testData.fileSecurityLevel}`,
+                                response: response.content,
+                                result:
+                                  Number(uploadedFile.securityLevel.value) ===
+                                  testData.fileSecurityLevel
+                                    ? TestResult.OK
+                                    : TestResult.FAIL,
+                              },
+                            ]),
+                            of(response.content),
                           ]);
                         }),
                       );
                   }),
                 );
             }),
+            concatMap(([testResults, content]) =>
+              this.explorerRequestBuilderService
+                .buildMoveCopyRequest(
+                  content ?? [],
+                  [`${folderPath}/${uploadedFileName}`],
+                  ExplorerRequestActions.COPY,
+                )
+                .pipe(
+                  concatMap((body) =>
+                    this.dispatchService
+                      .dispatch<MoveCopyRequest, MoveCopyResponse>(body)
+                      .pipe(
+                        catchError((err: HttpErrorResponse) =>
+                          throwError(() => [
+                            ...testResults,
+                            {
+                              title: 'Copy file',
+                              description: `Copy file to ${folderPath}/${uploadedFileName}`,
+                              responseStatus: `${err.status} ${err.statusText}`,
+                              response: err.error ?? '',
+                              errorText:
+                                'Cant execute next tests without copied file',
+                              result: TestResult.FAIL,
+                            },
+                          ]),
+                        ),
+                      ),
+                  ),
+                  concatMap(() =>
+                    this.explorerService.getContents(
+                      `${testData.folderForTests}/${folderName}`,
+                    ),
+                  ),
+                  concatMap((response) => {
+                    const copiedFile = response?.content?.find(
+                      (item) => item.fileName === uploadedFileName,
+                    );
+                    if (copiedFile === undefined) {
+                      return throwError(() => [
+                        ...testResults,
+                        {
+                          title: 'Copy file',
+                          description: `Check if file was copied to ${folderPath}/${uploadedFileName}`,
+                          response: response,
+                          errorText:
+                            'Cant execute next tests without copied file',
+                          result: TestResult.FAIL,
+                        },
+                      ]);
+                    }
+                    return combineLatest([
+                      of([
+                        ...testResults,
+                        {
+                          title: 'Check copied file',
+                          description: `Check if file ${uploadedFileName} was copied to to ${folderPath}/${uploadedFileName}`,
+                          response: response.content,
+                          result: TestResult.OK,
+                        },
+                      ]),
+                      of(copiedFile),
+                    ]);
+                  }),
+                  concatMap(([testResults, copiedFile]) =>
+                    this.explorerRequestBuilderService
+                      .buildMoveRequest(
+                        [copiedFile],
+                        [`${folderPath}/Renamed-Copy-${copiedFile.fileName}`],
+                        `Updated ${testData.fileDescription}`,
+                        ExplorerRequestActions.RENAME,
+                      )
+                      .pipe(
+                        concatMap((body) =>
+                          this.dispatchService
+                            .dispatch<MoveRequest, MoveResponse>(body)
+                            .pipe(
+                              catchError((err: HttpErrorResponse) =>
+                                throwError(() => [
+                                  ...testResults,
+                                  {
+                                    title: 'Rename file',
+                                    description: `Rename file to "Renamed-Copy-${copiedFile.fileName}"`,
+                                    responseStatus: `${err.status} ${err.statusText}`,
+                                    response: err.error ?? '',
+                                    errorText:
+                                      'Cant execute next tests without renamed file',
+                                    result: TestResult.FAIL,
+                                  },
+                                ]),
+                              ),
+                              concatMap(() =>
+                                this.explorerService.getContents(
+                                  `${folderPath}`,
+                                ),
+                              ),
+                              concatMap((response) => {
+                                const renamedFile = response?.content?.find(
+                                  (item) =>
+                                    item.fileName ===
+                                    `Renamed-Copy-${copiedFile.fileName}`,
+                                );
+                                if (renamedFile === undefined) {
+                                  return throwError(() => [
+                                    ...testResults,
+                                    {
+                                      title: 'Rename file',
+                                      description: `Check if file was renamed to "Renamed-Copy-${copiedFile.fileName}"`,
+                                      response: response,
+                                      errorText:
+                                        'Cant execute next tests without renamed file',
+                                      result: TestResult.FAIL,
+                                    },
+                                  ]);
+                                }
+                                return of([
+                                  ...testResults,
+                                  {
+                                    title: 'Rename file',
+                                    description: `Check if file ${copiedFile.fileName} was renamed to "Renamed-Copy-${copiedFile.fileName}"`,
+                                    response: response.content,
+                                    result: TestResult.OK,
+                                  },
+                                ]);
+                              }),
+                            ),
+                        ),
+                      ),
+                  ),
+                ),
+            ),
           );
       }),
-      concatMap((testResults) =>
-        this.explorerService.getContents(testData.folderForTests).pipe(
-          switchMap((list) =>
-            iif(
-              () => isArrayNotEmpty(list.content),
-              of([
-                ...testResults,
-                {
-                  title: 'List Directory Contents',
-                  description: '',
-                  response: list.content,
-                  result: TestResult.OK,
-                },
-              ]),
-              of([
-                ...testResults,
-                {
-                  title: 'Login',
-                  description: 'Login',
-                  response: list.content,
-                  result: TestResult.FAIL,
-                },
-              ]),
-            ),
-          ),
-        ),
-      ),
       map((results) => ({
         isLoading: false,
         isError: false,
@@ -349,68 +511,6 @@ export class QtisTestSuiteService {
           results,
         }),
       ),
-      // takeUntil(this.fatalError$),
-      finalize(() => {
-        console.warn('finalize');
-      }),
-      // repeat(),
     );
   }
-
-  // makeTestList(
-  //   formValue: ReturnType<typeof this.qtisTestFormService.form.getRawValue>,
-  // ): TestCasesTuple;
-  //
-  // private createTestCase<T>(
-  //   title: string,
-  //   description: string,
-  //   requestFactory: RequestFactory<T>,
-  //   comparator: (response: QtisRequestResponse<T>) => boolean,
-  //   start: Subject<void>,
-  // ): ApiTestCase<T> {
-  //   const abort = requestFactory.cancelRequest;
-  //
-  //   const baseResponse: ResponseObs<T> = {
-  //     isLoading: false,
-  //     isError: false,
-  //     isCanceled: false,
-  //     response: undefined,
-  //     testResult: undefined,
-  //   };
-  //
-  //   const response$ = start.asObservable().pipe(
-  //     switchMap(() =>
-  //       from(requestFactory.makeRequest()).pipe(
-  //         map((res) => {
-  //           const isSuccess = comparator(res);
-  //           return {
-  //             ...baseResponse,
-  //             response: res.data,
-  //             testResult: isSuccess ? TestResult.OK : TestResult.FAIL,
-  //           };
-  //         }),
-  //         startWith({
-  //           ...baseResponse,
-  //           isLoading: true,
-  //         }),
-  //         catchError((err) => {
-  //           if (err instanceof CanceledError) {
-  //             return of({
-  //               ...baseResponse,
-  //               isCanceled: true,
-  //               testResult: TestResult.CANCELED,
-  //             });
-  //           }
-  //           return of({
-  //             ...baseResponse,
-  //             isError: true,
-  //           });
-  //         }),
-  //       ),
-  //     ),
-  //     shareReplay(1),
-  //   );
-  //
-  //   return { title, description, abort, response$, start };
-  // }
 }

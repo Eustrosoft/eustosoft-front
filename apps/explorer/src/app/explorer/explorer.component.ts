@@ -386,9 +386,8 @@ export class ExplorerComponent implements OnInit {
     dialogRef
       .afterClosed()
       .pipe(
-        filter((str) => typeof str !== 'undefined'),
-        map((str) => str as string[]),
-        switchMap((to: string[]) =>
+        filter((str): str is string[] => typeof str !== 'undefined'),
+        switchMap((to) =>
           combineLatest([
             this.explorerRequestBuilderService.buildMoveCopyRequest(
               rows,

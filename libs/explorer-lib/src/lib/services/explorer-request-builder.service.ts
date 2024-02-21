@@ -129,39 +129,20 @@ export class ExplorerRequestBuilderService {
     description: string | undefined = undefined,
     action: ExplorerRequestActions = ExplorerRequestActions.MOVE,
   ): Observable<QtisRequestResponse<MoveRequest>> {
-    switch (action) {
-      case ExplorerRequestActions.RENAME: {
-        return of({
-          r: [
-            {
-              s: Subsystems.CMS,
-              r: ExplorerRequestActions.MOVE,
-              l: SupportedLanguages.EN_US,
-              to: to[0],
-              description: description,
-            } as MoveRequest,
-          ],
-          t: 0,
-        });
-      }
-      case ExplorerRequestActions.MOVE:
-      default: {
-        return of({
-          r: from.map(
-            (obj: FileSystemObject, i: number) =>
-              ({
-                s: Subsystems.CMS,
-                r: action,
-                l: SupportedLanguages.EN_US,
-                from: obj.fullPath,
-                to: to[i],
-                description: description,
-              }) as MoveRequest,
-          ),
-          t: 0,
-        });
-      }
-    }
+    return of({
+      r: from.map(
+        (obj: FileSystemObject, i: number) =>
+          ({
+            s: Subsystems.CMS,
+            r: action,
+            l: SupportedLanguages.EN_US,
+            from: obj.fullPath,
+            to: to[i],
+            description: description,
+          }) as MoveRequest,
+      ),
+      t: 0,
+    });
   }
 
   buildMoveCopyRequest(

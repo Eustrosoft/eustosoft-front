@@ -194,12 +194,12 @@ export class ExplorerService {
             [row],
             [`${folder}/${data.name}`],
             data.description ?? '',
+            ExplorerRequestActions.RENAME,
           ),
           this.explorerRequestBuilderService.buildMoveRequest(
             [row],
             [`${folder}/${data.name}`],
             data.description ?? '',
-            ExplorerRequestActions.RENAME,
           ),
         ),
       ),

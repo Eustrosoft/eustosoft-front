@@ -1,39 +1,10 @@
 <div class="flex flex-wrap g-3">
-  <button mat-raised-button color="primary" type="button">
-    <mat-icon>data_object</mat-icon> Fill In Test Data
-  </button>
   <button mat-stroked-button type="button">
     <mat-icon>play_arrow</mat-icon> Run All Tests
   </button>
-  <button mat-stroked-button type="button" (click)="runFsTests($event)">
+  <button mat-stroked-button type="button" (click)="runFsTests()">
     <mat-icon>play_arrow</mat-icon> Run FS Tests
   </button>
-  <ng-container *ngIf="apiTests()">
-    <button
-      mat-raised-button
-      color="primary"
-      type="button"
-      (click)="runAllTestCasesSimultaneously()"
-    >
-      <mat-icon>play_arrow</mat-icon> Run All Simultaneously
-    </button>
-    <button
-      mat-stroked-button
-      color="primary"
-      type="button"
-      (click)="accordion.openAll()"
-    >
-      Expand All
-    </button>
-    <button
-      mat-stroked-button
-      color="primary"
-      type="button"
-      (click)="accordion.closeAll()"
-    >
-      Collapse All
-    </button>
-  </ng-container>
 </div>
 <mat-tab-group dynamicHeight>
   <mat-tab>
@@ -57,84 +28,3 @@
     </ng-template>
   </mat-tab>
 </mat-tab-group>
-<ng-container *ngIf="apiTests()">
-  <mat-accordion [multi]="true">
-    <ng-container *ngFor="let test of apiTests()!; let index = index">
-      <ng-container *ngIf="{ res: test.response$ | async } as vm">
-        <mat-expansion-panel #expansionPanel>
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              <button
-                *ngIf="!vm.res?.isLoading"
-                mat-icon-button
-                color="primary"
-                type="button"
-                (click)="
-                  $event.stopPropagation();
-                  test.start.next();
-                  expansionPanel.open()
-                "
-              >
-                <mat-icon>play_arrow</mat-icon>
-              </button>
-              <eustrosoft-front-preloader
-                [diameter]="40"
-                *ngIf="vm.res?.isLoading"
-              ></eustrosoft-front-preloader>
-              <button
-                *ngIf="vm.res?.isLoading"
-                mat-icon-button
-                color="primary"
-                type="button"
-                (click)="$event.stopPropagation(); test.abort()"
-              >
-                <mat-icon>stop</mat-icon>
-              </button>
-            </mat-panel-title>
-            <mat-panel-description>
-              <mat-chip-set [ngSwitch]="vm.res?.testResult" class="me-2">
-                <mat-chip
-                  *ngSwitchCase="TestResult.OK"
-                  (click)="$event.stopPropagation()"
-                  highlighted
-                >
-                  OK
-                </mat-chip>
-                <mat-chip
-                  *ngSwitchCase="TestResult.FAIL"
-                  (click)="$event.stopPropagation()"
-                  color="warn"
-                  highlighted
-                >
-                  FAIL
-                </mat-chip>
-                <mat-chip
-                  *ngSwitchCase="TestResult.CANCELED"
-                  (click)="$event.stopPropagation()"
-                  highlighted
-                >
-                  CANCELED
-                </mat-chip>
-              </mat-chip-set>
-
-              <span>{{ test.description }}</span>
-            </mat-panel-description>
-          </mat-expansion-panel-header>
-
-          <ng-container *ngIf="vm.res?.isLoading && !vm.res?.isError">
-            <span>Loading...</span>
-          </ng-container>
-          <ng-container *ngIf="vm.res?.isError">
-            <span>Error occurred</span>
-          </ng-container>
-          <ng-container *ngIf="vm.res?.isCanceled">
-            <span>Test execution canceled</span>
-          </ng-container>
-          <ng-container *ngIf="vm.res?.response as response">
-            <pre class="overflow-auto">{{ response | json }}</pre>
-          </ng-container>
-        </mat-expansion-panel>
-      </ng-container>
-    </ng-container>
-  </mat-accordion>
-</ng-container>
