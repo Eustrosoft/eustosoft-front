@@ -5,4 +5,9 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-export const getGreeting = () => cy.get('h1');
+export enum ExplorerRoutes {
+  Login = 'login',
+  PdfPreview = 'pdf-preview',
+  ImgPreview = 'img-preview',
+  TxtPreview = 'txt-preview',
+}

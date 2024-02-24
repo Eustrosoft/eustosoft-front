@@ -36,6 +36,7 @@
     "ACTIONS_COLUMN_TEXT": "Actions",
     "FOLDER_IS_EMPTY": "No content",
     "LINK_COPIED_TO_CLIPBOARD": "Link copied to clipboard",
+    "PREVIEW_IS_NOT_AVAILABLE": "No preview tool available",
     "SIZES": {
       "BYTES": "Bytes",
       "KB": "KB",
@@ -132,6 +133,7 @@
       "MOVE_FILE_ALREADY_EXISTS_ERROR": "Selected element already exist in this folder",
       "MOVE_SAME_NAME_ERROR": "This directory already contains folder with same name",
       "ERROR_FETCHING_DATA": "Unable to show preview. Can't get data from server",
+      "ERROR_PARSING_DATA": "Unable to show preview. Can't parse data from server",
       "FILE_LINK_ERROR": "Unable to show preview. Invalid file link provided"
     }
   }

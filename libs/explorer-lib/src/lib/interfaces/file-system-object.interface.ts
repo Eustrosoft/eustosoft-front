@@ -10,5 +10,6 @@ import { Option } from '@eustrosoft-front/common-ui';
 
 export type FileSystemObject = Omit<ExplorerObjectResponse, 'securityLevel'> & {
   securityLevel: Pick<Option, 'displayText' | 'value'>;
-  previewable: boolean;
+  showPreviewButton: boolean;
+  previewRoute: string | undefined;
 };

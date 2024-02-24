@@ -36,6 +36,7 @@
     "ACTIONS_COLUMN_TEXT": "Действия",
     "FOLDER_IS_EMPTY": "Пусто",
     "LINK_COPIED_TO_CLIPBOARD": "Ссылка скопирована",
+    "PREVIEW_IS_NOT_AVAILABLE": "Нет инструмента предпросмотра",
     "SIZES": {
       "BYTES": "Байт",
       "KB": "КБ",
@@ -132,6 +133,7 @@
       "MOVE_FILE_ALREADY_EXISTS_ERROR": "Выбранный элемент уже существует в этой папке",
       "MOVE_SAME_NAME_ERROR": "Эта папка содержит папку с таким же именем",
       "ERROR_FETCHING_DATA": "Ошибка отображения. Невозможно получить данные с сервера",
+      "ERROR_PARSING_DATA": "Ошибка отображения. Невозможно прочитать данные с сервера",
       "FILE_LINK_ERROR": "Ошибка отображения. Неверная ссылка на файл"
     }
   }

@@ -110,7 +110,7 @@
             <span>{{ 'EXPLORER.DOWNLOAD_BUTTON_TEXT' | translate }}</span>
           </button>
           <button
-            *ngIf="content[i].previewable"
+            *ngIf="content[i].showPreviewButton"
             (click)="previewClicked.emit(content[i])"
             mat-menu-item
           >

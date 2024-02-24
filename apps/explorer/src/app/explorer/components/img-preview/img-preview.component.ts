@@ -8,8 +8,8 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PdfJsViewerModule } from 'ng2-pdfjs-viewer';
-import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { PreloaderComponent } from '@eustrosoft-front/common-ui';
+import { TranslateModule } from '@ngx-translate/core';
 import {
   catchError,
   iif,
@@ -20,11 +20,11 @@ import {
   switchMap,
   throwError,
 } from 'rxjs';
-import { PreloaderComponent } from '@eustrosoft-front/common-ui';
-import { TranslateModule } from '@ngx-translate/core';
+import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Component({
-  selector: 'eustrosoft-front-pdf-preview',
+  selector: 'eustrosoft-front-img-preview',
   standalone: true,
   imports: [
     CommonModule,
@@ -32,19 +32,18 @@ import { TranslateModule } from '@ngx-translate/core';
     PreloaderComponent,
     TranslateModule,
   ],
-  templateUrl: './pdf-preview.component.html',
-  styleUrl: './pdf-preview.component.scss',
+  templateUrl: './img-preview.component.html',
+  styleUrl: './img-preview.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PdfPreviewComponent {
+export class ImgPreviewComponent {
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
-
-  protected pdfLoad$: Observable<{
+  protected imgLoad$: Observable<{
     isLoading: boolean;
     isError: boolean;
     errorText: string;
-    pdfSrc: Blob | undefined;
+    src: string | undefined;
   }> = of(true).pipe(
     switchMap(() => {
       const link = this.router.lastSuccessfulNavigation?.extras?.state?.link;
@@ -66,13 +65,13 @@ export class PdfPreviewComponent {
             isLoading: false,
             isError: false,
             errorText: '',
-            pdfSrc: res ?? undefined,
+            src: URL.createObjectURL(res) ?? undefined,
           })),
           startWith({
             isLoading: true,
             isError: false,
             errorText: '',
-            pdfSrc: undefined,
+            src: undefined,
           }),
         ),
         throwError(() => 'EXPLORER.ERRORS.FILE_LINK_ERROR'),
@@ -83,7 +82,7 @@ export class PdfPreviewComponent {
         isLoading: false,
         isError: true,
         errorText,
-        pdfSrc: undefined,
+        src: undefined,
       });
     }),
   );

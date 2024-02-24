@@ -7,7 +7,13 @@
 
 import { inject, Injectable } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
-import { DispatchService, QtisRequestResponse } from '@eustrosoft-front/core';
+import {
+  DispatchService,
+  DocumentFileExtensions,
+  ImgFileExtensions,
+  QtisRequestResponse,
+  TextFileExtensions,
+} from '@eustrosoft-front/core';
 import {
   catchError,
   combineLatest,
@@ -43,6 +49,7 @@ import { ExplorerPathService } from './explorer-path.service';
 import { RenameDialogReturnData } from '../interfaces/rename-dialog/rename-dialog-return-data.interface';
 import { DOCUMENT } from '@angular/common';
 import { CachedDictionaryService } from '@eustrosoft-front/dic';
+import { ExplorerRoutes } from '../constants/enums/explorer-routes.enum';
 
 @Injectable({ providedIn: 'root' })
 export class ExplorerService {
@@ -133,18 +140,39 @@ export class ExplorerService {
               const matchingDict = securityLevelOptions.find(
                 (dict) => dict.value === obj.securityLevel?.toString(),
               );
+              const ext =
+                obj.fileName.split('.').pop()?.toLowerCase() ??
+                DocumentFileExtensions.Empty;
+              let previewRoute: string | undefined = undefined;
+
+              const isDocExt = Object.values<string>(
+                DocumentFileExtensions,
+              ).includes(ext);
+              const isImgExt =
+                Object.values<string>(ImgFileExtensions).includes(ext);
+              const isTxtExt =
+                Object.values<string>(TextFileExtensions).includes(ext);
+
+              if (isDocExt) {
+                previewRoute = ExplorerRoutes.PdfPreview;
+              }
+
+              if (isImgExt) {
+                previewRoute = ExplorerRoutes.ImgPreview;
+              }
+
+              if (isTxtExt) {
+                previewRoute = ExplorerRoutes.TxtPreview;
+              }
+
               const value: FileSystemObject = {
                 ...obj,
                 securityLevel: matchingDict ?? {
                   displayText: '',
                   value: undefined,
                 },
-                previewable:
-                  obj.type === ExplorerFsObjectTypes.FILE &&
-                  this.explorerPathService.checkExtension(
-                    obj.fileName ?? '',
-                    'pdf',
-                  ),
+                showPreviewButton: obj.type === ExplorerFsObjectTypes.FILE,
+                previewRoute,
               };
               return value;
             });

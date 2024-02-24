@@ -521,11 +521,20 @@ export class ExplorerComponent implements OnInit {
   }
 
   openPreview(row: FileSystemObject): void {
+    if (row.previewRoute === undefined) {
+      this.snackBar.open(
+        this.translateService.instant('EXPLORER.PREVIEW_IS_NOT_AVAILABLE'),
+        'close',
+      );
+      return;
+    }
     this.explorerService
       .makeDownloadLink(row.fullPath, ExplorerDownloadParams.PATH)
       .pipe(
         tap((link) => {
-          this.router.navigate(['pdf-preview'], { state: { link } });
+          this.router.navigate([row.previewRoute], {
+            state: { link },
+          });
         }),
         take(1),
       )

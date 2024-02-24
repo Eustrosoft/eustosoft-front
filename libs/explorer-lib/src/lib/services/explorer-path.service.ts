@@ -29,9 +29,4 @@ export class ExplorerPathService {
     pathArr.pop();
     return pathArr.join('/');
   }
-
-  checkExtension(filename: string, expectedExtension: string): boolean {
-    const fileExtension = filename.split('.').pop()?.toLowerCase();
-    return fileExtension === expectedExtension.toLowerCase();
-  }
 }
