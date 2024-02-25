@@ -6,7 +6,7 @@
  */
 
 import { inject, Injectable } from '@angular/core';
-import { HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse, HttpParams } from '@angular/common/http';
 import {
   DispatchService,
   DocumentFileExtensions,
@@ -105,10 +105,12 @@ export class ExplorerService {
     parameterName: ExplorerDownloadParams = ExplorerDownloadParams.TICKET,
   ): Observable<string> {
     return this.config.pipe(
-      map(
-        (config) =>
-          `${config.apiUrl}/download?${parameterName}=${parameterValue}`,
-      ),
+      map((config) => {
+        const params = new HttpParams({
+          fromString: `${parameterName}=${parameterValue}`,
+        });
+        return `${config.apiUrl}/download?${params.toString()}`;
+      }),
     );
   }
 
