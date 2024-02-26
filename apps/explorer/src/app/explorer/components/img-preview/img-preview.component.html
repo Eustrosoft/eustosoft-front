@@ -20,10 +20,16 @@
   </ng-container>
   <ng-container *ngIf="!vm.data?.isError && vm.data?.src as src">
     <img
+      *ngIf="vm.data?.ext !== ImgFileExtensions.Svg"
       [src]="src"
       style="object-fit: contain"
       class="w-100 overflow-auto"
       alt="Preview Image"
     />
+    <div
+      *ngIf="vm.data?.ext === ImgFileExtensions.Svg"
+      [innerHTML]="src"
+      class="w-100 overflow-auto flex align-items-center justify-content-center"
+    ></div>
   </ng-container>
 </ng-container>

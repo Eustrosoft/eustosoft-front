@@ -143,7 +143,8 @@
       "MOVE_SAME_NAME_ERROR": "This directory already contains folder with same name",
       "ERROR_FETCHING_DATA": "Unable to show preview. Can't get data from server",
       "ERROR_PARSING_DATA": "Unable to show preview. Can't parse data from server",
-      "FILE_LINK_ERROR": "Unable to show preview. Invalid file link provided"
+      "FILE_LINK_ERROR": "Unable to show preview. Invalid file link provided",
+      "FILE_EXT_ERROR": "Unable to show preview. Invalid file extension provided"
     }
   }
 }

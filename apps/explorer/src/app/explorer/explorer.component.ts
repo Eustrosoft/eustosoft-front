@@ -533,7 +533,7 @@ export class ExplorerComponent implements OnInit {
       .pipe(
         tap((link) => {
           this.router.navigate([row.previewRoute], {
-            state: { link },
+            state: { link, extension: row.fileName.split('.').pop() },
           });
         }),
         take(1),

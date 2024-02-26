@@ -12,7 +12,6 @@ import { PreloaderComponent } from '@eustrosoft-front/common-ui';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   catchError,
-  iif,
   map,
   Observable,
   of,
@@ -22,6 +21,8 @@ import {
 } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { ImgFileExtensions } from '@eustrosoft-front/core';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
   selector: 'eustrosoft-front-img-preview',
@@ -39,42 +40,66 @@ import { Router } from '@angular/router';
 export class ImgPreviewComponent {
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
+  private readonly domSanitizer = inject(DomSanitizer);
+  protected readonly ImgFileExtensions = ImgFileExtensions;
   protected imgLoad$: Observable<{
     isLoading: boolean;
     isError: boolean;
     errorText: string;
-    src: string | undefined;
+    src: string | SafeHtml | undefined;
+    ext: string | undefined;
   }> = of(true).pipe(
     switchMap(() => {
       const link = this.router.lastSuccessfulNavigation?.extras?.state?.link;
-      return iif(
-        () => typeof link !== 'undefined' && link !== null && link !== '',
-        of(link).pipe(
-          switchMap((link) =>
-            this.http
-              .get(link, {
-                responseType: 'blob',
-              })
-              .pipe(
+      const ext =
+        this.router.lastSuccessfulNavigation?.extras?.state?.extension;
+      if (typeof link === 'undefined' || link === null || link === '') {
+        return throwError(() => 'EXPLORER.ERRORS.FILE_LINK_ERROR');
+      }
+      if (typeof ext === 'undefined' || ext === null || ext === '') {
+        return throwError(() => 'EXPLORER.ERRORS.FILE_EXT_ERROR');
+      }
+
+      const responseType = ext === ImgFileExtensions.Svg ? 'text' : 'blob';
+      return of(link).pipe(
+        switchMap((link) => {
+          switch (responseType) {
+            case 'blob':
+              return this.http.get(link, { responseType }).pipe(
+                map((res) => ({
+                  isLoading: false,
+                  isError: false,
+                  errorText: '',
+                  src: URL.createObjectURL(res) ?? undefined,
+                  ext,
+                })),
                 catchError(() =>
                   throwError(() => 'EXPLORER.ERRORS.ERROR_FETCHING_DATA'),
                 ),
-              ),
-          ),
-          map((res) => ({
-            isLoading: false,
-            isError: false,
-            errorText: '',
-            src: URL.createObjectURL(res) ?? undefined,
-          })),
-          startWith({
-            isLoading: true,
-            isError: false,
-            errorText: '',
-            src: undefined,
-          }),
-        ),
-        throwError(() => 'EXPLORER.ERRORS.FILE_LINK_ERROR'),
+              );
+            case 'text':
+              return this.http.get(link, { responseType }).pipe(
+                map((res) => ({
+                  isLoading: false,
+                  isError: false,
+                  errorText: '',
+                  src:
+                    this.domSanitizer.bypassSecurityTrustHtml(res) ?? undefined,
+                  ext,
+                })),
+                catchError(() =>
+                  throwError(() => 'EXPLORER.ERRORS.ERROR_FETCHING_DATA'),
+                ),
+              );
+          }
+        }),
+        startWith({
+          isLoading: true,
+          isError: false,
+          errorText: '',
+          src: undefined,
+          ext: undefined,
+        }),
       );
     }),
     catchError((errorText: string) => {
@@ -83,6 +108,7 @@ export class ImgPreviewComponent {
         isError: true,
         errorText,
         src: undefined,
+        ext: undefined,
       });
     }),
   );
