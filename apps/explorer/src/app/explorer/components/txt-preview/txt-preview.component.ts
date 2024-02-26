@@ -32,7 +32,12 @@ import {
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { FileReaderService } from '@eustrosoft-front/explorer-lib';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import {
+  MatPaginatorIntl,
+  MatPaginatorModule,
+  PageEvent,
+} from '@angular/material/paginator';
+import { TextPaginatorIntl } from './text-paginator-intl.class';
 
 @Component({
   selector: 'eustrosoft-front-txt-preview',
@@ -46,6 +51,12 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
   templateUrl: './txt-preview.component.html',
   styleUrl: './txt-preview.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [
+    {
+      provide: MatPaginatorIntl,
+      useClass: TextPaginatorIntl,
+    },
+  ],
 })
 export class TxtPreviewComponent {
   private readonly http = inject(HttpClient);

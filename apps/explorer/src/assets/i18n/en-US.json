@@ -126,6 +126,15 @@
       "EXTRA_OPTIONS_PANEL_DESCRIPTION_LABEL": "Description",
       "OPEN_FOLDER_BUTTON_TOOLTIP": "Open file folder"
     },
+    "TXT_PREVIEW_PAGINATOR": {
+      "FIRST_PAGE": "First page",
+      "ITEMS_PER_PAGE": "Items per page:",
+      "LAST_PAGE": "Last page",
+      "NEXT_PAGE": "Next page",
+      "PREVIOUS_PAGE": "Previous page",
+      "ONE_OF_ONE": "Page 1 of 1",
+      "PAGE_OF_AMOUNT": "Page {{page}} of {{amountPages}}"
+    },
     "ERRORS": {
       "NO_SELECTED_FILES_ERROR_TEXT": "Select files first",
       "SECURITY_LEVEL_OPTIONS_FETCH_ERROR": "Error fetching security levels",

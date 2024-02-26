@@ -126,6 +126,15 @@
       "EXTRA_OPTIONS_PANEL_DESCRIPTION_LABEL": "Примечание",
       "OPEN_FOLDER_BUTTON_TOOLTIP": "Открыть папку с файлом"
     },
+    "TXT_PREVIEW_PAGINATOR": {
+      "FIRST_PAGE": "Первая страница",
+      "ITEMS_PER_PAGE": "Символов на странице:",
+      "LAST_PAGE": "Последняя страница",
+      "NEXT_PAGE": "Следующая страница",
+      "PREVIOUS_PAGE": "Предыдущая страница",
+      "ONE_OF_ONE": "Страница 1 из 1",
+      "PAGE_OF_AMOUNT": "Страница {{page}} из {{amountPages}}"
+    },
     "ERRORS": {
       "NO_SELECTED_FILES_ERROR_TEXT": "Сначала выберите файлы",
       "SECURITY_LEVEL_OPTIONS_FETCH_ERROR": "Ошибка при попытке получения списка уровней доступа",
