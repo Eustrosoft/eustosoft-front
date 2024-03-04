@@ -164,6 +164,9 @@ $flex-options: (
   flex-wrap-wrap-reverse: (
     flex-wrap: wrap-reverse,
   ),
+  flex-flow-wrap: (
+    flex-flow: wrap,
+  ),
 );
 
 @include mixins.generate-utility-classes($flex-options);

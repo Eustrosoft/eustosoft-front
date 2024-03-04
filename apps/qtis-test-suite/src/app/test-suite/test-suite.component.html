@@ -5,8 +5,8 @@
   ~ See the LICENSE file at the project root for licensing information.
   -->
 
-<div class="flex flex-wrap g-3">
-  <button mat-stroked-button type="button">
+<div class="flex flex-flow-wrap g-3">
+  <button mat-stroked-button type="button" (click)="runAllTests()">
     <mat-icon>play_arrow</mat-icon> Run All Tests
   </button>
   <button mat-stroked-button type="button" (click)="runFsTests()">
@@ -35,3 +35,4 @@
     </ng-template>
   </mat-tab>
 </mat-tab-group>
+<ng-container *ngIf="allTests$ | async"></ng-container>
