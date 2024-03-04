@@ -42,7 +42,6 @@ import {
 } from '../interfaces/explorer-response.interface';
 import { ExplorerDownloadParams } from '../constants/enums/explorer-download-params.enum';
 import { ExplorerFsObjectTypes } from '../constants/enums/explorer-fs-object-types.enum';
-import { ExplorerRequestActions } from '../constants/enums/explorer-actions.enum';
 import { FileSystemObject } from '../interfaces/file-system-object.interface';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ExplorerPathService } from './explorer-path.service';
@@ -218,19 +217,10 @@ export class ExplorerService {
         of(this.explorerPathService.getFullPathToLastFolder(fullPath)),
       ),
       switchMap((folder) =>
-        iif(
-          () => data.name !== row.fileName,
-          this.explorerRequestBuilderService.buildMoveRequest(
-            [row],
-            [`${folder}/${data.name}`],
-            data.description ?? '',
-            ExplorerRequestActions.RENAME,
-          ),
-          this.explorerRequestBuilderService.buildMoveRequest(
-            [row],
-            [`${folder}/${data.name}`],
-            data.description ?? '',
-          ),
+        this.explorerRequestBuilderService.buildMoveRequest(
+          [row],
+          [`${folder}/${data.name}`],
+          data.description ?? '',
         ),
       ),
       switchMap((body: QtisRequestResponse<MoveRequest>) =>

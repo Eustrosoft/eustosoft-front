@@ -12,9 +12,7 @@ export enum ExplorerRequestActions {
   UPLOAD_CHUNKS_BINARY = 'upload_chunks_binary',
   UPLOAD_CHUNKS_HEX = 'upload_chunks_hex',
   MOVE = 'move',
-  RENAME = 'rename',
   COPY = 'copy',
   DELETE = 'delete',
   TICKET = 'ticket',
-  DOWNLOAD = 'download',
 }

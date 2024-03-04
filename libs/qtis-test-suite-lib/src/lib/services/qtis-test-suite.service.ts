@@ -431,7 +431,6 @@ export class QtisTestSuiteService {
                         [copiedFile],
                         [`${folderPath}/Renamed-Copy-${copiedFile.fileName}`],
                         `Updated ${testData.fileDescription}`,
-                        ExplorerRequestActions.RENAME,
                       )
                       .pipe(
                         concatMap((body) =>

@@ -42,7 +42,7 @@
       {{ 'EXPLORER.NAME_COLUMN_TEXT' | translate }}
     </th>
     <td mat-cell *matCellDef="let element">
-      <div class="flex align-items-center">
+      <div class="flex align-items-center g-1">
         <ng-container [ngSwitch]="element.type">
           <ng-container *ngSwitchCase="fsObjTypes.DIRECTORY">
             <mat-icon>folder</mat-icon>
