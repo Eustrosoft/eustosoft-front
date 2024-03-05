@@ -49,6 +49,7 @@ import { RenameDialogReturnData } from '../interfaces/rename-dialog/rename-dialo
 import { DOCUMENT } from '@angular/common';
 import { CachedDictionaryService } from '@eustrosoft-front/dic';
 import { ExplorerRoutes } from '../constants/enums/explorer-routes.enum';
+import { ExplorerRequestActions } from '../constants/enums/explorer-actions.enum';
 
 @Injectable({ providedIn: 'root' })
 export class ExplorerService {
@@ -208,7 +209,7 @@ export class ExplorerService {
     );
   }
 
-  move(
+  rename(
     row: FileSystemObject,
     data: RenameDialogReturnData,
   ): Observable<QtisRequestResponse<MoveResponse>> {
@@ -227,6 +228,26 @@ export class ExplorerService {
         this.dispatchService.dispatch<MoveRequest, MoveResponse>(body),
       ),
       catchError((err) => this.handleError(err)),
+    );
+  }
+
+  move(
+    from: FileSystemObject[],
+    to: string[],
+    explorerRequestActions = ExplorerRequestActions.MOVE,
+  ): Observable<{ to: string[]; res: QtisRequestResponse<MoveResponse> }> {
+    return of(true).pipe(
+      switchMap(() =>
+        this.explorerRequestBuilderService.buildMoveCopyRequest(
+          from,
+          to,
+          explorerRequestActions,
+        ),
+      ),
+      switchMap((body) =>
+        this.dispatchService.dispatch<MoveRequest, MoveResponse>(body),
+      ),
+      switchMap((res) => of({ to, res })),
     );
   }
 

@@ -2,25 +2,34 @@ import { inject, Injectable } from '@angular/core';
 import { TestResult } from '../interfaces/test-case.interface';
 import {
   ExplorerFsObjectTypes,
-  ExplorerRequestBuilderService,
+  ExplorerRequestActions,
   ExplorerService,
   ExplorerUploadItemFormFactoryService,
   ExplorerUploadItemsService,
   ExplorerUploadService,
+  FileSystemObject,
 } from '@eustrosoft-front/explorer-lib';
-import { DispatchService, QtisRequestResponse } from '@eustrosoft-front/core';
-import { LoginService } from '@eustrosoft-front/security';
-import { catchError, concatMap, map, Observable, of, throwError } from 'rxjs';
+import { QtisRequestResponse } from '@eustrosoft-front/core';
+import { LoginService, SecurityLevels } from '@eustrosoft-front/security';
+import {
+  catchError,
+  combineLatest,
+  concatMap,
+  map,
+  Observable,
+  of,
+  Subject,
+  takeUntil,
+  throwError,
+} from 'rxjs';
 import { LoginLogoutResponse } from '@eustrosoft-front/login-lib';
 import { TestCaseResult } from '../interfaces/test-case-result.interface';
 import { HttpErrorResponse } from '@angular/common/http';
-import { QtisTestFormService } from './qtis-test-form.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class QtisTestsService {
-  private readonly qtisTestFormService = inject(QtisTestFormService);
   private readonly explorerService = inject(ExplorerService);
   private readonly explorerUploadService = inject(ExplorerUploadService);
   private readonly explorerUploadItemsService = inject(
@@ -29,10 +38,6 @@ export class QtisTestsService {
   private readonly explorerUploadItemFormFactoryService = inject(
     ExplorerUploadItemFormFactoryService,
   );
-  private readonly explorerRequestBuilderService = inject(
-    ExplorerRequestBuilderService,
-  );
-  private readonly dispatchService = inject(DispatchService);
   private readonly loginService = inject(LoginService);
 
   login(login: string, password: string): Observable<TestCaseResult[]> {
@@ -146,5 +151,213 @@ export class QtisTestsService {
           ]),
         ),
       );
+  }
+
+  uploadFile(
+    files: File[],
+    fileUploadPath: string,
+    fileName: string,
+    securityLevel: string,
+    description: string,
+    uploadedFileName: string,
+  ): Observable<[TestCaseResult[], FileSystemObject[] | undefined]> {
+    const teardownUploadSubject = new Subject<void>();
+    const formArray =
+      this.explorerUploadItemFormFactoryService.makeUploadItemsForm(
+        files,
+        fileUploadPath,
+        <SecurityLevels>securityLevel,
+        description,
+      );
+    const control = formArray.controls.find(
+      (item) => item.controls.filename.value === fileName,
+    );
+    control?.patchValue(
+      {
+        ...control.value,
+        filename: uploadedFileName,
+        description: description,
+      },
+      { emitEvent: false },
+    );
+    this.explorerUploadItemsService.uploadItems$.next(formArray);
+
+    return of(fileUploadPath).pipe(
+      concatMap((path) =>
+        this.explorerUploadService.uploadHexString(path).pipe(
+          takeUntil(teardownUploadSubject),
+          catchError((err: HttpErrorResponse) =>
+            throwError(() => [
+              {
+                title: 'Upload file',
+                description: `Upload file to ${fileUploadPath}`,
+                responseStatus: `${err.status} ${err.statusText}`,
+                response: err.error ?? '',
+                errorText: 'Cant execute next tests without uploaded file',
+                result: TestResult.FAIL,
+              },
+            ]),
+          ),
+        ),
+      ),
+      concatMap(() => {
+        teardownUploadSubject.next();
+        return this.explorerService.getContents(fileUploadPath);
+      }),
+      concatMap((response) => {
+        const uploadedFile = response?.content?.find(
+          (item) => item.fileName === uploadedFileName,
+        );
+        if (uploadedFile === undefined) {
+          return throwError(() => [
+            {
+              title: 'Upload file',
+              description: `Check if file was uploaded to ${fileUploadPath}`,
+              response: response,
+              errorText: 'Cant execute next tests without uploaded file',
+              result: TestResult.FAIL,
+            },
+          ]);
+        }
+        return combineLatest([
+          of([
+            {
+              title: 'Upload file',
+              description: `Check if file was uploaded to ${fileUploadPath}`,
+              response: response.content,
+              result: TestResult.OK,
+            },
+            {
+              title: 'Check file description',
+              description: `Check if description of ${uploadedFile.fileName} equals "${description}"`,
+              response: response.content,
+              result:
+                uploadedFile.description === description
+                  ? TestResult.OK
+                  : TestResult.FAIL,
+            },
+            {
+              title: 'Check security level',
+              description: `Check if securityLevel of ${uploadedFile.fileName} equals ${securityLevel}`,
+              response: response.content,
+              result:
+                uploadedFile.securityLevel.value === securityLevel
+                  ? TestResult.OK
+                  : TestResult.FAIL,
+            },
+          ]),
+          of(response.content),
+        ]);
+      }),
+    );
+  }
+
+  copy(
+    from: FileSystemObject[],
+    to: string[],
+    explorerRequestActions: ExplorerRequestActions,
+    folderPath: string,
+    uploadedFileName: string,
+  ): Observable<[TestCaseResult[], FileSystemObject]> {
+    return of(true).pipe(
+      concatMap(() =>
+        this.explorerService.move(from, to, explorerRequestActions).pipe(
+          catchError((err: HttpErrorResponse) =>
+            throwError(() => [
+              {
+                title: 'Copy file',
+                description: `Copy file to ${to[0]}`,
+                responseStatus: `${err.status} ${err.statusText}`,
+                response: err.error ?? '',
+                errorText: 'Cant execute next tests without copied file',
+                result: TestResult.FAIL,
+              },
+            ]),
+          ),
+        ),
+      ),
+      concatMap(() => this.explorerService.getContents(folderPath)),
+      concatMap((response) => {
+        const copiedFile = response?.content?.find(
+          (item) => item.fileName === uploadedFileName,
+        );
+        if (copiedFile === undefined) {
+          return throwError(() => [
+            {
+              title: 'Copy file',
+              description: `Check if file was copied to ${folderPath}/${uploadedFileName}`,
+              response: response,
+              errorText: 'Cant execute next tests without copied file',
+              result: TestResult.FAIL,
+            },
+          ]);
+        }
+        return combineLatest([
+          of([
+            {
+              title: 'Check copied file',
+              description: `Check if file ${uploadedFileName} was copied to to ${folderPath}/${uploadedFileName}`,
+              response: response.content,
+              result: TestResult.OK,
+            },
+          ]),
+          of(copiedFile),
+        ]);
+      }),
+    );
+  }
+
+  rename(
+    from: FileSystemObject,
+    name: string,
+    description: string,
+    folderPath: string,
+  ): Observable<[TestCaseResult[], FileSystemObject]> {
+    return of(true).pipe(
+      concatMap(() =>
+        this.explorerService.rename(from, { name, description }).pipe(
+          catchError((err: HttpErrorResponse) =>
+            throwError(() => [
+              {
+                title: 'Rename file',
+                description: `Rename file to "Renamed-Copy-${name}"`,
+                responseStatus: `${err.status} ${err.statusText}`,
+                response: err.error ?? '',
+                errorText: 'Cant execute next tests without renamed file',
+                result: TestResult.FAIL,
+              },
+            ]),
+          ),
+        ),
+      ),
+      concatMap(() => this.explorerService.getContents(folderPath)),
+      concatMap((response) => {
+        const renamedFile = response?.content?.find(
+          (item) => item.fileName === `${name}`,
+        );
+        if (renamedFile === undefined) {
+          return throwError(() => [
+            {
+              title: 'Rename file',
+              description: `Check if file was renamed to "${name}"`,
+              response: response,
+              errorText: 'Cant execute next tests without renamed file',
+              result: TestResult.FAIL,
+            },
+          ]);
+        }
+        return combineLatest([
+          of([
+            {
+              title: 'Rename file',
+              description: `Check if file ${name} was renamed to "${name}"`,
+              response: response.content,
+              result: TestResult.OK,
+            },
+          ]),
+          of(renamedFile),
+        ]);
+      }),
+    );
   }
 }

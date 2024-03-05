@@ -358,7 +358,7 @@ export class ExplorerComponent implements OnInit {
         filter(
           (str): str is RenameDialogReturnData => typeof str !== 'undefined',
         ),
-        switchMap((data) => this.explorerService.move(row, data)),
+        switchMap((data) => this.explorerService.rename(row, data)),
         tap(() => {
           this.refresh$.next();
         }),
@@ -387,25 +387,8 @@ export class ExplorerComponent implements OnInit {
       .afterClosed()
       .pipe(
         filter((str): str is string[] => typeof str !== 'undefined'),
-        switchMap((to) =>
-          combineLatest([
-            this.explorerRequestBuilderService.buildMoveCopyRequest(
-              rows,
-              to,
-              ExplorerRequestActions.MOVE,
-            ),
-            of(to),
-          ]),
-        ),
-        switchMap(([body, to]) =>
-          combineLatest([
-            this.dispatchService.dispatch<MoveCopyRequest, MoveCopyResponse>(
-              body,
-            ),
-            of(to),
-          ]),
-        ),
-        tap(([_, to]) => {
+        switchMap((to) => this.explorerService.move(rows, to)),
+        tap(({ to }) => {
           const lastIndex = to[0].lastIndexOf('/');
           const path = to[0].substring(0, lastIndex) || '/';
           this.path$.next(path);

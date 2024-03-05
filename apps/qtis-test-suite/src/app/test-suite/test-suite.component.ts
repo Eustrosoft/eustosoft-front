@@ -43,7 +43,7 @@ export class TestSuiteComponent {
   protected readonly isSm = this.breakpointsService.isSm();
   protected readonly allTests$ = this.qtisTestSuiteService
     .runAllTests$()
-    .pipe(switchMap(() => this.qtisTestSuiteService.executeAllTests()));
+    .pipe(switchMap(() => this.qtisTestSuiteService.executeAllTests$()));
 
   @ViewChild(MatAccordion) accordion!: MatAccordion;
 

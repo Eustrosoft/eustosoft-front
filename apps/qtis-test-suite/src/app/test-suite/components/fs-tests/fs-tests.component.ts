@@ -48,7 +48,7 @@ export class FsTestsComponent {
   protected readonly tests$ = merge(
     this.qtisTestSuiteService.runFsTests$(),
     this.qtisTestSuiteService.runAllTests$(),
-  ).pipe(switchMap(() => this.qtisTestSuiteService.executeFsTests$()));
+  ).pipe(switchMap(() => this.qtisTestSuiteService.fsTests$));
   protected readonly showResponses$ =
     this.qtisTestFormService.form.controls.showResponses.valueChanges.pipe(
       startWith(true),

@@ -4,35 +4,45 @@
   ~ This file is part of eustrosoft-front project.
   ~ See the LICENSE file at the project root for licensing information.
   -->
-
-<div class="flex flex-flow-wrap g-3">
-  <button mat-stroked-button type="button" (click)="runAllTests()">
-    <mat-icon>play_arrow</mat-icon> Run All Tests
-  </button>
-  <button mat-stroked-button type="button" (click)="runFsTests()">
-    <mat-icon>play_arrow</mat-icon> Run FS Tests
-  </button>
-</div>
-<mat-tab-group dynamicHeight>
-  <mat-tab>
-    <ng-template mat-tab-label>
-      <mat-icon class="me-2">data_object</mat-icon>
-      Data For Tests
-    </ng-template>
-    <eustrosoft-front-test-data-form></eustrosoft-front-test-data-form>
-  </mat-tab>
-  <mat-tab>
-    <ng-template mat-tab-label>
-      <mat-icon class="me-2">folder</mat-icon>
-      FS
-    </ng-template>
-    <eustrosoft-front-fs-tests></eustrosoft-front-fs-tests>
-  </mat-tab>
-  <mat-tab>
-    <ng-template mat-tab-label>
-      <mat-icon class="me-2">send</mat-icon>
-      MSG
-    </ng-template>
-  </mat-tab>
-</mat-tab-group>
-<ng-container *ngIf="allTests$ | async"></ng-container>
+<ng-container *ngIf="{ allTests: allTests$ | async } as vm">
+  <div class="flex flex-flow-wrap g-3">
+    <button
+      mat-stroked-button
+      type="button"
+      [disabled]="!!vm.allTests?.isLoading"
+      (click)="runAllTests()"
+    >
+      <mat-icon>play_arrow</mat-icon> Run All Tests
+    </button>
+    <button
+      mat-stroked-button
+      type="button"
+      [disabled]="!!vm.allTests?.isLoading"
+      (click)="runFsTests()"
+    >
+      <mat-icon>play_arrow</mat-icon> Run FS Tests
+    </button>
+  </div>
+  <mat-tab-group dynamicHeight>
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="me-2">data_object</mat-icon>
+        Data For Tests
+      </ng-template>
+      <eustrosoft-front-test-data-form></eustrosoft-front-test-data-form>
+    </mat-tab>
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="me-2">folder</mat-icon>
+        FS
+      </ng-template>
+      <eustrosoft-front-fs-tests></eustrosoft-front-fs-tests>
+    </mat-tab>
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="me-2">send</mat-icon>
+        MSG
+      </ng-template>
+    </mat-tab>
+  </mat-tab-group>
+</ng-container>
