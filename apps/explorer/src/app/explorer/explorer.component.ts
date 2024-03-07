@@ -39,14 +39,12 @@ import {
   takeUntil,
   tap,
 } from 'rxjs';
-import { DispatchService, QtisRequestResponse } from '@eustrosoft-front/core';
+import { DispatchService } from '@eustrosoft-front/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import {
   CreateDialogData,
   CreateDialogReturnData,
-  DeleteRequest,
-  DeleteResponse,
   ExplorerDownloadParams,
   ExplorerFsObjectTypes,
   ExplorerPathService,
@@ -393,7 +391,6 @@ export class ExplorerComponent implements OnInit {
           const path = to[0].substring(0, lastIndex) || '/';
           this.path$.next(path);
         }),
-        catchError((err) => this.explorerService.handleError(err)),
         take(1),
       )
       .subscribe();
@@ -474,17 +471,11 @@ export class ExplorerComponent implements OnInit {
       .afterClosed()
       .pipe(
         filter((v) => Boolean(v)),
-        switchMap(() =>
-          this.explorerRequestBuilderService.buildDeleteRequests(rows),
-        ),
-        switchMap((body: QtisRequestResponse<DeleteRequest>) =>
-          this.dispatchService.dispatch<DeleteRequest, DeleteResponse>(body),
-        ),
+        switchMap(() => this.explorerService.delete(rows)),
         tap(() => {
           this.refresh$.next();
           this.filesystemTableService.selection.clear();
         }),
-        catchError((err) => this.explorerService.handleError(err)),
         take(1),
       )
       .subscribe();

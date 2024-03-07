@@ -32,11 +32,13 @@ import {
 import { ExplorerRequestBuilderService } from './explorer-request-builder.service';
 import {
   CreateRequest,
+  DeleteRequest,
   MoveRequest,
   ViewRequest,
 } from '../interfaces/explorer-request.interface';
 import {
   CreateResponse,
+  DeleteResponse,
   MoveResponse,
   ViewResponse,
 } from '../interfaces/explorer-response.interface';
@@ -248,6 +250,18 @@ export class ExplorerService {
         this.dispatchService.dispatch<MoveRequest, MoveResponse>(body),
       ),
       switchMap((res) => of({ to, res })),
+      catchError((err) => this.handleError(err)),
+    );
+  }
+
+  delete(
+    rows: FileSystemObject[],
+  ): Observable<QtisRequestResponse<DeleteResponse>> {
+    return this.explorerRequestBuilderService.buildDeleteRequests(rows).pipe(
+      switchMap((body: QtisRequestResponse<DeleteRequest>) =>
+        this.dispatchService.dispatch<DeleteRequest, DeleteResponse>(body),
+      ),
+      catchError((err) => this.handleError(err)),
     );
   }
 

@@ -72,7 +72,7 @@ export class QtisTestsService {
     folderName: string,
     description: string,
     securityLevel: string,
-  ): Observable<[TestCaseResult[], FileSystemObject | undefined]> {
+  ): Observable<[TestCaseResult[], FileSystemObject]> {
     return this.explorerService
       .create(
         path,
@@ -252,43 +252,45 @@ export class QtisTestsService {
     );
   }
 
-  copy(
+  copyMove(
     from: FileSystemObject[],
     to: string[],
-    explorerRequestActions: ExplorerRequestActions,
-    folderPath: string,
+    explorerRequestActions:
+      | ExplorerRequestActions.COPY
+      | ExplorerRequestActions.MOVE,
+    folderToCheckPath: string,
     name: string,
   ): Observable<[TestCaseResult[], FileSystemObject]> {
     const fsObjName = this.getFsObjectTypeName(from);
+    const uFsActionName = this.getFsActionName(explorerRequestActions, true);
+    const fsActionName = this.getFsActionName(explorerRequestActions);
     return of(true).pipe(
       concatMap(() =>
         this.explorerService.move(from, to, explorerRequestActions).pipe(
           catchError((err: HttpErrorResponse) =>
             throwError(() => [
               {
-                title: `Copy ${fsObjName}`,
-                description: `Copy  ${fsObjName} to ${to[0]}`,
+                title: `${uFsActionName.action} ${fsObjName}`,
+                description: `${uFsActionName.action}  ${fsObjName} to ${to[0]}`,
                 responseStatus: `${err.status} ${err.statusText}`,
                 response: err.error ?? '',
-                errorText: `Cant execute next tests without copied ${fsObjName}`,
+                errorText: `Cant execute next tests without ${fsActionName.doneAction} ${fsObjName}`,
                 result: TestResult.FAIL,
               },
             ]),
           ),
         ),
       ),
-      concatMap(() => this.explorerService.getContents(folderPath)),
+      concatMap(() => this.explorerService.getContents(folderToCheckPath)),
       concatMap((response) => {
-        const copiedFile = response?.content?.find(
-          (item) => item.fileName === name,
-        );
-        if (copiedFile === undefined) {
+        const file = response?.content?.find((item) => item.fileName === name);
+        if (file === undefined) {
           return throwError(() => [
             {
-              title: `Copy ${fsObjName}`,
-              description: `Check if ${fsObjName} was copied to ${folderPath}/${name}`,
+              title: `${uFsActionName.action} ${fsObjName}`,
+              description: `Check if ${fsObjName} was ${fsActionName.doneAction} to ${folderToCheckPath}/${name}`,
               response: response,
-              errorText: `Cant execute next tests without copied ${fsObjName}`,
+              errorText: `Cant execute next tests without ${fsActionName.doneAction} ${fsObjName}`,
               result: TestResult.FAIL,
             },
           ]);
@@ -296,13 +298,13 @@ export class QtisTestsService {
         return combineLatest([
           of([
             {
-              title: `Check copied ${fsObjName}`,
-              description: `Check if ${fsObjName} ${name} was copied to to ${folderPath}/${name}`,
+              title: `Check ${fsActionName.doneAction} ${fsObjName}`,
+              description: `Check if ${fsObjName} ${name} was ${fsActionName.doneAction} to ${folderToCheckPath}/${name}`,
               response: response.content,
               result: TestResult.OK,
             },
           ]),
-          of(copiedFile),
+          of(file),
         ]);
       }),
     );
@@ -312,26 +314,27 @@ export class QtisTestsService {
     from: FileSystemObject,
     name: string,
     description: string,
-    folderPath: string,
+    folderToCheckPath: string,
   ): Observable<[TestCaseResult[], FileSystemObject]> {
+    const fsObjName = this.getFsObjectTypeName(from);
     return of(true).pipe(
       concatMap(() =>
         this.explorerService.rename(from, { name, description }).pipe(
           catchError((err: HttpErrorResponse) =>
             throwError(() => [
               {
-                title: 'Rename file',
-                description: `Rename file to "Renamed-Copy-${name}"`,
+                title: `Rename ${fsObjName}`,
+                description: `Rename ${fsObjName} to "Renamed-Copy-${name}"`,
                 responseStatus: `${err.status} ${err.statusText}`,
                 response: err.error ?? '',
-                errorText: 'Cant execute next tests without renamed file',
+                errorText: `Cant execute next tests without renamed ${fsObjName}`,
                 result: TestResult.FAIL,
               },
             ]),
           ),
         ),
       ),
-      concatMap(() => this.explorerService.getContents(folderPath)),
+      concatMap(() => this.explorerService.getContents(folderToCheckPath)),
       concatMap((response) => {
         const renamedFile = response?.content?.find(
           (item) => item.fileName === `${name}`,
@@ -339,10 +342,10 @@ export class QtisTestsService {
         if (renamedFile === undefined) {
           return throwError(() => [
             {
-              title: 'Rename file',
-              description: `Check if file was renamed to "${name}"`,
+              title: `Rename ${fsObjName}`,
+              description: `Check if ${fsObjName} was renamed to "${name}"`,
               response: response,
-              errorText: 'Cant execute next tests without renamed file',
+              errorText: 'Cant execute next tests without renamed ${fsObjName}',
               result: TestResult.FAIL,
             },
           ]);
@@ -350,8 +353,8 @@ export class QtisTestsService {
         return combineLatest([
           of([
             {
-              title: 'Rename file',
-              description: `Check if file ${name} was renamed to "${name}"`,
+              title: `Rename ${fsObjName}`,
+              description: `Check if ${fsObjName} ${name} was renamed to "${name}"`,
               response: response.content,
               result: TestResult.OK,
             },
@@ -362,7 +365,65 @@ export class QtisTestsService {
     );
   }
 
-  getFsObjectTypeName(obj: FileSystemObject | FileSystemObject[]): string {
+  delete(
+    fsObjects: FileSystemObject[],
+    folderPath: string,
+  ): Observable<TestCaseResult[]> {
+    const objWord = fsObjects.length > 1 ? 'objects' : 'object';
+    const fsObjName = this.getFsObjectTypeName(fsObjects, fsObjects.length > 1);
+    return of(true).pipe(
+      concatMap(() =>
+        this.explorerService.delete(fsObjects).pipe(
+          catchError((err: HttpErrorResponse) =>
+            throwError(() => [
+              {
+                title: `Delete ${fsObjName}`,
+                description: `Delete ${fsObjects
+                  .map((obj) => obj.fileName)
+                  .join()}`,
+                responseStatus: `${err.status} ${err.statusText}`,
+                response: err.error ?? '',
+                errorText: 'Delete failed',
+                result: TestResult.FAIL,
+              },
+            ]),
+          ),
+        ),
+      ),
+      concatMap(() => this.explorerService.getContents(folderPath)),
+      concatMap((response) => {
+        const notDeleted = response?.content?.filter((cont) =>
+          fsObjects.some((fsObj) => fsObj.fileName === cont.fileName),
+        );
+        if (!!notDeleted && notDeleted.length > 0) {
+          return throwError(() => [
+            {
+              title: `Delete ${fsObjName}`,
+              description: `Check if ${objWord} deleted`,
+              response: response,
+              errorText: `Not deleted: ${notDeleted!
+                .map((obj) => obj.fileName)
+                .join()}`,
+              result: TestResult.FAIL,
+            },
+          ]);
+        }
+        return of([
+          {
+            title: `Delete ${fsObjName}`,
+            description: `Check if ${objWord} were deleted successfully`,
+            response: response.content,
+            result: TestResult.OK,
+          },
+        ]);
+      }),
+    );
+  }
+
+  getFsObjectTypeName(
+    obj: FileSystemObject | FileSystemObject[],
+    plural = false,
+  ): string {
     let isFile: boolean;
     let isDir: boolean;
     if (Array.isArray(obj)) {
@@ -382,12 +443,48 @@ export class QtisTestsService {
     if (isFile) {
       name = 'file';
     }
+    if (isFile && plural) {
+      name = 'files';
+    }
     if (isDir) {
       name = 'directory';
+    }
+    if (isDir && plural) {
+      name = 'directories';
     }
     if (!isFile && !isDir) {
       name = 'mixed files and dirs';
     }
     return name;
+  }
+
+  getFsActionName(
+    action: ExplorerRequestActions,
+    uppercaseFirstLetter: boolean = false,
+  ): {
+    action: string;
+    doneAction: string;
+  } {
+    switch (action) {
+      case ExplorerRequestActions.COPY:
+        return {
+          action: `${uppercaseFirstLetter ? 'C' : 'c'}opy`,
+          doneAction: `${uppercaseFirstLetter ? 'C' : 'c'}opied`,
+        };
+      case ExplorerRequestActions.MOVE:
+        return {
+          action: `${uppercaseFirstLetter ? 'M' : 'm'}ove`,
+          doneAction: `${uppercaseFirstLetter ? 'M' : 'm'}oved`,
+        };
+      default:
+        return { action: 'UNKNOWN', doneAction: 'UNKNOWN' };
+    }
+  }
+
+  getFormattedDate(): string {
+    const currentDate = new Date();
+    const isoDate = currentDate.toISOString().split('T')[0];
+    const timeString = currentDate.toTimeString().split(' ')[0];
+    return `${isoDate}T${timeString}.000Z`;
   }
 }

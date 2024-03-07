@@ -40,11 +40,11 @@
       <ng-container *ngFor="let test of results; let index = index">
         <mat-expansion-panel>
           <mat-expansion-panel-header>
-            <mat-panel-title>
+            <mat-panel-title class="flex-basis-80 flex-shrink-0">
               {{ test.title }}
             </mat-panel-title>
-            <mat-panel-description>
-              <mat-chip-set [ngSwitch]="test.result" class="me-2">
+            <mat-panel-description class="g-2 flex-shrink-0">
+              <mat-chip-set [ngSwitch]="test.result">
                 <mat-chip
                   *ngSwitchCase="TestResult.OK"
                   (click)="$event.stopPropagation()"
@@ -68,8 +68,6 @@
                   CANCELED
                 </mat-chip>
               </mat-chip-set>
-
-              <span>{{ test.description }}</span>
             </mat-panel-description>
           </mat-expansion-panel-header>
           <ng-container>
@@ -84,6 +82,10 @@
               <span *ngIf="test.responseStatus">
                 Response Status: {{ test.responseStatus }}
               </span>
+            </div>
+            <div class="flex flex-column">
+              <h3>Description:</h3>
+              <p>{{ test.description }}</p>
             </div>
             <pre *ngIf="showResponses$ | async" class="overflow-auto">
               {{ test.response | json }}
