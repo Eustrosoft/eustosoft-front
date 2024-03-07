@@ -4,7 +4,9 @@
   ~ This file is part of eustrosoft-front project.
   ~ See the LICENSE file at the project root for licensing information.
   -->
-<ng-container *ngIf="{ allTests: allTests$ | async } as vm">
+<ng-container
+  *ngIf="{ allTests: allTests$ | async, fsTests: fsTests$ | async } as vm"
+>
   <div class="flex flex-flow-wrap g-3">
     <button
       mat-stroked-button
@@ -17,7 +19,7 @@
     <button
       mat-stroked-button
       type="button"
-      [disabled]="!!vm.allTests?.isLoading"
+      [disabled]="!!vm.fsTests?.isLoading"
       (click)="runFsTests()"
     >
       <mat-icon>play_arrow</mat-icon> Run FS Tests

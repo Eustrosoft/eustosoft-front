@@ -17,12 +17,12 @@ import {
 import {
   catchError,
   combineLatest,
-  EMPTY,
   iif,
   map,
   Observable,
   of,
   switchMap,
+  throwError,
 } from 'rxjs';
 import {
   APP_CONFIG,
@@ -205,7 +205,7 @@ export class ExplorerService {
       switchMap((body: QtisRequestResponse<CreateRequest>) =>
         this.dispatchService.dispatch<CreateRequest, CreateResponse>(body),
       ),
-      catchError((err) => this.handleError(err)),
+      catchError((err: HttpErrorResponse) => this.handleError(err)),
     );
   }
 
@@ -253,6 +253,6 @@ export class ExplorerService {
 
   handleError(err: HttpErrorResponse): Observable<never> {
     this.snackBar.open(err.error, 'close');
-    return EMPTY;
+    return throwError(() => err);
   }
 }

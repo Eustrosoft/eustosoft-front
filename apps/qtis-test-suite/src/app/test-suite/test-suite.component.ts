@@ -16,7 +16,7 @@ import { MatAccordion } from '@angular/material/expansion';
 import { QtisSubsystemTestsService } from '@eustrosoft-front/qtis-test-suite-lib';
 import { BreakpointsService } from '@eustrosoft-front/common-ui';
 import { MatIconModule } from '@angular/material/icon';
-import { MatTabsModule } from '@angular/material/tabs';
+import { MatTabGroup, MatTabsModule } from '@angular/material/tabs';
 import { TestDataFormComponent } from './components/test-data-form/test-data-form.component';
 import { FsTestsComponent } from './components/fs-tests/fs-tests.component';
 import { MatButtonModule } from '@angular/material/button';
@@ -44,14 +44,17 @@ export class TestSuiteComponent {
   protected readonly allTests$ = this.qtisTestSuiteService
     .runAllTests$()
     .pipe(switchMap(() => this.qtisTestSuiteService.executeAllTests$()));
+  protected readonly fsTests$ = this.qtisTestSuiteService.fsTests$;
 
   @ViewChild(MatAccordion) accordion!: MatAccordion;
+  @ViewChild(MatTabGroup) matTabGroup!: MatTabGroup;
 
   runAllTests(): void {
     this.qtisTestSuiteService.runAllTests();
   }
 
   runFsTests(): void {
+    this.matTabGroup.selectedIndex = 1;
     this.qtisTestSuiteService.runFsTests();
   }
 }

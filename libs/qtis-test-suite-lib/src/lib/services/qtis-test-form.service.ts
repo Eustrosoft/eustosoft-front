@@ -16,7 +16,7 @@ export class QtisTestFormService {
       showResponses: this.fb.nonNullable.control(true),
       login: this.fb.nonNullable.control('testData.login'),
       password: this.fb.nonNullable.control('testData.password'),
-      folderForTests: this.fb.nonNullable.control('/s/LOCAL/pub'),
+      folderForTests: this.fb.nonNullable.control('/s/LOCAL/priv'),
       folderSecurityLevel: this.fb.nonNullable.control(
         +SecurityLevels.CORPORATE,
       ),

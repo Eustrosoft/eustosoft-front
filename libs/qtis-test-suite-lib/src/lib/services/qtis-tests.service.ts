@@ -72,7 +72,7 @@ export class QtisTestsService {
     folderName: string,
     description: string,
     securityLevel: string,
-  ): Observable<TestCaseResult[]> {
+  ): Observable<[TestCaseResult[], FileSystemObject | undefined]> {
     return this.explorerService
       .create(
         path,
@@ -134,12 +134,12 @@ export class QtisTestsService {
                       : TestResult.FAIL,
                 },
               ];
-              return of(result);
+              return combineLatest([of(result), of(createdFolder)]);
             }),
           ),
         ),
-        catchError((err: HttpErrorResponse) =>
-          throwError(() => [
+        catchError((err: HttpErrorResponse) => {
+          return throwError(() => [
             {
               title: `Create folder ${folderName}`,
               description: 'Check if directory was created',
@@ -148,8 +148,8 @@ export class QtisTestsService {
               errorText: 'Cant execute next tests without created directory',
               result: TestResult.FAIL,
             },
-          ]),
-        ),
+          ]);
+        }),
       );
   }
 
@@ -257,19 +257,20 @@ export class QtisTestsService {
     to: string[],
     explorerRequestActions: ExplorerRequestActions,
     folderPath: string,
-    uploadedFileName: string,
+    name: string,
   ): Observable<[TestCaseResult[], FileSystemObject]> {
+    const fsObjName = this.getFsObjectTypeName(from);
     return of(true).pipe(
       concatMap(() =>
         this.explorerService.move(from, to, explorerRequestActions).pipe(
           catchError((err: HttpErrorResponse) =>
             throwError(() => [
               {
-                title: 'Copy file',
-                description: `Copy file to ${to[0]}`,
+                title: `Copy ${fsObjName}`,
+                description: `Copy  ${fsObjName} to ${to[0]}`,
                 responseStatus: `${err.status} ${err.statusText}`,
                 response: err.error ?? '',
-                errorText: 'Cant execute next tests without copied file',
+                errorText: `Cant execute next tests without copied ${fsObjName}`,
                 result: TestResult.FAIL,
               },
             ]),
@@ -279,15 +280,15 @@ export class QtisTestsService {
       concatMap(() => this.explorerService.getContents(folderPath)),
       concatMap((response) => {
         const copiedFile = response?.content?.find(
-          (item) => item.fileName === uploadedFileName,
+          (item) => item.fileName === name,
         );
         if (copiedFile === undefined) {
           return throwError(() => [
             {
-              title: 'Copy file',
-              description: `Check if file was copied to ${folderPath}/${uploadedFileName}`,
+              title: `Copy ${fsObjName}`,
+              description: `Check if ${fsObjName} was copied to ${folderPath}/${name}`,
               response: response,
-              errorText: 'Cant execute next tests without copied file',
+              errorText: `Cant execute next tests without copied ${fsObjName}`,
               result: TestResult.FAIL,
             },
           ]);
@@ -295,8 +296,8 @@ export class QtisTestsService {
         return combineLatest([
           of([
             {
-              title: 'Check copied file',
-              description: `Check if file ${uploadedFileName} was copied to to ${folderPath}/${uploadedFileName}`,
+              title: `Check copied ${fsObjName}`,
+              description: `Check if ${fsObjName} ${name} was copied to to ${folderPath}/${name}`,
               response: response.content,
               result: TestResult.OK,
             },
@@ -359,5 +360,34 @@ export class QtisTestsService {
         ]);
       }),
     );
+  }
+
+  getFsObjectTypeName(obj: FileSystemObject | FileSystemObject[]): string {
+    let isFile: boolean;
+    let isDir: boolean;
+    if (Array.isArray(obj)) {
+      const isEveryObjIsFile = obj.every(
+        (fr) => fr.type === ExplorerFsObjectTypes.FILE,
+      );
+      const isEveryObjIsDir = obj.every(
+        (fr) => fr.type === ExplorerFsObjectTypes.DIRECTORY,
+      );
+      isFile = isEveryObjIsFile;
+      isDir = isEveryObjIsDir;
+    } else {
+      isFile = obj.type === ExplorerFsObjectTypes.FILE;
+      isDir = obj.type === ExplorerFsObjectTypes.DIRECTORY;
+    }
+    let name = '';
+    if (isFile) {
+      name = 'file';
+    }
+    if (isDir) {
+      name = 'directory';
+    }
+    if (!isFile && !isDir) {
+      name = 'mixed files and dirs';
+    }
+    return name;
   }
 }

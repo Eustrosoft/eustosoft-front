@@ -7,8 +7,8 @@
 
 import { TestCaseResult } from './test-case-result.interface';
 
-export interface TestObs {
+export type TestObs = {
   isLoading: boolean;
   isError: boolean;
   results: TestCaseResult[] | undefined;
-}
+};
