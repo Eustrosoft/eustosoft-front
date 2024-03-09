@@ -12,6 +12,7 @@ export interface TestCaseResult {
   description: string;
   responseStatus?: string;
   errorText?: string;
+  hideToggle?: boolean;
   response: unknown;
   result: TestResult;
 }

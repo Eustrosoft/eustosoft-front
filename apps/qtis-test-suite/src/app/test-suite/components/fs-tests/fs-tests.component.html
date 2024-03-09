@@ -38,9 +38,12 @@
     </div>
     <mat-accordion [multi]="true">
       <ng-container *ngFor="let test of results; let index = index">
-        <mat-expansion-panel>
+        <mat-expansion-panel
+          [disabled]="!!test.hideToggle"
+          [hideToggle]="!!test.hideToggle"
+        >
           <mat-expansion-panel-header>
-            <mat-panel-title class="flex-basis-80 flex-shrink-0">
+            <mat-panel-title class="flex-basis-75 flex-shrink-0">
               {{ test.title }}
             </mat-panel-title>
             <mat-panel-description class="g-2 flex-shrink-0">
@@ -59,6 +62,14 @@
                   highlighted
                 >
                   FAIL
+                </mat-chip>
+                <mat-chip
+                  *ngSwitchCase="TestResult.NONE"
+                  (click)="$event.stopPropagation()"
+                  color="accent"
+                  highlighted
+                >
+                  NOT A TEST
                 </mat-chip>
                 <mat-chip
                   *ngSwitchCase="TestResult.CANCELED"
@@ -83,7 +94,7 @@
                 Response Status: {{ test.responseStatus }}
               </span>
             </div>
-            <div class="flex flex-column">
+            <div *ngIf="!!test.description" class="flex flex-column">
               <h3>Description:</h3>
               <p>{{ test.description }}</p>
             </div>

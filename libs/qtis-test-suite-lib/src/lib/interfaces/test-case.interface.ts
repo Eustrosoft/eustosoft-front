@@ -4,6 +4,7 @@ import { QtisRequestResponse } from '@eustrosoft-front/dao-ts';
 export enum TestResult {
   OK = 'OK',
   FAIL = 'FAIL',
+  NONE = 'NONE',
   CANCELED = 'CANCELED',
 }
 
