@@ -1,5 +1,5 @@
 import { Observable, Subject } from 'rxjs';
-import { QtisRequestResponse } from '@eustrosoft-front/dao-ts';
+import { QtisRequestResponse } from '@eustrosoft-front/core';
 
 export enum TestResult {
   OK = 'OK',

@@ -1,5 +1,4 @@
 export * from './lib/interfaces/test-case.interface';
-export * from './lib/interfaces/test-cases-tuple.type';
 export * from './lib/services/qtis-subsystem-tests.service';
 export * from './lib/services/qtis-tests.service';
 export * from './lib/services/qtis-test-form.service';
