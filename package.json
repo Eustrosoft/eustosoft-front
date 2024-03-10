@@ -6,8 +6,8 @@
     "start:login": "npx nx run login:serve",
     "start:dispatcher": "npx nx run dispatcher:serve",
     "start:explorer": "npx nx run explorer:serve",
-    "build:all:stage": "npx nx run-many --target=build --configuration=stage --projects=login,dispatcher,explorer,msg,qtis-test-suite --parallel=3",
-    "build:all:production": "npx nx run-many --target=build --configuration=production --projects=login,dispatcher,explorer,msg,qtis-test-suite --parallel=3",
+    "build:all:stage": "npx nx run-many --target=build --configuration=stage --projects=login,dispatcher,explorer,msg,qtis-test-suite --parallel=3 --skip-nx-cache",
+    "build:all:production": "npx nx run-many --target=build --configuration=production --projects=login,dispatcher,explorer,msg,qtis-test-suite --parallel=3 --skip-nx-cache",
     "nx:graph": "npx nx graph",
     "prepare": "husky install"
   },
@@ -26,7 +26,6 @@
     "@iharbeck/ngx-virtual-scroller": "^17.0.0",
     "@ngx-translate/core": "^15.0.0",
     "@ngx-translate/http-loader": "^8.0.0",
-    "@nx/angular": "17.2.8",
     "ng2-pdfjs-viewer": "^17.0.3",
     "rxjs": "~7.8.0",
     "zone.js": "0.14.2"
@@ -42,6 +41,7 @@
     "@angular/compiler-cli": "17.0.8",
     "@angular/language-service": "17.0.8",
     "@angular/localize": "17.0.8",
+    "@nx/angular": "17.2.8",
     "@nx/cypress": "17.2.8",
     "@nx/eslint": "17.2.8",
     "@nx/eslint-plugin": "17.2.8",

@@ -126,8 +126,7 @@ export class QtisSubsystemTestsService {
           fourthNestedFolderName,
         );
       }),
-      concatMap(([testResults, firstNestedFolder, deleteTestResults]) => {
-        testResults.push(deleteTestResults);
+      concatMap(([testResults, firstNestedFolder]) => {
         testResults.push([
           {
             title: 'END EMPTY FOLDER TESTS',
@@ -153,81 +152,29 @@ export class QtisSubsystemTestsService {
           firstNestedFolder,
           secondNestedFolderName,
           thirdNestedFolderName,
+          fourthNestedFolderName,
           uploadedFileName,
         );
       }),
-      // concatMap(
-      //   ([testResults, [createDirTestResults, copiedFirstNestedFolder]]) => {
-      //     testResults.push(createDirTestResults);
-      //     if (testData.files.length === 0) {
-      //       return throwError(() => [
-      //         ...testResults,
-      //         {
-      //           title: 'Upload file',
-      //           description: 'Upload file to folder',
-      //           errorText:
-      //             'Cant proceed without a file. Attach a file in Data For Tests tab',
-      //           result: TestResult.FAIL,
-      //         },
-      //       ]);
-      //     }
-      //     return combineLatest([
-      //       of(testResults),
-      //       this.qtisTestsService
-      //         .uploadFile(
-      //           testData.files,
-      //           fileUploadPath,
-      //           testData.fileName,
-      //           <SecurityLevels>testData.folderSecurityLevel.toString(),
-      //           testData.fileDescription,
-      //           uploadedFileName,
-      //         )
-      //         .pipe(
-      //           catchError((err: TestCaseResult[]) =>
-      //             throwError(() => [...testResults, err]),
-      //           ),
-      //         ),
-      //     ]);
-      //   },
-      // ),
-      // concatMap(([testResults, [uploadFileTestResults, content]]) => {
-      //   testResults.push(uploadFileTestResults);
-      //   return combineLatest([
-      //     of(testResults),
-      //     this.qtisTestsService
-      //       .copyMove(
-      //         content ?? [],
-      //         [`${folderPath}/${uploadedFileName}`],
-      //         ExplorerRequestActions.COPY,
-      //         folderPath,
-      //         uploadedFileName,
-      //       )
-      //       .pipe(
-      //         catchError((err: TestCaseResult[]) =>
-      //           throwError(() => [...testResults, err]),
-      //         ),
-      //       ),
-      //   ]);
-      // }),
-      // concatMap(([testResults, [copyFileTestResults, copiedFile]]) => {
-      //   testResults.push(copyFileTestResults);
-      //   return combineLatest([
-      //     of(testResults),
-      //     this.qtisTestsService
-      //       .rename(
-      //         copiedFile,
-      //         `Renamed-Copy-${copiedFile.fileName}`,
-      //         `Updated ${testData.fileDescription}`,
-      //         folderPath,
-      //       )
-      //       .pipe(
-      //         catchError((err: TestCaseResult[]) =>
-      //           throwError(() => [...testResults, err]),
-      //         ),
-      //       ),
-      //   ]);
-      // }),
-      concatMap(([testResults, _]) => {
+      concatMap(
+        ([
+          [testResults, _firstNestedFolder],
+          _nestedFirstInFirst,
+          _fileUploadedToFirstFolder,
+        ]) => {
+          testResults.push([
+            {
+              title: 'END NOT EMPTY FOLDER TESTS',
+              description: '',
+              response: {},
+              hideToggle: true,
+              result: TestResult.NONE,
+            },
+          ]);
+          return this.fileTests$(testResults);
+        },
+      ),
+      concatMap((testResults) => {
         const results = flattenArray(testResults);
         console.log(results);
         return of<TestObs>({
@@ -261,7 +208,7 @@ export class QtisSubsystemTestsService {
     secondNestedFolderName: string,
     thirdNestedFolderName: string,
     fourthNestedFolderName: string,
-  ): Observable<[TestCaseResult[][], FileSystemObject, TestCaseResult[]]> {
+  ): Observable<[TestCaseResult[][], FileSystemObject]> {
     return combineLatest([
       of(testResults),
       this.qtisTestsService
@@ -314,119 +261,14 @@ export class QtisSubsystemTestsService {
           testResults.push(createFirstNestedTestResults);
           testResults.push(createSecondNestedTestResults);
           testResults.push(createThirdNestedTestResults);
-          return combineLatest([
-            of(testResults),
-            of(firstNestedFolder),
-            of(secondNestedFolder),
-            of(thirdNestedFolder),
-            this.qtisTestsService
-              .copyMove(
-                [firstNestedFolder],
-                [
-                  `${secondNestedFolder.fullPath}/${firstNestedFolder.fileName}`,
-                ],
-                ExplorerRequestActions.COPY,
-                secondNestedFolder.fullPath,
-                firstNestedFolder.fileName,
-              )
-              .pipe(
-                catchError((err: TestCaseResult[]) =>
-                  throwError(() => [...testResults, err]),
-                ),
-              ),
-          ]);
-        },
-      ),
-      concatMap(
-        ([
-          testResults,
-          firstNestedFolder,
-          secondNestedFolder,
-          thirdNestedFolder,
-          [copyDirTestResults, copiedFirstNestedFolder],
-        ]) => {
-          testResults.push(copyDirTestResults);
-          return combineLatest([
-            of(testResults),
-            of(firstNestedFolder),
-            of(secondNestedFolder),
-            of(thirdNestedFolder),
-            of(copiedFirstNestedFolder),
-            this.qtisTestsService
-              .rename(
-                copiedFirstNestedFolder,
-                fourthNestedFolderName,
-                `Renamed ${copiedFirstNestedFolder.description}`,
-                secondNestedFolder.fullPath,
-              )
-              .pipe(
-                catchError((err: TestCaseResult[]) =>
-                  throwError(() => [...testResults, err]),
-                ),
-              ),
-          ]);
-        },
-      ),
-      concatMap(
-        ([
-          testResults,
-          firstNestedFolder,
-          secondNestedFolder,
-          thirdNestedFolder,
-          _fourthNestedFolderName,
-          [renameDirTestResults, renamedToFourthNestedFolderName],
-        ]) => {
-          testResults.push(renameDirTestResults);
-          return combineLatest([
-            of(testResults),
-            of(firstNestedFolder),
-            of(secondNestedFolder),
-            of(thirdNestedFolder),
-            of(renamedToFourthNestedFolderName),
-            this.qtisTestsService
-              .copyMove(
-                [renamedToFourthNestedFolderName],
-                [`${folderPath}/${renamedToFourthNestedFolderName.fileName}`],
-                ExplorerRequestActions.MOVE,
-                folderPath,
-                renamedToFourthNestedFolderName.fileName,
-              )
-              .pipe(
-                catchError((err: TestCaseResult[]) =>
-                  throwError(() => [...testResults, err]),
-                ),
-              ),
-          ]);
-        },
-      ),
-      concatMap(
-        ([
-          testResults,
-          firstNestedFolder,
-          secondNestedFolder,
-          thirdNestedFolder,
-          _fourthNestedFolderName,
-          [moveDirTestResults, movedAndRenamedToFourthNestedFolderName],
-        ]) => {
-          testResults.push(moveDirTestResults);
-          return combineLatest([
-            of(testResults),
-            of(firstNestedFolder),
-            this.qtisTestsService
-              .delete(
-                [
-                  movedAndRenamedToFourthNestedFolderName,
-                  thirdNestedFolder,
-                  secondNestedFolder,
-                ],
-                folderPath,
-              )
-              .pipe(
-                catchError((err: TestCaseResult[]) =>
-                  throwError(() => [...testResults, err]),
-                ),
-              ),
-          ]);
+          return this.sharedTests$(
+            testResults,
+            firstNestedFolder,
+            secondNestedFolder,
+            thirdNestedFolder,
+            fourthNestedFolderName,
+            folderPath,
+          );
         },
       ),
     );
@@ -439,8 +281,11 @@ export class QtisSubsystemTestsService {
     firstNestedFolder: FileSystemObject,
     secondNestedFolderName: string,
     thirdNestedFolderName: string,
+    fourthNestedFolderName: string,
     uploadedFileName: string,
-  ): Observable<[TestCaseResult[][], FileSystemObject]> {
+  ): Observable<
+    [[TestCaseResult[][], FileSystemObject], FileSystemObject, FileSystemObject]
+  > {
     const nestedFirstInFirstName = `1-${firstNestedFolder.fileName}`;
     const nestedSecondInSecond = `2-${secondNestedFolderName}`;
     const nestedThirdInThird = `3-${thirdNestedFolderName}`;
@@ -545,7 +390,7 @@ export class QtisSubsystemTestsService {
           [
             firstNestedFolder,
             createNestedFirstInFirstTestResults,
-            _nestedFirstInFirst,
+            nestedFirstInFirst,
           ],
           [
             secondNestedFolder,
@@ -580,6 +425,10 @@ export class QtisSubsystemTestsService {
           // Upload to first, copy to second and third
           return combineLatest([
             of(testResults),
+            of(firstNestedFolder),
+            of(nestedFirstInFirst),
+            of(secondNestedFolder),
+            of(thirdNestedFolder),
             this.qtisTestsService
               .uploadFile(
                 testData.files,
@@ -632,17 +481,162 @@ export class QtisSubsystemTestsService {
       concatMap(
         ([
           testResults,
+          firstNestedFolder,
+          nestedFirstInFirst,
+          secondNestedFolder,
+          thirdNestedFolder,
           [
-            _uploadedToFirst,
+            fileUploadedToFirstFolder,
             [copyToSecondTestResults, _copiedToSecond],
             [copyToThirdTestResults, _copiedToThird],
           ],
         ]) => {
           testResults.push(copyToSecondTestResults);
           testResults.push(copyToThirdTestResults);
-          return combineLatest([of(testResults), of(firstNestedFolder)]);
+          return combineLatest([
+            this.sharedTests$(
+              testResults,
+              firstNestedFolder,
+              secondNestedFolder,
+              thirdNestedFolder,
+              fourthNestedFolderName,
+              folderPath,
+            ),
+            of(nestedFirstInFirst),
+            of(fileUploadedToFirstFolder),
+          ]);
         },
       ),
+    );
+  }
+
+  fileTests$(testResults: TestCaseResult[][]): Observable<TestCaseResult[][]> {
+    return of(testResults);
+  }
+
+  private sharedTests$(
+    testResults: TestCaseResult[][],
+    firstNestedFolder: FileSystemObject,
+    secondNestedFolder: FileSystemObject,
+    thirdNestedFolder: FileSystemObject,
+    fourthNestedFolderName: string,
+    folderPath: string,
+  ): Observable<[TestCaseResult[][], FileSystemObject]> {
+    return combineLatest([
+      of(testResults),
+      of(firstNestedFolder),
+      of(secondNestedFolder),
+      of(thirdNestedFolder),
+      this.qtisTestsService
+        .copyMove(
+          [firstNestedFolder],
+          [`${secondNestedFolder.fullPath}/${firstNestedFolder.fileName}`],
+          ExplorerRequestActions.COPY,
+          secondNestedFolder.fullPath,
+          firstNestedFolder.fileName,
+        )
+        .pipe(
+          catchError((err: TestCaseResult[]) =>
+            throwError(() => [...testResults, err]),
+          ),
+        ),
+    ]).pipe(
+      concatMap(
+        ([
+          testResults,
+          firstNestedFolder,
+          secondNestedFolder,
+          thirdNestedFolder,
+          [copyDirTestResults, copiedFirstNestedFolder],
+        ]) => {
+          testResults.push(copyDirTestResults);
+          return combineLatest([
+            of(testResults),
+            of(firstNestedFolder),
+            of(secondNestedFolder),
+            of(thirdNestedFolder),
+            of(copiedFirstNestedFolder),
+            this.qtisTestsService
+              .rename(
+                copiedFirstNestedFolder,
+                fourthNestedFolderName,
+                `Renamed ${copiedFirstNestedFolder.description}`,
+                secondNestedFolder.fullPath,
+              )
+              .pipe(
+                catchError((err: TestCaseResult[]) =>
+                  throwError(() => [...testResults, err]),
+                ),
+              ),
+          ]);
+        },
+      ),
+      concatMap(
+        ([
+          testResults,
+          firstNestedFolder,
+          secondNestedFolder,
+          thirdNestedFolder,
+          _fourthNestedFolderName,
+          [renameDirTestResults, renamedToFourthNestedFolderName],
+        ]) => {
+          testResults.push(renameDirTestResults);
+          return combineLatest([
+            of(testResults),
+            of(firstNestedFolder),
+            of(secondNestedFolder),
+            of(thirdNestedFolder),
+            of(renamedToFourthNestedFolderName),
+            this.qtisTestsService
+              .copyMove(
+                [renamedToFourthNestedFolderName],
+                [`${folderPath}/${renamedToFourthNestedFolderName.fileName}`],
+                ExplorerRequestActions.MOVE,
+                folderPath,
+                renamedToFourthNestedFolderName.fileName,
+              )
+              .pipe(
+                catchError((err: TestCaseResult[]) =>
+                  throwError(() => [...testResults, err]),
+                ),
+              ),
+          ]);
+        },
+      ),
+      concatMap(
+        ([
+          testResults,
+          firstNestedFolder,
+          secondNestedFolder,
+          thirdNestedFolder,
+          _fourthNestedFolderName,
+          [moveDirTestResults, movedAndRenamedToFourthNestedFolderName],
+        ]) => {
+          testResults.push(moveDirTestResults);
+          return combineLatest([
+            of(testResults),
+            of(firstNestedFolder),
+            this.qtisTestsService
+              .delete(
+                [
+                  movedAndRenamedToFourthNestedFolderName,
+                  thirdNestedFolder,
+                  secondNestedFolder,
+                ],
+                folderPath,
+              )
+              .pipe(
+                catchError((err: TestCaseResult[]) =>
+                  throwError(() => [...testResults, err]),
+                ),
+              ),
+          ]);
+        },
+      ),
+      concatMap(([testResults, firstNestedFolder, deleteTestResults]) => {
+        testResults.push(deleteTestResults);
+        return combineLatest([of(testResults), of(firstNestedFolder)]);
+      }),
     );
   }
 }
