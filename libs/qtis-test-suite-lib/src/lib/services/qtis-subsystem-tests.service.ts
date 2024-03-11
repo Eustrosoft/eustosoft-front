@@ -158,9 +158,9 @@ export class QtisSubsystemTestsService {
       }),
       concatMap(
         ([
-          [testResults, _firstNestedFolder],
-          _nestedFirstInFirst,
-          _fileUploadedToFirstFolder,
+          [testResults, firstNestedFolder],
+          nestedFirstInFirst,
+          fileUploadedToFirstFolder,
         ]) => {
           testResults.push([
             {
@@ -171,10 +171,61 @@ export class QtisSubsystemTestsService {
               result: TestResult.NONE,
             },
           ]);
-          return this.fileTests$(testResults);
+          testResults.push([
+            {
+              title: 'BEGIN FILE TESTS',
+              description: '',
+              response: {},
+              hideToggle: true,
+              result: TestResult.NONE,
+            },
+          ]);
+          return this.fileTests$(
+            testResults,
+            firstNestedFolder,
+            nestedFirstInFirst,
+            fileUploadedToFirstFolder,
+            folderPath,
+          );
+        },
+      ),
+      concatMap(
+        ([testResults, fileUploadedToFirstFolder, firstNestedFolder]) => {
+          testResults.push([
+            {
+              title: 'END FILE TESTS',
+              description: '',
+              response: {},
+              hideToggle: true,
+              result: TestResult.NONE,
+            },
+          ]);
+          testResults.push([
+            {
+              title: 'BEGIN NEGATIVE TESTS',
+              description: '',
+              response: {},
+              hideToggle: true,
+              result: TestResult.NONE,
+            },
+          ]);
+          return this.negativeTests$(
+            testResults,
+            firstNestedFolder,
+            fileUploadedToFirstFolder,
+          );
         },
       ),
       concatMap((testResults) => {
+        testResults.push([
+          {
+            title: 'END NEGATIVE TESTS',
+            description: '',
+            response: {},
+            hideToggle: true,
+            result: TestResult.NONE,
+          },
+        ]);
         const results = flattenArray(testResults);
         console.log(results);
         return of<TestObs>({
@@ -510,7 +561,133 @@ export class QtisSubsystemTestsService {
     );
   }
 
-  fileTests$(testResults: TestCaseResult[][]): Observable<TestCaseResult[][]> {
+  fileTests$(
+    testResults: TestCaseResult[][],
+    firstNestedFolder: FileSystemObject,
+    nestedFirstInFirst: FileSystemObject,
+    fileUploadedToFirstFolder: FileSystemObject,
+    folderPath: string,
+  ): Observable<[TestCaseResult[][], FileSystemObject, FileSystemObject]> {
+    return combineLatest([
+      of(testResults),
+      this.qtisTestsService
+        .copyMove(
+          [fileUploadedToFirstFolder],
+          [`${folderPath}/${fileUploadedToFirstFolder.fileName}`],
+          ExplorerRequestActions.COPY,
+          folderPath,
+          fileUploadedToFirstFolder.fileName,
+        )
+        .pipe(
+          catchError((err: TestCaseResult[]) =>
+            throwError(() => [...testResults, err]),
+          ),
+        ),
+    ]).pipe(
+      concatMap(([testResults, [copyFileTestResults, copiedFile]]) => {
+        testResults.push(copyFileTestResults);
+        return combineLatest([
+          of(testResults),
+          this.qtisTestsService
+            .rename(
+              copiedFile,
+              `Renamed-Copy-${copiedFile.fileName}`,
+              `Updated ${copiedFile.description}`,
+              folderPath,
+            )
+            .pipe(
+              catchError((err: TestCaseResult[]) =>
+                throwError(() => [...testResults, err]),
+              ),
+            ),
+        ]);
+      }),
+      concatMap(([testResults, [renameFileTestResults, renamedFile]]) => {
+        testResults.push(renameFileTestResults);
+        return combineLatest([
+          of(testResults),
+          this.qtisTestsService
+            .copyMove(
+              [renamedFile],
+              [
+                `${folderPath}/${firstNestedFolder.fileName}/${renamedFile.fileName}`,
+              ],
+              ExplorerRequestActions.MOVE,
+              `${folderPath}/${firstNestedFolder.fileName}`,
+              renamedFile.fileName,
+            )
+            .pipe(
+              concatMap(([moveTestResults, movedRenamedFile]) => {
+                testResults.push(moveTestResults);
+                return combineLatest([
+                  of(testResults),
+                  of(movedRenamedFile),
+                  of(fileUploadedToFirstFolder),
+                  this.qtisTestsService
+                    .delete(
+                      [fileUploadedToFirstFolder],
+                      `${folderPath}/${firstNestedFolder.fileName}`,
+                    )
+                    .pipe(
+                      catchError((err: TestCaseResult[]) =>
+                        throwError(() => [...testResults, err]),
+                      ),
+                    ),
+                ]);
+              }),
+              concatMap(
+                ([
+                  testResults,
+                  movedRenamedFile,
+                  fileUploadedToFirstFolder,
+                  deleteTestResults,
+                ]) => {
+                  testResults.push(deleteTestResults);
+                  return combineLatest([
+                    of(testResults),
+                    this.qtisTestsService
+                      .rename(
+                        movedRenamedFile,
+                        fileUploadedToFirstFolder.fileName,
+                        fileUploadedToFirstFolder.description,
+                        `${folderPath}/${firstNestedFolder.fileName}`,
+                      )
+                      .pipe(
+                        catchError((err: TestCaseResult[]) =>
+                          throwError(() => [...testResults, err]),
+                        ),
+                      ),
+                  ]);
+                },
+              ),
+              catchError((err: TestCaseResult[]) =>
+                throwError(() => [...testResults, err]),
+              ),
+            ),
+        ]);
+      }),
+      concatMap(
+        ([
+          testResults,
+          [_moveTestResults, [renameTestResults, renamedFile]],
+        ]) => {
+          testResults.push(renameTestResults);
+          return combineLatest([
+            of(testResults),
+            of(renamedFile),
+            of(firstNestedFolder),
+          ]);
+        },
+      ),
+    );
+  }
+
+  negativeTests$(
+    testResults: TestCaseResult[][],
+    _firstNestedFolder: FileSystemObject,
+    _fileUploadedToFirstFolder: FileSystemObject,
+  ): Observable<TestCaseResult[][]> {
+    // TODO negative tests
     return of(testResults);
   }
 

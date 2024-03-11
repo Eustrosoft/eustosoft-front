@@ -312,7 +312,7 @@ export class ExplorerComponent implements OnInit {
             .value as SecurityLevels) ?? SecurityLevels.PUBLIC_PLUS,
         descriptionInputDefaultValue: '',
       },
-      minWidth: '40vw',
+      minWidth: this.isSm ? '90vw' : '50vw',
     });
 
     dialogRef
@@ -348,6 +348,7 @@ export class ExplorerComponent implements OnInit {
         nameInputValue: row.fileName,
         descriptionInputValue: row.description,
       },
+      minWidth: this.isSm ? '90vw' : '50vw',
     });
 
     dialogRef
@@ -378,7 +379,7 @@ export class ExplorerComponent implements OnInit {
         fsObjects: rows,
         defaultPath: this.path$.getValue(),
       },
-      minWidth: this.isSm ? '90vw' : '50vw',
+      width: this.isSm ? '90vw' : '50vw',
     });
 
     dialogRef
@@ -409,7 +410,7 @@ export class ExplorerComponent implements OnInit {
         fsObjects: rows,
         defaultPath: this.path$.getValue(),
       },
-      minWidth: this.isSm ? '90vw' : '50vw',
+      width: this.isSm ? '90vw' : '50vw',
     });
 
     dialogRef
@@ -531,7 +532,7 @@ export class ExplorerComponent implements OnInit {
         shareLinkObs$,
         shareOWikiLinkObs$,
       },
-      minWidth: this.isSm ? '100vw' : '50vw',
+      minWidth: this.isSm ? '90vw' : '50vw',
     });
 
     const dialogClosed$ = dialogRef.afterClosed();
@@ -558,7 +559,7 @@ export class ExplorerComponent implements OnInit {
     const dialogRef = this.dialog.open<UploadDialogComponent, undefined, void>(
       UploadDialogComponent,
       {
-        width: this.isSm ? '100vw' : '50vw',
+        width: this.isSm ? '90vw' : '50vw',
       },
     );
 
