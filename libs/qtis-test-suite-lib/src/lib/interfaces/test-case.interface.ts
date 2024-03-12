@@ -4,6 +4,7 @@ import { QtisRequestResponse } from '@eustrosoft-front/core';
 export enum TestResult {
   OK = 'OK',
   FAIL = 'FAIL',
+  BACKEND_ERROR = 'UNEXPECTED BACKEND ERROR',
   NONE = 'NONE',
   CANCELED = 'CANCELED',
 }

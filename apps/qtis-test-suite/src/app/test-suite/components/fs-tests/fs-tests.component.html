@@ -64,6 +64,14 @@
                   FAIL
                 </mat-chip>
                 <mat-chip
+                  *ngSwitchCase="TestResult.BACKEND_ERROR"
+                  (click)="$event.stopPropagation()"
+                  color="warn"
+                  highlighted
+                >
+                  UNEXPECTED BACKEND ERROR
+                </mat-chip>
+                <mat-chip
                   *ngSwitchCase="TestResult.NONE"
                   (click)="$event.stopPropagation()"
                   color="accent"

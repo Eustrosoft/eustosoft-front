@@ -345,7 +345,7 @@ export class QtisTestsService {
               title: `Rename ${fsObjName}`,
               description: `Check if ${fsObjName} was renamed to "${name}"`,
               response: response,
-              errorText: 'Cant execute next tests without renamed ${fsObjName}',
+              errorText: `Cant execute next tests without renamed ${fsObjName}`,
               result: TestResult.FAIL,
             },
           ]);

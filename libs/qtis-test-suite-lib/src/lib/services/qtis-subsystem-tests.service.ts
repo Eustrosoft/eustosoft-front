@@ -26,6 +26,7 @@ import { QtisTestsService } from './qtis-tests.service';
 import { flattenArray } from '../functions/flatten-array.function';
 import { TestResult } from '../interfaces/test-case.interface';
 import { SecurityLevels } from '@eustrosoft-front/security';
+import { QtisErrorCodes } from '@eustrosoft-front/core';
 
 @Injectable({
   providedIn: 'root',
@@ -213,6 +214,8 @@ export class QtisSubsystemTestsService {
             testResults,
             firstNestedFolder,
             fileUploadedToFirstFolder,
+            folderPath,
+            testData.files,
           );
         },
       ),
@@ -227,7 +230,6 @@ export class QtisSubsystemTestsService {
           },
         ]);
         const results = flattenArray(testResults);
-        console.log(results);
         return of<TestObs>({
           isLoading: false,
           isError: false,
@@ -684,11 +686,139 @@ export class QtisSubsystemTestsService {
 
   negativeTests$(
     testResults: TestCaseResult[][],
-    _firstNestedFolder: FileSystemObject,
-    _fileUploadedToFirstFolder: FileSystemObject,
+    firstNestedFolder: FileSystemObject,
+    fileUploadedToFirstFolder: FileSystemObject,
+    folderPath: string,
+    files: File[],
   ): Observable<TestCaseResult[][]> {
-    // TODO negative tests
-    return of(testResults);
+    return combineLatest([
+      of(testResults),
+      this.qtisTestsService
+        .createDir(
+          folderPath,
+          firstNestedFolder.fileName,
+          firstNestedFolder.description,
+          firstNestedFolder.securityLevel.value!.toString(),
+        )
+        .pipe(
+          catchError((err: TestCaseResult[]) => {
+            const { response, responseStatus } = err[0];
+            const responseIsString = typeof response === 'string';
+            if (
+              responseIsString &&
+              response.includes(QtisErrorCodes.DuplicatedRecord)
+            ) {
+              testResults.push([
+                {
+                  title: `Error creating duplicate folder ${firstNestedFolder.fileName}`,
+                  description: '',
+                  responseStatus: responseStatus,
+                  response: response,
+                  errorText: '',
+                  result: TestResult.OK,
+                },
+              ]);
+              return of(testResults);
+            }
+            testResults.push([
+              {
+                title: `Error creating duplicate folder ${firstNestedFolder.fileName}`,
+                description: '',
+                responseStatus: responseStatus,
+                response: response,
+                errorText: '',
+                result: TestResult.BACKEND_ERROR,
+              },
+            ]);
+            return of(testResults);
+          }),
+        ),
+      this.qtisTestsService
+        .uploadFile(
+          files,
+          `${folderPath}/${firstNestedFolder.fileName}`,
+          files[0].name,
+          <SecurityLevels>(
+            fileUploadedToFirstFolder.securityLevel.value!.toString()
+          ),
+          fileUploadedToFirstFolder.description,
+          fileUploadedToFirstFolder.fileName,
+        )
+        .pipe(
+          catchError((err: TestCaseResult[]) => {
+            const { response, responseStatus } = err[0];
+            const responseIsString = typeof response === 'string';
+            if (
+              responseIsString &&
+              response.includes(QtisErrorCodes.DuplicatedRecord)
+            ) {
+              testResults.push([
+                {
+                  title: `Error uploading duplicate file ${fileUploadedToFirstFolder.fileName}`,
+                  description: '',
+                  responseStatus: responseStatus,
+                  response: response,
+                  errorText: '',
+                  result: TestResult.OK,
+                },
+              ]);
+              return of(testResults);
+            }
+            testResults.push([
+              {
+                title: `Error uploading duplicate file ${fileUploadedToFirstFolder.fileName}`,
+                description: '',
+                responseStatus: responseStatus,
+                response: response,
+                errorText: '',
+                result: TestResult.BACKEND_ERROR,
+              },
+            ]);
+            return of(testResults);
+          }),
+        ),
+      this.qtisTestsService
+        .copyMove(
+          [firstNestedFolder],
+          [folderPath],
+          ExplorerRequestActions.COPY,
+          folderPath,
+          firstNestedFolder.fileName,
+        )
+        .pipe(
+          catchError((err: TestCaseResult[]) => {
+            const { response, responseStatus } = err[0];
+            const responseIsString = typeof response === 'string';
+            if (
+              responseIsString &&
+              response.includes(QtisErrorCodes.DuplicatedRecord)
+            ) {
+              testResults.push([
+                {
+                  title: `Error creating duplicate folder ${firstNestedFolder.fileName} via copy`,
+                  description: '',
+                  responseStatus: responseStatus,
+                  response: response,
+                  errorText: '',
+                  result: TestResult.OK,
+                },
+              ]);
+              return of(testResults);
+            }
+            testResults.push([
+              {
+                title: `Error creating duplicate folder ${firstNestedFolder.fileName} via copy`,
+                description: '',
+                responseStatus: responseStatus,
+                response: response,
+                errorText: '',
+                result: TestResult.BACKEND_ERROR,
+              },
+            ]);
+            return of(testResults);
+          }),
+        ),
+    ]).pipe(concatMap(([testResults]) => of(testResults)));
   }
 
   private sharedTests$(
