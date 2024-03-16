@@ -7,6 +7,7 @@
 
 import { inject, Injectable } from '@angular/core';
 import { AuthenticationService } from '@eustrosoft-front/security';
+import { HttpParams } from '@angular/common/http';
 
 @Injectable({ providedIn: 'root' })
 export class ExplorerPathService {
@@ -28,5 +29,12 @@ export class ExplorerPathService {
     const pathArr = path.split('/');
     pathArr.pop();
     return pathArr.join('/');
+  }
+
+  getFolderPathParams(path: string): string {
+    if (path === '') {
+      return '';
+    }
+    return `?${new HttpParams({ fromObject: { path } }).toString()}`;
   }
 }

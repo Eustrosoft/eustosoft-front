@@ -22,6 +22,8 @@
     "NEW_UPLOAD_BUTTON_TEXT": "New upload",
     "UPLOAD_TYPE_LABEL_TEXT": "Upload type",
     "BATCH_OPERATIONS_BUTTON_TEXT": "Batch operations",
+    "NAVIGATE_BACK_TITLE": "Previous folder",
+    "ROOT_BREADCRUMB_TEXT": "Home",
     "COPY_BUTTON_TEXT": "Copy",
     "MOVE_TO_BUTTON_TEXT": "Move to",
     "DELETE_BUTTON_TEXT": "Delete",

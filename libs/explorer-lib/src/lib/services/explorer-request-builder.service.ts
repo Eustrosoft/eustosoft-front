@@ -16,7 +16,6 @@ import { Observable, of } from 'rxjs';
 import {
   CreateRequest,
   DeleteRequest,
-  DownloadTicketRequest,
   MoveCopyRequest,
   MoveRequest,
   UploadHexRequest,
@@ -98,7 +97,7 @@ export class ExplorerRequestBuilderService {
     const params: UploadHexRequest['parameters'] = {
       hexString: chunk,
       name: filename ?? file.name,
-      ext: file.name.split('.').pop() as string,
+      ext: file.name.split('.').pop()!,
       chunk: chunkIndex,
       all_chunks: totalChunks,
       hash: crc32(chunk),
@@ -124,43 +123,37 @@ export class ExplorerRequestBuilderService {
   }
 
   buildMoveRequest(
-    from: FileSystemObject[],
+    from: string[],
     to: string[],
     description: string | undefined = undefined,
     action: ExplorerRequestActions = ExplorerRequestActions.MOVE,
   ): Observable<QtisRequestResponse<MoveRequest>> {
     return of({
-      r: from.map(
-        (obj: FileSystemObject, i: number) =>
-          ({
-            s: Subsystems.CMS,
-            r: action,
-            l: SupportedLanguages.EN_US,
-            from: obj.fullPath,
-            to: to[i],
-            description: description,
-          }) as MoveRequest,
-      ),
+      r: from.map<MoveRequest>((fr: string, i: number) => ({
+        s: Subsystems.CMS,
+        r: action,
+        l: SupportedLanguages.EN_US,
+        from: fr,
+        to: to[i],
+        description: description,
+      })),
       t: 0,
     });
   }
 
   buildMoveCopyRequest(
-    from: FileSystemObject[],
+    from: string[],
     to: string[],
     action: ExplorerRequestActions,
   ): Observable<QtisRequestResponse<MoveCopyRequest>> {
     return of({
-      r: from.map(
-        (obj: FileSystemObject, i: number) =>
-          ({
-            s: Subsystems.CMS,
-            r: action,
-            l: SupportedLanguages.EN_US,
-            from: obj.fullPath,
-            to: to[i],
-          }) as MoveCopyRequest,
-      ),
+      r: from.map<MoveCopyRequest>((fr: string, i: number) => ({
+        s: Subsystems.CMS,
+        r: action,
+        l: SupportedLanguages.EN_US,
+        from: fr,
+        to: to[i],
+      })),
       t: 0,
     });
   }
@@ -199,32 +192,12 @@ export class ExplorerRequestBuilderService {
     rows: FileSystemObject[],
   ): Observable<QtisRequestResponse<DeleteRequest>> {
     return of({
-      r: rows.map(
-        (row: FileSystemObject) =>
-          ({
-            s: Subsystems.CMS,
-            r: ExplorerRequestActions.DELETE,
-            l: SupportedLanguages.EN_US,
-            path: row.fullPath,
-          }) as DeleteRequest,
-      ),
-      t: 0,
-    });
-  }
-
-  buildDownloadTicketRequests(
-    rows: FileSystemObject[],
-  ): Observable<QtisRequestResponse<DownloadTicketRequest>> {
-    return of({
-      r: rows.map(
-        (row: FileSystemObject) =>
-          ({
-            s: Subsystems.CMS,
-            r: ExplorerRequestActions.TICKET,
-            l: SupportedLanguages.EN_US,
-            path: row.fullPath,
-          }) as DownloadTicketRequest,
-      ),
+      r: rows.map<DeleteRequest>((row: FileSystemObject) => ({
+        s: Subsystems.CMS,
+        r: ExplorerRequestActions.DELETE,
+        l: SupportedLanguages.EN_US,
+        path: row.fullPath,
+      })),
       t: 0,
     });
   }

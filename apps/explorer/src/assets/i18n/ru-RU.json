@@ -22,6 +22,8 @@
     "NEW_UPLOAD_BUTTON_TEXT": "Загрузить",
     "UPLOAD_TYPE_LABEL_TEXT": "Тип загрузки",
     "BATCH_OPERATIONS_BUTTON_TEXT": "Операции",
+    "NAVIGATE_BACK_TITLE": "Предыдущая папка",
+    "ROOT_BREADCRUMB_TEXT": "Home",
     "COPY_BUTTON_TEXT": "Копировать",
     "MOVE_TO_BUTTON_TEXT": "Переместить",
     "DELETE_BUTTON_TEXT": "Удалить",

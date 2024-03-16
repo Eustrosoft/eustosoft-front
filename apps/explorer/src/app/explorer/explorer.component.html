@@ -80,10 +80,28 @@
     ></eustrosoft-front-input-file>
   </div>
   <div class="explorer-path">
+    <button
+      mat-icon-button
+      type="button"
+      color="primary"
+      [title]="'EXPLORER.NAVIGATE_BACK_TITLE' | translate"
+      (click)="navigateBack()"
+    >
+      <mat-icon>navigate_before</mat-icon>
+    </button>
     <eustrosoft-front-breadcrumbs
-      [path$]="path$"
+      [path$]="path$$"
       (breadcrumbClicked)="openByPath($event)"
     ></eustrosoft-front-breadcrumbs>
+    <button
+      mat-icon-button
+      type="button"
+      color="primary"
+      [title]="'EXPLORER.COPY_BUTTON_TEXT' | translate"
+      (click)="copyPathLink()"
+    >
+      <mat-icon>content_copy</mat-icon>
+    </button>
   </div>
   <div class="explorer-table">
     <ng-container *ngIf="{ content: content$ | async } as vm">

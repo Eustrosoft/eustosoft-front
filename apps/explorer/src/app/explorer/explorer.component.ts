@@ -32,6 +32,7 @@ import {
   Observable,
   of,
   repeat,
+  shareReplay,
   startWith,
   Subject,
   switchMap,
@@ -141,9 +142,11 @@ export class ExplorerComponent implements OnInit {
   private readonly teardownUpload$ = new Subject<void>();
 
   protected readonly refresh$ = new Subject<void>();
+  protected readonly navigateBack$ = new Subject<void>();
   protected readonly path$ = new BehaviorSubject<string>(
     this.explorerPathService.getLastPathState(),
   );
+  protected readonly path$$ = this.path$.asObservable().pipe(shareReplay(1));
   protected readonly currentFolder$ = new BehaviorSubject<
     FileSystemObject | undefined
   >(undefined);
@@ -156,7 +159,7 @@ export class ExplorerComponent implements OnInit {
     isError: boolean;
     content: FileSystemObject[] | undefined;
   }> = combineLatest([
-    this.path$.asObservable(),
+    this.path$$,
     this.refresh$.asObservable().pipe(startWith(undefined)),
   ]).pipe(
     switchMap(([path]) => {
@@ -185,10 +188,10 @@ export class ExplorerComponent implements OnInit {
   protected fileControl = new FormControl<File[]>([], { nonNullable: true });
 
   protected overlayHidden = true;
-
   ngOnInit(): void {
     this.initializePathObs();
     this.initializeUploadObs();
+    this.initializeNavigateBackObs();
   }
 
   initializePathObs(): void {
@@ -247,6 +250,24 @@ export class ExplorerComponent implements OnInit {
     );
   }
 
+  initializeNavigateBackObs(): void {
+    this.navigateBack$
+      .asObservable()
+      .pipe(
+        tap(() => {
+          const path = this.path$.getValue();
+          const isRoot = path === '';
+          if (!isRoot) {
+            this.path$.next(
+              this.explorerPathService.getFullPathToLastFolder(path),
+            );
+          }
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
+  }
+
   open(fsElem: FileSystemObject): void {
     if (fsElem.type !== ExplorerFsObjectTypes.DIRECTORY) {
       return;
@@ -259,6 +280,22 @@ export class ExplorerComponent implements OnInit {
   openByPath(path: string): void {
     this.filesystemTableService.selection.clear();
     this.path$.next(path);
+  }
+
+  navigateBack(): void {
+    this.navigateBack$.next();
+  }
+
+  copyPathLink(): void {
+    const httpParams = this.explorerPathService.getFolderPathParams(
+      this.path$.getValue(),
+    );
+    this.clipboard.copy(`${this.document.location.href}${httpParams}`);
+    this.snackBar.open(
+      this.translateService.instant('EXPLORER.LINK_COPIED_TO_CLIPBOARD'),
+      'close',
+      { duration: 1000 },
+    );
   }
 
   filesDroppedOnFolder(event: {
@@ -421,7 +458,7 @@ export class ExplorerComponent implements OnInit {
         switchMap((to: string[]) =>
           combineLatest([
             this.explorerRequestBuilderService.buildMoveCopyRequest(
-              rows,
+              rows.map((row) => row.fullPath),
               to,
               ExplorerRequestActions.COPY,
             ),
@@ -471,7 +508,7 @@ export class ExplorerComponent implements OnInit {
     dialogRef
       .afterClosed()
       .pipe(
-        filter((v) => Boolean(v)),
+        filter((val) => Boolean(val)),
         switchMap(() => this.explorerService.delete(rows)),
         tap(() => {
           this.refresh$.next();

@@ -5,8 +5,8 @@
   ~ See the LICENSE file at the project root for licensing information.
   -->
 
-<nav class="nav">
-  <ol class="flex flex-wrap list-style-none p-0 m-0">
+<nav>
+  <ol class="flex flex-wrap list-style-none lh-normal p-0 m-0">
     <ng-container *ngIf="breadcrumbs$ | async as breadcrumbs">
       <ng-container *ngFor="let breadcrumb of breadcrumbs; let i = index">
         <li>

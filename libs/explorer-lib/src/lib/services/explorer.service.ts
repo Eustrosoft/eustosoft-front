@@ -221,7 +221,7 @@ export class ExplorerService {
       ),
       switchMap((folder) =>
         this.explorerRequestBuilderService.buildMoveRequest(
-          [row],
+          [row.fullPath],
           [`${folder}/${data.name}`],
           data.description ?? '',
         ),
@@ -241,7 +241,7 @@ export class ExplorerService {
     return of(true).pipe(
       switchMap(() =>
         this.explorerRequestBuilderService.buildMoveCopyRequest(
-          from,
+          from.map((fr) => fr.fullPath),
           to,
           explorerRequestActions,
         ),
