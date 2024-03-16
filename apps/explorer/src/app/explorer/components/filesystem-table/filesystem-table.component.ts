@@ -59,6 +59,7 @@ export class FilesystemTableComponent implements OnChanges, AfterViewInit {
   @Output() downloadClicked = new EventEmitter<FileSystemObject[]>();
   @Output() previewClicked = new EventEmitter<FileSystemObject>();
   @Output() shareClicked = new EventEmitter<FileSystemObject[]>();
+  @Output() versionsClicked = new EventEmitter<FileSystemObject[]>();
   @Output() renameClicked = new EventEmitter<FileSystemObject>();
   @Output() moveClicked = new EventEmitter<FileSystemObject[]>();
   @Output() copyClicked = new EventEmitter<FileSystemObject[]>();

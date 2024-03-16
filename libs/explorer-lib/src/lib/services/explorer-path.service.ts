@@ -8,10 +8,21 @@
 import { inject, Injectable } from '@angular/core';
 import { AuthenticationService } from '@eustrosoft-front/security';
 import { HttpParams } from '@angular/common/http';
+import {
+  PRECONFIGURED_TRANSLATE_SERVICE,
+  Subsystems,
+} from '@eustrosoft-front/core';
+import { ExplorerRequestActions } from '../constants/enums/explorer-actions.enum';
+import { FileSystemObject } from '../interfaces/file-system-object.interface';
+import { DOCUMENT } from '@angular/common';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable({ providedIn: 'root' })
 export class ExplorerPathService {
   private readonly authenticationService = inject(AuthenticationService);
+  private readonly document = inject(DOCUMENT);
+  private readonly snackBar = inject(MatSnackBar);
+  private readonly translateService = inject(PRECONFIGURED_TRANSLATE_SERVICE);
   private readonly lastPathStorageKey = `qtis-explorer-last-path-${
     this.authenticationService.userInfo$.getValue().userId
   }`;
@@ -31,10 +42,28 @@ export class ExplorerPathService {
     return pathArr.join('/');
   }
 
-  getFolderPathParams(path: string): string {
-    if (path === '') {
-      return '';
+  makeVersionLinks(rows: FileSystemObject[]): string[] {
+    const itemsWithoutFileId = rows.filter((row) => row.fileId === undefined);
+    const itemsWithFileId = rows.filter((row) => row.fileId !== undefined);
+    if (itemsWithoutFileId.length === rows.length) {
+      this.snackBar.open(
+        this.translateService.instant('EXPLORER.ERRORS.VIRTUAL_OBJECT_ERROR'),
+        'close',
+      );
+      return [];
     }
-    return `?${new HttpParams({ fromObject: { path } }).toString()}`;
+
+    return itemsWithFileId.map((row) => {
+      const httpParams = new HttpParams({
+        fromObject: {
+          subsys: Subsystems.TIS,
+          request: ExplorerRequestActions.VIEW,
+          ZID: row.fileId!,
+        },
+      });
+      return `${
+        this.document.location.origin
+      }/lk/qtis.jsp?${httpParams.toString()}`;
+    });
   }
 }

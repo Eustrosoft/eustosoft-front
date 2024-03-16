@@ -14,5 +14,6 @@ export interface ExplorerObjectResponse {
   securityLevel: number;
   space: number;
   type: ExplorerFsObjectTypes;
-  zoid: number;
+  zoid?: number;
+  fileId?: number;
 }

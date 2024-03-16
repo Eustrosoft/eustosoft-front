@@ -6,6 +6,7 @@
  */
 
 export enum Subsystems {
+  TIS = 'TIS',
   CMS = 'cms',
   SQL = 'sql',
   PING = 'ping',

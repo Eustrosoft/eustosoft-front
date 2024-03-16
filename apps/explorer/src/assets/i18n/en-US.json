@@ -30,6 +30,7 @@
     "DOWNLOAD_BUTTON_TEXT": "Download",
     "PREVIEW_BUTTON_TEXT": "Preview",
     "SHARE_BUTTON_TEXT": "Share",
+    "VERSIONS_BUTTON_TEXT": "Versions",
     "RENAME_BUTTON_TEXT": "Rename",
     "NAME_COLUMN_TEXT": "Name",
     "SPACE_COLUMN_TEXT": "Size",
@@ -146,7 +147,8 @@
       "ERROR_FETCHING_DATA": "Unable to show preview. Can't get data from server",
       "ERROR_PARSING_DATA": "Unable to show preview. Can't parse data from server",
       "FILE_LINK_ERROR": "Unable to show preview. Invalid file link provided",
-      "FILE_EXT_ERROR": "Unable to show preview. Invalid file extension provided"
+      "FILE_EXT_ERROR": "Unable to show preview. Invalid file extension provided",
+      "VIRTUAL_OBJECT_ERROR": "The selected object is virtual and has no versions"
     }
   }
 }

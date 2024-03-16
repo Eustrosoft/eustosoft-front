@@ -40,7 +40,10 @@ import {
   takeUntil,
   tap,
 } from 'rxjs';
-import { DispatchService } from '@eustrosoft-front/core';
+import {
+  DispatchService,
+  PRECONFIGURED_TRANSLATE_SERVICE,
+} from '@eustrosoft-front/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import {
@@ -70,8 +73,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { CreateDialogComponent } from './components/create-dialog/create-dialog.component';
 import { SelectionChange } from '@angular/cdk/collections';
 import { MoveCopyDialogComponent } from './components/move-copy-dialog/move-copy-dialog.component';
-import { HttpErrorResponse } from '@angular/common/http';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { HttpErrorResponse, HttpParams } from '@angular/common/http';
+import { TranslateModule } from '@ngx-translate/core';
 import { UploadOverlayComponent } from './components/upload-overlay/upload-overlay.component';
 import { UploadDialogComponent } from './components/upload-dialog/upload-dialog.component';
 import { Clipboard } from '@angular/cdk/clipboard';
@@ -125,7 +128,7 @@ export class ExplorerComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
-  private readonly translateService = inject(TranslateService);
+  private readonly translateService = inject(PRECONFIGURED_TRANSLATE_SERVICE);
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly fb = inject(FormBuilder);
   private readonly clipboard = inject(Clipboard);
@@ -283,13 +286,14 @@ export class ExplorerComponent implements OnInit {
   }
 
   navigateBack(): void {
+    this.filesystemTableService.selection.clear();
     this.navigateBack$.next();
   }
 
   copyPathLink(): void {
-    const httpParams = this.explorerPathService.getFolderPathParams(
-      this.path$.getValue(),
-    );
+    const httpParams = `?${new HttpParams({
+      fromObject: { path: this.path$.getValue() },
+    }).toString()}`;
     this.clipboard.copy(`${this.document.location.href}${httpParams}`);
     this.snackBar.open(
       this.translateService.instant('EXPLORER.LINK_COPIED_TO_CLIPBOARD'),
@@ -590,6 +594,13 @@ export class ExplorerComponent implements OnInit {
         takeUntil(dialogClosed$),
       )
       .subscribe();
+  }
+
+  goToVersions(rows: FileSystemObject[]): void {
+    const urls = this.explorerPathService.makeVersionLinks(rows);
+    for (const url of urls) {
+      this.document.defaultView!.open(url, '_blank');
+    }
   }
 
   openUploadDialog(): void {
