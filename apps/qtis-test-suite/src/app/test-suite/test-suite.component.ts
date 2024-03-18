@@ -18,9 +18,8 @@ import { BreakpointsService } from '@eustrosoft-front/common-ui';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabGroup, MatTabsModule } from '@angular/material/tabs';
 import { TestDataFormComponent } from './components/test-data-form/test-data-form.component';
-import { FsTestsComponent } from './components/fs-tests/fs-tests.component';
 import { MatButtonModule } from '@angular/material/button';
-import { switchMap } from 'rxjs';
+import { TestResultsComponent } from './components/test-results/test-results.component';
 
 @Component({
   selector: 'eustrosoft-front-test-suite',
@@ -30,8 +29,8 @@ import { switchMap } from 'rxjs';
     MatIconModule,
     MatTabsModule,
     TestDataFormComponent,
-    FsTestsComponent,
     MatButtonModule,
+    TestResultsComponent,
   ],
   templateUrl: './test-suite.component.html',
   styleUrl: './test-suite.component.scss',
@@ -41,10 +40,8 @@ export class TestSuiteComponent {
   private readonly qtisTestSuiteService = inject(QtisSubsystemTestsService);
   private readonly breakpointsService = inject(BreakpointsService);
   protected readonly isSm = this.breakpointsService.isSm();
-  protected readonly allTests$ = this.qtisTestSuiteService
-    .runAllTests$()
-    .pipe(switchMap(() => this.qtisTestSuiteService.executeAllTests$()));
   protected readonly fsTests$ = this.qtisTestSuiteService.fsTests$;
+  protected readonly msgTests$ = this.qtisTestSuiteService.msgTests$;
 
   @ViewChild(MatAccordion) accordion!: MatAccordion;
   @ViewChild(MatTabGroup) matTabGroup!: MatTabGroup;
@@ -56,5 +53,10 @@ export class TestSuiteComponent {
   runFsTests(): void {
     this.matTabGroup.selectedIndex = 1;
     this.qtisTestSuiteService.runFsTests();
+  }
+
+  runMsgTests(): void {
+    this.matTabGroup.selectedIndex = 2;
+    this.qtisTestSuiteService.runMsgTests();
   }
 }

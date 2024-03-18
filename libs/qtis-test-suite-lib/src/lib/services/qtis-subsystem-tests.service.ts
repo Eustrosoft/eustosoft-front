@@ -3,7 +3,6 @@ import { QtisTestFormService } from './qtis-test-form.service';
 import {
   catchError,
   combineLatest,
-  concat,
   concatMap,
   interval,
   map,
@@ -36,6 +35,7 @@ export class QtisSubsystemTestsService {
   private readonly qtisTestsService = inject(QtisTestsService);
   private readonly runAllTestsSubject = new Subject<void>();
   private readonly runFsTestsSubject = new Subject<void>();
+  private readonly runMsgTestsSubject = new Subject<void>();
   private readonly phrases = [
     'Remembering USSR',
     'Remembering Great Depression',
@@ -64,13 +64,15 @@ export class QtisSubsystemTestsService {
     shareReplay(1),
   );
 
+  msgTests$ = merge(this.runMsgTests$(), this.runAllTests$()).pipe(
+    switchMap(() => this.executeMsgTests$()),
+    shareReplay(1),
+  );
+
   getPhraseObservable(): Observable<string> {
     return interval(2000).pipe(
       startWith(0),
-      map(() => {
-        const randomIndex = Math.floor(Math.random() * this.phrases.length);
-        return this.phrases[randomIndex];
-      }),
+      map(() => this.phrases[Math.floor(Math.random() * this.phrases.length)]),
     );
   }
 
@@ -90,11 +92,15 @@ export class QtisSubsystemTestsService {
     return this.runFsTestsSubject.asObservable();
   }
 
-  executeAllTests$(): Observable<TestObs> {
-    return concat(this.fsTests$);
+  runMsgTests(): void {
+    this.runMsgTestsSubject.next();
   }
 
-  executeFsTests$(): Observable<TestObs> {
+  runMsgTests$(): Observable<void> {
+    return this.runMsgTestsSubject.asObservable();
+  }
+
+  private executeFsTests$(): Observable<TestObs> {
     const testData = this.qtisTestFormService.form.getRawValue();
     const dateNow = this.qtisTestsService.getFormattedDate();
     const testsFolderName = `test-folder-${dateNow}`;
@@ -105,7 +111,6 @@ export class QtisSubsystemTestsService {
     const fourthNestedFolderName = `4-${nestedFolderName}`;
     const uploadedFileName = `${dateNow}-${testData.fileName}`;
     const folderPath = `${testData.folderForTests}/${testsFolderName}`;
-    // const fileUploadPath = `${testData.folderForTests}/${testsFolderName}/${firstNestedFolderName}`;
 
     return this.qtisTestsService.login(testData.login, testData.password).pipe(
       concatMap((testResults) => {
@@ -252,7 +257,37 @@ export class QtisSubsystemTestsService {
     );
   }
 
-  emptyFolderTests$(
+  private executeMsgTests$(): Observable<TestObs> {
+    const testData = this.qtisTestFormService.form.getRawValue();
+    return this.qtisTestsService.login(testData.login, testData.password).pipe(
+      concatMap((testResults) => {
+        return of(testResults);
+      }),
+      concatMap((testResults) => {
+        const results = flattenArray(testResults);
+        return of<TestObs>({
+          isLoading: false,
+          isError: false,
+          results,
+        });
+      }),
+      startWith<TestObs>({
+        isLoading: true,
+        isError: false,
+        results: undefined,
+      }),
+      catchError((results: TestCaseResult[]) => {
+        const res = flattenArray(results);
+        return of<TestObs>({
+          isLoading: false,
+          isError: true,
+          results: res,
+        });
+      }),
+    );
+  }
+
+  private emptyFolderTests$(
     testResults: TestCaseResult[],
     testData: ReturnType<typeof this.qtisTestFormService.form.getRawValue>,
     testsFolderName: string,
@@ -327,7 +362,7 @@ export class QtisSubsystemTestsService {
     );
   }
 
-  notEmptyFolderTests$(
+  private notEmptyFolderTests$(
     testResults: TestCaseResult[][],
     testData: ReturnType<typeof this.qtisTestFormService.form.getRawValue>,
     folderPath: string,
@@ -563,7 +598,7 @@ export class QtisSubsystemTestsService {
     );
   }
 
-  fileTests$(
+  private fileTests$(
     testResults: TestCaseResult[][],
     firstNestedFolder: FileSystemObject,
     nestedFirstInFirst: FileSystemObject,
@@ -684,7 +719,7 @@ export class QtisSubsystemTestsService {
     );
   }
 
-  negativeTests$(
+  private negativeTests$(
     testResults: TestCaseResult[][],
     firstNestedFolder: FileSystemObject,
     fileUploadedToFirstFolder: FileSystemObject,

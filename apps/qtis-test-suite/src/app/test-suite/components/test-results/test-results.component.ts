@@ -9,24 +9,26 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
+  Input,
   ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   QtisSubsystemTestsService,
   QtisTestFormService,
+  TestObs,
   TestResult,
 } from '@eustrosoft-front/qtis-test-suite-lib';
 import { PreloaderComponent } from '@eustrosoft-front/common-ui';
 import { TranslateModule } from '@ngx-translate/core';
-import { merge, startWith, switchMap } from 'rxjs';
+import { Observable, startWith } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatAccordion, MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
-  selector: 'eustrosoft-front-fs-tests',
+  selector: 'eustrosoft-front-test-results',
   standalone: true,
   imports: [
     CommonModule,
@@ -37,18 +39,15 @@ import { MatIconModule } from '@angular/material/icon';
     MatExpansionModule,
     MatIconModule,
   ],
-  templateUrl: './fs-tests.component.html',
-  styleUrl: './fs-tests.component.scss',
+  templateUrl: './test-results.component.html',
+  styleUrl: './test-results.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FsTestsComponent {
+export class TestResultsComponent {
+  @Input() tests$!: Observable<TestObs>;
   private readonly qtisTestSuiteService = inject(QtisSubsystemTestsService);
   private readonly qtisTestFormService = inject(QtisTestFormService);
   protected readonly TestResult = TestResult;
-  protected readonly tests$ = merge(
-    this.qtisTestSuiteService.runFsTests$(),
-    this.qtisTestSuiteService.runAllTests$(),
-  ).pipe(switchMap(() => this.qtisTestSuiteService.fsTests$));
   protected readonly showResponses$ =
     this.qtisTestFormService.form.controls.showResponses.valueChanges.pipe(
       startWith(true),

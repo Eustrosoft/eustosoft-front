@@ -5,13 +5,16 @@
   ~ See the LICENSE file at the project root for licensing information.
   -->
 <ng-container
-  *ngIf="{ allTests: allTests$ | async, fsTests: fsTests$ | async } as vm"
+  *ngIf="{
+    fsTests: fsTests$ | async,
+    msgTests: msgTests$ | async
+  } as vm"
 >
   <div class="flex flex-flow-wrap g-3">
     <button
       mat-stroked-button
       type="button"
-      [disabled]="!!vm.allTests?.isLoading"
+      [disabled]="!!vm.fsTests?.isLoading || !!vm.msgTests?.isLoading"
       (click)="runAllTests()"
     >
       <mat-icon>play_arrow</mat-icon> Run All Tests
@@ -19,10 +22,18 @@
     <button
       mat-stroked-button
       type="button"
-      [disabled]="!!vm.fsTests?.isLoading"
+      [disabled]="!!vm.fsTests?.isLoading || !!vm.msgTests?.isLoading"
       (click)="runFsTests()"
     >
       <mat-icon>play_arrow</mat-icon> Run FS Tests
+    </button>
+    <button
+      mat-stroked-button
+      type="button"
+      [disabled]="!!vm.msgTests?.isLoading || !!vm.fsTests?.isLoading"
+      (click)="runMsgTests()"
+    >
+      <mat-icon>play_arrow</mat-icon> Run MSG Tests
     </button>
   </div>
   <mat-tab-group dynamicHeight>
@@ -38,13 +49,18 @@
         <mat-icon class="me-2">folder</mat-icon>
         FS
       </ng-template>
-      <eustrosoft-front-fs-tests></eustrosoft-front-fs-tests>
+      <eustrosoft-front-test-results
+        [tests$]="fsTests$"
+      ></eustrosoft-front-test-results>
     </mat-tab>
     <mat-tab>
       <ng-template mat-tab-label>
         <mat-icon class="me-2">send</mat-icon>
         MSG
       </ng-template>
+      <eustrosoft-front-test-results
+        [tests$]="msgTests$"
+      ></eustrosoft-front-test-results>
     </mat-tab>
   </mat-tab-group>
 </ng-container>
