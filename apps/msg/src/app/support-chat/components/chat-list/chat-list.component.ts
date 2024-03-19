@@ -27,7 +27,6 @@ import {
 import { MsgChatStatusPipe } from '../../pipes/msg-chat-status.pipe';
 import { TranslateModule } from '@ngx-translate/core';
 import { MatDividerModule } from '@angular/material/divider';
-import { VirtualScrollerModule } from '@iharbeck/ngx-virtual-scroller';
 import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
@@ -36,6 +35,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { NgClass, NgFor, NgIf } from '@angular/common';
 import { DicValue } from '@eustrosoft-front/dic';
 import { Chat, ChatVersion, MsgChatStatus } from '@eustrosoft-front/msg-lib';
+import {
+  CdkFixedSizeVirtualScroll,
+  CdkVirtualForOf,
+  CdkVirtualScrollViewport,
+} from '@angular/cdk/scrolling';
 
 @Component({
   selector: 'eustrosoft-front-chat-list',
@@ -53,12 +57,14 @@ import { Chat, ChatVersion, MsgChatStatus } from '@eustrosoft-front/msg-lib';
     MatCheckboxModule,
     NgIf,
     MatListModule,
-    VirtualScrollerModule,
     HoverCursorDirective,
     HoverShadowDirective,
     MatDividerModule,
     TranslateModule,
     MsgChatStatusPipe,
+    CdkVirtualScrollViewport,
+    CdkFixedSizeVirtualScroll,
+    CdkVirtualForOf,
   ],
 })
 export class ChatListComponent implements OnInit {

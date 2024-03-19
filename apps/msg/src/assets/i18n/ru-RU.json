@@ -63,7 +63,8 @@
       "CHATS_FETCH_ERROR": "Ошибка при попытке получения чатов",
       "CHAT_MESSAGES_FETCH_ERROR": "Ошибка при попытке получения сообщений",
       "CHAT_STATUS_FILTERS_FETCH_ERROR": "Ошибка при попытке получения фильтров для чатов",
-      "CHAT_SECURITY_LEVEL_OPTIONS_FETCH_ERROR": "Ошибка при попытке получения списка уровней доступа"
+      "CHAT_SECURITY_LEVEL_OPTIONS_FETCH_ERROR": "Ошибка при попытке получения списка уровней доступа",
+      "CHAT_SCOPE_OPTIONS_FETCH_ERROR": "Ошибка при попытке получения списка областей"
     }
   }
 }

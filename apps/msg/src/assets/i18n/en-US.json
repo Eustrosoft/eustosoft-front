@@ -63,7 +63,8 @@
       "CHATS_FETCH_ERROR": "Error fetching chats",
       "CHAT_MESSAGES_FETCH_ERROR": "Error fetching chat messages",
       "CHAT_STATUS_FILTERS_FETCH_ERROR": "Error fetching chat status filters",
-      "CHAT_SECURITY_LEVEL_OPTIONS_FETCH_ERROR": "Error fetching security levels for chats"
+      "CHAT_SECURITY_LEVEL_OPTIONS_FETCH_ERROR": "Error fetching security levels for chats",
+      "CHAT_SCOPE_OPTIONS_FETCH_ERROR": "Error fetching scopes list"
     }
   }
 }

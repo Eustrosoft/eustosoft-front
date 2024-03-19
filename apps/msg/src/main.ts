@@ -18,7 +18,6 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { VirtualScrollerModule } from '@iharbeck/ngx-virtual-scroller';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
@@ -61,7 +60,6 @@ bootstrapApplication(AppComponent, {
       MatListModule,
       MatIconModule,
       MatDialogModule,
-      VirtualScrollerModule,
       MatTooltipModule,
       MatSidenavModule,
       MatCheckboxModule,

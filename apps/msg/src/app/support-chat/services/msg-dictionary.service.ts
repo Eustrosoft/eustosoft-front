@@ -24,9 +24,9 @@ import {
 
 @Injectable({ providedIn: 'root' })
 export class MsgDictionaryService {
-  private dicService = inject(DicService);
-  private samService = inject(SamService);
-  private dicMapperService = inject(DicMapperService);
+  private readonly dicService = inject(DicService);
+  private readonly samService = inject(SamService);
+  private readonly dicMapperService = inject(DicMapperService);
 
   getStatusOptions(): Observable<DicValue[]> {
     return this.dicService
@@ -48,12 +48,12 @@ export class MsgDictionaryService {
   getScopeOptions(): Observable<Option[]> {
     return this.samService.getUserAvailableScope(Scopes.MSGC).pipe(
       map((response: QtisRequestResponse<UserAvailableScopesResponse>) =>
-        response.r.flatMap((r) => r.zsid),
+        response.r.flatMap((r) => r.scopes),
       ),
-      map((values) =>
-        values.map((value) => ({
-          value: value,
-          displayText: value.toString(),
+      map((scopes) =>
+        scopes.map((scope) => ({
+          value: scope.ZSID,
+          displayText: scope.name,
           disabled: false,
         })),
       ),

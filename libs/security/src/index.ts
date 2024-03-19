@@ -14,6 +14,7 @@ export * from './lib/interceptors/with-credentials.interceptor';
 export * from './lib/interfaces/authenticated-user.interface';
 export * from './lib/interfaces/sam-request.interface';
 export * from './lib/interfaces/sam-response.interface';
+export * from './lib/interfaces/scope.interface';
 export * from './lib/constants/enums/sam-actions.enum';
 export * from './lib/constants/enums/scopes.enum';
 export * from './lib/constants/enums/security-levels.enum';

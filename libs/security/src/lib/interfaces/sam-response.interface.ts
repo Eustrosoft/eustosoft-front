@@ -7,6 +7,7 @@
 
 import { Subsystems, SupportedLanguages } from '@eustrosoft-front/core';
 import { SamRequestActions } from '../constants/enums/sam-actions.enum';
+import { Scope } from './scope.interface';
 
 interface BaseSamResponse {
   s: Subsystems.SAM;
@@ -43,5 +44,5 @@ export interface UserAvailableSlvlResponse extends BaseSamResponse {
 
 export interface UserAvailableScopesResponse extends BaseSamResponse {
   r: SamRequestActions.USER_AVAILABLE_SCOPE;
-  zsid: number[];
+  scopes: Scope[];
 }

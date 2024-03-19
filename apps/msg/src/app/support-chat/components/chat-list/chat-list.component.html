@@ -76,10 +76,8 @@
     *ngIf="chats.length > 0; else noChatsTemplate"
     class="flex flex-auto p-0"
   >
-    <virtual-scroller #scroll [items]="chats" class="flex-auto">
-      <ng-container
-        *ngFor="let chat of scroll.viewPortItems; trackBy: trackByFn"
-      >
+    <cdk-virtual-scroll-viewport [itemSize]="64" class="flex-auto">
+      <ng-container *cdkVirtualFor="let chat of chats; trackBy: trackByFn">
         <mat-list-item
           eustrosoftFrontHoverCursor
           eustrosoftFrontHoverShadow
@@ -87,7 +85,7 @@
             'list-item-hover brs-2':
               selectedChat && selectedChat.zoid === chat.zoid
           }"
-          class="p-2 my-2"
+          class="p-2 my-2 flex-wrap"
           (click)="selectChat(chat)"
         >
           <span
@@ -123,7 +121,7 @@
         </mat-list-item>
         <mat-divider></mat-divider>
       </ng-container>
-    </virtual-scroller>
+    </cdk-virtual-scroll-viewport>
   </mat-list>
 </div>
 

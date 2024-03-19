@@ -8,8 +8,8 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-    name: 'newLineToBr',
-    standalone: true,
+  name: 'newLineToBr',
+  standalone: true,
 })
 export class NewLineToBrPipe implements PipeTransform {
   transform(value: string): string {

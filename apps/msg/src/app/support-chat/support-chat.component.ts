@@ -259,7 +259,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
       catchError((_err: HttpErrorResponse) => {
         this.snackBar.open(
           this.translateService.instant(
-            'MSG.ERRORS.CHAT_SECURITY_LEVEL_OPTIONS_FETCH_ERROR',
+            'MSG.ERRORS.CHAT_SCOPE_OPTIONS_FETCH_ERROR',
           ),
           'close',
         );
