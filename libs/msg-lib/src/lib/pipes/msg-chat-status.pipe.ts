@@ -6,7 +6,7 @@
  */
 
 import { Pipe, PipeTransform } from '@angular/core';
-import { MsgChatStatus } from '@eustrosoft-front/msg-lib';
+import { MsgChatStatus } from '../constants/enums/msg-chat-status.enum';
 
 @Pipe({
   name: 'msgChatStatus',

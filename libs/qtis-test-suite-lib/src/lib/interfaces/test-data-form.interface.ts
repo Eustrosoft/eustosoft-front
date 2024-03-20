@@ -18,4 +18,8 @@ export interface TestDataFormInterface {
   fileSecurityLevel: FormControl<number>;
   fileDescription: FormControl<string>;
   files: FormControl<File[]>;
+  chatName: FormControl<string>;
+  chatInitialMessage: FormControl<string>;
+  chatScopeId: FormControl<number>;
+  chatSecurityLevel: FormControl<number>;
 }

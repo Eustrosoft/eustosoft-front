@@ -24,7 +24,12 @@ import {
   HoverCursorDirective,
   HoverShadowDirective,
 } from '@eustrosoft-front/common-ui';
-import { MsgChatStatusPipe } from '../../pipes/msg-chat-status.pipe';
+import {
+  Chat,
+  ChatVersion,
+  MsgChatStatus,
+  MsgChatStatusPipe,
+} from '@eustrosoft-front/msg-lib';
 import { TranslateModule } from '@ngx-translate/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
@@ -34,7 +39,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { NgClass, NgFor, NgIf } from '@angular/common';
 import { DicValue } from '@eustrosoft-front/dic';
-import { Chat, ChatVersion, MsgChatStatus } from '@eustrosoft-front/msg-lib';
 import {
   CdkFixedSizeVirtualScroll,
   CdkVirtualForOf,

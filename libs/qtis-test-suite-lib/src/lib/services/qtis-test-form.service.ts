@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { TestDataFormInterface } from '../interfaces/test-data-form.interface';
 import { SecurityLevels } from '@eustrosoft-front/security';
 // eslint-disable-next-line @nx/enforce-module-boundaries
-// import { testData } from '../../../../../coverage/test-data';
+import { testData } from '../../../../../coverage/test-data';
 
 @Injectable({
   providedIn: 'root',
@@ -14,8 +14,8 @@ export class QtisTestFormService {
   form: FormGroup<TestDataFormInterface> = this.fb.group<TestDataFormInterface>(
     {
       showResponses: this.fb.nonNullable.control(true),
-      login: this.fb.nonNullable.control('testData.login'),
-      password: this.fb.nonNullable.control('testData.password'),
+      login: this.fb.nonNullable.control(testData.login),
+      password: this.fb.nonNullable.control(testData.password),
       folderForTests: this.fb.nonNullable.control('/s/LOCAL/priv/tests'),
       folderSecurityLevel: this.fb.nonNullable.control(
         +SecurityLevels.CORPORATE,
@@ -25,6 +25,10 @@ export class QtisTestFormService {
       fileSecurityLevel: this.fb.nonNullable.control(+SecurityLevels.CORPORATE),
       fileDescription: this.fb.nonNullable.control('Test file description'),
       files: this.fb.nonNullable.control<File[]>([]),
+      chatName: this.fb.nonNullable.control('chat'),
+      chatInitialMessage: this.fb.nonNullable.control('Initial Message'),
+      chatScopeId: this.fb.nonNullable.control(1099512479744),
+      chatSecurityLevel: this.fb.nonNullable.control(+SecurityLevels.CORPORATE),
     },
   );
 }

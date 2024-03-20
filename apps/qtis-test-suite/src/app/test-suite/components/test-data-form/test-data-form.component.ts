@@ -23,10 +23,11 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { ReactiveFormsModule } from '@angular/forms';
-import { AsyncPipe, JsonPipe } from '@angular/common';
+import { AsyncPipe, JsonPipe, NgTemplateOutlet } from '@angular/common';
 import { SecurityLevels } from '@eustrosoft-front/security';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDividerModule } from '@angular/material/divider';
 
 @Component({
   selector: 'eustrosoft-front-test-data-form',
@@ -45,6 +46,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     JsonPipe,
     MatCheckboxModule,
     MatTooltipModule,
+    MatDividerModule,
+    NgTemplateOutlet,
   ],
 })
 export class TestDataFormComponent implements OnInit {

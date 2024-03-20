@@ -38,29 +38,6 @@ import { CreateChatDialogComponent } from './components/create-chat-dialog/creat
 import { CreateChatDialogData } from './components/create-chat-dialog/create-chat-dialog-data.interface';
 import { CreateChatDialogReturnData } from './components/create-chat-dialog/create-chat-dialog-return-data.interface';
 import { DispatchService, QtisRequestResponse } from '@eustrosoft-front/core';
-import { MsgRequestBuilderService } from './services/msg-request-builder.service';
-import { HttpErrorResponse } from '@angular/common/http';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import {
-  BreakpointsService,
-  Option,
-  PreloaderComponent,
-  PromptDialogComponent,
-  PromptDialogData,
-} from '@eustrosoft-front/common-ui';
-import { RenameChatDialogComponent } from './components/rename-chat-dialog/rename-chat-dialog.component';
-import { RenameChatDialogData } from './components/rename-chat-dialog/rename-chat-dialog-data.interface';
-import { RenameChatDialogReturnData } from './components/rename-chat-dialog/rename-chat-dialog-return-data.interface';
-import { MsgDictionaryService } from './services/msg-dictionary.service';
-import { MsgSubjectsService } from './services/msg-subjects.service';
-import { MsgSubjects } from './contants/enums/msg-subjects.enum';
-import { MsgMapperService } from './services/msg-mapper.service';
-import { ChatListComponent } from './components/chat-list/chat-list.component';
-import { ChatViewComponent } from './components/chat-view/chat-view.component';
-import { MatButtonModule } from '@angular/material/button';
-import { AsyncPipe, NgIf, NgTemplateOutlet } from '@angular/common';
-import { MatSidenavModule } from '@angular/material/sidenav';
 import {
   ChangeChatStatusRequest,
   ChangeChatStatusResponse,
@@ -77,6 +54,11 @@ import {
   EditChatMessageResponse,
   MessageType,
   MsgChatStatus,
+  MsgDictionaryService,
+  MsgMapperService,
+  MsgRequestBuilderService,
+  MsgSubjects,
+  MsgSubjectsService,
   SendChatMessageRequest,
   SendChatMessageResponse,
   UpdateChatListRequest,
@@ -84,6 +66,24 @@ import {
   ViewChatsRequest,
   ViewChatsResponse,
 } from '@eustrosoft-front/msg-lib';
+import { HttpErrorResponse } from '@angular/common/http';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  BreakpointsService,
+  Option,
+  PreloaderComponent,
+  PromptDialogComponent,
+  PromptDialogData,
+} from '@eustrosoft-front/common-ui';
+import { RenameChatDialogComponent } from './components/rename-chat-dialog/rename-chat-dialog.component';
+import { RenameChatDialogData } from './components/rename-chat-dialog/rename-chat-dialog-data.interface';
+import { RenameChatDialogReturnData } from './components/rename-chat-dialog/rename-chat-dialog-return-data.interface';
+import { ChatListComponent } from './components/chat-list/chat-list.component';
+import { ChatViewComponent } from './components/chat-view/chat-view.component';
+import { MatButtonModule } from '@angular/material/button';
+import { AsyncPipe, NgIf, NgTemplateOutlet } from '@angular/common';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { DicValue } from '@eustrosoft-front/dic';
 
 @Component({

@@ -7,7 +7,7 @@
 
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import { MsgSubjects } from '../contants/enums/msg-subjects.enum';
+import { MsgSubjects } from '../constants/enums/msg-subjects.enum';
 
 @Injectable({ providedIn: 'root' })
 export class MsgSubjectsService {

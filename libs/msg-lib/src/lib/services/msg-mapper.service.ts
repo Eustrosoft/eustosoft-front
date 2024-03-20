@@ -17,11 +17,9 @@ import {
 } from 'rxjs';
 import { DispatchService, QtisRequestResponse } from '@eustrosoft-front/core';
 import { MsgRequestBuilderService } from './msg-request-builder.service';
-import {
-  ChatMessage,
-  ViewChatRequest,
-  ViewChatResponse,
-} from '@eustrosoft-front/msg-lib';
+import { ChatMessage } from '../interfaces/chat-message.interface';
+import { ViewChatRequest } from '../interfaces/msg-request.interface';
+import { ViewChatResponse } from '../interfaces/msg-response.interface';
 
 @Injectable({ providedIn: 'root' })
 export class MsgMapperService {

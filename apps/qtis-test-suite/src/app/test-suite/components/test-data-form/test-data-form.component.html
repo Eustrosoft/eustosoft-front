@@ -4,6 +4,9 @@
   ~ This file is part of eustrosoft-front project.
   ~ See the LICENSE file at the project root for licensing information.
   -->
+<ng-container
+  *ngTemplateOutlet="blockHeader; context: { $implicit: 'Common' }"
+></ng-container>
 <mat-checkbox [formControl]="qtisTestFormService.form.controls.showResponses">
   Print response
 </mat-checkbox>
@@ -29,6 +32,9 @@
     />
   </mat-form-field>
 </div>
+<ng-container
+  *ngTemplateOutlet="blockHeader; context: { $implicit: 'Explorer' }"
+></ng-container>
 <div class="flex flex-flow-wrap g-3">
   <mat-form-field
     [appearance]="'outline'"
@@ -114,3 +120,57 @@
     class="flex-auto"
   ></eustrosoft-front-file-list>
 </div>
+<ng-container
+  *ngTemplateOutlet="blockHeader; context: { $implicit: 'Msg' }"
+></ng-container>
+<div class="flex flex-flow-wrap g-3">
+  <mat-form-field
+    [appearance]="'outline'"
+    [subscriptSizing]="'dynamic'"
+    class="flex-auto"
+  >
+    <mat-label> Chat Name (will be used with timestamp) </mat-label>
+    <input
+      [formControl]="qtisTestFormService.form.controls.chatName"
+      matInput
+    />
+  </mat-form-field>
+  <mat-form-field
+    [appearance]="'outline'"
+    [subscriptSizing]="'dynamic'"
+    class="flex-auto"
+  >
+    <mat-label> Chat Initial Message </mat-label>
+    <input
+      [formControl]="qtisTestFormService.form.controls.chatInitialMessage"
+      matInput
+    />
+  </mat-form-field>
+  <mat-form-field [appearance]="'outline'" [subscriptSizing]="'dynamic'">
+    <mat-label> Chat Scope ID </mat-label>
+    <input
+      [formControl]="qtisTestFormService.form.controls.chatScopeId"
+      [type]="'number'"
+      matInput
+    />
+  </mat-form-field>
+  <mat-form-field
+    [appearance]="'outline'"
+    [subscriptSizing]="'dynamic'"
+    [matTooltip]="SecurityLevels | json"
+  >
+    <mat-label> Chat Security Level </mat-label>
+    <input
+      [formControl]="qtisTestFormService.form.controls.chatSecurityLevel"
+      [type]="'number'"
+      matInput
+    />
+  </mat-form-field>
+</div>
+
+<ng-template #blockHeader let-title>
+  <div>
+    <h1 class="m-0">{{ title }}</h1>
+    <mat-divider></mat-divider>
+  </div>
+</ng-template>

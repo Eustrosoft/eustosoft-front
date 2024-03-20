@@ -18,12 +18,12 @@ import {
   DeleteChatMessageRequest,
   DeleteChatRequest,
   EditChatMessageRequest,
-  MsgRequestActions,
   SendChatMessageRequest,
   UpdateChatListRequest,
   ViewChatRequest,
   ViewChatsRequest,
-} from '@eustrosoft-front/msg-lib';
+} from '../interfaces/msg-request.interface';
+import { MsgRequestActions } from '../constants/enums/msg-request-actions.enum';
 
 @Injectable({ providedIn: 'root' })
 export class MsgRequestBuilderService {

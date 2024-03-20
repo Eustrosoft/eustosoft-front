@@ -23,7 +23,12 @@ import { trackByZridFunction } from '@eustrosoft-front/core';
 import { AuthenticationService } from '@eustrosoft-front/security';
 import { shareReplay } from 'rxjs';
 import { BreakpointsService } from '@eustrosoft-front/common-ui';
-import { NewLineToBrPipe } from '../../pipes/new-line-to-br.pipe';
+import {
+  Chat,
+  ChatMessage,
+  MsgChatStatus,
+  NewLineToBrPipe,
+} from '@eustrosoft-front/msg-lib';
 import { TranslateModule } from '@ngx-translate/core';
 import { ChatMessageInputComponent } from '../chat-message-input/chat-message-input.component';
 import {
@@ -36,7 +41,6 @@ import {
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { Chat, ChatMessage, MsgChatStatus } from '@eustrosoft-front/msg-lib';
 
 @Component({
   selector: 'eustrosoft-front-chat-view',

@@ -20,7 +20,12 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
-import { Chat, ChatMessage } from '@eustrosoft-front/msg-lib';
+import {
+  Chat,
+  ChatMessage,
+  MsgSubjects,
+  MsgSubjectsService,
+} from '@eustrosoft-front/msg-lib';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import {
   debounceTime,
@@ -29,8 +34,6 @@ import {
   fromEvent,
   tap,
 } from 'rxjs';
-import { MsgSubjectsService } from '../../services/msg-subjects.service';
-import { MsgSubjects } from '../../contants/enums/msg-subjects.enum';
 import { MatInput, MatInputModule } from '@angular/material/input';
 import { TranslateModule } from '@ngx-translate/core';
 import { MatIconModule } from '@angular/material/icon';
