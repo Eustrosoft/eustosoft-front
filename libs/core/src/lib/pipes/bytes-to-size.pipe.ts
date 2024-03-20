@@ -9,8 +9,8 @@ import { inject, Pipe, PipeTransform } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
 @Pipe({
-    name: 'bytesToSize',
-    standalone: true,
+  name: 'bytesToSize',
+  standalone: true,
 })
 export class BytesToSizePipe implements PipeTransform {
   private translateService = inject(TranslateService);

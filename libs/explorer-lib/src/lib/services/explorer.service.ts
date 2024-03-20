@@ -109,7 +109,9 @@ export class ExplorerService {
     return this.config.pipe(
       map((config) => {
         const params = new HttpParams({
-          fromString: `${parameterName}=${parameterValue}`,
+          fromObject: {
+            [parameterName]: parameterValue,
+          },
         });
         return `${config.apiUrl}/download?${params.toString()}`;
       }),

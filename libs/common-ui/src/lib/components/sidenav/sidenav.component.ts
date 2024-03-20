@@ -23,20 +23,20 @@ import { MatButtonModule } from '@angular/material/button';
 import { NgIf, NgClass, NgFor, AsyncPipe } from '@angular/common';
 
 @Component({
-    selector: 'eustrosoft-front-sidenav',
-    templateUrl: './sidenav.component.html',
-    styleUrls: ['./sidenav.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [
-        NgIf,
-        MatButtonModule,
-        NgClass,
-        MatIconModule,
-        NgFor,
-        MatMenuModule,
-        AsyncPipe,
-    ],
+  selector: 'eustrosoft-front-sidenav',
+  templateUrl: './sidenav.component.html',
+  styleUrls: ['./sidenav.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    NgIf,
+    MatButtonModule,
+    NgClass,
+    MatIconModule,
+    NgFor,
+    MatMenuModule,
+    AsyncPipe,
+  ],
 })
 export class SidenavComponent implements AfterViewInit {
   @ViewChildren(MatMenu) menus!: QueryList<MatMenu>;

@@ -21,9 +21,11 @@ import {
   MatDialogTitle,
 } from '@angular/material/dialog';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { CreateChatDialogForm } from './create-chat-dialog-form.interface';
-import { CreateChatDialogData } from './create-chat-dialog-data.interface';
-import { CreateChatDialogReturnData } from './create-chat-dialog-return-data.interface';
+import {
+  CreateChatDialogData,
+  CreateChatDialogForm,
+  CreateChatDialogReturnData,
+} from '@eustrosoft-front/msg-lib';
 import { TranslateModule } from '@ngx-translate/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatOptionModule } from '@angular/material/core';

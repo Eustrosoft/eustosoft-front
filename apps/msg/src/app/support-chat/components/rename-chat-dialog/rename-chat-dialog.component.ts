@@ -19,8 +19,10 @@ import {
   MatDialogTitle,
 } from '@angular/material/dialog';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RenameChatDialogForm } from './rename-chat-dialog-form.interface';
-import { RenameChatDialogData } from './rename-chat-dialog-data.interface';
+import {
+  RenameChatDialogData,
+  RenameChatDialogForm,
+} from '@eustrosoft-front/msg-lib';
 import { TranslateModule } from '@ngx-translate/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';

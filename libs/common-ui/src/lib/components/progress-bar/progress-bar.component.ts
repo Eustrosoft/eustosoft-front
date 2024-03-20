@@ -6,15 +6,18 @@
  */
 
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { ProgressBarMode, MatProgressBarModule } from '@angular/material/progress-bar';
+import {
+  ProgressBarMode,
+  MatProgressBarModule,
+} from '@angular/material/progress-bar';
 
 @Component({
-    selector: 'eustrosoft-front-progress-bar',
-    templateUrl: './progress-bar.component.html',
-    styleUrls: ['./progress-bar.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [MatProgressBarModule],
+  selector: 'eustrosoft-front-progress-bar',
+  templateUrl: './progress-bar.component.html',
+  styleUrls: ['./progress-bar.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [MatProgressBarModule],
 })
 export class ProgressBarComponent {
   @Input() mode: ProgressBarMode = 'determinate';

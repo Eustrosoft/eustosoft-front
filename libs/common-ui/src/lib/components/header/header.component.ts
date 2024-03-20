@@ -29,20 +29,20 @@ import { NgIf, NgFor, AsyncPipe } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
 @Component({
-    selector: 'eustrosoft-front-header',
-    templateUrl: './header.component.html',
-    styleUrls: ['./header.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true,
-    imports: [
-        MatToolbarModule,
-        NgIf,
-        MatButtonModule,
-        MatMenuModule,
-        MatIconModule,
-        NgFor,
-        AsyncPipe,
-    ],
+  selector: 'eustrosoft-front-header',
+  templateUrl: './header.component.html',
+  styleUrls: ['./header.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatToolbarModule,
+    NgIf,
+    MatButtonModule,
+    MatMenuModule,
+    MatIconModule,
+    NgFor,
+    AsyncPipe,
+  ],
 })
 export class HeaderComponent implements AfterViewInit {
   @ViewChildren(MatMenu) menus!: QueryList<MatMenu>;
