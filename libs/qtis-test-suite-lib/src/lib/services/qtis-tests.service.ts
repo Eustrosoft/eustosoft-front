@@ -15,6 +15,7 @@ import {
   catchError,
   combineLatest,
   concatMap,
+  filter,
   map,
   Observable,
   of,
@@ -25,12 +26,19 @@ import {
 import { LoginLogoutResponse } from '@eustrosoft-front/login-lib';
 import { TestCaseResult } from '../interfaces/test-case-result.interface';
 import { HttpErrorResponse } from '@angular/common/http';
+import {
+  Chat,
+  CreateChatDialogReturnData,
+  MsgChatStatus,
+  MsgService,
+} from '@eustrosoft-front/msg-lib';
 
 @Injectable({
   providedIn: 'root',
 })
 export class QtisTestsService {
   private readonly explorerService = inject(ExplorerService);
+  private readonly msgService = inject(MsgService);
   private readonly explorerUploadService = inject(ExplorerUploadService);
   private readonly explorerUploadItemsService = inject(
     ExplorerUploadItemsService,
@@ -40,7 +48,7 @@ export class QtisTestsService {
   );
   private readonly loginService = inject(LoginService);
 
-  login(login: string, password: string): Observable<TestCaseResult[]> {
+  login$(login: string, password: string): Observable<TestCaseResult[]> {
     return this.loginService.login(login, password).pipe(
       map<QtisRequestResponse<LoginLogoutResponse>, TestCaseResult[]>(
         (response) => [
@@ -67,7 +75,7 @@ export class QtisTestsService {
     );
   }
 
-  createDir(
+  createDir$(
     path: string,
     folderName: string,
     description: string,
@@ -153,7 +161,7 @@ export class QtisTestsService {
       );
   }
 
-  uploadFile(
+  uploadFile$(
     files: File[],
     fileUploadPath: string,
     fileName: string,
@@ -252,7 +260,7 @@ export class QtisTestsService {
     );
   }
 
-  copyMove(
+  copyMoveFsObject$(
     from: FileSystemObject[],
     to: string[],
     explorerRequestActions:
@@ -310,7 +318,7 @@ export class QtisTestsService {
     );
   }
 
-  rename(
+  renameFsObject$(
     from: FileSystemObject,
     name: string,
     description: string,
@@ -365,7 +373,7 @@ export class QtisTestsService {
     );
   }
 
-  delete(
+  deleteFsObject$(
     fsObjects: FileSystemObject[],
     folderPath: string,
   ): Observable<TestCaseResult[]> {
@@ -414,6 +422,105 @@ export class QtisTestsService {
             description: `Check if ${objWord} were deleted successfully`,
             response: response.content,
             result: TestResult.OK,
+          },
+        ]);
+      }),
+    );
+  }
+
+  createChat$(
+    testResults: TestCaseResult[],
+    data: CreateChatDialogReturnData,
+  ): Observable<[TestCaseResult[], Chat]> {
+    return of(true).pipe(
+      concatMap(() =>
+        this.msgService.createNewChat$(data).pipe(
+          catchError((err) =>
+            throwError(() => [
+              ...testResults,
+              {
+                title: `Create chat ${data.subject}`,
+                description: '',
+                responseStatus: `${err.status} ${err.statusText}`,
+                response: err.error ?? '',
+                errorText: 'Create chat failed',
+                result: TestResult.FAIL,
+              },
+            ]),
+          ),
+        ),
+      ),
+      concatMap(() =>
+        this.msgService.getChats$([]).pipe(
+          filter((chats) => !chats.isLoading),
+          concatMap((chats) => {
+            const chat = chats?.chats?.find(
+              (chat) => chat.subject === data.subject,
+            );
+            if (chat === undefined) {
+              return throwError(() => [
+                ...testResults,
+                {
+                  title: 'Check if chat was created',
+                  description: '',
+                  response: chats.chats,
+                  errorText: `Cant find chat with subject ${data.subject} in chat list`,
+                  result: TestResult.FAIL,
+                },
+              ]);
+            }
+            testResults = [
+              ...testResults,
+              {
+                title: 'Check if chat was created',
+                description: '',
+                response: chats.chats,
+                errorText: `Cant find chat with subject ${data.subject} in chat list`,
+                result: TestResult.OK,
+              },
+            ];
+            return combineLatest([
+              this.checkIfChatVersionWasUpdated$(
+                chat.zoid,
+                chat.zver,
+                testResults,
+              ),
+              of(chat),
+            ]);
+          }),
+        ),
+      ),
+    );
+  }
+
+  checkIfChatVersionWasUpdated$(
+    zoid: number,
+    zver: number,
+    testResults: TestCaseResult[],
+    statuses: MsgChatStatus[] = [],
+  ): Observable<TestCaseResult[]> {
+    return this.msgService.getChatsUpdates$(statuses).pipe(
+      concatMap((versions) => {
+        const chat = versions.find((ver) => ver.zoid === zoid);
+        if (chat === undefined) {
+          return throwError(() => [
+            ...testResults,
+            {
+              title: 'Check chat version',
+              description: '',
+              response: versions,
+              errorText: `Cant find chat with zoid ${zoid} in versions list`,
+              result: TestResult.FAIL,
+            },
+          ]);
+        }
+        return of([
+          ...testResults,
+          {
+            title: 'Check chat version',
+            description: `Check if chat with zoid ${zoid} has updated version`,
+            response: versions,
+            result: zver === chat.zver ? TestResult.OK : TestResult.FAIL,
           },
         ]);
       }),

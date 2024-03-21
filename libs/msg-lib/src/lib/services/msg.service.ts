@@ -79,7 +79,7 @@ export class MsgService {
       );
   }
 
-  getChatById$(statuses: MsgChatStatus[]): Observable<ChatVersion[]> {
+  getChatsUpdates$(statuses: MsgChatStatus[]): Observable<ChatVersion[]> {
     return this.msgRequestBuilderService
       .buildUpdateChatListRequest({
         statuses,

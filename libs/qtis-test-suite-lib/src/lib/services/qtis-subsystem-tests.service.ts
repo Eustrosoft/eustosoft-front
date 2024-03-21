@@ -112,7 +112,7 @@ export class QtisSubsystemTestsService {
     const uploadedFileName = `${dateNow}-${testData.fileName}`;
     const folderPath = `${testData.folderForTests}/${testsFolderName}`;
 
-    return this.qtisTestsService.login(testData.login, testData.password).pipe(
+    return this.qtisTestsService.login$(testData.login, testData.password).pipe(
       concatMap((testResults) => {
         testResults.push({
           title: 'BEGIN EMPTY FOLDER TESTS',
@@ -259,8 +259,22 @@ export class QtisSubsystemTestsService {
 
   private executeMsgTests$(): Observable<TestObs> {
     const testData = this.qtisTestFormService.form.getRawValue();
-    return this.qtisTestsService.login(testData.login, testData.password).pipe(
+    const dateNow = this.qtisTestsService.getFormattedDate();
+    const chatName = `${testData.chatName}-${dateNow}`;
+    const firstChatName = `1-${chatName}`;
+    // const secondChatName = `2-${chatName}`;
+    // const thirdChatName = `3-${chatName}`;
+    // const fourthChatName = `4-${chatName}`;
+    return this.qtisTestsService.login$(testData.login, testData.password).pipe(
       concatMap((testResults) => {
+        return this.qtisTestsService.createChat$(testResults, {
+          subject: firstChatName,
+          message: testData.chatInitialMessage,
+          securityLevel: testData.chatSecurityLevel.toString(),
+          scope: testData.chatScopeId,
+        });
+      }),
+      concatMap(([testResults]) => {
         return of(testResults);
       }),
       concatMap((testResults) => {
@@ -300,7 +314,7 @@ export class QtisSubsystemTestsService {
     return combineLatest([
       of(testResults),
       this.qtisTestsService
-        .createDir(
+        .createDir$(
           testData.folderForTests,
           testsFolderName,
           testData.folderDescription,
@@ -315,19 +329,19 @@ export class QtisSubsystemTestsService {
       concatMap(([testResults, [createDirResult]]) => {
         return combineLatest([
           of([testResults, createDirResult]),
-          this.qtisTestsService.createDir(
+          this.qtisTestsService.createDir$(
             folderPath,
             firstNestedFolderName,
             testData.folderDescription,
             testData.folderSecurityLevel.toString(),
           ),
-          this.qtisTestsService.createDir(
+          this.qtisTestsService.createDir$(
             folderPath,
             secondNestedFolderName,
             testData.folderDescription,
             testData.folderSecurityLevel.toString(),
           ),
-          this.qtisTestsService.createDir(
+          this.qtisTestsService.createDir$(
             folderPath,
             thirdNestedFolderName,
             testData.folderDescription,
@@ -382,7 +396,7 @@ export class QtisSubsystemTestsService {
       of(firstNestedFolder).pipe(
         concatMap(() =>
           this.qtisTestsService
-            .createDir(
+            .createDir$(
               `${folderPath}/${firstNestedFolder.fileName}`,
               nestedFirstInFirstName,
               testData.folderDescription,
@@ -403,7 +417,7 @@ export class QtisSubsystemTestsService {
         ),
       ),
       this.qtisTestsService
-        .createDir(
+        .createDir$(
           folderPath,
           secondNestedFolderName,
           testData.folderDescription,
@@ -412,7 +426,7 @@ export class QtisSubsystemTestsService {
         .pipe(
           concatMap(([createDirTestResults, secondNestedFolder]) =>
             this.qtisTestsService
-              .createDir(
+              .createDir$(
                 `${folderPath}/${secondNestedFolderName}`,
                 nestedSecondInSecond,
                 testData.folderDescription,
@@ -438,7 +452,7 @@ export class QtisSubsystemTestsService {
           ),
         ),
       this.qtisTestsService
-        .createDir(
+        .createDir$(
           folderPath,
           thirdNestedFolderName,
           testData.folderDescription,
@@ -447,7 +461,7 @@ export class QtisSubsystemTestsService {
         .pipe(
           concatMap(([createDirTestResults, thirdNestedFolder]) =>
             this.qtisTestsService
-              .createDir(
+              .createDir$(
                 `${folderPath}/${thirdNestedFolderName}`,
                 nestedThirdInThird,
                 testData.folderDescription,
@@ -518,7 +532,7 @@ export class QtisSubsystemTestsService {
             of(secondNestedFolder),
             of(thirdNestedFolder),
             this.qtisTestsService
-              .uploadFile(
+              .uploadFile$(
                 testData.files,
                 firstNestedFolder.fullPath,
                 testData.fileName,
@@ -531,7 +545,7 @@ export class QtisSubsystemTestsService {
                   testResults.push(fileUploadTestResults);
                   return combineLatest([
                     of(folderContent![1]),
-                    this.qtisTestsService.copyMove(
+                    this.qtisTestsService.copyMoveFsObject$(
                       [folderContent![1]],
                       [
                         `${secondNestedFolder.fullPath}/${
@@ -542,7 +556,7 @@ export class QtisSubsystemTestsService {
                       secondNestedFolder.fullPath,
                       folderContent![1].fileName,
                     ),
-                    this.qtisTestsService.copyMove(
+                    this.qtisTestsService.copyMoveFsObject$(
                       [folderContent![1]],
                       [
                         `${thirdNestedFolder.fullPath}/${
@@ -608,7 +622,7 @@ export class QtisSubsystemTestsService {
     return combineLatest([
       of(testResults),
       this.qtisTestsService
-        .copyMove(
+        .copyMoveFsObject$(
           [fileUploadedToFirstFolder],
           [`${folderPath}/${fileUploadedToFirstFolder.fileName}`],
           ExplorerRequestActions.COPY,
@@ -626,7 +640,7 @@ export class QtisSubsystemTestsService {
         return combineLatest([
           of(testResults),
           this.qtisTestsService
-            .rename(
+            .renameFsObject$(
               copiedFile,
               `Renamed-Copy-${copiedFile.fileName}`,
               `Updated ${copiedFile.description}`,
@@ -644,7 +658,7 @@ export class QtisSubsystemTestsService {
         return combineLatest([
           of(testResults),
           this.qtisTestsService
-            .copyMove(
+            .copyMoveFsObject$(
               [renamedFile],
               [
                 `${folderPath}/${firstNestedFolder.fileName}/${renamedFile.fileName}`,
@@ -661,7 +675,7 @@ export class QtisSubsystemTestsService {
                   of(movedRenamedFile),
                   of(fileUploadedToFirstFolder),
                   this.qtisTestsService
-                    .delete(
+                    .deleteFsObject$(
                       [fileUploadedToFirstFolder],
                       `${folderPath}/${firstNestedFolder.fileName}`,
                     )
@@ -683,7 +697,7 @@ export class QtisSubsystemTestsService {
                   return combineLatest([
                     of(testResults),
                     this.qtisTestsService
-                      .rename(
+                      .renameFsObject$(
                         movedRenamedFile,
                         fileUploadedToFirstFolder.fileName,
                         fileUploadedToFirstFolder.description,
@@ -729,7 +743,7 @@ export class QtisSubsystemTestsService {
     return combineLatest([
       of(testResults),
       this.qtisTestsService
-        .createDir(
+        .createDir$(
           folderPath,
           firstNestedFolder.fileName,
           firstNestedFolder.description,
@@ -769,7 +783,7 @@ export class QtisSubsystemTestsService {
           }),
         ),
       this.qtisTestsService
-        .uploadFile(
+        .uploadFile$(
           files,
           `${folderPath}/${firstNestedFolder.fileName}`,
           files[0].name,
@@ -813,7 +827,7 @@ export class QtisSubsystemTestsService {
           }),
         ),
       this.qtisTestsService
-        .copyMove(
+        .copyMoveFsObject$(
           [firstNestedFolder],
           [folderPath],
           ExplorerRequestActions.COPY,
@@ -870,7 +884,7 @@ export class QtisSubsystemTestsService {
       of(secondNestedFolder),
       of(thirdNestedFolder),
       this.qtisTestsService
-        .copyMove(
+        .copyMoveFsObject$(
           [firstNestedFolder],
           [`${secondNestedFolder.fullPath}/${firstNestedFolder.fileName}`],
           ExplorerRequestActions.COPY,
@@ -899,7 +913,7 @@ export class QtisSubsystemTestsService {
             of(thirdNestedFolder),
             of(copiedFirstNestedFolder),
             this.qtisTestsService
-              .rename(
+              .renameFsObject$(
                 copiedFirstNestedFolder,
                 fourthNestedFolderName,
                 `Renamed ${copiedFirstNestedFolder.description}`,
@@ -930,7 +944,7 @@ export class QtisSubsystemTestsService {
             of(thirdNestedFolder),
             of(renamedToFourthNestedFolderName),
             this.qtisTestsService
-              .copyMove(
+              .copyMoveFsObject$(
                 [renamedToFourthNestedFolderName],
                 [`${folderPath}/${renamedToFourthNestedFolderName.fileName}`],
                 ExplorerRequestActions.MOVE,
@@ -959,7 +973,7 @@ export class QtisSubsystemTestsService {
             of(testResults),
             of(firstNestedFolder),
             this.qtisTestsService
-              .delete(
+              .deleteFsObject$(
                 [
                   movedAndRenamedToFourthNestedFolderName,
                   thirdNestedFolder,

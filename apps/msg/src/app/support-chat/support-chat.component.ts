@@ -111,7 +111,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
         switchMap(() =>
           this.msgService.chatListRefreshInterval$.pipe(
             switchMap(() =>
-              this.msgService.getChatById$(
+              this.msgService.getChatsUpdates$(
                 this.msgService.fetchChatsByStatuses$.getValue(),
               ),
             ),
