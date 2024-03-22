@@ -24,7 +24,7 @@ module.exports = [
     changeOrigin: true,
     context: ['/api', '/lk'],
     secure: false,
-    target: 'https://dev37.qxyz.ru/',
+    target: 'https://debug.dev37.qxyz.ru/',
     logLevel: 'debug',
   },
 ];

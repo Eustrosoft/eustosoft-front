@@ -8,8 +8,7 @@
 <mat-drawer-container [hasBackdrop]="true">
   <mat-drawer #drawer [mode]="'over'" [position]="'end'">
     <eustrosoft-front-sidenav
-      class="flex-auto"
-      (logoutClicked)="logout()"
+      (sidenavToggleClicked)="drawer.toggle()"
     ></eustrosoft-front-sidenav>
   </mat-drawer>
   <mat-drawer-content>
@@ -22,7 +21,6 @@
           appsButtonText: 'HEADER.APPS_BUTTON_TEXT' | translate
         }"
         (sidenavToggleClicked)="drawer.toggle()"
-        (logoutClicked)="logout()"
       ></eustrosoft-front-header>
 
       <router-outlet></router-outlet>

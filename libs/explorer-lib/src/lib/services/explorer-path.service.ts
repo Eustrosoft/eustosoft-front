@@ -16,6 +16,7 @@ import { ExplorerRequestActions } from '../constants/enums/explorer-actions.enum
 import { FileSystemObject } from '../interfaces/file-system-object.interface';
 import { DOCUMENT } from '@angular/common';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { map, Observable, take, tap } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class ExplorerPathService {
@@ -23,16 +24,32 @@ export class ExplorerPathService {
   private readonly document = inject(DOCUMENT);
   private readonly snackBar = inject(MatSnackBar);
   private readonly translateService = inject(PRECONFIGURED_TRANSLATE_SERVICE);
-  private readonly lastPathStorageKey = `qtis-explorer-last-path-${
-    this.authenticationService.userInfo$.getValue().userId
-  }`;
+  private readonly lastPathStorageKey = 'qtis-explorer-last-path-';
 
-  getLastPathState(): string {
-    return localStorage.getItem(this.lastPathStorageKey) ?? '/';
+  getLastPathState(): Observable<string> {
+    return this.authenticationService.userInfo$.pipe(
+      map((userInfo) => {
+        return (
+          localStorage.getItem(
+            `${this.lastPathStorageKey}${userInfo.userId}`,
+          ) ?? '/'
+        );
+      }),
+    );
   }
 
   setLastPathState(path: string): void {
-    localStorage.setItem(this.lastPathStorageKey, path);
+    this.authenticationService.userInfo$
+      .pipe(
+        tap((userInfo) => {
+          localStorage.setItem(
+            `${this.lastPathStorageKey}${userInfo.userId}`,
+            path,
+          );
+        }),
+        take(1),
+      )
+      .subscribe();
   }
 
   getFullPathToLastFolder(path: string): string {

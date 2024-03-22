@@ -25,6 +25,7 @@ import {
   BehaviorSubject,
   catchError,
   combineLatest,
+  concat,
   EMPTY,
   filter,
   map,
@@ -33,6 +34,7 @@ import {
   of,
   repeat,
   shareReplay,
+  skip,
   startWith,
   Subject,
   switchMap,
@@ -146,10 +148,11 @@ export class ExplorerComponent implements OnInit {
 
   protected readonly refresh$ = new Subject<void>();
   protected readonly navigateBack$ = new Subject<void>();
-  protected readonly path$ = new BehaviorSubject<string>(
+  protected readonly path$ = new BehaviorSubject<string>('/');
+  protected readonly path$$ = concat(
     this.explorerPathService.getLastPathState(),
-  );
-  protected readonly path$$ = this.path$.asObservable().pipe(shareReplay(1));
+    this.path$.asObservable().pipe(skip(1)),
+  ).pipe(shareReplay(1));
   protected readonly currentFolder$ = new BehaviorSubject<
     FileSystemObject | undefined
   >(undefined);
@@ -259,7 +262,7 @@ export class ExplorerComponent implements OnInit {
       .pipe(
         tap(() => {
           const path = this.path$.getValue();
-          const isRoot = path === '';
+          const isRoot = path === '/' || path === '';
           if (!isRoot) {
             this.path$.next(
               this.explorerPathService.getFullPathToLastFolder(path),

@@ -15,5 +15,21 @@
     "PASSWORD_LABEL": "Пароль",
     "SUBMIT_BUTTON_TEXT": "Войти"
   },
+  "SIDENAV": {
+    "ACCOUNT_TITLE": "Личный кабинет",
+    "ACCOUNT_LINK_TEXT": "Личный кабинет участника",
+    "QR_GEN_LINK_TEXT": "QR Генератор",
+    "EXPLORER_LINK_TEXT": "Explorer - управление файлами",
+    "MSG_LINK_TEXT": "MSG - Общение с тех.поддержкой",
+    "QTIS_ADMIN_LINK_TEXT": "QTIS Администрирование Системы",
+    "QR_QXYZ_TITLE": "QR.qxyz",
+    "QR_LOCAL_SERVICE_LINK_TEXT": "Локальный сервис портала",
+    "QR_EXTERNAL_SERVICE_LINK_TEXT": "Внешний сервис портала",
+    "PUBLIC_FILE_ARCHIVE_LINK_TEXT": "Публичный архив файлов",
+    "QR_CARD_EXAMPLE_LINK_TEXT": "Образец QR карточки",
+    "SITEMAP_LINK_TEXT": "Карта",
+    "REF_LINK_TEXT": "Справка",
+    "LOGOUT_BUTTON_TEXT": "Выйти"
+  },
   "QTIS_TEST_SUITE": {}
 }

@@ -12,6 +12,7 @@ import {
   DocumentFileExtensions,
   ImgFileExtensions,
   QtisRequestResponse,
+  ReplaceOriginPipe,
   TextFileExtensions,
 } from '@eustrosoft-front/core';
 import {
@@ -24,11 +25,7 @@ import {
   switchMap,
   throwError,
 } from 'rxjs';
-import {
-  APP_CONFIG,
-  FallbackConfig,
-  OriginReplaceString,
-} from '@eustrosoft-front/config';
+import { APP_CONFIG, FallbackConfig } from '@eustrosoft-front/config';
 import { ExplorerRequestBuilderService } from './explorer-request-builder.service';
 import {
   CreateRequest,
@@ -48,7 +45,6 @@ import { FileSystemObject } from '../interfaces/file-system-object.interface';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ExplorerPathService } from './explorer-path.service';
 import { RenameDialogReturnData } from '../interfaces/rename-dialog/rename-dialog-return-data.interface';
-import { DOCUMENT } from '@angular/common';
 import { CachedDictionaryService } from '@eustrosoft-front/dic';
 import { ExplorerRoutes } from '../constants/enums/explorer-routes.enum';
 import { ExplorerRequestActions } from '../constants/enums/explorer-actions.enum';
@@ -63,7 +59,7 @@ export class ExplorerService {
   private readonly cachedDictionaryService = inject(CachedDictionaryService);
   private readonly snackBar = inject(MatSnackBar);
   private readonly explorerPathService = inject(ExplorerPathService);
-  private readonly document = inject(DOCUMENT);
+  private readonly replaceOriginPipe = inject(ReplaceOriginPipe);
 
   makeShareLink(path: string): Observable<string> {
     return this.config.pipe(
@@ -72,20 +68,7 @@ export class ExplorerService {
           () => !!config.shareUrl,
           of(`${config.shareUrl}${path}`),
           of(`${FallbackConfig.shareUrl}${path}`),
-        ).pipe(
-          switchMap(() =>
-            iif(
-              () => config.shareUrl.includes(OriginReplaceString),
-              of(
-                `${config.shareUrl.replace(
-                  OriginReplaceString,
-                  this.document.location.origin,
-                )}${path}`,
-              ),
-              of(`${config.shareUrl}${path}`),
-            ),
-          ),
-        ),
+        ).pipe(map(() => this.replaceOriginPipe.transform(config.shareUrl))),
       ),
     );
   }

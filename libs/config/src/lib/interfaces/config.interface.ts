@@ -5,12 +5,16 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
+import { MenuItem } from './menu-item.interface';
+import { Link } from './link.interface';
+
 export interface Config {
   production: boolean;
   apiUrl: string;
   shareUrl: string;
   shareOWikiUrl: string;
   apps: App[];
+  sideNavMenuItems: SideNavMenuItems;
   loginUrl: string;
   appsPageUrl: string;
   homePageUrl: string;
@@ -21,4 +25,9 @@ export interface App {
   active: boolean;
   url: string;
   icon: string;
+}
+
+export interface SideNavMenuItems {
+  dropdowns: MenuItem[];
+  rest: Link[];
 }

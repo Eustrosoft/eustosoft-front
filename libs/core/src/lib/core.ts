@@ -11,6 +11,7 @@ import { SM_SCREEN_RESOLUTION } from './di/small-screen-resolution.token';
 import { SupportedLanguages } from './constants/enums/supported-languages.enum';
 import { TranslateService } from '@ngx-translate/core';
 import { initializeLocales } from './functions/locale-initializer.function';
+import { ReplaceOriginPipe } from './pipes/replace-origin.pipe';
 
 export function provideCoreLib(): Provider[] {
   return [
@@ -63,5 +64,6 @@ export function provideCoreLib(): Provider[] {
       provide: SM_SCREEN_RESOLUTION,
       useValue: 576,
     },
+    ReplaceOriginPipe,
   ];
 }

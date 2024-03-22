@@ -22,7 +22,7 @@ export const authenticationGuard = (): Observable<UrlTree | boolean> => {
   const router: Router = inject(Router);
 
   // TODO локализация ошибок
-  return authenticationService.getAuthenticationInfo().pipe(
+  return authenticationService.pingRes$.pipe(
     switchMap((pingResponse: QtisRequestResponse<PingResponse>) => {
       if (pingResponse.r[0].e !== 0) {
         snackBar.open('Authenticate in order to access this page', 'Close');

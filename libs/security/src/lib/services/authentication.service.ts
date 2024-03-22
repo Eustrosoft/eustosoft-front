@@ -12,9 +12,7 @@ import {
   combineLatest,
   map,
   Observable,
-  of,
-  switchMap,
-  tap,
+  shareReplay,
   throwError,
 } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -25,8 +23,8 @@ import {
   SupportedLanguages,
 } from '@eustrosoft-front/core';
 import { SamService } from './sam.service';
-import { AuthenticatedUser } from '../interfaces/authenticated-user.interface';
 import { PingRequest, PingResponse } from '@eustrosoft-front/login-lib';
+import { AuthenticatedUser } from '../interfaces/authenticated-user.interface';
 
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {
@@ -34,18 +32,12 @@ export class AuthenticationService {
   private samService = inject(SamService);
 
   isAuthenticated$ = new BehaviorSubject<boolean>(false);
-  userInfo$ = new BehaviorSubject<AuthenticatedUser>({
-    userAvailableSlvl: '',
-    userLang: '',
-    userLogin: '',
-    userId: -1,
-    userSlvl: '',
-    userFullName: '',
-  });
+  pingRes$ = this.getPingResponse().pipe(shareReplay(1));
+  userInfo$ = this.getAuthenticationInfo().pipe(shareReplay(1));
 
-  getAuthenticationInfo(): Observable<QtisRequestResponse<PingResponse>> {
-    return combineLatest([
-      this.dispatchService.dispatch<PingRequest, PingResponse>({
+  private getPingResponse(): Observable<QtisRequestResponse<PingResponse>> {
+    return this.dispatchService
+      .dispatch<PingRequest, PingResponse>({
         r: [
           {
             s: Subsystems.PING,
@@ -53,24 +45,27 @@ export class AuthenticationService {
           },
         ],
         t: 0,
-      } as QtisRequestResponse<PingRequest>),
+      })
+      .pipe(catchError((err: HttpErrorResponse) => throwError(() => err)));
+  }
+
+  getAuthenticationInfo(): Observable<AuthenticatedUser> {
+    return combineLatest([
+      this.pingRes$,
       this.samService.getUserId().pipe(map((res) => +res.r[0].data)),
       this.samService.getUserLogin().pipe(map((res) => res.r[0].data)),
       this.samService.getUserLang().pipe(map((res) => res.r[0].data)),
       this.samService.getUserSlvl().pipe(map((res) => res.r[0].data)),
       this.samService.getUserAvailableSlvl().pipe(map((res) => res.r[0].data)),
     ]).pipe(
-      tap(([pingRes, id, login, lang, slvl, availableSlvl]) =>
-        this.userInfo$.next({
-          userAvailableSlvl: availableSlvl,
-          userLang: lang,
-          userLogin: login,
-          userId: id,
-          userFullName: pingRes.r[0].fullName,
-          userSlvl: slvl,
-        }),
-      ),
-      switchMap(([pingRes]) => of(pingRes)),
+      map(([pingRes, id, login, lang, slvl, availableSlvl]) => ({
+        userAvailableSlvl: availableSlvl,
+        userLang: lang,
+        userLogin: login,
+        userId: id,
+        userFullName: pingRes.r[0].fullName,
+        userSlvl: slvl,
+      })),
       catchError((err: HttpErrorResponse) => throwError(() => err)),
     );
   }

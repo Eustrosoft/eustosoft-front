@@ -5,52 +5,74 @@
   ~ See the LICENSE file at the project root for licensing information.
   -->
 
-<div class="flex flex-column align-items-center g-2 p-2">
-  <ng-container *ngIf="userInfo$ | async as info">
-    <div class="flex align-items-center">
-      <h4 class="m-0 px-3 fs-4" [title]="info.userFullName">
-        {{ info.userFullName }}
-      </h4>
+<div class="flex flex-auto flex-column align-items-center g-2 p-2">
+  <ng-container *ngIf="{ userInfo: userInfo$ | async } as vm">
+    <div
+      class="flex flex-row align-items-center align-self-stretch justify-content-end"
+    >
+      <ng-container *ngIf="vm.userInfo">
+        <h4 class="m-0 px-3 fs-4" [title]="vm.userInfo.userFullName">
+          {{ vm.userInfo.userFullName }}
+        </h4>
+      </ng-container>
       <button
         mat-icon-button
         type="button"
-        (click)="logout()"
-        [ngClass]="'logout-icon'"
+        (click)="sidenavToggleClicked.emit()"
       >
-        <mat-icon>logout</mat-icon>
+        <mat-icon>menu</mat-icon>
       </button>
     </div>
   </ng-container>
-  <ng-container *ngFor="let menuItem of menuItems.dropdowns; let i = index">
-    <button
-      mat-stroked-button
-      color="primary"
-      type="button"
-      class="w-100"
-      [matMenuTriggerFor]="menuTriggers[i]"
-    >
-      <div
-        class="flex flex-row-reverse align-items-center justify-content-space-between"
+  <ng-container *ngIf="{ menuItems: menuItems$ | async } as vm">
+    <ng-container *ngFor="let menuItem of vm.menuItems?.dropdowns">
+      <button
+        mat-stroked-button
+        color="primary"
+        type="button"
+        class="w-100"
+        [matMenuTriggerFor]="menu"
       >
-        <mat-icon>expand_more</mat-icon>
-        <span>{{ menuItem.title }}</span>
-      </div>
-    </button>
-    <mat-menu [hasBackdrop]="true">
+        <div
+          class="flex flex-row-reverse align-items-center justify-content-space-between"
+        >
+          <mat-icon>expand_more</mat-icon>
+          <span>{{ menuItem.title | translate }}</span>
+        </div>
+      </button>
+      <mat-menu #menu [hasBackdrop]="true">
+        <a
+          *ngFor="let link of menuItem?.links"
+          mat-menu-item
+          [href]="link.href | replaceOrigin"
+          target="_blank"
+        >
+          {{ link.text | translate }}
+        </a>
+      </mat-menu>
+    </ng-container>
+
+    <ng-container *ngFor="let link of vm.menuItems?.rest">
       <a
-        *ngFor="let link of menuItem.links"
         mat-menu-item
-        [href]="link.href"
+        [href]="link.href | replaceOrigin"
         target="_blank"
+        class="fs-3"
       >
-        {{ link.text }}
+        {{ link.text | translate }}
       </a>
-    </mat-menu>
+    </ng-container>
   </ng-container>
 
-  <ng-container *ngFor="let link of menuItems.rest">
-    <a mat-menu-item [href]="link.href" target="_blank" class="fs-3">
-      {{ link.text }}
-    </a>
-  </ng-container>
+  <div class="flex flex-auto align-items-end align-self-stretch">
+    <button
+      mat-flat-button
+      color="primary"
+      type="button"
+      class="flex-auto"
+      (click)="logout()"
+    >
+      {{ 'SIDENAV.LOGOUT_BUTTON_TEXT' | translate }}
+    </button>
+  </div>
 </div>

@@ -32,6 +32,10 @@ export const FallbackConfig: Config = {
       icon: 'chat',
     },
   ],
+  sideNavMenuItems: {
+    dropdowns: [],
+    rest: [],
+  },
   loginUrl: 'http://fudo.eustrosoft.org:8080/login/',
   appsPageUrl: 'http://fudo.eustrosoft.org:8080/login/apps',
   homePageUrl: 'http://fudo.eustrosoft.org',

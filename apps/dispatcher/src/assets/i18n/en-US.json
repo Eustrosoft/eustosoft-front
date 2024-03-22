@@ -15,5 +15,21 @@
     "LOGIN_LABEL": "Login",
     "PASSWORD_LABEL": "Password",
     "SUBMIT_BUTTON_TEXT": "Log In"
+  },
+  "SIDENAV": {
+    "ACCOUNT_TITLE": "Account",
+    "ACCOUNT_LINK_TEXT": "Account",
+    "QR_GEN_LINK_TEXT": "QR Generator",
+    "EXPLORER_LINK_TEXT": "Explorer App",
+    "MSG_LINK_TEXT": "MSG App",
+    "QTIS_ADMIN_LINK_TEXT": "QTIS Admin",
+    "QR_QXYZ_TITLE": "QR.qxyz",
+    "QR_LOCAL_SERVICE_LINK_TEXT": "QR Local Service",
+    "QR_EXTERNAL_SERVICE_LINK_TEXT": "QR External Service",
+    "PUBLIC_FILE_ARCHIVE_LINK_TEXT": "Public File Archive",
+    "QR_CARD_EXAMPLE_LINK_TEXT": "QR Card Example",
+    "SITEMAP_LINK_TEXT": "Sitemap",
+    "REF_LINK_TEXT": "Reference",
+    "LOGOUT_BUTTON_TEXT": "Log Out"
   }
 }

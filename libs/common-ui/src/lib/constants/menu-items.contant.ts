@@ -5,9 +5,9 @@
  * See the LICENSE file at the project root for licensing information.
  */
 
-import { HeaderMenuItems } from '../interfaces/header-menu-items.interface';
+import { SideNavMenuItems } from '@eustrosoft-front/config';
 
-export const menuItems: HeaderMenuItems = {
+export const menuItems: SideNavMenuItems = {
   dropdowns: [
     {
       title: 'Личный кабинет',

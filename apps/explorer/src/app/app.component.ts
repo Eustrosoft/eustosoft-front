@@ -19,6 +19,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { HeaderComponent, SidenavComponent } from '@eustrosoft-front/common-ui';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { AsyncPipe, NgFor, NgIf } from '@angular/common';
+import { ExplorerRoutes } from '@eustrosoft-front/explorer-lib';
 
 @Component({
   selector: 'eustrosoft-front-root',
@@ -54,7 +55,7 @@ export class AppComponent {
       .logout()
       .pipe(
         tap(() => {
-          this.router.navigate(['login']);
+          this.router.navigate([ExplorerRoutes.Login]);
         }),
         take(1),
       )

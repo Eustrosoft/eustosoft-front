@@ -21,7 +21,6 @@ import {
 } from '@angular/core';
 import { trackByZridFunction } from '@eustrosoft-front/core';
 import { AuthenticationService } from '@eustrosoft-front/security';
-import { shareReplay } from 'rxjs';
 import { BreakpointsService } from '@eustrosoft-front/common-ui';
 import {
   Chat,
@@ -91,9 +90,7 @@ export class ChatViewComponent implements OnChanges, AfterViewInit {
   protected trackByFn = trackByZridFunction;
   protected isSm = this.breakpointsService.isSm();
 
-  protected userInfo$ = this.authenticationService.userInfo$
-    .asObservable()
-    .pipe(shareReplay(1));
+  protected userInfo$ = this.authenticationService.userInfo$;
 
   ngOnChanges(changes: SimpleChanges): void {
     if ('selectedChat' in changes) {

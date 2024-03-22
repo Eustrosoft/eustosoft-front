@@ -27,7 +27,7 @@ export class QtisTestFormService {
       files: this.fb.nonNullable.control<File[]>([]),
       chatName: this.fb.nonNullable.control('chat'),
       chatInitialMessage: this.fb.nonNullable.control('Initial Message'),
-      chatScopeId: this.fb.nonNullable.control(1099512479744),
+      chatScopeId: this.fb.nonNullable.control(1048576),
       chatSecurityLevel: this.fb.nonNullable.control(+SecurityLevels.CORPORATE),
     },
   );

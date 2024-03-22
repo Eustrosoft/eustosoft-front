@@ -20,12 +20,12 @@ import {
 } from '@angular/core';
 import { AuthenticationService } from '@eustrosoft-front/security';
 import { APP_CONFIG } from '@eustrosoft-front/config';
-import { MatMenu, MatMenuPanel, MatMenuModule } from '@angular/material/menu';
+import { MatMenu, MatMenuModule, MatMenuPanel } from '@angular/material/menu';
 import { menuItems } from '../../constants/menu-items.contant';
 import { BreakpointsService } from '../../services/breakpoints.service';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { NgIf, NgFor, AsyncPipe } from '@angular/common';
+import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
 @Component({
@@ -58,7 +58,7 @@ export class HeaderComponent implements AfterViewInit {
   protected readonly config = inject(APP_CONFIG);
   protected isAuthenticated$ =
     this.authenticationService.isAuthenticated$.asObservable();
-  protected userInfo$ = this.authenticationService.userInfo$.asObservable();
+  protected userInfo$ = this.authenticationService.userInfo$;
   protected isSm = this.breakpointsService.isSm();
 
   menuItems = menuItems;

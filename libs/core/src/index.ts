@@ -13,6 +13,7 @@ export * from './lib/constants/enums/mime-types.enum';
 export * from './lib/constants/enums/file-extensions.enum';
 export * from './lib/constants/enums/qtis-error-codes.enum';
 export * from './lib/pipes/bytes-to-size.pipe';
+export * from './lib/pipes/replace-origin.pipe';
 export * from './lib/interfaces/qtis-req-res.interface';
 export * from './lib/types/login-form.type';
 export * from './lib/types/form-controls.type';

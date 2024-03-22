@@ -10,8 +10,8 @@
     <mat-drawer #drawer [mode]="'over'" [position]="'end'">
       <eustrosoft-front-sidenav
         *ngIf="vm.isAuthenticated"
-        class="flex-auto"
-        (logoutClicked)="logout()"
+        (sidenavToggleClicked)="drawer.toggle()"
+        (logoutClicked)="drawer.toggle(); logout()"
       ></eustrosoft-front-sidenav>
     </mat-drawer>
     <mat-drawer-content>

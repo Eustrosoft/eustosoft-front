@@ -10,6 +10,9 @@
 :host {
   display: flex;
   ::ng-deep {
+    .cdk-virtual-scroll-content-wrapper {
+      max-width: 100%;
+    }
     .mat-mdc-list-item-title:before {
       height: 1.3rem !important;
     }
