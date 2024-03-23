@@ -40,14 +40,12 @@ import {
   MsgChatStatus,
   MsgDictionaryService,
   MsgMapperService,
-  MsgRequestBuilderService,
   MsgService,
   MsgSubjects,
   MsgSubjectsService,
   RenameChatDialogData,
   RenameChatDialogReturnData,
 } from '@eustrosoft-front/msg-lib';
-import { DispatchService } from '@eustrosoft-front/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -64,7 +62,7 @@ import { ChatViewComponent } from './components/chat-view/chat-view.component';
 import { MatButtonModule } from '@angular/material/button';
 import { AsyncPipe, NgIf, NgTemplateOutlet } from '@angular/common';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { DicValue } from '@eustrosoft-front/dic';
+import { CachedDictionaryService, DicValue } from '@eustrosoft-front/dic';
 
 @Component({
   selector: 'eustrosoft-front-support-chat',
@@ -86,10 +84,9 @@ import { DicValue } from '@eustrosoft-front/dic';
   ],
 })
 export class SupportChatComponent implements OnInit, OnDestroy {
-  private readonly dispatchService = inject(DispatchService);
   private readonly msgService = inject(MsgService);
-  private readonly msgRequestBuilderService = inject(MsgRequestBuilderService);
   private readonly msgDictionaryService = inject(MsgDictionaryService);
+  private readonly cachedDictionaryService = inject(CachedDictionaryService);
   private readonly msgSubjectsService = inject(MsgSubjectsService);
   private readonly msgMapperService = inject(MsgMapperService);
   private readonly dialog = inject(MatDialog);
@@ -147,10 +144,8 @@ export class SupportChatComponent implements OnInit, OnDestroy {
     ),
   );
 
-  // TODO Get dictionary values only once on app init
-  chatFilterOptions$: Observable<DicValue[]> = this.msgDictionaryService
-    .getStatusOptions()
-    .pipe(
+  chatFilterOptions$: Observable<DicValue[]> =
+    this.msgDictionaryService.msgStatusOptions$.pipe(
       catchError((_err: HttpErrorResponse) => {
         this.snackBar.open(
           this.translateService.instant(
@@ -162,9 +157,8 @@ export class SupportChatComponent implements OnInit, OnDestroy {
       }),
     );
 
-  securityLevelOptions$: Observable<Option[]> = this.msgDictionaryService
-    .getSecurityLevelOptions()
-    .pipe(
+  securityLevelOptions$: Observable<Option[]> =
+    this.cachedDictionaryService.securityOptions$.pipe(
       catchError((_err: HttpErrorResponse) => {
         this.snackBar.open(
           this.translateService.instant(
@@ -176,9 +170,8 @@ export class SupportChatComponent implements OnInit, OnDestroy {
       }),
     );
 
-  scopeOptions$: Observable<Option[]> = this.msgDictionaryService
-    .getScopeOptions()
-    .pipe(
+  scopeOptions$: Observable<Option[]> =
+    this.cachedDictionaryService.scopeOptions$.pipe(
       catchError((_err: HttpErrorResponse) => {
         this.snackBar.open(
           this.translateService.instant(

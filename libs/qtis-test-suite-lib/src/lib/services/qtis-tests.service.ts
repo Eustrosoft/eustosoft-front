@@ -431,7 +431,7 @@ export class QtisTestsService {
   createChat$(
     testResults: TestCaseResult[],
     data: CreateChatDialogReturnData,
-  ): Observable<[TestCaseResult[], Chat]> {
+  ): Observable<[TestCaseResult[], TestCaseResult[], TestCaseResult[], Chat]> {
     return of(true).pipe(
       concatMap(() =>
         this.msgService.createNewChat$(data).pipe(
@@ -469,17 +469,35 @@ export class QtisTestsService {
                 },
               ]);
             }
-            testResults = [
-              ...testResults,
-              {
-                title: 'Check if chat was created',
-                description: '',
-                response: chats.chats,
-                errorText: `Cant find chat with subject ${data.subject} in chat list`,
-                result: TestResult.OK,
-              },
-            ];
+            if (chat.zsid === null) {
+              chat.zsid = undefined;
+            }
             return combineLatest([
+              of(testResults),
+              of([
+                {
+                  title: `Check if chat ${data.subject} was created`,
+                  description: '',
+                  response: chats.chats,
+                  result: TestResult.OK,
+                },
+                {
+                  title: `Check if chat ${data.subject} was created with provided security level`,
+                  description: `{ zlvl } must be equal ${+data.securityLevel!}`,
+                  response: chats.chats,
+                  result:
+                    chat.zlvl === +data.securityLevel!
+                      ? TestResult.OK
+                      : TestResult.FAIL,
+                },
+                {
+                  title: `Check if chat ${data.subject} was created with provided scope`,
+                  description: `{ zsid } must be equal ${data.scope!}`,
+                  response: chats.chats,
+                  result:
+                    chat.zsid === data.scope ? TestResult.OK : TestResult.FAIL,
+                },
+              ]),
               this.checkIfChatVersionWasUpdated$(
                 chat.zoid,
                 chat.zver,
@@ -515,7 +533,6 @@ export class QtisTestsService {
           ]);
         }
         return of([
-          ...testResults,
           {
             title: 'Check chat version',
             description: `Check if chat with zoid ${zoid} has updated version`,

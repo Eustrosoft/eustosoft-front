@@ -13,7 +13,8 @@ export interface Chat {
   subject: string;
   status: MsgChatStatus;
   zoid: number;
-  zver: number;
+  zver: number; // version
   zrid: number;
-  zlvl: number;
+  zsid: number | null | undefined; // scope
+  zlvl: number | null | undefined; // security level
 }

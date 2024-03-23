@@ -7,28 +7,21 @@
 
 import { inject, Injectable } from '@angular/core';
 import {
-  DicMapperService,
   DicService,
   Dictionaries,
   DicValue,
   DicValuesResponse,
 } from '@eustrosoft-front/dic';
-import { map, Observable } from 'rxjs';
+import { map, Observable, shareReplay } from 'rxjs';
 import { QtisRequestResponse } from '@eustrosoft-front/core';
-import { Option } from '@eustrosoft-front/common-ui';
-import {
-  SamService,
-  Scopes,
-  UserAvailableScopesResponse,
-} from '@eustrosoft-front/security';
 
 @Injectable({ providedIn: 'root' })
 export class MsgDictionaryService {
   private readonly dicService = inject(DicService);
-  private readonly samService = inject(SamService);
-  private readonly dicMapperService = inject(DicMapperService);
 
-  getStatusOptions(): Observable<DicValue[]> {
+  msgStatusOptions$ = this.getStatusOptions().pipe(shareReplay(1));
+
+  private getStatusOptions(): Observable<DicValue[]> {
     return this.dicService
       .getDicValues(Dictionaries.MSG_CHANNEL_STATUS)
       .pipe(
@@ -36,27 +29,5 @@ export class MsgDictionaryService {
           response.r.flatMap((r: DicValuesResponse) => r.values),
         ),
       );
-  }
-
-  getSecurityLevelOptions(): Observable<Option[]> {
-    return this.dicService.getMappedDicValues<Option>(
-      Dictionaries.SLEVEL,
-      this.dicMapperService.toOption,
-    );
-  }
-
-  getScopeOptions(): Observable<Option[]> {
-    return this.samService.getUserAvailableScope(Scopes.MSGC).pipe(
-      map((response: QtisRequestResponse<UserAvailableScopesResponse>) =>
-        response.r.flatMap((r) => r.scopes),
-      ),
-      map((scopes) =>
-        scopes.map((scope) => ({
-          value: scope.ZSID,
-          displayText: scope.name,
-          disabled: false,
-        })),
-      ),
-    );
   }
 }

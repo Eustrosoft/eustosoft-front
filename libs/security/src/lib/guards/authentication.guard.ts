@@ -15,11 +15,9 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { PingResponse } from '@eustrosoft-front/login-lib';
 
 export const authenticationGuard = (): Observable<UrlTree | boolean> => {
-  const authenticationService: AuthenticationService = inject(
-    AuthenticationService,
-  );
-  const snackBar: MatSnackBar = inject(MatSnackBar);
-  const router: Router = inject(Router);
+  const authenticationService = inject(AuthenticationService);
+  const snackBar = inject(MatSnackBar);
+  const router = inject(Router);
 
   // TODO локализация ошибок
   return authenticationService.pingRes$.pipe(

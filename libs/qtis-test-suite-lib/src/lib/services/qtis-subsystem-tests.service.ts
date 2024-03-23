@@ -262,20 +262,66 @@ export class QtisSubsystemTestsService {
     const dateNow = this.qtisTestsService.getFormattedDate();
     const chatName = `${testData.chatName}-${dateNow}`;
     const firstChatName = `1-${chatName}`;
-    // const secondChatName = `2-${chatName}`;
-    // const thirdChatName = `3-${chatName}`;
+    const secondChatName = `2-${chatName}`;
+    const thirdChatName = `3-${chatName}`;
     // const fourthChatName = `4-${chatName}`;
     return this.qtisTestsService.login$(testData.login, testData.password).pipe(
       concatMap((testResults) => {
-        return this.qtisTestsService.createChat$(testResults, {
-          subject: firstChatName,
-          message: testData.chatInitialMessage,
-          securityLevel: testData.chatSecurityLevel.toString(),
-          scope: testData.chatScopeId,
-        });
-      }),
-      concatMap(([testResults]) => {
-        return of(testResults);
+        return combineLatest([
+          of([testResults]),
+          this.qtisTestsService.createChat$(testResults, {
+            subject: firstChatName,
+            message: testData.chatInitialMessage,
+            securityLevel: testData.chatSecurityLevel.toString(),
+            scope: testData.chatScopeId,
+          }),
+          this.qtisTestsService.createChat$(testResults, {
+            subject: secondChatName,
+            message: '',
+            securityLevel: testData.chatSecurityLevel.toString(),
+            scope: undefined,
+          }),
+          this.qtisTestsService.createChat$(testResults, {
+            subject: thirdChatName,
+            message: '',
+            securityLevel: undefined,
+            scope: undefined,
+          }),
+        ]).pipe(
+          concatMap(
+            ([
+              testResults,
+              [
+                _tr,
+                createFirstChatTestResult,
+                checkFirstChatVersionTestResult,
+                _firstCreatedChat,
+              ],
+              [
+                _tr2,
+                createSecondChatTestResult,
+                checkSecondChatVersionTestResult,
+                _secondCreatedChat,
+              ],
+              [
+                _tr3,
+                createThirdChatTestResult,
+                checkThirdChatVersionTestResult,
+                _thirdCreatedChat,
+              ],
+            ]) => {
+              testResults.push(
+                createFirstChatTestResult,
+                checkFirstChatVersionTestResult,
+                createSecondChatTestResult,
+                checkSecondChatVersionTestResult,
+                createThirdChatTestResult,
+                checkThirdChatVersionTestResult,
+              );
+              return of(testResults);
+            },
+          ),
+        );
       }),
       concatMap((testResults) => {
         const results = flattenArray(testResults);

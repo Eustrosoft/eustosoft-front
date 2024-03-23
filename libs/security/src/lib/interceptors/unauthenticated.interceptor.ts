@@ -17,12 +17,15 @@ import {
 import { catchError, tap, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { getHttpStatusCodeName } from '@eustrosoft-front/core';
+import { AuthenticationService } from '../services/authentication.service';
 
 export const unauthenticatedInterceptor: HttpInterceptorFn = (
   req: HttpRequest<unknown>,
   next: HttpHandlerFn,
 ) => {
   const router = inject(Router);
+  const authenticationService = inject(AuthenticationService);
+
   return next(req).pipe(
     tap((event) => {
       if (event instanceof HttpResponse) {
@@ -48,7 +51,12 @@ export const unauthenticatedInterceptor: HttpInterceptorFn = (
     }),
     catchError((err: HttpErrorResponse) => {
       if (err.status === HttpStatusCode.Unauthorized) {
-        router.navigate(['login']);
+        const paths = router.config.map((route) => route.path);
+        const hasLoginRoute = paths.includes('login');
+        authenticationService.isAuthenticated$.next(false);
+        if (hasLoginRoute) {
+          router.navigate(['login']);
+        }
       }
       return throwError(() => err);
     }),

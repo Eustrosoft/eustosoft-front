@@ -4,7 +4,10 @@
  * This file is part of eustrosoft-front project.
  * See the LICENSE file at the project root for licensing information.
  */
+@use 'libs/common-ui/src/lib/styles/utilities';
+
 :host {
+  @extend .flex, .overflow-auto;
   height: inherit;
-  display: flex;
+  max-width: 100vw;
 }
