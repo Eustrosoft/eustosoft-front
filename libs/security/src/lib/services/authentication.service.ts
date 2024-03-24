@@ -49,7 +49,7 @@ export class AuthenticationService {
       .pipe(catchError((err: HttpErrorResponse) => throwError(() => err)));
   }
 
-  getAuthenticationInfo(): Observable<AuthenticatedUser> {
+  private getAuthenticationInfo(): Observable<AuthenticatedUser> {
     return combineLatest([
       this.pingRes$,
       this.samService.getUserId().pipe(map((res) => +res.r[0].data)),
@@ -57,14 +57,16 @@ export class AuthenticationService {
       this.samService.getUserLang().pipe(map((res) => res.r[0].data)),
       this.samService.getUserSlvl().pipe(map((res) => res.r[0].data)),
       this.samService.getUserAvailableSlvl().pipe(map((res) => res.r[0].data)),
+      this.samService.getUserDefaultScope().pipe(map((res) => res.r[0].data)),
     ]).pipe(
-      map(([pingRes, id, login, lang, slvl, availableSlvl]) => ({
+      map(([pingRes, id, login, lang, slvl, availableSlvl, defaultScope]) => ({
         userAvailableSlvl: availableSlvl,
         userLang: lang,
         userLogin: login,
         userId: id,
         userFullName: pingRes.r[0].fullName,
-        userSlvl: slvl,
+        userSlvl: +slvl,
+        userDefaultScope: +defaultScope,
       })),
       catchError((err: HttpErrorResponse) => throwError(() => err)),
     );

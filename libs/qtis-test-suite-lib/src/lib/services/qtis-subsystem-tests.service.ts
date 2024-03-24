@@ -24,8 +24,9 @@ import { TestObs } from '../interfaces/test-obs.interface';
 import { QtisTestsService } from './qtis-tests.service';
 import { flattenArray } from '../functions/flatten-array.function';
 import { TestResult } from '../interfaces/test-case.interface';
-import { SecurityLevels } from '@eustrosoft-front/security';
+import { SamService, SecurityLevels } from '@eustrosoft-front/security';
 import { QtisErrorCodes } from '@eustrosoft-front/core';
+import { MsgChatStatus } from '@eustrosoft-front/msg-lib';
 
 @Injectable({
   providedIn: 'root',
@@ -33,6 +34,7 @@ import { QtisErrorCodes } from '@eustrosoft-front/core';
 export class QtisSubsystemTestsService {
   private readonly qtisTestFormService = inject(QtisTestFormService);
   private readonly qtisTestsService = inject(QtisTestsService);
+  private readonly samService = inject(SamService);
   private readonly runAllTestsSubject = new Subject<void>();
   private readonly runFsTestsSubject = new Subject<void>();
   private readonly runMsgTestsSubject = new Subject<void>();
@@ -265,28 +267,51 @@ export class QtisSubsystemTestsService {
     const secondChatName = `2-${chatName}`;
     const thirdChatName = `3-${chatName}`;
     // const fourthChatName = `4-${chatName}`;
-    return this.qtisTestsService.login$(testData.login, testData.password).pipe(
-      concatMap((testResults) => {
+    return combineLatest([
+      this.qtisTestsService.login$(testData.login, testData.password),
+      this.samService
+        .getUserDefaultScope()
+        .pipe(map((data) => +data.r.flatMap((val) => val.data).pop()!)),
+      this.samService
+        .getUserSlvl()
+        .pipe(map((data) => +data.r.flatMap((val) => val.data).pop()!)),
+    ]).pipe(
+      concatMap(([testResults, defaultScope, defaultSlvl]) => {
         return combineLatest([
           of([testResults]),
-          this.qtisTestsService.createChat$(testResults, {
-            subject: firstChatName,
-            message: testData.chatInitialMessage,
-            securityLevel: testData.chatSecurityLevel.toString(),
-            scope: testData.chatScopeId,
-          }),
-          this.qtisTestsService.createChat$(testResults, {
-            subject: secondChatName,
-            message: '',
-            securityLevel: testData.chatSecurityLevel.toString(),
-            scope: undefined,
-          }),
-          this.qtisTestsService.createChat$(testResults, {
-            subject: thirdChatName,
-            message: '',
-            securityLevel: undefined,
-            scope: undefined,
-          }),
+          this.qtisTestsService.createChat$(
+            testResults,
+            defaultScope,
+            defaultSlvl,
+            {
+              subject: firstChatName,
+              message: testData.chatInitialMessage,
+              securityLevel: testData.chatSecurityLevel.toString(),
+              scope: testData.chatScopeId,
+            },
+          ),
+          this.qtisTestsService.createChat$(
+            testResults,
+            defaultScope,
+            defaultSlvl,
+            {
+              subject: secondChatName,
+              message: '',
+              securityLevel: testData.chatSecurityLevel.toString(),
+              scope: undefined,
+            },
+          ),
+          this.qtisTestsService.createChat$(
+            testResults,
+            defaultScope,
+            defaultSlvl,
+            {
+              subject: thirdChatName,
+              message: '',
+              securityLevel: undefined,
+              scope: undefined,
+            },
+          ),
         ]).pipe(
           concatMap(
             ([
@@ -295,13 +320,13 @@ export class QtisSubsystemTestsService {
                 _tr,
                 createFirstChatTestResult,
                 checkFirstChatVersionTestResult,
-                _firstCreatedChat,
+                firstCreatedChat,
               ],
               [
                 _tr2,
                 createSecondChatTestResult,
                 checkSecondChatVersionTestResult,
-                _secondCreatedChat,
+                secondCreatedChat,
               ],
               [
                 _tr3,
@@ -318,6 +343,40 @@ export class QtisSubsystemTestsService {
                 createThirdChatTestResult,
                 checkThirdChatVersionTestResult,
               );
+              return combineLatest([
+                of(testResults),
+                this.qtisTestsService.changeChatStatus$(
+                  firstCreatedChat,
+                  MsgChatStatus.CLOSED,
+                ),
+                this.qtisTestsService.changeChatStatus$(
+                  secondCreatedChat,
+                  MsgChatStatus.WIP,
+                ),
+              ]);
+            },
+          ),
+          concatMap(
+            ([
+              testResults,
+              [
+                changeFirstChatTestResult,
+                checkFirstChatVersionTestResult,
+                _firstChatWithChangedStatus,
+              ],
+              [
+                changeSecondChatTestResult,
+                checkSecondChatVersionTestResult,
+                _secondChatWithChangedStatus,
+              ],
+            ]) => {
+              testResults.push(
+                changeFirstChatTestResult,
+                checkFirstChatVersionTestResult,
+                changeSecondChatTestResult,
+                checkSecondChatVersionTestResult,
+              );
+              // TODO Filter Tests
               return of(testResults);
             },
           ),
@@ -875,7 +934,7 @@ export class QtisSubsystemTestsService {
       this.qtisTestsService
         .copyMoveFsObject$(
           [firstNestedFolder],
-          [folderPath],
+          [firstNestedFolder.fullPath],
           ExplorerRequestActions.COPY,
           folderPath,
           firstNestedFolder.fileName,
@@ -903,6 +962,46 @@ export class QtisSubsystemTestsService {
             testResults.push([
               {
                 title: `Error creating duplicate folder ${firstNestedFolder.fileName} via copy`,
+                description: '',
+                responseStatus: responseStatus,
+                response: response,
+                errorText: '',
+                result: TestResult.BACKEND_ERROR,
+              },
+            ]);
+            return of(testResults);
+          }),
+        ),
+      this.qtisTestsService
+        .createDir$(
+          firstNestedFolder.fullPath,
+          fileUploadedToFirstFolder.fileName,
+          firstNestedFolder.description,
+          firstNestedFolder.securityLevel.value!.toString(),
+        )
+        .pipe(
+          catchError((err: TestCaseResult[]) => {
+            const { response, responseStatus } = err[0];
+            const responseIsString = typeof response === 'string';
+            if (
+              responseIsString &&
+              response.includes(QtisErrorCodes.DuplicatedRecord)
+            ) {
+              testResults.push([
+                {
+                  title: `Error creating folder with name of existing file ${fileUploadedToFirstFolder.fileName}`,
+                  description: '',
+                  responseStatus: responseStatus,
+                  response: response,
+                  errorText: '',
+                  result: TestResult.OK,
+                },
+              ]);
+              return of(testResults);
+            }
+            testResults.push([
+              {
+                title: `Error creating folder with name of existing file ${fileUploadedToFirstFolder.fileName}`,
                 description: '',
                 responseStatus: responseStatus,
                 response: response,

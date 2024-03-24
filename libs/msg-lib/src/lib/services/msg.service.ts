@@ -208,24 +208,9 @@ export class MsgService {
       );
   }
 
-  closeChat$(params: ChangeChatStatusRequest['params']): Observable<number> {
-    return this.msgRequestBuilderService
-      .buildChangeChatStatusRequest(params)
-      .pipe(
-        switchMap((request) =>
-          this.dispatchService.dispatch<
-            ChangeChatStatusRequest,
-            ChangeChatStatusResponse
-          >(request),
-        ),
-        map(
-          (response: QtisRequestResponse<ChangeChatStatusResponse>) =>
-            response.r[0].e,
-        ),
-      );
-  }
-
-  reopenChat$(params: ChangeChatStatusRequest['params']): Observable<number> {
+  changeChatStatus$(
+    params: ChangeChatStatusRequest['params'],
+  ): Observable<number> {
     return this.msgRequestBuilderService
       .buildChangeChatStatusRequest(params)
       .pipe(

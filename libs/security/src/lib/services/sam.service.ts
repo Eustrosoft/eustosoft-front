@@ -16,6 +16,7 @@ import { Observable } from 'rxjs';
 import {
   UserAvailableScopesRequest,
   UserAvailableSlvlRequest,
+  UserDefaultScopeRequest,
   UserIdRequest,
   UserLangRequest,
   UserLoginRequest,
@@ -24,6 +25,7 @@ import {
 import {
   UserAvailableScopesResponse,
   UserAvailableSlvlResponse,
+  UserDefaultScopeResponse,
   UserIdResponse,
   UserLangResponse,
   UserLoginResponse,
@@ -119,6 +121,24 @@ export class SamService {
           r: SamRequestActions.USER_AVAILABLE_SCOPE,
           l: SupportedLanguages.EN_US,
           type,
+        },
+      ],
+      t: 0,
+    });
+  }
+
+  getUserDefaultScope(): Observable<
+    QtisRequestResponse<UserDefaultScopeResponse>
+  > {
+    return this.dispatchService.dispatch<
+      UserDefaultScopeRequest,
+      UserDefaultScopeResponse
+    >({
+      r: [
+        {
+          s: Subsystems.SAM,
+          r: SamRequestActions.USER_DEFAULT_SCOPE,
+          l: SupportedLanguages.EN_US,
         },
       ],
       t: 0,

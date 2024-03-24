@@ -430,6 +430,8 @@ export class QtisTestsService {
 
   createChat$(
     testResults: TestCaseResult[],
+    defaultScope: number,
+    defaultSlvl: number,
     data: CreateChatDialogReturnData,
   ): Observable<[TestCaseResult[], TestCaseResult[], TestCaseResult[], Chat]> {
     return of(true).pipe(
@@ -469,9 +471,39 @@ export class QtisTestsService {
                 },
               ]);
             }
-            if (chat.zsid === null) {
-              chat.zsid = undefined;
+
+            const securityLevelTestResult = {
+              title: `Check if chat ${data.subject} was created with provided security level`,
+              description: `{ zlvl } must be equal ${+data.securityLevel!}`,
+              response: chats.chats,
+              result:
+                chat.zlvl === +data.securityLevel!
+                  ? TestResult.OK
+                  : TestResult.FAIL,
+            };
+
+            if (data.securityLevel === undefined) {
+              securityLevelTestResult.title = `Check if chat ${data.subject} was created with default security level`;
+              securityLevelTestResult.description = `{ zlvl } must be equal default (${defaultSlvl})`;
+              securityLevelTestResult.result =
+                chat.zlvl === defaultSlvl ? TestResult.OK : TestResult.FAIL;
             }
+
+            const scopeTestResult = {
+              title: `Check if chat ${data.subject} was created with provided scope`,
+              description: `{ zsid } must be equal ${data.scope!}`,
+              response: chats.chats,
+              result:
+                chat.zsid === data.scope ? TestResult.OK : TestResult.FAIL,
+            };
+
+            if (data.scope === undefined) {
+              scopeTestResult.title = `Check if chat ${data.subject} was created with default scope`;
+              scopeTestResult.description = `{ zsid } must be equal default (${defaultScope})`;
+              scopeTestResult.result =
+                chat.zsid === defaultScope ? TestResult.OK : TestResult.FAIL;
+            }
+
             return combineLatest([
               of(testResults),
               of([
@@ -481,28 +513,10 @@ export class QtisTestsService {
                   response: chats.chats,
                   result: TestResult.OK,
                 },
-                {
-                  title: `Check if chat ${data.subject} was created with provided security level`,
-                  description: `{ zlvl } must be equal ${+data.securityLevel!}`,
-                  response: chats.chats,
-                  result:
-                    chat.zlvl === +data.securityLevel!
-                      ? TestResult.OK
-                      : TestResult.FAIL,
-                },
-                {
-                  title: `Check if chat ${data.subject} was created with provided scope`,
-                  description: `{ zsid } must be equal ${data.scope!}`,
-                  response: chats.chats,
-                  result:
-                    chat.zsid === data.scope ? TestResult.OK : TestResult.FAIL,
-                },
+                securityLevelTestResult,
+                scopeTestResult,
               ]),
-              this.checkIfChatVersionWasUpdated$(
-                chat.zoid,
-                chat.zver,
-                testResults,
-              ),
+              this.checkIfChatVersionWasUpdated$(chat.zoid, chat.zver),
               of(chat),
             ]);
           }),
@@ -511,10 +525,64 @@ export class QtisTestsService {
     );
   }
 
+  changeChatStatus$(
+    chat: Chat,
+    status: MsgChatStatus,
+  ): Observable<[TestCaseResult[], TestCaseResult[], Chat]> {
+    return this.msgService
+      .changeChatStatus$({
+        zoid: chat.zoid,
+        zrid: chat.zrid,
+        subject: chat.subject,
+        reference: null,
+        status: status,
+      })
+      .pipe(
+        concatMap(() =>
+          this.msgService
+            .getChats$([])
+            .pipe(filter((chats) => !chats.isLoading)),
+        ),
+        concatMap((chatList) => {
+          const chatFromList = chatList?.chats?.find(
+            (chatL) => chatL.subject === chat.subject,
+          );
+          if (chatFromList === undefined) {
+            return throwError(() => [
+              {
+                title: 'Check if chat status was changed',
+                description: '',
+                response: chatList.chats,
+                errorText: `Cant find chat with subject ${chat.subject} in chat list`,
+                result: TestResult.FAIL,
+              },
+            ]);
+          }
+          return combineLatest([
+            of([
+              {
+                title: `Check if status of chat ${chat.subject} changed`,
+                description: `{ status } must be equal ${status}`,
+                response: chatList.chats,
+                result:
+                  chatFromList.status === status
+                    ? TestResult.OK
+                    : TestResult.FAIL,
+              },
+            ]),
+            this.checkIfChatVersionWasUpdated$(
+              chatFromList.zoid,
+              chatFromList.zver,
+            ),
+            of(chatFromList),
+          ]);
+        }),
+      );
+  }
+
   checkIfChatVersionWasUpdated$(
     zoid: number,
     zver: number,
-    testResults: TestCaseResult[],
     statuses: MsgChatStatus[] = [],
   ): Observable<TestCaseResult[]> {
     return this.msgService.getChatsUpdates$(statuses).pipe(
@@ -522,7 +590,6 @@ export class QtisTestsService {
         const chat = versions.find((ver) => ver.zoid === zoid);
         if (chat === undefined) {
           return throwError(() => [
-            ...testResults,
             {
               title: 'Check chat version',
               description: '',
@@ -534,8 +601,8 @@ export class QtisTestsService {
         }
         return of([
           {
-            title: 'Check chat version',
-            description: `Check if chat with zoid ${zoid} has updated version`,
+            title: `Check if chat with zoid ${zoid} has updated version`,
+            description: `Chat ${zoid} version ${zver} === ${chat.zver}`,
             response: versions,
             result: zver === chat.zver ? TestResult.OK : TestResult.FAIL,
           },

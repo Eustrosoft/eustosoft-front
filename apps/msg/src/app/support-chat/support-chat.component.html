@@ -72,8 +72,8 @@
             (messageSent)="sendMessage($event)"
             (messageEdited)="editMessage($event)"
             (messageDeleted)="deleteMessage($event)"
-            (closeChatClicked)="closeChat($event)"
-            (reopenChatClicked)="reopenChat($event)"
+            (closeChatClicked)="changeChatStatus($event, MsgChatStatus.CLOSED)"
+            (reopenChatClicked)="changeChatStatus($event, MsgChatStatus.WIP)"
             class="flex flex-auto"
           ></eustrosoft-front-chat-view>
         </ng-container>
@@ -91,9 +91,7 @@
     } as chatVm"
   >
     <ng-container *ngIf="chatVm.chats?.isLoading && !chatVm.chats?.isError">
-      <div
-        class="flex flex-auto flex-column align-items-center justify-content-center"
-      >
+      <div class="flex flex-auto align-items-center justify-content-center">
         <eustrosoft-front-preloader></eustrosoft-front-preloader>
       </div>
     </ng-container>

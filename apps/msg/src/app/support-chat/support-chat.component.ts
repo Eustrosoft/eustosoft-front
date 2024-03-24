@@ -94,7 +94,9 @@ export class SupportChatComponent implements OnInit, OnDestroy {
   private readonly translateService = inject(TranslateService);
   private readonly breakpointsService = inject(BreakpointsService);
 
-  chats$: Observable<{
+  protected readonly MsgChatStatus = MsgChatStatus;
+
+  protected chats$: Observable<{
     chats: Chat[] | undefined;
     isLoading: boolean;
     isError: boolean;
@@ -126,7 +128,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
     shareReplay(1),
   );
 
-  chatMessages$: Observable<{
+  protected chatMessages$: Observable<{
     messages: ChatMessage[] | undefined;
     isLoading: boolean;
     isError: boolean;
@@ -144,7 +146,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
     ),
   );
 
-  chatFilterOptions$: Observable<DicValue[]> =
+  protected chatFilterOptions$: Observable<DicValue[]> =
     this.msgDictionaryService.msgStatusOptions$.pipe(
       catchError((_err: HttpErrorResponse) => {
         this.snackBar.open(
@@ -157,7 +159,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
       }),
     );
 
-  securityLevelOptions$: Observable<Option[]> =
+  protected securityLevelOptions$: Observable<Option[]> =
     this.cachedDictionaryService.securityOptions$.pipe(
       catchError((_err: HttpErrorResponse) => {
         this.snackBar.open(
@@ -170,7 +172,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
       }),
     );
 
-  scopeOptions$: Observable<Option[]> =
+  protected scopeOptions$: Observable<Option[]> =
     this.cachedDictionaryService.scopeOptions$.pipe(
       catchError((_err: HttpErrorResponse) => {
         this.snackBar.open(
@@ -183,11 +185,11 @@ export class SupportChatComponent implements OnInit, OnDestroy {
       }),
     );
 
-  userSeenChatVersions$!: Observable<ChatVersion[]>;
+  protected userSeenChatVersions$!: Observable<ChatVersion[]>;
 
-  selectedChat: Chat | undefined = undefined;
-  selectedStatuses: MsgChatStatus[] = [];
-  isCollapsed = true;
+  protected selectedChat: Chat | undefined = undefined;
+  protected selectedStatuses: MsgChatStatus[] = [];
+  protected isCollapsed = true;
   protected isSm = this.breakpointsService.isSm();
 
   @HostListener('window:resize', ['$event'])
@@ -343,46 +345,25 @@ export class SupportChatComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  closeChat(chat: Chat): void {
+  changeChatStatus(chat: Chat, status: MsgChatStatus): void {
     this.msgService
-      .closeChat$({
+      .changeChatStatus$({
         zoid: chat.zoid,
         zrid: chat.zrid,
         subject: chat.subject,
         reference: null,
-        status: MsgChatStatus.CLOSED,
+        status,
       })
       .pipe(
         tap((hasError) => {
           this.msgService.fetchChatsByStatuses$.next(this.selectedStatuses);
           if (!hasError) {
-            this.chatSelected({ ...chat, status: MsgChatStatus.CLOSED });
+            this.chatSelected({ ...chat, status });
           }
         }),
         catchError((err: HttpErrorResponse) => {
           this.snackBar.open(`${err.error}`, 'close');
           return EMPTY;
-        }),
-        take(1),
-      )
-      .subscribe();
-  }
-
-  reopenChat(chat: Chat): void {
-    this.msgService
-      .reopenChat$({
-        zoid: chat.zoid,
-        zrid: chat.zrid,
-        subject: chat.subject,
-        reference: null,
-        status: MsgChatStatus.WIP,
-      })
-      .pipe(
-        tap((hasError) => {
-          this.msgService.fetchChatsByStatuses$.next(this.selectedStatuses);
-          if (!hasError) {
-            this.chatSelected({ ...chat, status: MsgChatStatus.WIP });
-          }
         }),
         take(1),
       )

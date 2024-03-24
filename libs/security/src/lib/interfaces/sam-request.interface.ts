@@ -45,3 +45,8 @@ export interface UserAvailableScopesRequest extends BaseSamRequest {
   r: SamRequestActions.USER_AVAILABLE_SCOPE;
   type: Scopes;
 }
+
+export interface UserDefaultScopeRequest extends BaseSamRequest {
+  s: Subsystems.SAM;
+  r: SamRequestActions.USER_DEFAULT_SCOPE;
+}

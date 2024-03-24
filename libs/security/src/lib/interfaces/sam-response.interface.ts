@@ -46,3 +46,8 @@ export interface UserAvailableScopesResponse extends BaseSamResponse {
   r: SamRequestActions.USER_AVAILABLE_SCOPE;
   scopes: Scope[];
 }
+export interface UserDefaultScopeResponse extends BaseSamResponse {
+  r: SamRequestActions.USER_AVAILABLE_SCOPE;
+  scopes: Scope[];
+  data: string;
+}

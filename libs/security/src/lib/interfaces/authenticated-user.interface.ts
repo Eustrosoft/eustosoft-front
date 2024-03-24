@@ -10,6 +10,7 @@ export interface AuthenticatedUser {
   userFullName: string;
   userLogin: string;
   userLang: string;
-  userSlvl: string;
+  userSlvl: number;
   userAvailableSlvl: string;
+  userDefaultScope: number;
 }

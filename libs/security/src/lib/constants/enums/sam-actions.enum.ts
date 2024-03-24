@@ -12,4 +12,5 @@ export enum SamRequestActions {
   USER_SLVL = 'user_slvl',
   USER_AVAILABLE_SLVL = 'user_available_slvl',
   USER_AVAILABLE_SCOPE = 'zsid',
+  USER_DEFAULT_SCOPE = 'default_zsid',
 }
