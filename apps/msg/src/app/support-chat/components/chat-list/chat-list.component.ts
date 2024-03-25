@@ -75,6 +75,7 @@ export class ChatListComponent implements OnInit {
   @Input() chats!: Chat[];
   @Input() chatVersions!: ChatVersion[];
   @Input() selectedChat: Chat | undefined = undefined;
+  @Input() selectedStatuses: MsgChatStatus[] = [];
   @Input() removeBorderRadius!: boolean;
   @Input() chatStatusFilterOptions!: DicValue[];
   @Output() chatSelected = new EventEmitter<Chat>();
@@ -93,7 +94,9 @@ export class ChatListComponent implements OnInit {
 
   ngOnInit(): void {
     this.chatStatusFilterOptions.forEach((option) => {
-      this.checkedStatuses[option.code] = false;
+      this.checkedStatuses[option.code] = this.selectedStatuses.includes(
+        option.code as MsgChatStatus,
+      );
     });
   }
 
@@ -120,6 +123,9 @@ export class ChatListComponent implements OnInit {
 
   filterChange(event: MatCheckboxChange, value: string): void {
     this.checkedStatuses[value] = event.checked;
+  }
+
+  filterClosed(): void {
     const codes = Object.keys(this.checkedStatuses).filter(
       (optionValue) => this.checkedStatuses[optionValue],
     ) as MsgChatStatus[];

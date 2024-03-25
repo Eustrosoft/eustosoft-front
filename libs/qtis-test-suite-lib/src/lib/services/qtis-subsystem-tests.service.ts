@@ -4,6 +4,7 @@ import {
   catchError,
   combineLatest,
   concatMap,
+  filter,
   interval,
   map,
   merge,
@@ -26,7 +27,7 @@ import { flattenArray } from '../functions/flatten-array.function';
 import { TestResult } from '../interfaces/test-case.interface';
 import { SamService, SecurityLevels } from '@eustrosoft-front/security';
 import { QtisErrorCodes } from '@eustrosoft-front/core';
-import { MsgChatStatus } from '@eustrosoft-front/msg-lib';
+import { MsgChatStatus, MsgService } from '@eustrosoft-front/msg-lib';
 
 @Injectable({
   providedIn: 'root',
@@ -35,6 +36,7 @@ export class QtisSubsystemTestsService {
   private readonly qtisTestFormService = inject(QtisTestFormService);
   private readonly qtisTestsService = inject(QtisTestsService);
   private readonly samService = inject(SamService);
+  private readonly msgService = inject(MsgService);
   private readonly runAllTestsSubject = new Subject<void>();
   private readonly runFsTestsSubject = new Subject<void>();
   private readonly runMsgTestsSubject = new Subject<void>();
@@ -353,31 +355,108 @@ export class QtisSubsystemTestsService {
                   secondCreatedChat,
                   MsgChatStatus.WIP,
                 ),
-              ]);
-            },
-          ),
-          concatMap(
-            ([
-              testResults,
-              [
-                changeFirstChatTestResult,
-                checkFirstChatVersionTestResult,
-                _firstChatWithChangedStatus,
-              ],
-              [
-                changeSecondChatTestResult,
-                checkSecondChatVersionTestResult,
-                _secondChatWithChangedStatus,
-              ],
-            ]) => {
-              testResults.push(
-                changeFirstChatTestResult,
-                checkFirstChatVersionTestResult,
-                changeSecondChatTestResult,
-                checkSecondChatVersionTestResult,
+              ]).pipe(
+                concatMap(
+                  ([
+                    testResults,
+                    [
+                      changeFirstChatTestResult,
+                      checkFirstChatVersionTestResult,
+                      firstChatWithChangedStatus,
+                    ],
+                    [
+                      changeSecondChatTestResult,
+                      checkSecondChatVersionTestResult,
+                      secondChatWithChangedStatus,
+                    ],
+                  ]) => {
+                    testResults.push(
+                      changeFirstChatTestResult,
+                      checkFirstChatVersionTestResult,
+                      changeSecondChatTestResult,
+                      checkSecondChatVersionTestResult,
+                    );
+                    return combineLatest([
+                      of(testResults),
+                      this.msgService
+                        .getChats$([MsgChatStatus.CLOSED, MsgChatStatus.WIP])
+                        .pipe(
+                          catchError(() =>
+                            throwError(() => [
+                              ...testResults,
+                              {
+                                title: 'Error getting filtered chat list',
+                                description: '',
+                                errorText: `Cant get list of chats with status filter ${[
+                                  MsgChatStatus.CLOSED,
+                                  MsgChatStatus.WIP,
+                                ].toString()}`,
+                                result: TestResult.FAIL,
+                              },
+                            ]),
+                          ),
+                          filter((chats) => !chats.isLoading),
+                        ),
+                    ]).pipe(
+                      concatMap(([testResults, response]) => {
+                        const chatNames = response.chats!.map(
+                          (chat) => chat.subject,
+                        );
+                        const firstInListWithCorrectStatus =
+                          chatNames.includes(
+                            firstChatWithChangedStatus.subject,
+                          ) &&
+                          firstChatWithChangedStatus.status ===
+                            MsgChatStatus.CLOSED;
+
+                        const secondInListWithCorrectStatus =
+                          chatNames.includes(
+                            secondChatWithChangedStatus.subject,
+                          ) &&
+                          secondChatWithChangedStatus.status ===
+                            MsgChatStatus.WIP;
+
+                        return combineLatest([
+                          of(testResults),
+                          of([
+                            {
+                              title: 'Check if CLOSED chat had been filtered',
+                              description: `Check if chat ${firstChatWithChangedStatus.subject} is in list`,
+                              response: response.chats,
+                              result: firstInListWithCorrectStatus
+                                ? TestResult.OK
+                                : TestResult.FAIL,
+                            },
+                            {
+                              title: 'Check if WIP chat had been filtered',
+                              description: `Check if chat ${secondChatWithChangedStatus.subject} is in list`,
+                              response: response.chats,
+                              result: secondInListWithCorrectStatus
+                                ? TestResult.OK
+                                : TestResult.FAIL,
+                            },
+                            {
+                              title:
+                                'Check that filtered list dont contain chats with NEW status',
+                              description: `Check if chat ${firstCreatedChat.subject} is in list`,
+                              response: response.chats,
+                              result: response.chats!.some(
+                                (chat) => chat.status === MsgChatStatus.NEW,
+                              )
+                                ? TestResult.FAIL
+                                : TestResult.OK,
+                            },
+                          ]),
+                        ]);
+                      }),
+                    );
+                  },
+                ),
+                concatMap(([testResults, filterTestResults]) => {
+                  testResults.push(filterTestResults);
+                  return of(testResults);
+                }),
               );
-              // TODO Filter Tests
-              return of(testResults);
             },
           ),
         );

@@ -33,6 +33,7 @@
           [matMenuTriggerFor]="chatFiltersMenu"
           [matTooltip]="'MSG.CHAT_FILTERS_BUTTON_TEXT' | translate"
           [matTooltipShowDelay]="300"
+          #matMenuFiltersTrigger="matMenuTrigger"
         >
           <mat-icon>filter_alt</mat-icon>
         </button>
@@ -46,12 +47,20 @@
             <mat-checkbox
               class="mat-menu-item"
               [value]="filter.code"
+              [checked]="checkedStatuses[filter.code]"
               (change)="filterChange($event, filter.code)"
               (click)="$event.stopPropagation()"
             >
               {{ filter.value }}
             </mat-checkbox>
           </ng-container>
+          <button
+            (click)="matMenuFiltersTrigger.closeMenu(); filterClosed()"
+            mat-menu-item
+            [role]="'menuitem'"
+          >
+            <mat-icon>done</mat-icon>
+          </button>
         </mat-menu>
         <button
           mat-icon-button
