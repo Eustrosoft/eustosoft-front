@@ -28,9 +28,14 @@ import { TestCaseResult } from '../interfaces/test-case-result.interface';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
   Chat,
+  ChatMessage,
   CreateChatDialogReturnData,
+  DeleteChatMessageRequest,
+  EditChatMessageRequest,
   MsgChatStatus,
+  MsgMapperService,
   MsgService,
+  SendChatMessageRequest,
 } from '@eustrosoft-front/msg-lib';
 
 @Injectable({
@@ -39,6 +44,7 @@ import {
 export class QtisTestsService {
   private readonly explorerService = inject(ExplorerService);
   private readonly msgService = inject(MsgService);
+  private readonly msgMapperService = inject(MsgMapperService);
   private readonly explorerUploadService = inject(ExplorerUploadService);
   private readonly explorerUploadItemsService = inject(
     ExplorerUploadItemsService,
@@ -429,17 +435,15 @@ export class QtisTestsService {
   }
 
   createChat$(
-    testResults: TestCaseResult[],
     defaultScope: number,
     defaultSlvl: number,
     data: CreateChatDialogReturnData,
-  ): Observable<[TestCaseResult[], TestCaseResult[], TestCaseResult[], Chat]> {
+  ): Observable<[TestCaseResult[], TestCaseResult[], Chat]> {
     return of(true).pipe(
       concatMap(() =>
         this.msgService.createNewChat$(data).pipe(
-          catchError((err) =>
+          catchError((err: HttpErrorResponse) =>
             throwError(() => [
-              ...testResults,
               {
                 title: `Create chat ${data.subject}`,
                 description: '',
@@ -454,6 +458,18 @@ export class QtisTestsService {
       ),
       concatMap(() =>
         this.msgService.getChats$([]).pipe(
+          catchError((err: HttpErrorResponse) =>
+            throwError(() => [
+              {
+                title: 'Get chats',
+                description: '',
+                responseStatus: `${err.status} ${err.statusText}`,
+                response: err.error ?? '',
+                errorText: 'Get chats failed',
+                result: TestResult.FAIL,
+              },
+            ]),
+          ),
           filter((chats) => !chats.isLoading),
           concatMap((chats) => {
             const chat = chats?.chats?.find(
@@ -461,7 +477,6 @@ export class QtisTestsService {
             );
             if (chat === undefined) {
               return throwError(() => [
-                ...testResults,
                 {
                   title: 'Check if chat was created',
                   description: '',
@@ -505,7 +520,6 @@ export class QtisTestsService {
             }
 
             return combineLatest([
-              of(testResults),
               of([
                 {
                   title: `Check if chat ${data.subject} was created`,
@@ -538,13 +552,25 @@ export class QtisTestsService {
         status: status,
       })
       .pipe(
+        catchError((err: HttpErrorResponse) =>
+          throwError(() => [
+            {
+              title: 'Change chat status',
+              description: '',
+              responseStatus: `${err.status} ${err.statusText}`,
+              response: err.error ?? '',
+              errorText: 'Change chat status failed',
+              result: TestResult.FAIL,
+            },
+          ]),
+        ),
         concatMap(() =>
           this.msgService
             .getChats$([])
             .pipe(filter((chats) => !chats.isLoading)),
         ),
-        concatMap((chatList) => {
-          const chatFromList = chatList?.chats?.find(
+        concatMap(({ chats }) => {
+          const chatFromList = chats!.find(
             (chatL) => chatL.subject === chat.subject,
           );
           if (chatFromList === undefined) {
@@ -552,7 +578,7 @@ export class QtisTestsService {
               {
                 title: 'Check if chat status was changed',
                 description: '',
-                response: chatList.chats,
+                response: chats,
                 errorText: `Cant find chat with subject ${chat.subject} in chat list`,
                 result: TestResult.FAIL,
               },
@@ -563,7 +589,7 @@ export class QtisTestsService {
               {
                 title: `Check if status of chat ${chat.subject} changed`,
                 description: `{ status } must be equal ${status}`,
-                response: chatList.chats,
+                response: chats,
                 result:
                   chatFromList.status === status
                     ? TestResult.OK
@@ -578,6 +604,159 @@ export class QtisTestsService {
           ]);
         }),
       );
+  }
+
+  sendChatMessage$(
+    params: SendChatMessageRequest['params'],
+    chatZver: number,
+  ): Observable<[TestCaseResult[], TestCaseResult[], ChatMessage]> {
+    return this.msgService.sendChatMessage$(params).pipe(
+      catchError((err: HttpErrorResponse) =>
+        throwError(() => [
+          {
+            title: 'Send chat message',
+            description: '',
+            responseStatus: `${err.status} ${err.statusText}`,
+            response: err.error ?? '',
+            errorText: 'Send chat message failed',
+            result: TestResult.FAIL,
+          },
+        ]),
+      ),
+      concatMap(() =>
+        this.msgMapperService
+          .fetchChatMessagesWithPreloader(params.zoid)
+          .pipe(filter((messages) => !messages.isLoading)),
+      ),
+      concatMap(({ messages }) => {
+        const createdMessage = messages!.find(
+          (message) => message.content === params.content,
+        );
+        if (createdMessage === undefined) {
+          return throwError(() => [
+            {
+              title: 'Check if message was sent',
+              description: '',
+              response: messages,
+              errorText: `Cant find message with content ${params.content} in messages list`,
+              result: TestResult.FAIL,
+            },
+          ]);
+        }
+        return combineLatest([
+          of([
+            {
+              title: 'Check if message was sent to chat',
+              description: `Check if message ${params.content} was sent to chat with zoid ${params.zoid}`,
+              response: messages,
+              result:
+                createdMessage.content === params.content
+                  ? TestResult.OK
+                  : TestResult.FAIL,
+            },
+          ]),
+          this.checkIfChatVersionWasUpdated$(params.zoid, chatZver),
+          of(createdMessage),
+        ]);
+      }),
+    );
+  }
+
+  editChatMessage$(
+    params: EditChatMessageRequest['params'],
+    chatZver: number,
+  ): Observable<[TestCaseResult[], TestCaseResult[], ChatMessage]> {
+    return this.msgService.editChatMessage$(params).pipe(
+      catchError((err: HttpErrorResponse) =>
+        throwError(() => [
+          {
+            title: 'Edit chat message',
+            description: '',
+            responseStatus: `${err.status} ${err.statusText}`,
+            response: err.error ?? '',
+            errorText: 'Edit chat message failed',
+            result: TestResult.FAIL,
+          },
+        ]),
+      ),
+      concatMap(() =>
+        this.msgMapperService
+          .fetchChatMessagesWithPreloader(params.zoid)
+          .pipe(filter((messages) => !messages.isLoading)),
+      ),
+      concatMap(({ messages }) => {
+        const editedMessage = messages!.find(
+          (message) => message.content === params.content,
+        );
+        if (editedMessage === undefined) {
+          return throwError(() => [
+            {
+              title: 'Check if message was edited',
+              description: '',
+              response: messages,
+              errorText: `Cant find message with content ${params.content} in messages list`,
+              result: TestResult.FAIL,
+            },
+          ]);
+        }
+        return combineLatest([
+          of([
+            {
+              title: 'Check if message was edited',
+              description: `Check if message ${params.content} was edited in chat with zoid ${params.zoid}`,
+              response: messages,
+              result:
+                editedMessage.content === params.content
+                  ? TestResult.OK
+                  : TestResult.FAIL,
+            },
+          ]),
+          this.checkIfChatVersionWasUpdated$(params.zoid, chatZver),
+          of(editedMessage),
+        ]);
+      }),
+    );
+  }
+
+  deleteChatMessage$(
+    params: DeleteChatMessageRequest['params'],
+    chatZver: number,
+  ): Observable<[TestCaseResult[], TestCaseResult[]]> {
+    return this.msgService.deleteChatMessage$(params).pipe(
+      catchError((err: HttpErrorResponse) =>
+        throwError(() => [
+          {
+            title: 'Delete chat message',
+            description: '',
+            responseStatus: `${err.status} ${err.statusText}`,
+            response: err.error ?? '',
+            errorText: 'Delete chat message failed',
+            result: TestResult.FAIL,
+          },
+        ]),
+      ),
+      concatMap(() =>
+        this.msgMapperService
+          .fetchChatMessagesWithPreloader(params.zoid)
+          .pipe(filter((messages) => !messages.isLoading)),
+      ),
+      concatMap(({ messages }) => {
+        const isMessageDeleted =
+          messages!.filter((message) => message.zrid === params.zrid).length ===
+          0;
+        return combineLatest([
+          of([
+            {
+              title: 'Check if message was deleted',
+              description: `Check if message ${params.zrid} was deleted in chat with zoid ${params.zoid}`,
+              response: messages,
+              result: isMessageDeleted ? TestResult.OK : TestResult.FAIL,
+            },
+          ]),
+          this.checkIfChatVersionWasUpdated$(params.zoid, chatZver),
+        ]);
+      }),
+    );
   }
 
   checkIfChatVersionWasUpdated$(

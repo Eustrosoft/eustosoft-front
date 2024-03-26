@@ -87,7 +87,7 @@
     *ngIf="chats.length > 0; else noChatsTemplate"
     class="flex flex-auto p-0"
   >
-    <cdk-virtual-scroll-viewport [itemSize]="64" class="flex-auto">
+    <cdk-virtual-scroll-viewport [itemSize]="80" class="flex-auto">
       <ng-container *cdkVirtualFor="let chat of chats; trackBy: trackByFn">
         <mat-list-item
           eustrosoftFrontHoverCursor
@@ -130,7 +130,7 @@
             </mat-menu>
           </div>
         </mat-list-item>
-        <mat-divider></mat-divider>
+        <!--        <mat-divider></mat-divider>-->
       </ng-container>
     </cdk-virtual-scroll-viewport>
   </mat-list>

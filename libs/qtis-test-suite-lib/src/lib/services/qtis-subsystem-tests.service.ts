@@ -27,7 +27,11 @@ import { flattenArray } from '../functions/flatten-array.function';
 import { TestResult } from '../interfaces/test-case.interface';
 import { SamService, SecurityLevels } from '@eustrosoft-front/security';
 import { QtisErrorCodes } from '@eustrosoft-front/core';
-import { MsgChatStatus, MsgService } from '@eustrosoft-front/msg-lib';
+import {
+  MessageType,
+  MsgChatStatus,
+  MsgService,
+} from '@eustrosoft-front/msg-lib';
 
 @Injectable({
   providedIn: 'root',
@@ -281,57 +285,39 @@ export class QtisSubsystemTestsService {
       concatMap(([testResults, defaultScope, defaultSlvl]) => {
         return combineLatest([
           of([testResults]),
-          this.qtisTestsService.createChat$(
-            testResults,
-            defaultScope,
-            defaultSlvl,
-            {
-              subject: firstChatName,
-              message: testData.chatInitialMessage,
-              securityLevel: testData.chatSecurityLevel.toString(),
-              scope: testData.chatScopeId,
-            },
-          ),
-          this.qtisTestsService.createChat$(
-            testResults,
-            defaultScope,
-            defaultSlvl,
-            {
-              subject: secondChatName,
-              message: '',
-              securityLevel: testData.chatSecurityLevel.toString(),
-              scope: undefined,
-            },
-          ),
-          this.qtisTestsService.createChat$(
-            testResults,
-            defaultScope,
-            defaultSlvl,
-            {
-              subject: thirdChatName,
-              message: '',
-              securityLevel: undefined,
-              scope: undefined,
-            },
-          ),
+          this.qtisTestsService.createChat$(defaultScope, defaultSlvl, {
+            subject: firstChatName,
+            message: testData.chatInitialMessage,
+            securityLevel: testData.chatSecurityLevel.toString(),
+            scope: testData.chatScopeId,
+          }),
+          this.qtisTestsService.createChat$(defaultScope, defaultSlvl, {
+            subject: secondChatName,
+            message: '',
+            securityLevel: testData.chatSecurityLevel.toString(),
+            scope: undefined,
+          }),
+          this.qtisTestsService.createChat$(defaultScope, defaultSlvl, {
+            subject: thirdChatName,
+            message: '',
+            securityLevel: undefined,
+            scope: undefined,
+          }),
         ]).pipe(
           concatMap(
             ([
               testResults,
               [
-                _tr,
                 createFirstChatTestResult,
                 checkFirstChatVersionTestResult,
                 firstCreatedChat,
               ],
               [
-                _tr2,
                 createSecondChatTestResult,
                 checkSecondChatVersionTestResult,
                 secondCreatedChat,
               ],
               [
-                _tr3,
                 createThirdChatTestResult,
                 checkThirdChatVersionTestResult,
                 _thirdCreatedChat,
@@ -418,7 +404,7 @@ export class QtisSubsystemTestsService {
 
                         return combineLatest([
                           of(testResults),
-                          of([
+                          of<TestCaseResult[]>([
                             {
                               title: 'Check if CLOSED chat had been filtered',
                               description: `Check if chat ${firstChatWithChangedStatus.subject} is in list`,
@@ -449,13 +435,149 @@ export class QtisSubsystemTestsService {
                           ]),
                         ]);
                       }),
+                      concatMap(([testResults, filterTestResults]) => {
+                        testResults.push(filterTestResults);
+                        return combineLatest([
+                          of(testResults),
+                          this.qtisTestsService.sendChatMessage$(
+                            {
+                              zoid: secondChatWithChangedStatus.zoid,
+                              content: 'Test Message',
+                              type: MessageType.MESSAGE,
+                              reference: '',
+                            },
+                            secondChatWithChangedStatus.zver + 1,
+                          ),
+                        ]);
+                      }),
+                      concatMap(
+                        ([
+                          testResults,
+                          [
+                            createMessageTestResults,
+                            checkChatVersionTestResult,
+                            createdMessage,
+                          ],
+                        ]) => {
+                          testResults.push(
+                            createMessageTestResults,
+                            checkChatVersionTestResult,
+                          );
+                          return combineLatest([
+                            of(testResults),
+                            this.qtisTestsService.editChatMessage$(
+                              {
+                                zoid: secondChatWithChangedStatus.zoid,
+                                zrid: createdMessage.zrid,
+                                content: 'Updated Test Message',
+                                reference: '',
+                                type: MessageType.MESSAGE,
+                              },
+                              secondChatWithChangedStatus.zver + 2,
+                            ),
+                          ]);
+                        },
+                      ),
+                      concatMap(
+                        ([
+                          testResults,
+                          [
+                            editMessageTestResults,
+                            checkChatVersionTestResult,
+                            editedMessage,
+                          ],
+                        ]) => {
+                          testResults.push(
+                            editMessageTestResults,
+                            checkChatVersionTestResult,
+                          );
+                          return combineLatest([
+                            of(testResults),
+                            this.qtisTestsService.deleteChatMessage$(
+                              {
+                                zoid: secondChatWithChangedStatus.zoid,
+                                zrid: editedMessage.zrid,
+                              },
+                              secondChatWithChangedStatus.zver + 3,
+                            ),
+                          ]);
+                        },
+                      ),
+                      concatMap(
+                        ([
+                          testResults,
+                          [
+                            deleteMessageTestResults,
+                            checkChatVersionTestResult,
+                          ],
+                        ]) => {
+                          testResults.push(
+                            deleteMessageTestResults,
+                            checkChatVersionTestResult,
+                          );
+                          return combineLatest([
+                            of(testResults),
+                            this.qtisTestsService
+                              .sendChatMessage$(
+                                {
+                                  zoid: firstChatWithChangedStatus.zoid,
+                                  content: 'Test Message To Closed Chat',
+                                  type: MessageType.MESSAGE,
+                                  reference: '',
+                                },
+                                firstChatWithChangedStatus.zver,
+                              )
+                              .pipe(
+                                concatMap(
+                                  ([testResults, createResult, _message]) => {
+                                    const isSuccessful = testResults
+                                      .map((res) => res.result)
+                                      .includes(TestResult.OK);
+                                    if (isSuccessful) {
+                                      return of<TestCaseResult[]>([
+                                        {
+                                          title:
+                                            'Message successfully send to CLOSED chat',
+                                          description:
+                                            'CLOSED chat cant accept messages',
+                                          response: createResult,
+                                          errorText: '',
+                                          result: TestResult.BACKEND_ERROR,
+                                        },
+                                      ]);
+                                    }
+                                    return of<TestCaseResult[]>([
+                                      {
+                                        title:
+                                          'Check if message cant be sent to CLOSED chat',
+                                        description: '',
+                                        response: {},
+                                        result: TestResult.OK,
+                                      },
+                                    ]);
+                                  },
+                                ),
+                                catchError((err: TestCaseResult[]) => {
+                                  return of<TestCaseResult[]>(
+                                    err.map((er) => ({
+                                      ...er,
+                                      title:
+                                        'Check if cant send message to CLOSED chat',
+                                      result: TestResult.OK,
+                                    })),
+                                  );
+                                }),
+                              ),
+                          ]);
+                        },
+                      ),
+                      concatMap(([testResults, sendToClosedTestResult]) => {
+                        testResults.push(sendToClosedTestResult);
+                        return of(testResults);
+                      }),
                     );
                   },
                 ),
-                concatMap(([testResults, filterTestResults]) => {
-                  testResults.push(filterTestResults);
-                  return of(testResults);
-                }),
               );
             },
           ),
