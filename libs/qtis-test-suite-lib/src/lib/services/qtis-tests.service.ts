@@ -27,11 +27,14 @@ import { LoginLogoutResponse } from '@eustrosoft-front/login-lib';
 import { TestCaseResult } from '../interfaces/test-case-result.interface';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
+  ChangeChatStatusRequest,
   Chat,
   ChatMessage,
   CreateChatDialogReturnData,
   DeleteChatMessageRequest,
+  DeleteChatRequest,
   EditChatMessageRequest,
+  MessageType,
   MsgChatStatus,
   MsgMapperService,
   MsgService,
@@ -662,6 +665,55 @@ export class QtisTestsService {
     );
   }
 
+  sendMessageToClosedChat$(
+    chatZoid: number,
+    chatZver: number,
+  ): Observable<TestCaseResult[]> {
+    return this.sendChatMessage$(
+      {
+        zoid: chatZoid,
+        content: 'Test Message To Closed Chat',
+        type: MessageType.MESSAGE,
+        reference: '',
+      },
+      chatZver,
+    ).pipe(
+      concatMap(([testResults, createResult, _message]) => {
+        const isSuccessful = testResults
+          .map((res) => res.result)
+          .includes(TestResult.OK);
+        if (isSuccessful) {
+          return of<TestCaseResult[]>([
+            {
+              title: 'Message successfully send to CLOSED chat',
+              description: 'CLOSED chat cant accept messages',
+              response: createResult,
+              errorText: '',
+              result: TestResult.BACKEND_ERROR,
+            },
+          ]);
+        }
+        return of<TestCaseResult[]>([
+          {
+            title: 'Check if message cant be sent to CLOSED chat',
+            description: '',
+            response: {},
+            result: TestResult.OK,
+          },
+        ]);
+      }),
+      catchError((err: TestCaseResult[]) => {
+        return of<TestCaseResult[]>(
+          err.map((er) => ({
+            ...er,
+            title: 'Check if cant send message to CLOSED chat',
+            result: TestResult.OK,
+          })),
+        );
+      }),
+    );
+  }
+
   editChatMessage$(
     params: EditChatMessageRequest['params'],
     chatZver: number,
@@ -754,6 +806,142 @@ export class QtisTestsService {
             },
           ]),
           this.checkIfChatVersionWasUpdated$(params.zoid, chatZver),
+        ]);
+      }),
+    );
+  }
+
+  renameChat$(
+    params: ChangeChatStatusRequest['params'],
+  ): Observable<[TestCaseResult[], TestCaseResult[]]> {
+    return this.msgService.renameChat$(params).pipe(
+      catchError((err: HttpErrorResponse) =>
+        throwError(() => [
+          {
+            title: 'Rename chat',
+            description: '',
+            responseStatus: `${err.status} ${err.statusText}`,
+            response: err.error ?? '',
+            errorText: 'Rename chat failed',
+            result: TestResult.FAIL,
+          },
+        ]),
+      ),
+      concatMap(() =>
+        this.msgService.getChats$([]).pipe(filter((chats) => !chats.isLoading)),
+      ),
+      concatMap(({ chats }) => {
+        const chatFromList = chats!.find(
+          (chatL) => chatL.subject === params.subject,
+        );
+        if (chatFromList === undefined) {
+          return throwError(() => [
+            {
+              title: 'Check if chat subject was changed',
+              description: '',
+              response: chats,
+              errorText: `Cant find chat with subject ${params.subject} in chat list`,
+              result: TestResult.FAIL,
+            },
+          ]);
+        }
+        return combineLatest([
+          of([
+            {
+              title: `Check if subject of chat with zoid ${params.zoid} changed`,
+              description: `{ subject } must be equal ${params.subject}`,
+              response: chats,
+              result:
+                chatFromList.subject === params.subject
+                  ? TestResult.OK
+                  : TestResult.FAIL,
+            },
+          ]),
+          this.checkIfChatVersionWasUpdated$(
+            chatFromList.zoid,
+            chatFromList.zver,
+          ),
+        ]);
+      }),
+    );
+  }
+
+  renameClosedChat$(
+    chatZoid: number,
+    chatZrid: number,
+    chatStatus: MsgChatStatus,
+  ): Observable<TestCaseResult[]> {
+    return this.renameChat$({
+      zoid: chatZoid,
+      zrid: chatZrid,
+      subject: 'Failed Update Subject',
+      reference: null,
+      status: chatStatus,
+    }).pipe(
+      concatMap(([testResults, createResult]) => {
+        const isSuccessful = testResults
+          .map((res) => res.result)
+          .includes(TestResult.OK);
+        if (isSuccessful) {
+          return of<TestCaseResult[]>([
+            {
+              title: 'Subject of CLOSED chat successfully changed',
+              description: 'Subject of CLOSED chat cant be changed',
+              response: createResult,
+              errorText: '',
+              result: TestResult.BACKEND_ERROR,
+            },
+          ]);
+        }
+        return of<TestCaseResult[]>([
+          {
+            title: 'Check if subject of CLOSED chat cant be changed',
+            description: '',
+            response: {},
+            result: TestResult.OK,
+          },
+        ]);
+      }),
+      catchError((err: TestCaseResult[]) => {
+        return of<TestCaseResult[]>(
+          err.map((er) => ({
+            ...er,
+            title: 'Check if subject of CLOSED chat cant be changed',
+            result: TestResult.OK,
+          })),
+        );
+      }),
+    );
+  }
+
+  deleteChat$(
+    params: DeleteChatRequest['params'],
+  ): Observable<TestCaseResult[]> {
+    return this.msgService.deleteChat$(params).pipe(
+      catchError((err: HttpErrorResponse) =>
+        throwError(() => [
+          {
+            title: 'Delete chat',
+            description: '',
+            responseStatus: `${err.status} ${err.statusText}`,
+            response: err.error ?? '',
+            errorText: 'Delete chat failed',
+            result: TestResult.FAIL,
+          },
+        ]),
+      ),
+      concatMap(() =>
+        this.msgService.getChats$([]).pipe(filter((chats) => !chats.isLoading)),
+      ),
+      concatMap(({ chats }) => {
+        const isDeleted = chats!.map((chat) => chat.zoid).includes(params.zoid);
+        return of([
+          {
+            title: `Check if chat with zoid ${params.zoid} was deleted`,
+            description: 'Chat must be deleted',
+            response: chats,
+            result: isDeleted ? TestResult.OK : TestResult.OK,
+          },
         ]);
       }),
     );
