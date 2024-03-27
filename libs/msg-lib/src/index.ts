@@ -20,6 +20,7 @@ export * from './lib/constants/enums/msg-request-actions.enum';
 export * from './lib/constants/enums/msg-chat-status.enum';
 export * from './lib/constants/enums/msg-edit-type.enum';
 export * from './lib/constants/enums/msg-subjects.enum';
+export * from './lib/constants/initial-filters.constant';
 export * from './lib/services/msg-dictionary.service';
 export * from './lib/services/msg-mapper.service';
 export * from './lib/services/msg-request-builder.service';

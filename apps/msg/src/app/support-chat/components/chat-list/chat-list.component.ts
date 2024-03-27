@@ -8,11 +8,13 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   EventEmitter,
   inject,
   Input,
   OnInit,
   Output,
+  signal,
 } from '@angular/core';
 import { trackByZridFunction } from '@eustrosoft-front/core';
 import {
@@ -29,6 +31,7 @@ import {
   ChatVersion,
   MsgChatStatus,
   MsgChatStatusPipe,
+  MsgService,
 } from '@eustrosoft-front/msg-lib';
 import { TranslateModule } from '@ngx-translate/core';
 import { MatDividerModule } from '@angular/material/divider';
@@ -44,6 +47,8 @@ import {
   CdkVirtualForOf,
   CdkVirtualScrollViewport,
 } from '@angular/cdk/scrolling';
+import { tap } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'eustrosoft-front-chat-list',
@@ -75,7 +80,6 @@ export class ChatListComponent implements OnInit {
   @Input() chats!: Chat[];
   @Input() chatVersions!: ChatVersion[];
   @Input() selectedChat: Chat | undefined = undefined;
-  @Input() selectedStatuses: MsgChatStatus[] = [];
   @Input() removeBorderRadius!: boolean;
   @Input() chatStatusFilterOptions!: DicValue[];
   @Output() chatSelected = new EventEmitter<Chat>();
@@ -87,17 +91,30 @@ export class ChatListComponent implements OnInit {
   @Output() statusFilterChanged = new EventEmitter<MsgChatStatus[]>();
 
   private readonly breakpointsService = inject(BreakpointsService);
+  private readonly msgService = inject(MsgService);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected trackByFn = trackByZridFunction;
-  protected checkedStatuses: { [key: string]: boolean } = {};
+  protected checkedStatuses = signal<{ [key: string]: boolean }>({});
   protected isSm = this.breakpointsService.isSm();
 
   ngOnInit(): void {
-    this.chatStatusFilterOptions.forEach((option) => {
-      this.checkedStatuses[option.code] = this.selectedStatuses.includes(
-        option.code as MsgChatStatus,
-      );
-    });
+    this.msgService
+      .getStatusFilterSubject()
+      .pipe(
+        tap((statuses) => {
+          const obj = this.chatStatusFilterOptions.reduce(
+            (acc, curr) => {
+              acc[curr.code] = statuses.includes(curr.code as MsgChatStatus);
+              return acc;
+            },
+            {} as { [key: string]: boolean },
+          );
+          this.checkedStatuses.set(obj);
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
   }
 
   selectChat(chat: Chat): void {
@@ -122,13 +139,25 @@ export class ChatListComponent implements OnInit {
   }
 
   filterChange(event: MatCheckboxChange, value: string): void {
-    this.checkedStatuses[value] = event.checked;
+    this.checkedStatuses.update((checkedSt) => {
+      checkedSt[value] = event.checked;
+      return { ...checkedSt };
+    });
   }
 
   filterClosed(): void {
-    const codes = Object.keys(this.checkedStatuses).filter(
-      (optionValue) => this.checkedStatuses[optionValue],
+    const statuses = Object.keys(this.checkedStatuses()).filter(
+      (key) => this.checkedStatuses()[key],
     ) as MsgChatStatus[];
-    this.statusFilterChanged.emit(codes);
+    this.statusFilterChanged.emit(statuses);
+  }
+
+  toggleAllFilters(event: MouseEvent, value: boolean): void {
+    event.stopPropagation();
+    const statuses = this.checkedStatuses();
+    for (const statusKey in statuses) {
+      statuses[statusKey] = value;
+    }
+    this.checkedStatuses.set(statuses);
   }
 }

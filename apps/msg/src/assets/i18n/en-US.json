@@ -42,6 +42,8 @@
     "RENAME_CHAT_BUTTON_TEXT": "Rename ticket",
     "DELETE_CHAT_BUTTON_TEXT": "Delete ticket",
     "TICKET_LIST_HEADER_TEXT": "Tickets",
+    "SELECT_ALL_STATUS_FILTER_BUTTON_TEXT": "Select all",
+    "DESELECT_ALL_STATUS_FILTER_BUTTON_TEXT": "Deselect all",
     "REFRESH_TICKET_LIST_BUTTON_TOOLTIP": "Refresh list",
     "NO_MESSAGES_CAPTION_TEXT": "No messages available",
     "NEW_MESSAGE_LABEL_TEXT": "Message",

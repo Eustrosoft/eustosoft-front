@@ -22,6 +22,12 @@
   }
 }
 
+.custom-item {
+  mat-icon {
+    margin: 0;
+  }
+}
+
 .chat-has-updates {
   font-weight: bold;
   color: mat.get-color-from-palette(vars.$deep-purple-palette, 600);

@@ -42,6 +42,8 @@
     "RENAME_CHAT_BUTTON_TEXT": "Переименовать чат",
     "DELETE_CHAT_BUTTON_TEXT": "Удалить чат",
     "TICKET_LIST_HEADER_TEXT": "Чаты",
+    "SELECT_ALL_STATUS_FILTER_BUTTON_TEXT": "Выбрать все",
+    "DESELECT_ALL_STATUS_FILTER_BUTTON_TEXT": "Сброс",
     "REFRESH_TICKET_LIST_BUTTON_TOOLTIP": "Обновить список",
     "NO_MESSAGES_CAPTION_TEXT": "Сообщения отсутствуют",
     "NEW_MESSAGE_LABEL_TEXT": "Сообщение",

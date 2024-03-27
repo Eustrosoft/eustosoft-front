@@ -12,6 +12,7 @@ import {
   inject,
   OnDestroy,
   OnInit,
+  signal,
 } from '@angular/core';
 import {
   catchError,
@@ -36,6 +37,7 @@ import {
   ChatVersion,
   CreateChatDialogData,
   CreateChatDialogReturnData,
+  InitialFiltersConstant,
   MessageType,
   MsgChatStatus,
   MsgDictionaryService,
@@ -101,22 +103,17 @@ export class SupportChatComponent implements OnInit, OnDestroy {
     isLoading: boolean;
     isError: boolean;
   }> = combineLatest([
-    this.msgService.fetchChatsByStatuses$
-      .asObservable()
+    this.msgService
+      .getStatusFilterSubject()
       .pipe(switchMap((statuses) => this.msgService.getChats$(statuses))),
-    this.msgService.fetchChatMessagesByChatId$
-      .asObservable()
-      .pipe(
-        switchMap(() =>
-          this.msgService.chatListRefreshInterval$.pipe(
-            switchMap(() =>
-              this.msgService.getChatsUpdates$(
-                this.msgService.fetchChatsByStatuses$.getValue(),
-              ),
-            ),
-          ),
+    this.msgService.fetchChatMessagesByChatId$.asObservable().pipe(
+      switchMap(() =>
+        this.msgService.chatListRefreshInterval$.pipe(
+          switchMap(() => this.msgService.getStatusFilterSubject()),
+          switchMap((statuses) => this.msgService.getChatsUpdates$(statuses)),
         ),
       ),
+    ),
   ]).pipe(
     switchMap(([objectForView, chatUpdates]) =>
       this.msgService.mapUpdates$(
@@ -188,7 +185,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
   protected userSeenChatVersions$!: Observable<ChatVersion[]>;
 
   protected selectedChat: Chat | undefined = undefined;
-  protected selectedStatuses: MsgChatStatus[] = [];
+  protected selectedStatuses = signal<MsgChatStatus[]>(InitialFiltersConstant);
   protected isCollapsed = true;
   protected isSm = this.breakpointsService.isSm();
 
@@ -232,7 +229,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
   }
 
   refreshChats(): void {
-    this.msgService.fetchChatsByStatuses$.next(this.selectedStatuses);
+    this.msgService.setStatusFilterSubject(this.selectedStatuses());
   }
 
   createNewChat(): void {
@@ -266,7 +263,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
           ),
         ),
         tap(() => {
-          this.msgService.fetchChatsByStatuses$.next(this.selectedStatuses);
+          this.msgService.setStatusFilterSubject(this.selectedStatuses());
           dialogRef.close();
         }),
         takeUntil(dialogClosed$),
@@ -356,7 +353,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
       })
       .pipe(
         tap((hasError) => {
-          this.msgService.fetchChatsByStatuses$.next(this.selectedStatuses);
+          this.msgService.setStatusFilterSubject(this.selectedStatuses());
           if (!hasError) {
             this.chatSelected({ ...chat, status });
           }
@@ -399,7 +396,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
           }),
         ),
         tap(() =>
-          this.msgService.fetchChatsByStatuses$.next(this.selectedStatuses),
+          this.msgService.setStatusFilterSubject(this.selectedStatuses()),
         ),
         catchError((err: HttpErrorResponse) => {
           this.snackBar.open(`${err.error}`, 'close');
@@ -441,7 +438,7 @@ export class SupportChatComponent implements OnInit, OnDestroy {
           }),
         ),
         tap(() =>
-          this.msgService.fetchChatsByStatuses$.next(this.selectedStatuses),
+          this.msgService.setStatusFilterSubject(this.selectedStatuses()),
         ),
         catchError((err: HttpErrorResponse) => {
           this.snackBar.open(`${err.error}`, 'close');
@@ -453,8 +450,8 @@ export class SupportChatComponent implements OnInit, OnDestroy {
   }
 
   statusFilterChanged(statuses: MsgChatStatus[]): void {
-    this.selectedStatuses = statuses;
+    this.selectedStatuses.set(statuses);
     this.selectedChat = undefined;
-    this.msgService.fetchChatsByStatuses$.next(statuses);
+    this.msgService.setStatusFilterSubject(statuses);
   }
 }

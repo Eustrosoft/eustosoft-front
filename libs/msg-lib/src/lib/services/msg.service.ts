@@ -13,6 +13,7 @@ import {
   map,
   Observable,
   of,
+  shareReplay,
   startWith,
   switchMap,
 } from 'rxjs';
@@ -42,17 +43,31 @@ import {
 import { MsgRequestBuilderService } from './msg-request-builder.service';
 import { ChatVersion } from '../interfaces/chat-version.type';
 import { CreateChatDialogReturnData } from '../interfaces/create-chat-dialog-return-data.interface';
+import { InitialFiltersConstant } from '../constants/initial-filters.constant';
 
 @Injectable({ providedIn: 'root' })
 export class MsgService {
   private readonly dispatchService = inject(DispatchService);
   private readonly msgRequestBuilderService = inject(MsgRequestBuilderService);
+  private statusFilter$ = new BehaviorSubject<MsgChatStatus[]>(
+    InitialFiltersConstant,
+  );
+  private statusFilter$$ = this.statusFilter$
+    .asObservable()
+    .pipe(shareReplay(1));
 
   chatListRefreshInterval$ = interval(5000).pipe(startWith(1));
-  fetchChatsByStatuses$ = new BehaviorSubject<MsgChatStatus[]>([]);
   fetchChatMessagesByChatId$ = new BehaviorSubject<number | undefined>(
     undefined,
   );
+
+  getStatusFilterSubject(): Observable<MsgChatStatus[]> {
+    return this.statusFilter$$;
+  }
+
+  setStatusFilterSubject(statuses: MsgChatStatus[]): void {
+    this.statusFilter$.next(statuses);
+  }
 
   getChats$(statuses: MsgChatStatus[]): Observable<{
     chats: Chat[] | undefined;
