@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ * Copyright (c) 2023-2024. IdrisovII & EustroSoft.org
  *
  * This file is part of eustrosoft-front project.
  * See the LICENSE file at the project root for licensing information.
@@ -7,13 +7,18 @@
 
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { ThemePalette } from '@angular/material/core';
-import { ProgressSpinnerMode } from '@angular/material/progress-spinner';
+import {
+  ProgressSpinnerMode,
+  MatProgressSpinnerModule,
+} from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'eustrosoft-front-preloader',
   templateUrl: './preloader.component.html',
   styleUrls: ['./preloader.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [MatProgressSpinnerModule],
 })
 export class PreloaderComponent {
   @Input() color: ThemePalette = 'primary';

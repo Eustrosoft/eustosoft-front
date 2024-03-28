@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ * Copyright (c) 2023-2024. IdrisovII & EustroSoft.org
  *
  * This file is part of eustrosoft-front project.
  * See the LICENSE file at the project root for licensing information.
@@ -8,8 +8,10 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   ElementRef,
   EventEmitter,
+  inject,
   Input,
   OnDestroy,
   OnInit,
@@ -17,13 +19,17 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Subject, takeUntil, tap } from 'rxjs';
+import { tap } from 'rxjs';
+import { MatButtonModule } from '@angular/material/button';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'eustrosoft-front-input-file',
   templateUrl: './input-file.component.html',
   styleUrls: ['./input-file.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [MatButtonModule],
 })
 export class InputFileComponent implements OnInit, OnDestroy {
   @Input() control!: FormControl<File[]>;
@@ -33,7 +39,7 @@ export class InputFileComponent implements OnInit, OnDestroy {
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
-  private readonly destroy$ = new Subject<void>();
+  private readonly destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
     this.control.valueChanges
@@ -43,7 +49,7 @@ export class InputFileComponent implements OnInit, OnDestroy {
           files.forEach((file: File) => dt.items.add(file));
           this.fileInput.nativeElement.files = dt.files;
         }),
-        takeUntil(this.destroy$)
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
   }
@@ -65,8 +71,6 @@ export class InputFileComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
     this.clear();
   }
 }

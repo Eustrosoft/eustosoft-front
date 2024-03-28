@@ -1,0 +1,113 @@
+{
+  "id": 8468684315,
+  "fields": [
+    {
+      "//": "text | textarea | number | checkbox",
+      "type": "text",
+      "//": "Label for displaying in UI",
+      "label": "Name",
+      "//": "Name for angular form",
+      "name": "name",
+      "//": "Field description",
+      "description": "Name for displaying in user's profile",
+      "//": "List of validations for field",
+      "validations": [
+        {
+          "name": "required",
+          "validator": "required",
+          "message": "Name is required"
+        }
+      ]
+    },
+    {
+      "//": "select | radio",
+      "type": "select",
+      "label": "Use autosave",
+      "name": "useAutosave",
+      "description": "Name for displaying in user's profile",
+      "//": "Some source for getting an array of options",
+      "optionsSource": {
+        "dic": "SLEVEL",
+        "doc": {
+          "id": 123124512,
+          "fieldName": "organizations"
+        }
+      },
+      "options": [
+        { "label": "Yes", "value": true },
+        { "label": "No", "value": false }
+      ],
+      "validations": []
+    },
+    {
+      "type": "formArray",
+      "label": "Engine Parts",
+      "name": "parts",
+      "description": "List of engine parts",
+      "forms": [
+        {
+          "formLabel": "Engine block",
+          "fields": [
+            {
+              "type": "text",
+              "label": "Engine block volume",
+              "name": "engineBlockVolume",
+              "description": "",
+              "validations": []
+            },
+            {
+              "type": "select",
+              "label": "Material",
+              "name": "material",
+              "description": "Material from which the engine block is made",
+              "options": [
+                { "label": "Aluminum", "value": 1 },
+                { "label": "Cast iron", "value": 2 },
+                { "label": "Magnesium alloy", "value": 3 }
+              ],
+              "validations": []
+            }
+          ]
+        },
+        {
+          "formLabel": "Engine valves",
+          "fields": [
+            {
+              "type": "number",
+              "label": "Overall valve length",
+              "name": "overallValveLength",
+              "description": "",
+              "validations": []
+            },
+            {
+              "type": "number",
+              "label": "Valve seat angle",
+              "name": "valveSeatAngle",
+              "description": "",
+              "validations": []
+            }
+          ]
+        }
+      ],
+      "validations": [
+        {
+          "name": "required",
+          "validator": "required",
+          "message": "Provide at least one engine part"
+        }
+      ]
+    }
+  ],
+  "//": "Nested forms",
+  "children": [
+    {
+      "fields": [],
+      "children": [
+        {
+          "fields": [],
+          "children": []
+        }
+      ]
+    }
+  ]
+}

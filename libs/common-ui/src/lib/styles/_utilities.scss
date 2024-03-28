@@ -1,3 +1,10 @@
+/*!
+ * Copyright (c) 2024. IdrisovII & EustroSoft.org
+ *
+ * This file is part of eustrosoft-front project.
+ * See the LICENSE file at the project root for licensing information.
+ */
+
 @use 'variables' as vars;
 @use 'mixins' as mixins;
 
@@ -58,6 +65,14 @@
   .br-#{$size} {
     border-radius: $value !important;
   }
+  .brs-#{$size} {
+    border-bottom-left-radius: $value !important;
+    border-top-left-radius: $value !important;
+  }
+  .brt-#{$size} {
+    border-top-left-radius: $value !important;
+    border-top-right-radius: $value !important;
+  }
   // font-size
   .fs-#{$size} {
     font-size: $value !important;
@@ -71,6 +86,12 @@
   .h-#{$size} {
     height: $value !important;
   }
+  .max-width-#{$size} {
+    max-width: $value !important;
+  }
+  .max-height-#{$size} {
+    max-height: $value !important;
+  }
 }
 
 $flex-options: (
@@ -79,6 +100,18 @@ $flex-options: (
   ),
   flex-auto: (
     flex: auto,
+  ),
+  flex-shrink-0: (
+    flex-shrink: 0,
+  ),
+  flex-shrink-1: (
+    flex-shrink: 1,
+  ),
+  flex-grow-0: (
+    flex-grow: 0,
+  ),
+  flex-grow-1: (
+    flex-grow: 1,
   ),
   flex-1: (
     flex: 1,
@@ -122,6 +155,9 @@ $flex-options: (
   align-items-center: (
     align-items: center,
   ),
+  align-self-stretch: (
+    align-self: stretch,
+  ),
   flex-wrap: (
     flex-wrap: wrap,
   ),
@@ -131,9 +167,23 @@ $flex-options: (
   flex-wrap-wrap-reverse: (
     flex-wrap: wrap-reverse,
   ),
+  flex-flow-wrap: (
+    flex-flow: wrap,
+  ),
 );
 
 @include mixins.generate-utility-classes($flex-options);
+
+$display-options: (
+  display-none: (
+    display: none,
+  ),
+  display-block: (
+    display: block,
+  ),
+);
+
+@include mixins.generate-utility-classes($display-options);
 
 $flex-basis-options: (
   auto: (
@@ -260,6 +310,14 @@ $text-overflow-options: (
 
 @include mixins.generate-utility-classes($text-overflow-options);
 
+$text-align-options: (
+  text-align-center: (
+    text-align: center,
+  ),
+);
+
+@include mixins.generate-utility-classes($text-align-options);
+
 $list-style-options: (
   list-style-none: (
     list-style: none,
@@ -320,6 +378,20 @@ $font-weight-options: (
 
 @include mixins.generate-utility-classes($font-weight-options);
 
+$font-style-options: (
+  fst-normal: (
+    font-style: normal,
+  ),
+  fst-italic: (
+    font-style: italic,
+  ),
+  fst-oblique: (
+    font-style: oblique,
+  ),
+);
+
+@include mixins.generate-utility-classes($font-style-options);
+
 $line-height-options: (
   lh-normal: (
     line-height: normal,
@@ -347,4 +419,13 @@ $outline-options: (
 
 .text-truncate {
   @extend .whitespace-nowrap, .overflow-hidden, .text-overflow-ellipsis;
+}
+
+.text-break {
+  word-wrap: break-word;
+  word-break: break-word;
+}
+
+.bg-white {
+  background-color: rgba(255, 255, 255, 1);
 }

@@ -16,6 +16,22 @@
     "PASSWORD_LABEL": "Пароль",
     "SUBMIT_BUTTON_TEXT": "Войти"
   },
+  "SIDENAV": {
+    "ACCOUNT_TITLE": "Личный кабинет",
+    "ACCOUNT_LINK_TEXT": "Личный кабинет участника",
+    "QR_GEN_LINK_TEXT": "QR Генератор",
+    "EXPLORER_LINK_TEXT": "Explorer - управление файлами",
+    "MSG_LINK_TEXT": "MSG - Общение с тех.поддержкой",
+    "QTIS_ADMIN_LINK_TEXT": "QTIS Администрирование Системы",
+    "QR_QXYZ_TITLE": "QR.qxyz",
+    "QR_LOCAL_SERVICE_LINK_TEXT": "Локальный сервис портала",
+    "QR_EXTERNAL_SERVICE_LINK_TEXT": "Внешний сервис портала",
+    "PUBLIC_FILE_ARCHIVE_LINK_TEXT": "Публичный архив файлов",
+    "QR_CARD_EXAMPLE_LINK_TEXT": "Образец QR карточки",
+    "SITEMAP_LINK_TEXT": "Карта",
+    "REF_LINK_TEXT": "Справка",
+    "LOGOUT_BUTTON_TEXT": "Выйти"
+  },
   "MSG": {
     "SELECT_TICKET_CAPTION_TEXT": "Выберите чат из меню",
     "OPEN_MENU_BUTTON_TEXT": "Открыть меню",
@@ -26,6 +42,8 @@
     "RENAME_CHAT_BUTTON_TEXT": "Переименовать чат",
     "DELETE_CHAT_BUTTON_TEXT": "Удалить чат",
     "TICKET_LIST_HEADER_TEXT": "Чаты",
+    "SELECT_ALL_STATUS_FILTER_BUTTON_TEXT": "Выбрать все",
+    "DESELECT_ALL_STATUS_FILTER_BUTTON_TEXT": "Сброс",
     "REFRESH_TICKET_LIST_BUTTON_TOOLTIP": "Обновить список",
     "NO_MESSAGES_CAPTION_TEXT": "Сообщения отсутствуют",
     "NEW_MESSAGE_LABEL_TEXT": "Сообщение",
@@ -63,7 +81,8 @@
       "CHATS_FETCH_ERROR": "Ошибка при попытке получения чатов",
       "CHAT_MESSAGES_FETCH_ERROR": "Ошибка при попытке получения сообщений",
       "CHAT_STATUS_FILTERS_FETCH_ERROR": "Ошибка при попытке получения фильтров для чатов",
-      "CHAT_SECURITY_LEVEL_OPTIONS_FETCH_ERROR": "Ошибка при попытке получения списка уровней доступа"
+      "CHAT_SECURITY_LEVEL_OPTIONS_FETCH_ERROR": "Ошибка при попытке получения списка уровней доступа",
+      "CHAT_SCOPE_OPTIONS_FETCH_ERROR": "Ошибка при попытке получения списка областей"
     }
   }
 }

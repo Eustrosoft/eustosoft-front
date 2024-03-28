@@ -1,32 +1,34 @@
 /*
- * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ * Copyright (c) 2023-2024. IdrisovII & EustroSoft.org
  *
  * This file is part of eustrosoft-front project.
  * See the LICENSE file at the project root for licensing information.
  */
 
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import {
-  DispatcherActions,
-  DispatcherQueryTypes,
-  FileReaderService,
-  FileRequest,
-  QtisRequestResponseInterface,
-  SqlRequest,
+  QtisRequestResponse,
   Subsystems,
   SupportedLanguages,
 } from '@eustrosoft-front/core';
 import { combineLatest, mergeMap, Observable, of } from 'rxjs';
 import { FormArray, FormGroup } from '@angular/forms';
 import { SingleRequestForm } from '../interfaces/request.types';
+import {
+  DispatcherActions,
+  DispatcherQueryTypes,
+  FileRequest,
+  SqlRequest,
+} from '@eustrosoft-front/dispatcher-lib';
+import { FileReaderService } from '@eustrosoft-front/explorer-lib';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class RequestBuilderService {
-  constructor(private fileReaderService: FileReaderService) {}
+  private readonly fileReaderService = inject(FileReaderService);
 
   buildQuery(
-    forms: FormArray<FormGroup<SingleRequestForm>>
-  ): Observable<QtisRequestResponseInterface<FileRequest | SqlRequest>> {
+    forms: FormArray<FormGroup<SingleRequestForm>>,
+  ): Observable<QtisRequestResponse<FileRequest | SqlRequest>> {
     const requests = forms.controls.map(
       (control: FormGroup<SingleRequestForm>) => {
         switch (control.value.queryType as DispatcherQueryTypes) {
@@ -35,7 +37,7 @@ export class RequestBuilderService {
           case DispatcherQueryTypes.SQL:
             return this.buildSqlQuery(control.value.request as string);
         }
-      }
+      },
     );
 
     return combineLatest(requests).pipe(
@@ -43,8 +45,8 @@ export class RequestBuilderService {
         of({
           r: value,
           t: 0,
-        })
-      )
+        }),
+      ),
     );
   }
 
@@ -72,8 +74,8 @@ export class RequestBuilderService {
           },
           request: 'upload',
           subsystem: 'file',
-        })
-      )
+        }),
+      ),
     );
   }
 }

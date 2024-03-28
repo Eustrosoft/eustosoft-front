@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ * Copyright (c) 2023-2024. IdrisovII & EustroSoft.org
  *
  * This file is part of eustrosoft-front project.
  * See the LICENSE file at the project root for licensing information.
  */
 
-const nxPreset = require('@nrwl/jest/preset').default;
+const nxPreset = require('@nx/jest/preset').default;
 
 module.exports = {
   ...nxPreset,

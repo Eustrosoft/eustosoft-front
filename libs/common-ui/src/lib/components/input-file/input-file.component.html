@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright (c) 2023. IdrisovII & EustroSoft.org
+  ~ Copyright (c) 2023-2024. IdrisovII & EustroSoft.org
   ~
   ~ This file is part of eustrosoft-front project.
   ~ See the LICENSE file at the project root for licensing information.
@@ -13,11 +13,6 @@
   type="file"
   name="file"
 />
-
-<eustrosoft-front-button
-  [buttonType]="'button'"
-  [buttonStyleType]="'stroked'"
-  [buttonText]="buttonText"
-  (click)="fileInput.click()"
->
-</eustrosoft-front-button>
+<button mat-stroked-button type="button" (click)="fileInput.click()">
+  {{ buttonText }}
+</button>

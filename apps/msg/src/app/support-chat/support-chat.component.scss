@@ -1,5 +1,5 @@
 /*!
- * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ * Copyright (c) 2023-2024. IdrisovII & EustroSoft.org
  *
  * This file is part of eustrosoft-front project.
  * See the LICENSE file at the project root for licensing information.
@@ -12,6 +12,9 @@
   overflow: auto;
 
   ::ng-deep {
+    .mat-drawer-inner-container {
+      display: flex;
+    }
     .mdc-icon-button {
       font-size: 22px;
     }
@@ -23,30 +26,4 @@
       width: auto !important;
     }
   }
-}
-
-.sidebar {
-  position: fixed;
-  top: calc(8vh + 1rem);
-  padding: 0;
-  left: 0;
-  z-index: 1000;
-  overflow: hidden;
-  transition: width 0.3s;
-  background: white;
-}
-
-.backdrop {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  background: black;
-  opacity: 0.5;
-  transition: all 0.3s ease;
-}
-
-.collapsed {
-  width: 0;
 }

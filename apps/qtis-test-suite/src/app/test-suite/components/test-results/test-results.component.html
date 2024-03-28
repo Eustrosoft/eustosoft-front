@@ -1,0 +1,117 @@
+<!--
+  ~ Copyright (c) 2024. IdrisovII & EustroSoft.org
+  ~
+  ~ This file is part of eustrosoft-front project.
+  ~ See the LICENSE file at the project root for licensing information.
+  -->
+<ng-container *ngIf="{ tests: tests$ | async } as vm">
+  <ng-container *ngIf="!vm.tests?.results && !vm.tests?.isLoading">
+    <h1>Test results will be here. Run tests using the button</h1>
+  </ng-container>
+  <ng-container *ngIf="vm.tests?.isLoading && !vm.tests?.isError">
+    <div class="flex flex-column align-items-center">
+      <h1>Tests are being executed...</h1>
+      <eustrosoft-front-preloader
+        class="flex justify-content-center"
+      ></eustrosoft-front-preloader>
+      <h2>{{ loadingThatWeDeserved$ | async }}</h2>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="vm.tests?.results as results">
+    <div class="flex g-3">
+      <button
+        mat-stroked-button
+        color="primary"
+        type="button"
+        (click)="accordion.openAll()"
+      >
+        Expand All
+      </button>
+      <button
+        mat-stroked-button
+        color="primary"
+        type="button"
+        (click)="accordion.closeAll()"
+      >
+        Collapse All
+      </button>
+    </div>
+    <mat-accordion [multi]="true">
+      <ng-container *ngFor="let test of results; let index = index">
+        <mat-expansion-panel
+          [disabled]="!!test.hideToggle"
+          [hideToggle]="!!test.hideToggle"
+        >
+          <mat-expansion-panel-header>
+            <mat-panel-title class="flex-basis-75 flex-shrink-0">
+              {{ test.title }}
+            </mat-panel-title>
+            <mat-panel-description class="g-2 flex-shrink-0">
+              <mat-chip-set [ngSwitch]="test.result">
+                <mat-chip
+                  *ngSwitchCase="TestResult.OK"
+                  (click)="$event.stopPropagation()"
+                  highlighted
+                >
+                  OK
+                </mat-chip>
+                <mat-chip
+                  *ngSwitchCase="TestResult.FAIL"
+                  (click)="$event.stopPropagation()"
+                  color="warn"
+                  highlighted
+                >
+                  FAIL
+                </mat-chip>
+                <mat-chip
+                  *ngSwitchCase="TestResult.BACKEND_ERROR"
+                  (click)="$event.stopPropagation()"
+                  color="warn"
+                  highlighted
+                >
+                  UNEXPECTED BACKEND ERROR
+                </mat-chip>
+                <mat-chip
+                  *ngSwitchCase="TestResult.NONE"
+                  (click)="$event.stopPropagation()"
+                  color="accent"
+                  highlighted
+                >
+                  NOT A TEST
+                </mat-chip>
+                <mat-chip
+                  *ngSwitchCase="TestResult.CANCELED"
+                  (click)="$event.stopPropagation()"
+                  highlighted
+                >
+                  CANCELED
+                </mat-chip>
+              </mat-chip-set>
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <ng-container>
+            <div
+              class="flex flex-column"
+              *ngIf="test.errorText || test.responseStatus"
+            >
+              <span *ngIf="test.errorText">
+                Test Case Error:
+                {{ test.errorText }}
+              </span>
+              <span *ngIf="test.responseStatus">
+                Response Status: {{ test.responseStatus }}
+              </span>
+            </div>
+            <div *ngIf="!!test.description" class="flex flex-column">
+              <h3>Description:</h3>
+              <p>{{ test.description }}</p>
+            </div>
+            <pre *ngIf="showResponses$ | async" class="overflow-auto">
+              {{ test.response | json }}
+            </pre>
+          </ng-container>
+        </mat-expansion-panel>
+      </ng-container>
+    </mat-accordion>
+  </ng-container>
+</ng-container>

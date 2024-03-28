@@ -1,36 +1,41 @@
 <!--
-  ~ Copyright (c) 2023. IdrisovII & EustroSoft.org
+  ~ Copyright (c) 2023-2024. IdrisovII & EustroSoft.org
   ~
   ~ This file is part of eustrosoft-front project.
   ~ See the LICENSE file at the project root for licensing information.
   -->
-
-<eustrosoft-front-textarea
-  [label]="label"
-  [control]="control"
-  [rows]="1"
-  [hideResize]="true"
-  [hideSubscriptWrapper]="true"
-  [enableCdkAutoResize]="true"
-  [fieldAppearance]="'outline'"
-  [placeholder]="'MSG.MESSAGE_INPUT_PLACEHOLDER_TEXT' | translate"
-  class="flex-grow-1"
-></eustrosoft-front-textarea>
-<eustrosoft-front-button
+<mat-form-field
+  [appearance]="'outline'"
+  [subscriptSizing]="'dynamic'"
+  class="flex-auto"
+>
+  <mat-label>{{ label }}</mat-label>
+  <textarea
+    [formControl]="control"
+    [placeholder]="'MSG.MESSAGE_INPUT_PLACEHOLDER_TEXT' | translate"
+    [rows]="1"
+    [class.hideResize]="true"
+    [cdkTextareaAutosize]="true"
+    matInput
+  ></textarea>
+</mat-form-field>
+<button
   *ngIf="messageInEdit"
-  [buttonType]="'button'"
-  [buttonStyleType]="'icon'"
-  [iconName]="'cancel'"
+  mat-icon-button
+  type="button"
   [matTooltip]="'MSG.CANCEL_MESSAGE_EDIT_BUTTON_TOOLTIP' | translate"
   [matTooltipShowDelay]="300"
-  (clicked)="cancelEdit()"
-></eustrosoft-front-button>
-<eustrosoft-front-button
-  [buttonType]="'button'"
-  [buttonStyleType]="'icon'"
-  [iconName]="iconButtonName"
+  (click)="cancelEdit()"
+>
+  <mat-icon>cancel</mat-icon>
+</button>
+<button
+  mat-icon-button
+  type="button"
   [matTooltip]="'MSG.SEND_MESSAGE_BUTTON_TOOLTIP' | translate"
   [matTooltipClass]="'whitespace-pre-line'"
   [matTooltipShowDelay]="300"
-  (clicked)="submitMessage()"
-></eustrosoft-front-button>
+  (click)="submitMessage()"
+>
+  <mat-icon>{{ iconButtonName }}</mat-icon>
+</button>

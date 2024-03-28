@@ -1,31 +1,44 @@
+/*
+ * Copyright (c) 2024. IdrisovII & EustroSoft.org
+ *
+ * This file is part of eustrosoft-front project.
+ * See the LICENSE file at the project root for licensing information.
+ */
+
 import { inject, Injectable } from '@angular/core';
 import {
   DispatchService,
-  QtisRequestResponseInterface,
-  SamRequestActions,
-  Scopes,
+  QtisRequestResponse,
   Subsystems,
   SupportedLanguages,
-  UserAvailableScopesRequest,
-  UserAvailableScopesResponse,
-  UserAvailableSlvlRequest,
-  UserAvailableSlvlResponse,
-  UserIdRequest,
-  UserIdResponse,
-  UserLangRequest,
-  UserLangResponse,
-  UserLoginRequest,
-  UserLoginResponse,
-  UserSlvlRequest,
-  UserSlvlResponse,
 } from '@eustrosoft-front/core';
 import { Observable } from 'rxjs';
+import {
+  UserAvailableScopesRequest,
+  UserAvailableSlvlRequest,
+  UserDefaultScopeRequest,
+  UserIdRequest,
+  UserLangRequest,
+  UserLoginRequest,
+  UserSlvlRequest,
+} from '../interfaces/sam-request.interface';
+import {
+  UserAvailableScopesResponse,
+  UserAvailableSlvlResponse,
+  UserDefaultScopeResponse,
+  UserIdResponse,
+  UserLangResponse,
+  UserLoginResponse,
+  UserSlvlResponse,
+} from '../interfaces/sam-response.interface';
+import { SamRequestActions } from '../constants/enums/sam-actions.enum';
+import { Scopes } from '../constants/enums/scopes.enum';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class SamService {
   private dispatchService = inject(DispatchService);
 
-  getUserId(): Observable<QtisRequestResponseInterface<UserIdResponse>> {
+  getUserId(): Observable<QtisRequestResponse<UserIdResponse>> {
     return this.dispatchService.dispatch<UserIdRequest, UserIdResponse>({
       r: [
         {
@@ -38,7 +51,7 @@ export class SamService {
     });
   }
 
-  getUserLogin(): Observable<QtisRequestResponseInterface<UserLoginResponse>> {
+  getUserLogin(): Observable<QtisRequestResponse<UserLoginResponse>> {
     return this.dispatchService.dispatch<UserLoginRequest, UserLoginResponse>({
       r: [
         {
@@ -51,7 +64,7 @@ export class SamService {
     });
   }
 
-  getUserLang(): Observable<QtisRequestResponseInterface<UserLangResponse>> {
+  getUserLang(): Observable<QtisRequestResponse<UserLangResponse>> {
     return this.dispatchService.dispatch<UserLangRequest, UserLangResponse>({
       r: [
         {
@@ -64,7 +77,7 @@ export class SamService {
     });
   }
 
-  getUserSlvl(): Observable<QtisRequestResponseInterface<UserSlvlResponse>> {
+  getUserSlvl(): Observable<QtisRequestResponse<UserSlvlResponse>> {
     return this.dispatchService.dispatch<UserSlvlRequest, UserSlvlResponse>({
       r: [
         {
@@ -78,7 +91,7 @@ export class SamService {
   }
 
   getUserAvailableSlvl(): Observable<
-    QtisRequestResponseInterface<UserAvailableSlvlResponse>
+    QtisRequestResponse<UserAvailableSlvlResponse>
   > {
     return this.dispatchService.dispatch<
       UserAvailableSlvlRequest,
@@ -96,8 +109,8 @@ export class SamService {
   }
 
   getUserAvailableScope(
-    type: Scopes
-  ): Observable<QtisRequestResponseInterface<UserAvailableScopesResponse>> {
+    type: Scopes,
+  ): Observable<QtisRequestResponse<UserAvailableScopesResponse>> {
     return this.dispatchService.dispatch<
       UserAvailableScopesRequest,
       UserAvailableScopesResponse
@@ -108,6 +121,24 @@ export class SamService {
           r: SamRequestActions.USER_AVAILABLE_SCOPE,
           l: SupportedLanguages.EN_US,
           type,
+        },
+      ],
+      t: 0,
+    });
+  }
+
+  getUserDefaultScope(): Observable<
+    QtisRequestResponse<UserDefaultScopeResponse>
+  > {
+    return this.dispatchService.dispatch<
+      UserDefaultScopeRequest,
+      UserDefaultScopeResponse
+    >({
+      r: [
+        {
+          s: Subsystems.SAM,
+          r: SamRequestActions.USER_DEFAULT_SCOPE,
+          l: SupportedLanguages.EN_US,
         },
       ],
       t: 0,

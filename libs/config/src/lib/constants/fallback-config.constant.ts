@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ * Copyright (c) 2023-2024. IdrisovII & EustroSoft.org
  *
  * This file is part of eustrosoft-front project.
  * See the LICENSE file at the project root for licensing information.
@@ -32,6 +32,10 @@ export const FallbackConfig: Config = {
       icon: 'chat',
     },
   ],
+  sideNavMenuItems: {
+    dropdowns: [],
+    rest: [],
+  },
   loginUrl: 'http://fudo.eustrosoft.org:8080/login/',
   appsPageUrl: 'http://fudo.eustrosoft.org:8080/login/apps',
   homePageUrl: 'http://fudo.eustrosoft.org',

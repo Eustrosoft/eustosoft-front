@@ -1,44 +1,42 @@
 <!--
-  ~ Copyright (c) 2023. IdrisovII & EustroSoft.org
+  ~ Copyright (c) 2023-2024. IdrisovII & EustroSoft.org
   ~
   ~ This file is part of eustrosoft-front project.
   ~ See the LICENSE file at the project root for licensing information.
   -->
 
-<div class="container">
-  <div class="row">
-    <h1 class="col-12 m-0" mat-dialog-title>{{ data.title }}</h1>
+<div class="flex flex-column g-3">
+  <h1 class="m-0 px-3 pb-0" mat-dialog-title>
+    {{ 'MSG.RENAME_CHAT_MODAL.TITLE_TEXT' | translate }}
+  </h1>
+  <div class="flex flex-column g-3 px-3 py-0" mat-dialog-content>
+    <mat-form-field
+      [appearance]="'outline'"
+      [subscriptSizing]="'dynamic'"
+      class="py-2"
+    >
+      <mat-label>
+        {{ 'MSG.RENAME_CHAT_MODAL.SUBJECT_LABEL_TEXT' | translate }}
+      </mat-label>
+      <input [formControl]="form.controls.subject" matInput />
+    </mat-form-field>
   </div>
-  <div class="row">
-    <div class="py-2" mat-dialog-content>
-      <div class="col-12">
-        <eustrosoft-front-input
-          [label]="data.subjectInputLabel"
-          [fieldAppearance]="'outline'"
-          [control]="form.controls.subject"
-        ></eustrosoft-front-input>
-      </div>
-    </div>
-  </div>
-  <div class="row">
-    <div [align]="'end'" mat-dialog-actions>
-      <eustrosoft-front-button
-        [buttonType]="'button'"
-        [buttonStyleType]="'flat'"
-        [buttonText]="data.cancelButtonText"
-        (clicked)="reject()"
-      >
-      </eustrosoft-front-button>
-      <span class="buttons-spacer"></span>
-      <eustrosoft-front-button
-        [buttonType]="'button'"
-        [buttonStyleType]="'flat'"
-        [buttonText]="data.submitButtonText"
-        [color]="'primary'"
-        [disabled]="form.invalid"
-        (clicked)="resolve()"
-      >
-      </eustrosoft-front-button>
-    </div>
+  <div
+    class="flex flex-wrap-nowrap g-2 pb-3 px-3 pt-0"
+    [align]="'end'"
+    mat-dialog-actions
+  >
+    <button mat-flat-button type="button" (click)="reject()">
+      {{ 'MSG.RENAME_CHAT_MODAL.CANCEL_BUTTON_TEXT' | translate }}
+    </button>
+    <button
+      mat-flat-button
+      type="button"
+      color="primary"
+      [disabled]="form.invalid"
+      (click)="resolve()"
+    >
+      {{ 'MSG.RENAME_CHAT_MODAL.SUBMIT_BUTTON_TEXT' | translate }}
+    </button>
   </div>
 </div>

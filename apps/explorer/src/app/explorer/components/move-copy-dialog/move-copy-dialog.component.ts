@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ * Copyright (c) 2023-2024. IdrisovII & EustroSoft.org
  *
  * This file is part of eustrosoft-front project.
  * See the LICENSE file at the project root for licensing information.
@@ -15,7 +15,13 @@ import {
   OnDestroy,
   ViewChild,
 } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogActions,
+  MatDialogContent,
+  MatDialogRef,
+  MatDialogTitle,
+} from '@angular/material/dialog';
 import {
   BehaviorSubject,
   map,
@@ -25,29 +31,74 @@ import {
   switchMap,
   tap,
 } from 'rxjs';
-import { FileSystemObjectTypes } from '@eustrosoft-front/core';
-import { MatListOption, MatSelectionList } from '@angular/material/list';
+import {
+  ExplorerFsObjectTypes,
+  ExplorerService,
+  FileSystemObject,
+  MoveCopyDialogData,
+} from '@eustrosoft-front/explorer-lib';
+import {
+  MatListModule,
+  MatListOption,
+  MatSelectionList,
+} from '@angular/material/list';
 import { Stack } from '../../classes/Stack';
-import { MoveCopyDialogData } from './move-copy-dialog-data.interface';
-import { FileSystemObject } from '../../models/file-system-object.interface';
-import { ExplorerService } from '../../services/explorer.service';
+import { TranslateModule } from '@ngx-translate/core';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { PreloaderComponent } from '@eustrosoft-front/common-ui';
+import {
+  AsyncPipe,
+  NgFor,
+  NgIf,
+  NgSwitch,
+  NgSwitchCase,
+  NgTemplateOutlet,
+} from '@angular/common';
+import {
+  CdkFixedSizeVirtualScroll,
+  CdkVirtualScrollViewport,
+} from '@angular/cdk/scrolling';
+import { BreadcrumbsComponent } from '../breadcrumbs/breadcrumbs.component';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'eustrosoft-front-move-folder-dialog',
   templateUrl: './move-copy-dialog.component.html',
   styleUrls: ['./move-copy-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatDialogTitle,
+    MatDialogContent,
+    MatButtonModule,
+    MatIconModule,
+    BreadcrumbsComponent,
+    MatListModule,
+    CdkVirtualScrollViewport,
+    CdkFixedSizeVirtualScroll,
+    NgIf,
+    PreloaderComponent,
+    NgFor,
+    NgSwitch,
+    NgSwitchCase,
+    NgTemplateOutlet,
+    MatDialogActions,
+    MatTooltipModule,
+    AsyncPipe,
+    TranslateModule,
+  ],
 })
 export class MoveCopyDialogComponent implements AfterViewInit, OnDestroy {
   @ViewChild(MatSelectionList) matSelectionList!: MatSelectionList;
   private readonly dialogRef: MatDialogRef<MoveCopyDialogComponent> = inject(
-    MatDialogRef<MoveCopyDialogComponent>
+    MatDialogRef<MoveCopyDialogComponent>,
   );
   private readonly explorerService = inject(ExplorerService);
   private readonly cdRef = inject(ChangeDetectorRef);
   private readonly navigationHistoryStack: Stack<string> = inject(Stack);
   protected readonly data = inject<MoveCopyDialogData>(MAT_DIALOG_DATA);
-  protected readonly fsObjTypes = FileSystemObjectTypes;
+  protected readonly fsObjTypes = ExplorerFsObjectTypes;
 
   private currentSelectedOptionIndex: number | undefined = undefined;
   private destroy$ = new Subject<void>();
@@ -60,7 +111,7 @@ export class MoveCopyDialogComponent implements AfterViewInit, OnDestroy {
     .pipe(switchMap((path) => this.explorerService.getContents(path)));
 
   @HostListener('keydown.enter', ['$event'])
-  onEnterKeydown(e: KeyboardEvent) {
+  onEnterKeydown(e: KeyboardEvent): void {
     e.stopPropagation();
     this.resolve();
   }
@@ -68,7 +119,7 @@ export class MoveCopyDialogComponent implements AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     this.moveButtonDisabled$ = merge(
       this.matSelectionList.options.changes,
-      this.matSelectionList.selectedOptions.changed
+      this.matSelectionList.selectedOptions.changed,
     ).pipe(
       map(() => {
         const options = this.matSelectionList.options
@@ -77,20 +128,20 @@ export class MoveCopyDialogComponent implements AfterViewInit, OnDestroy {
 
         const matchingObjects = options.filter((option) =>
           this.data.fsObjects.some(
-            (fsObject) => option.fileName === fsObject.fileName
-          )
+            (fsObject) => option.fileName === fsObject.fileName,
+          ),
         );
 
         const matchingIndexes = matchingObjects.map((file) =>
-          options.findIndex((f) => f.fileName === file.fileName)
+          options.findIndex((f) => f.fileName === file.fileName),
         );
 
         const objectsAlreadyExistsInFolder =
           options.filter(
             (value: FileSystemObject) =>
-              (value.type === FileSystemObjectTypes.FILE ||
-                value.type === FileSystemObjectTypes.DIRECTORY) &&
-              matchingIndexes.length > 0
+              (value.type === ExplorerFsObjectTypes.FILE ||
+                value.type === ExplorerFsObjectTypes.DIRECTORY) &&
+              matchingIndexes.length > 0,
           ).length > 0;
 
         matchingIndexes.forEach((index: number) => {
@@ -124,7 +175,7 @@ export class MoveCopyDialogComponent implements AfterViewInit, OnDestroy {
         setTimeout(() => {
           this.cdRef.detectChanges();
         }, 0);
-      })
+      }),
     );
   }
 
@@ -142,14 +193,13 @@ export class MoveCopyDialogComponent implements AfterViewInit, OnDestroy {
 
   navigateBack(): void {
     this.matSelectionList.deselectAll();
-    this.path$.next(this.navigationHistoryStack.pop(true) || '/');
+    this.path$.next(this.navigationHistoryStack.pop(true) ?? '/');
   }
 
   createNewFolder(): void {
     /** TODO
      *   Implement
      */
-    return;
   }
 
   reject(): void {
@@ -160,7 +210,7 @@ export class MoveCopyDialogComponent implements AfterViewInit, OnDestroy {
     if (this.matSelectionList.selectedOptions.hasValue()) {
       const paths = this.buildPaths(
         this.matSelectionList.selectedOptions.selected[0].value.fullPath,
-        this.data.fsObjects
+        this.data.fsObjects,
       );
       this.dialogRef.close(paths);
     } else {

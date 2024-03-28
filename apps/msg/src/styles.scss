@@ -1,5 +1,5 @@
 /*!
- * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ * Copyright (c) 2023-2024. IdrisovII & EustroSoft.org
  *
  * This file is part of eustrosoft-front project.
  * See the LICENSE file at the project root for licensing information.
@@ -8,16 +8,24 @@
 /* You can add global styles to this file, and also import other style files */
 
 @use 'libs/common-ui/src/lib/styles/material.override';
-@use 'libs/common-ui/src/lib/styles/bootstrap.override';
 @use 'libs/common-ui/src/lib/styles/global';
 @use 'libs/common-ui/src/lib/styles/utilities';
-@use 'libs/common-ui/src/lib/styles/variables';
+@use 'libs/common-ui/src/lib/styles/variables' as vars;
 @use 'libs/common-ui/src/lib/styles/fonts';
+@use '@angular/material' as mat;
 
 .msg-chat-status-filter-menu {
-  .mdc-list {
+  .mat-mdc-menu-content {
     display: flex;
     flex-direction: column;
     padding: 0.5rem;
   }
+}
+
+.grey-background-header {
+  background-color: mat.get-color-from-palette(vars.$grey-palette, 600, 0.25);
+}
+
+.grey-background-chat {
+  background-color: mat.get-color-from-palette(vars.$grey-palette, 600, 0.1);
 }

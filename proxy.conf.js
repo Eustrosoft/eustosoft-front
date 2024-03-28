@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ * Copyright (c) 2023-2024. IdrisovII & EustroSoft.org
  *
  * This file is part of eustrosoft-front project.
  * See the LICENSE file at the project root for licensing information.
@@ -22,9 +22,9 @@
 module.exports = [
   {
     changeOrigin: true,
-    context: ['/api'],
+    context: ['/api', '/lk'],
     secure: false,
-    target: 'https://dev37.qxyz.ru/',
+    target: 'https://debug.dev37.qxyz.ru/',
     logLevel: 'debug',
   },
 ];

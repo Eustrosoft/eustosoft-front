@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ * Copyright (c) 2023-2024. IdrisovII & EustroSoft.org
  *
  * This file is part of eustrosoft-front project.
  * See the LICENSE file at the project root for licensing information.
@@ -12,20 +12,62 @@ import {
   inject,
   Output,
 } from '@angular/core';
-import { FormArray, FormGroup } from '@angular/forms';
-import { UploadItemState } from '../../constants/enums/uploading-state.enum';
+import { FormArray, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import {
+  ExplorerUploadItemsService,
+  UploadItemForm,
+  UploadItemState,
+} from '@eustrosoft-front/explorer-lib';
 import { map, Observable, shareReplay, tap } from 'rxjs';
-import { SecurityLevels, UploadItemForm } from '@eustrosoft-front/core';
-import { ExplorerUploadItemsService } from '../../services/explorer-upload-items.service';
-import { ExplorerDictionaryService } from '../../services/explorer-dictionary.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ProgressBarComponent } from '@eustrosoft-front/common-ui';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatIconModule } from '@angular/material/icon';
+import { MatOptionModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import {
+  CdkFixedSizeVirtualScroll,
+  CdkVirtualScrollViewport,
+} from '@angular/cdk/scrolling';
+import { MatButtonModule } from '@angular/material/button';
+import {
+  MatDialogActions,
+  MatDialogContent,
+  MatDialogTitle,
+} from '@angular/material/dialog';
+import { AsyncPipe, NgFor, NgIf } from '@angular/common';
+import { SecurityLevels } from '@eustrosoft-front/security';
+import { CachedDictionaryService } from '@eustrosoft-front/dic';
 
 @Component({
   selector: 'eustrosoft-front-upload-dialog',
   templateUrl: './upload-dialog.component.html',
   styleUrls: ['./upload-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    NgIf,
+    MatDialogTitle,
+    MatDialogContent,
+    MatButtonModule,
+    CdkVirtualScrollViewport,
+    CdkFixedSizeVirtualScroll,
+    NgFor,
+    MatFormFieldModule,
+    MatInputModule,
+    ReactiveFormsModule,
+    MatSelectModule,
+    MatOptionModule,
+    MatIconModule,
+    MatTooltipModule,
+    ProgressBarComponent,
+    MatDialogActions,
+    AsyncPipe,
+    TranslateModule,
+  ],
 })
 export class UploadDialogComponent {
   @Output() fileSelectClicked = new EventEmitter<void>();
@@ -38,16 +80,14 @@ export class UploadDialogComponent {
   @Output() openFileFolder = new EventEmitter<string>();
 
   private readonly explorerUploadItemsService = inject(
-    ExplorerUploadItemsService
+    ExplorerUploadItemsService,
   );
-  private readonly explorerDictionaryService = inject(
-    ExplorerDictionaryService
-  );
+  private readonly cachedDictionaryService = inject(CachedDictionaryService);
   private readonly snackBar = inject(MatSnackBar);
   private readonly translateService = inject(TranslateService);
   protected readonly UploadingState = UploadItemState;
   protected readonly securityLevelOptions$ =
-    this.explorerDictionaryService.securityOptions$;
+    this.cachedDictionaryService.securityOptions$;
 
   protected startUploadButtonText =
     'EXPLORER.UPLOAD_DIALOG.START_UPLOAD_BUTTON_TEXT';
@@ -66,8 +106,8 @@ export class UploadDialogComponent {
     map((forms) =>
       forms.controls.some(
         (form) =>
-          form.controls.uploadItem.value.state === UploadItemState.UPLOADING
-      )
+          form.controls.uploadItem.value.state === UploadItemState.UPLOADING,
+      ),
     ),
     tap((isUploading) => {
       if (isUploading) {
@@ -76,10 +116,10 @@ export class UploadDialogComponent {
         this.warningText = '';
         this.modifyUploadButtonState(
           false,
-          'EXPLORER.UPLOAD_DIALOG.START_UPLOAD_BUTTON_TEXT'
+          'EXPLORER.UPLOAD_DIALOG.START_UPLOAD_BUTTON_TEXT',
         );
       }
-    })
+    }),
   );
 
   protected uploadCompleted$ = this.uploadItems$.pipe(
@@ -88,26 +128,26 @@ export class UploadDialogComponent {
         forms.controls.length > 0 &&
         forms.controls.every(
           (form) =>
-            form.controls.uploadItem.value.state === UploadItemState.UPLOADED
-        )
+            form.controls.uploadItem.value.state === UploadItemState.UPLOADED,
+        ),
     ),
     tap((uploadCompleted) => {
       if (uploadCompleted) {
         this.snackBar.open(
           this.translateService.instant(
-            'EXPLORER.UPLOAD_DIALOG.UPLOAD_COMPLETE_TEXT'
+            'EXPLORER.UPLOAD_DIALOG.UPLOAD_COMPLETE_TEXT',
           ),
           'close',
           {
             duration: 10000,
-          }
+          },
         );
         this.modifyUploadButtonState(
           false,
-          'EXPLORER.UPLOAD_DIALOG.START_UPLOAD_BUTTON_TEXT'
+          'EXPLORER.UPLOAD_DIALOG.START_UPLOAD_BUTTON_TEXT',
         );
       }
-    })
+    }),
   );
 
   cancel(): void {
@@ -121,7 +161,6 @@ export class UploadDialogComponent {
     }
 
     if (
-      forms &&
       forms.controls[0].controls.description.value === '' &&
       !this.descriptionSuggestionShown
     ) {
@@ -129,27 +168,26 @@ export class UploadDialogComponent {
         'EXPLORER.UPLOAD_DIALOG.SUGGESTIONS.FILL_DESCRIPTION_TEXT';
       this.modifyUploadButtonState(
         false,
-        'EXPLORER.UPLOAD_DIALOG.PROCEED_AFTER_SUGGESTION_TEXT'
+        'EXPLORER.UPLOAD_DIALOG.PROCEED_AFTER_SUGGESTION_TEXT',
       );
       this.descriptionSuggestionShown = true;
       return;
     }
 
     const isLowSecurityLevel =
-      forms &&
-      forms.controls[0].controls.securityLevel.value &&
+      forms.controls[0].controls.securityLevel.value !== undefined &&
       [
         SecurityLevels.SYSTEM,
         SecurityLevels.PUBLIC,
         SecurityLevels.PUBLIC_PLUS,
       ].includes(forms.controls[0].controls.securityLevel.value);
 
-    if (forms && isLowSecurityLevel && !this.securityLevelSuggestionShown) {
+    if (isLowSecurityLevel && !this.securityLevelSuggestionShown) {
       this.warningText =
         'EXPLORER.UPLOAD_DIALOG.SUGGESTIONS.SECURITY_LVL_WARNING';
       this.modifyUploadButtonState(
         false,
-        'EXPLORER.UPLOAD_DIALOG.PROCEED_AFTER_SUGGESTION_TEXT'
+        'EXPLORER.UPLOAD_DIALOG.PROCEED_AFTER_SUGGESTION_TEXT',
       );
       this.securityLevelSuggestionShown = true;
       return;
@@ -182,7 +220,7 @@ export class UploadDialogComponent {
 
   modifyUploadButtonState(
     uploadButtonDisabled: boolean,
-    startUploadButtonText = 'EXPLORER.UPLOAD_DIALOG.START_UPLOAD_BUTTON_TEXT_UPLOADING_STATE'
+    startUploadButtonText = 'EXPLORER.UPLOAD_DIALOG.START_UPLOAD_BUTTON_TEXT_UPLOADING_STATE',
   ): void {
     this.startUploadButtonDisabled = uploadButtonDisabled;
     this.startUploadButtonText = startUploadButtonText;

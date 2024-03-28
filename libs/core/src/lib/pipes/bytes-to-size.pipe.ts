@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ * Copyright (c) 2023-2024. IdrisovII & EustroSoft.org
  *
  * This file is part of eustrosoft-front project.
  * See the LICENSE file at the project root for licensing information.
@@ -10,6 +10,7 @@ import { TranslateService } from '@ngx-translate/core';
 
 @Pipe({
   name: 'bytesToSize',
+  standalone: true,
 })
 export class BytesToSizePipe implements PipeTransform {
   private translateService = inject(TranslateService);
@@ -19,7 +20,7 @@ export class BytesToSizePipe implements PipeTransform {
     }
     const k = 1024;
     const sizes = Object.values<string>(
-      this.translateService.instant('EXPLORER.SIZES')
+      this.translateService.instant('EXPLORER.SIZES'),
     );
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     const size = parseFloat((bytes / Math.pow(k, i)).toFixed(decimals));

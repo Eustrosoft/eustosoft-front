@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ * Copyright (c) 2023-2024. IdrisovII & EustroSoft.org
  *
  * This file is part of eustrosoft-front project.
  * See the LICENSE file at the project root for licensing information.
@@ -8,22 +8,24 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   inject,
-  OnDestroy,
   OnInit,
   ViewChild,
 } from '@angular/core';
 import {
   BreakpointsService,
   InputFileComponent,
+  PreloaderComponent,
   PromptDialogComponent,
-  PromptDialogDataInterface,
+  PromptDialogData,
 } from '@eustrosoft-front/common-ui';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   BehaviorSubject,
   catchError,
   combineLatest,
+  concat,
   EMPTY,
   filter,
   map,
@@ -31,6 +33,8 @@ import {
   Observable,
   of,
   repeat,
+  shareReplay,
+  skip,
   startWith,
   Subject,
   switchMap,
@@ -39,95 +43,120 @@ import {
   tap,
 } from 'rxjs';
 import {
-  CmsDownloadParams,
-  CmsRequestActions,
-  DeleteRequest,
-  DeleteResponse,
   DispatchService,
-  FileSystemObjectTypes,
-  MoveCopyRequest,
-  MoveCopyResponse,
-  QtisRequestResponseInterface,
-  SecurityLevels,
-  UploadItemForm,
+  PRECONFIGURED_TRANSLATE_SERVICE,
 } from '@eustrosoft-front/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ExplorerRequestBuilderService } from './services/explorer-request-builder.service';
-import { ExplorerService } from './services/explorer.service';
+import {
+  CreateDialogData,
+  CreateDialogReturnData,
+  ExplorerDownloadParams,
+  ExplorerFsObjectTypes,
+  ExplorerPathService,
+  ExplorerRequestActions,
+  ExplorerRequestBuilderService,
+  ExplorerService,
+  ExplorerUploadItemFormFactoryService,
+  ExplorerUploadItemsService,
+  ExplorerUploadService,
+  FileSystemObject,
+  FilesystemTableService,
+  MoveCopyDialogData,
+  MoveCopyRequest,
+  MoveCopyResponse,
+  RenameDialogData,
+  RenameDialogReturnData,
+  ShareDialogData,
+  UploadItemForm,
+  UploadItemState,
+} from '@eustrosoft-front/explorer-lib';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateDialogComponent } from './components/create-dialog/create-dialog.component';
-import { CreateDialogData } from './components/create-dialog/create-dialog-data.interface';
-import { ExplorerPathService } from './services/explorer-path.service';
 import { SelectionChange } from '@angular/cdk/collections';
 import { MoveCopyDialogComponent } from './components/move-copy-dialog/move-copy-dialog.component';
-import { MoveCopyDialogData } from './components/move-copy-dialog/move-copy-dialog-data.interface';
-import { HttpErrorResponse } from '@angular/common/http';
-import { ExplorerUploadService } from './services/explorer-upload.service';
-import { TranslateService } from '@ngx-translate/core';
-import { ExplorerUploadItemsService } from './services/explorer-upload-items.service';
+import { HttpErrorResponse, HttpParams } from '@angular/common/http';
+import { TranslateModule } from '@ngx-translate/core';
 import { UploadOverlayComponent } from './components/upload-overlay/upload-overlay.component';
-import { ExplorerUploadItemFormFactoryService } from './services/explorer-upload-item-form-factory.service';
-import { UploadItemState } from './constants/enums/uploading-state.enum';
 import { UploadDialogComponent } from './components/upload-dialog/upload-dialog.component';
-import { FileSystemObject } from './models/file-system-object.interface';
 import { Clipboard } from '@angular/cdk/clipboard';
-import { DOCUMENT } from '@angular/common';
+import { AsyncPipe, DOCUMENT, NgIf } from '@angular/common';
 import { ShareDialogComponent } from './components/share-dialog/share-dialog.component';
-import { ShareDialogDataInterface } from './components/share-dialog/share-dialog-data.interface';
 import { RenameDialogComponent } from './components/rename-dialog/rename-dialog.component';
-import { RenameDialogData } from './components/rename-dialog/rename-dialog-data.interface';
-import { RenameDialogReturnData } from './components/rename-dialog/rename-dialog-return-data.interface';
-import { FilesystemTableService } from './services/filesystem-table.service';
-import { CreateDialogReturnData } from './components/create-dialog/create-dialog-return-data.interface';
+import { FilesystemTableComponent } from './components/filesystem-table/filesystem-table.component';
+import { BreadcrumbsComponent } from './components/breadcrumbs/breadcrumbs.component';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatButtonModule } from '@angular/material/button';
+import { SecurityLevels } from '@eustrosoft-front/security';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'eustrosoft-front-explorer',
   templateUrl: './explorer.component.html',
   styleUrls: ['./explorer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatButtonModule,
+    MatMenuModule,
+    MatIconModule,
+    NgIf,
+    InputFileComponent,
+    BreadcrumbsComponent,
+    PreloaderComponent,
+    FilesystemTableComponent,
+    UploadOverlayComponent,
+    AsyncPipe,
+    TranslateModule,
+  ],
 })
-export class ExplorerComponent implements OnInit, OnDestroy {
+export class ExplorerComponent implements OnInit {
   @ViewChild(InputFileComponent) inputFileComponent!: InputFileComponent;
   @ViewChild(UploadOverlayComponent)
   uploadOverlayComponent!: UploadOverlayComponent;
 
   private readonly dispatchService = inject(DispatchService);
   private readonly explorerRequestBuilderService = inject(
-    ExplorerRequestBuilderService
+    ExplorerRequestBuilderService,
   );
   private readonly explorerService = inject(ExplorerService);
   private readonly explorerPathService = inject(ExplorerPathService);
   private readonly explorerUploadService = inject(ExplorerUploadService);
   private readonly explorerUploadItemsService = inject(
-    ExplorerUploadItemsService
+    ExplorerUploadItemsService,
   );
   private readonly snackBar = inject(MatSnackBar);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
-  private readonly translateService = inject(TranslateService);
+  private readonly translateService = inject(PRECONFIGURED_TRANSLATE_SERVICE);
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly fb = inject(FormBuilder);
   private readonly clipboard = inject(Clipboard);
   private readonly document = inject(DOCUMENT);
   private readonly explorerUploadItemFormFactoryService = inject(
-    ExplorerUploadItemFormFactoryService
+    ExplorerUploadItemFormFactoryService,
   );
   private readonly breakpointsService = inject(BreakpointsService);
   protected readonly filesystemTableService = inject(FilesystemTableService);
   protected readonly isSm = this.breakpointsService.isSm();
 
-  private readonly destroy$ = new Subject<void>();
   private readonly startUpload$ = new Subject<void>();
   private readonly fileUploadCancelled$ = new Subject<void>();
   private readonly teardownUpload$ = new Subject<void>();
 
   protected readonly refresh$ = new Subject<void>();
+  protected readonly navigateBack$ = new Subject<void>();
   protected readonly path$ = new BehaviorSubject<string>('/');
+  protected readonly path$$ = concat(
+    this.explorerPathService.getLastPathState(),
+    this.path$.asObservable().pipe(skip(1)),
+  ).pipe(shareReplay(1));
   protected readonly currentFolder$ = new BehaviorSubject<
     FileSystemObject | undefined
   >(undefined);
-  protected upload$!: Observable<any>;
+  protected upload$!: Observable<unknown>;
   protected fileControlChanges$!: Observable<
     FormArray<FormGroup<UploadItemForm>>
   >;
@@ -136,21 +165,21 @@ export class ExplorerComponent implements OnInit, OnDestroy {
     isError: boolean;
     content: FileSystemObject[] | undefined;
   }> = combineLatest([
-    this.path$.asObservable(),
+    this.path$$,
     this.refresh$.asObservable().pipe(startWith(undefined)),
   ]).pipe(
     switchMap(([path]) => {
-      this.explorerPathService.updateLastPathState(path);
+      this.explorerPathService.setLastPathState(path);
       return this.explorerService.getContents(path).pipe(
         // startWith({ isLoading: true, isError: false, content: undefined })
         catchError((err: HttpErrorResponse) => {
           this.path$.next('/');
           this.snackBar.open(err.error, 'close');
           return EMPTY;
-        })
+        }),
       );
     }),
-    startWith({ isLoading: true, isError: false, content: undefined })
+    startWith({ isLoading: true, isError: false, content: undefined }),
   );
 
   protected selectedRows$ = this.filesystemTableService.selection.changed
@@ -158,17 +187,17 @@ export class ExplorerComponent implements OnInit, OnDestroy {
     .pipe(
       map(
         (selection: SelectionChange<FileSystemObject>) =>
-          selection.source.selected
-      )
+          selection.source.selected,
+      ),
     );
 
   protected fileControl = new FormControl<File[]>([], { nonNullable: true });
 
   protected overlayHidden = true;
-
   ngOnInit(): void {
     this.initializePathObs();
     this.initializeUploadObs();
+    this.initializeNavigateBackObs();
   }
 
   initializePathObs(): void {
@@ -176,14 +205,14 @@ export class ExplorerComponent implements OnInit, OnDestroy {
       .pipe(
         map((query) => query.get('path') ?? undefined),
         filter(
-          (queryPath): queryPath is string => typeof queryPath !== 'undefined'
+          (queryPath): queryPath is string => typeof queryPath !== 'undefined',
         ),
         tap((path) => {
-          this.explorerPathService.updateLastPathState(path);
+          this.explorerPathService.setLastPathState(path);
           this.clearQueryParams();
           this.path$.next(path);
         }),
-        takeUntil(this.destroy$)
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
   }
@@ -195,13 +224,13 @@ export class ExplorerComponent implements OnInit, OnDestroy {
           this.explorerUploadItemFormFactoryService.makeUploadItemsForm(
             files,
             this.path$.getValue(),
-            this.currentFolder$.getValue()?.securityLevel.value ??
-              SecurityLevels.PUBLIC_PLUS
+            (this.currentFolder$.getValue()?.securityLevel
+              .value as SecurityLevels) ?? SecurityLevels.PUBLIC_PLUS,
           );
         this.explorerUploadItemsService.uploadItems$.next(formArray);
         // this.overlayHidden = false;
         return formArray;
-      })
+      }),
     );
 
     this.upload$ = combineLatest([
@@ -211,30 +240,42 @@ export class ExplorerComponent implements OnInit, OnDestroy {
       switchMap(() =>
         this.explorerUploadService
           .uploadHexString(this.path$.getValue())
-          .pipe(takeUntil(this.teardownUpload$))
+          .pipe(takeUntil(this.teardownUpload$)),
       ),
       tap(() => {
         this.closeOverlay();
         this.refresh$.next();
       }),
       catchError((err: HttpErrorResponse) => {
-        console.error(err);
         this.snackBar.open(err.error, 'close');
         this.inputFileComponent.clear();
         this.closeOverlay();
         return EMPTY;
       }),
-      repeat()
+      repeat(),
     );
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+  initializeNavigateBackObs(): void {
+    this.navigateBack$
+      .asObservable()
+      .pipe(
+        tap(() => {
+          const path = this.path$.getValue();
+          const isRoot = path === '/' || path === '';
+          if (!isRoot) {
+            this.path$.next(
+              this.explorerPathService.getFullPathToLastFolder(path),
+            );
+          }
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
   }
 
   open(fsElem: FileSystemObject): void {
-    if (fsElem.type !== FileSystemObjectTypes.DIRECTORY) {
+    if (fsElem.type !== ExplorerFsObjectTypes.DIRECTORY) {
       return;
     }
     this.filesystemTableService.selection.clear();
@@ -242,9 +283,26 @@ export class ExplorerComponent implements OnInit, OnDestroy {
     this.currentFolder$.next(fsElem);
   }
 
-  openByPath(path: string) {
+  openByPath(path: string): void {
     this.filesystemTableService.selection.clear();
     this.path$.next(path);
+  }
+
+  navigateBack(): void {
+    this.filesystemTableService.selection.clear();
+    this.navigateBack$.next();
+  }
+
+  copyPathLink(): void {
+    const httpParams = `?${new HttpParams({
+      fromObject: { path: this.path$.getValue() },
+    }).toString()}`;
+    this.clipboard.copy(`${this.document.location.href}${httpParams}`);
+    this.snackBar.open(
+      this.translateService.instant('EXPLORER.LINK_COPIED_TO_CLIPBOARD'),
+      'close',
+      { duration: 1000 },
+    );
   }
 
   filesDroppedOnFolder(event: {
@@ -273,7 +331,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
 
   closeOverlay(): void {
     this.explorerUploadItemsService.uploadItems$.next(
-      this.fb.array<FormGroup<UploadItemForm>>([])
+      this.fb.array<FormGroup<UploadItemForm>>([]),
     );
     this.teardownUpload$.next();
     this.overlayHidden = true;
@@ -294,32 +352,32 @@ export class ExplorerComponent implements OnInit, OnDestroy {
         nameInputDefaultValue:
           'EXPLORER.CREATE_FOLDER_DIALOG.NAME_INPUT_DEFAULT_VALUE',
         securityLevelSelectDefaultValue:
-          this.currentFolder$.getValue()?.securityLevel.value ??
-          SecurityLevels.PUBLIC_PLUS,
+          (this.currentFolder$.getValue()?.securityLevel
+            .value as SecurityLevels) ?? SecurityLevels.PUBLIC_PLUS,
         descriptionInputDefaultValue: '',
       },
-      minWidth: '40vw',
+      minWidth: this.isSm ? '90vw' : '50vw',
     });
 
     dialogRef
       .afterClosed()
       .pipe(
         filter(
-          (data): data is CreateDialogReturnData => typeof data !== 'undefined'
+          (data): data is CreateDialogReturnData => typeof data !== 'undefined',
         ),
         switchMap((data) =>
           this.explorerService.create(
             this.path$.getValue(),
             data.name,
-            FileSystemObjectTypes.DIRECTORY,
+            ExplorerFsObjectTypes.DIRECTORY,
             data.description,
-            data.securityLevel
-          )
+            data.securityLevel,
+          ),
         ),
         tap(() => {
           this.refresh$.next();
         }),
-        take(1)
+        take(1),
       )
       .subscribe();
   }
@@ -334,19 +392,20 @@ export class ExplorerComponent implements OnInit, OnDestroy {
         nameInputValue: row.fileName,
         descriptionInputValue: row.description,
       },
+      minWidth: this.isSm ? '90vw' : '50vw',
     });
 
     dialogRef
       .afterClosed()
       .pipe(
         filter(
-          (str): str is RenameDialogReturnData => typeof str !== 'undefined'
+          (str): str is RenameDialogReturnData => typeof str !== 'undefined',
         ),
-        switchMap((data) => this.explorerService.move(row, data)),
+        switchMap((data) => this.explorerService.rename(row, data)),
         tap(() => {
           this.refresh$.next();
         }),
-        take(1)
+        take(1),
       )
       .subscribe();
   }
@@ -364,39 +423,20 @@ export class ExplorerComponent implements OnInit, OnDestroy {
         fsObjects: rows,
         defaultPath: this.path$.getValue(),
       },
-      minWidth: this.isSm ? '90vw' : '50vw',
+      width: this.isSm ? '90vw' : '50vw',
     });
 
     dialogRef
       .afterClosed()
       .pipe(
-        filter((str) => typeof str !== 'undefined'),
-        map((str) => str as string[]),
-        switchMap((to: string[]) =>
-          combineLatest([
-            this.explorerRequestBuilderService.buildMoveCopyRequest(
-              rows,
-              to,
-              CmsRequestActions.MOVE
-            ),
-            of(to),
-          ])
-        ),
-        switchMap(([body, to]) =>
-          combineLatest([
-            this.dispatchService.dispatch<MoveCopyRequest, MoveCopyResponse>(
-              body
-            ),
-            of(to),
-          ])
-        ),
-        tap(([moveResponse, to]) => {
+        filter((str): str is string[] => typeof str !== 'undefined'),
+        switchMap((to) => this.explorerService.move(rows, to)),
+        tap(({ to }) => {
           const lastIndex = to[0].lastIndexOf('/');
           const path = to[0].substring(0, lastIndex) || '/';
           this.path$.next(path);
         }),
-        catchError((err) => this.explorerService.handleError(err)),
-        take(1)
+        take(1),
       )
       .subscribe();
   }
@@ -414,7 +454,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
         fsObjects: rows,
         defaultPath: this.path$.getValue(),
       },
-      minWidth: this.isSm ? '90vw' : '50vw',
+      width: this.isSm ? '90vw' : '50vw',
     });
 
     dialogRef
@@ -425,28 +465,28 @@ export class ExplorerComponent implements OnInit, OnDestroy {
         switchMap((to: string[]) =>
           combineLatest([
             this.explorerRequestBuilderService.buildMoveCopyRequest(
-              rows,
+              rows.map((row) => row.fullPath),
               to,
-              CmsRequestActions.COPY
+              ExplorerRequestActions.COPY,
             ),
             of(to),
-          ])
+          ]),
         ),
         switchMap(([body, to]) =>
           combineLatest([
             this.dispatchService.dispatch<MoveCopyRequest, MoveCopyResponse>(
-              body
+              body,
             ),
             of(to),
-          ])
+          ]),
         ),
-        tap(([copyResponse, to]) => {
+        tap(([_copyResponse, to]) => {
           const lastIndex = to[0].lastIndexOf('/');
           const path = to[0].substring(0, lastIndex);
           this.path$.next(path);
         }),
         catchError((err) => this.explorerService.handleError(err)),
-        take(1)
+        take(1),
       )
       .subscribe();
   }
@@ -454,7 +494,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
   delete(rows: FileSystemObject[]): void {
     const dialogRef = this.dialog.open<
       PromptDialogComponent,
-      PromptDialogDataInterface,
+      PromptDialogData,
       boolean
     >(PromptDialogComponent, {
       data: {
@@ -464,10 +504,10 @@ export class ExplorerComponent implements OnInit, OnDestroy {
           objectsWord: rows.length > 1 ? 'objects' : 'object',
         }),
         cancelButtonText: this.translateService.instant(
-          'EXPLORER.DELETE_DIALOG.CANCEL_BUTTON_TEXT'
+          'EXPLORER.DELETE_DIALOG.CANCEL_BUTTON_TEXT',
         ),
         submitButtonText: this.translateService.instant(
-          'EXPLORER.DELETE_DIALOG.SUBMIT_BUTTON_TEXT'
+          'EXPLORER.DELETE_DIALOG.SUBMIT_BUTTON_TEXT',
         ),
       },
     });
@@ -475,32 +515,47 @@ export class ExplorerComponent implements OnInit, OnDestroy {
     dialogRef
       .afterClosed()
       .pipe(
-        filter((v) => Boolean(v)),
-        switchMap(() =>
-          this.explorerRequestBuilderService.buildDeleteRequests(rows)
-        ),
-        switchMap((body: QtisRequestResponseInterface<DeleteRequest>) =>
-          this.dispatchService.dispatch<DeleteRequest, DeleteResponse>(body)
-        ),
+        filter((val) => Boolean(val)),
+        switchMap(() => this.explorerService.delete(rows)),
         tap(() => {
           this.refresh$.next();
           this.filesystemTableService.selection.clear();
         }),
-        catchError((err) => this.explorerService.handleError(err)),
-        take(1)
+        take(1),
       )
       .subscribe();
   }
 
   downloadViaPath(rows: FileSystemObject[]): void {
     this.explorerService
-      .makeDownloadLink(rows[0].fullPath, CmsDownloadParams.PATH)
+      .makeDownloadLink(rows[0].fullPath, ExplorerDownloadParams.PATH)
       .pipe(
         tap((url: string) => {
           this.document.location.href = url;
         }),
         catchError((err) => this.explorerService.handleError(err)),
-        takeUntil(this.destroy$)
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
+  }
+
+  openPreview(row: FileSystemObject): void {
+    if (row.previewRoute === undefined) {
+      this.snackBar.open(
+        this.translateService.instant('EXPLORER.PREVIEW_IS_NOT_AVAILABLE'),
+        'close',
+      );
+      return;
+    }
+    this.explorerService
+      .makeDownloadLink(row.fullPath, ExplorerDownloadParams.PATH)
+      .pipe(
+        tap((link) => {
+          this.router.navigate([row.previewRoute], {
+            state: { link, extension: row.fileName.split('.').pop() },
+          });
+        }),
+        take(1),
       )
       .subscribe();
   }
@@ -509,26 +564,26 @@ export class ExplorerComponent implements OnInit, OnDestroy {
     const shareLinkObs$ = this.explorerService.makeShareLink(rows[0].fullPath);
 
     const shareOWikiLinkObs$ = this.explorerService.makeOWikiShareLink(
-      rows[0].fullPath
+      rows[0].fullPath,
     );
 
     const dialogRef = this.dialog.open<
       ShareDialogComponent,
-      ShareDialogDataInterface,
+      ShareDialogData,
       string
     >(ShareDialogComponent, {
       data: {
         shareLinkObs$,
         shareOWikiLinkObs$,
       },
-      minWidth: this.isSm ? '100vw' : '50vw',
+      minWidth: this.isSm ? '90vw' : '50vw',
     });
 
     const dialogClosed$ = dialogRef.afterClosed();
 
     merge(
       dialogRef.componentInstance.shareUrlCopied,
-      dialogRef.componentInstance.shareOWikiUrlCopied
+      dialogRef.componentInstance.shareOWikiUrlCopied,
     )
       .pipe(
         tap((url) => {
@@ -536,20 +591,27 @@ export class ExplorerComponent implements OnInit, OnDestroy {
           this.snackBar.open(
             this.translateService.instant('EXPLORER.LINK_COPIED_TO_CLIPBOARD'),
             'close',
-            { duration: 2000 }
+            { duration: 2000 },
           );
         }),
-        takeUntil(dialogClosed$)
+        takeUntil(dialogClosed$),
       )
       .subscribe();
+  }
+
+  goToVersions(rows: FileSystemObject[]): void {
+    const urls = this.explorerPathService.makeVersionLinks(rows);
+    for (const url of urls) {
+      this.document.defaultView!.open(url, '_blank');
+    }
   }
 
   openUploadDialog(): void {
     const dialogRef = this.dialog.open<UploadDialogComponent, undefined, void>(
       UploadDialogComponent,
       {
-        width: this.isSm ? '100vw' : '50vw',
-      }
+        width: this.isSm ? '90vw' : '50vw',
+      },
     );
 
     const dialogClosed$ = dialogRef.afterClosed();
@@ -559,7 +621,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
         tap(() => {
           this.inputFileComponent.fileInput.nativeElement.click();
         }),
-        takeUntil(dialogClosed$)
+        takeUntil(dialogClosed$),
       )
       .subscribe();
 
@@ -568,21 +630,21 @@ export class ExplorerComponent implements OnInit, OnDestroy {
         tap(() => {
           this.startUpload$.next();
         }),
-        takeUntil(dialogClosed$)
+        takeUntil(dialogClosed$),
       )
       .subscribe();
 
     merge(
       dialogRef.componentInstance.cancelUploadClicked,
       dialogRef.componentInstance.removeItem,
-      dialogRef.backdropClick()
+      dialogRef.backdropClick(),
     )
       .pipe(
         tap(() => {
           this.closeOverlay();
           dialogRef.close();
         }),
-        takeUntil(dialogClosed$)
+        takeUntil(dialogClosed$),
       )
       .subscribe();
 
@@ -592,7 +654,7 @@ export class ExplorerComponent implements OnInit, OnDestroy {
         tap(() => {
           dialogRef.close();
         }),
-        takeUntil(dialogClosed$)
+        takeUntil(dialogClosed$),
       )
       .subscribe();
   }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ * Copyright (c) 2023-2024. IdrisovII & EustroSoft.org
  *
  * This file is part of eustrosoft-front project.
  * See the LICENSE file at the project root for licensing information.
@@ -12,43 +12,32 @@ import {
   combineLatest,
   map,
   Observable,
-  of,
-  switchMap,
-  tap,
+  shareReplay,
   throwError,
 } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
-  AuthenticatedUserInterface,
   DispatchService,
-  PingRequest,
-  PingResponse,
-  QtisRequestResponseInterface,
+  QtisRequestResponse,
   Subsystems,
   SupportedLanguages,
 } from '@eustrosoft-front/core';
 import { SamService } from './sam.service';
+import { PingRequest, PingResponse } from '@eustrosoft-front/login-lib';
+import { AuthenticatedUser } from '../interfaces/authenticated-user.interface';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class AuthenticationService {
   private dispatchService = inject(DispatchService);
   private samService = inject(SamService);
 
   isAuthenticated$ = new BehaviorSubject<boolean>(false);
-  userInfo$ = new BehaviorSubject<AuthenticatedUserInterface>({
-    userAvailableSlvl: '',
-    userLang: '',
-    userLogin: '',
-    userId: -1,
-    userSlvl: '',
-    userFullName: '',
-  });
+  pingRes$ = this.getPingResponse().pipe(shareReplay(1));
+  userInfo$ = this.getAuthenticationInfo().pipe(shareReplay(1));
 
-  getAuthenticationInfo(): Observable<
-    QtisRequestResponseInterface<PingResponse>
-  > {
-    return combineLatest([
-      this.dispatchService.dispatch<PingRequest, PingResponse>({
+  private getPingResponse(): Observable<QtisRequestResponse<PingResponse>> {
+    return this.dispatchService
+      .dispatch<PingRequest, PingResponse>({
         r: [
           {
             s: Subsystems.PING,
@@ -56,25 +45,30 @@ export class AuthenticationService {
           },
         ],
         t: 0,
-      } as QtisRequestResponseInterface<PingRequest>),
+      })
+      .pipe(catchError((err: HttpErrorResponse) => throwError(() => err)));
+  }
+
+  private getAuthenticationInfo(): Observable<AuthenticatedUser> {
+    return combineLatest([
+      this.pingRes$,
       this.samService.getUserId().pipe(map((res) => +res.r[0].data)),
       this.samService.getUserLogin().pipe(map((res) => res.r[0].data)),
       this.samService.getUserLang().pipe(map((res) => res.r[0].data)),
       this.samService.getUserSlvl().pipe(map((res) => res.r[0].data)),
       this.samService.getUserAvailableSlvl().pipe(map((res) => res.r[0].data)),
+      this.samService.getUserDefaultScope().pipe(map((res) => res.r[0].data)),
     ]).pipe(
-      tap(([pingRes, id, login, lang, slvl, availableSlvl]) =>
-        this.userInfo$.next({
-          userAvailableSlvl: availableSlvl,
-          userLang: lang,
-          userLogin: login,
-          userId: id,
-          userFullName: pingRes.r[0].fullName,
-          userSlvl: slvl,
-        })
-      ),
-      switchMap(([pingRes]) => of(pingRes)),
-      catchError((err: HttpErrorResponse) => throwError(() => err))
+      map(([pingRes, id, login, lang, slvl, availableSlvl, defaultScope]) => ({
+        userAvailableSlvl: availableSlvl,
+        userLang: lang,
+        userLogin: login,
+        userId: id,
+        userFullName: pingRes.r[0].fullName,
+        userSlvl: +slvl,
+        userDefaultScope: +defaultScope,
+      })),
+      catchError((err: HttpErrorResponse) => throwError(() => err)),
     );
   }
 }

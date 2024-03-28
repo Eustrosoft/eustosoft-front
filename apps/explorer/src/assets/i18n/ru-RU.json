@@ -15,6 +15,22 @@
     "PASSWORD_LABEL": "Пароль",
     "SUBMIT_BUTTON_TEXT": "Войти"
   },
+  "SIDENAV": {
+    "ACCOUNT_TITLE": "Личный кабинет",
+    "ACCOUNT_LINK_TEXT": "Личный кабинет участника",
+    "QR_GEN_LINK_TEXT": "QR Генератор",
+    "EXPLORER_LINK_TEXT": "Explorer - управление файлами",
+    "MSG_LINK_TEXT": "MSG - Общение с тех.поддержкой",
+    "QTIS_ADMIN_LINK_TEXT": "QTIS Администрирование Системы",
+    "QR_QXYZ_TITLE": "QR.qxyz",
+    "QR_LOCAL_SERVICE_LINK_TEXT": "Локальный сервис портала",
+    "QR_EXTERNAL_SERVICE_LINK_TEXT": "Внешний сервис портала",
+    "PUBLIC_FILE_ARCHIVE_LINK_TEXT": "Публичный архив файлов",
+    "QR_CARD_EXAMPLE_LINK_TEXT": "Образец QR карточки",
+    "SITEMAP_LINK_TEXT": "Карта",
+    "REF_LINK_TEXT": "Справка",
+    "LOGOUT_BUTTON_TEXT": "Выйти"
+  },
   "EXPLORER": {
     "NEW_MENU_BUTTON_TEXT": "Создать",
     "NEW_FOLDER_BUTTON_TEXT": "Новую папку",
@@ -22,11 +38,15 @@
     "NEW_UPLOAD_BUTTON_TEXT": "Загрузить",
     "UPLOAD_TYPE_LABEL_TEXT": "Тип загрузки",
     "BATCH_OPERATIONS_BUTTON_TEXT": "Операции",
+    "NAVIGATE_BACK_TITLE": "Предыдущая папка",
+    "ROOT_BREADCRUMB_TEXT": "Home",
     "COPY_BUTTON_TEXT": "Копировать",
     "MOVE_TO_BUTTON_TEXT": "Переместить",
     "DELETE_BUTTON_TEXT": "Удалить",
     "SHARE_BUTTON_TEXT": "Поделиться",
+    "VERSIONS_BUTTON_TEXT": "Версии",
     "DOWNLOAD_BUTTON_TEXT": "Скачать",
+    "PREVIEW_BUTTON_TEXT": "Предпросмотр",
     "RENAME_BUTTON_TEXT": "Переименовать",
     "NAME_COLUMN_TEXT": "Наименование",
     "SPACE_COLUMN_TEXT": "Размер",
@@ -35,6 +55,7 @@
     "ACTIONS_COLUMN_TEXT": "Действия",
     "FOLDER_IS_EMPTY": "Пусто",
     "LINK_COPIED_TO_CLIPBOARD": "Ссылка скопирована",
+    "PREVIEW_IS_NOT_AVAILABLE": "Нет инструмента предпросмотра",
     "SIZES": {
       "BYTES": "Байт",
       "KB": "КБ",
@@ -124,12 +145,26 @@
       "EXTRA_OPTIONS_PANEL_DESCRIPTION_LABEL": "Примечание",
       "OPEN_FOLDER_BUTTON_TOOLTIP": "Открыть папку с файлом"
     },
+    "TXT_PREVIEW_PAGINATOR": {
+      "FIRST_PAGE": "Первая страница",
+      "ITEMS_PER_PAGE": "Символов на странице:",
+      "LAST_PAGE": "Последняя страница",
+      "NEXT_PAGE": "Следующая страница",
+      "PREVIOUS_PAGE": "Предыдущая страница",
+      "ONE_OF_ONE": "Страница 1 из 1",
+      "PAGE_OF_AMOUNT": "Страница {{page}} из {{amountPages}}"
+    },
     "ERRORS": {
       "NO_SELECTED_FILES_ERROR_TEXT": "Сначала выберите файлы",
       "SECURITY_LEVEL_OPTIONS_FETCH_ERROR": "Ошибка при попытке получения списка уровней доступа",
       "FILESYSTEM_OBJECTS_FETCH_ERROR": "Ошибка при попытке получения содержимого файловой системы",
       "MOVE_FILE_ALREADY_EXISTS_ERROR": "Выбранный элемент уже существует в этой папке",
-      "MOVE_SAME_NAME_ERROR": "Эта папка содержит папку с таким же именем"
+      "MOVE_SAME_NAME_ERROR": "Эта папка содержит папку с таким же именем",
+      "ERROR_FETCHING_DATA": "Ошибка отображения. Невозможно получить данные с сервера",
+      "ERROR_PARSING_DATA": "Ошибка отображения. Невозможно прочитать данные с сервера",
+      "FILE_LINK_ERROR": "Ошибка отображения. Неверная ссылка на файл",
+      "FILE_EXT_ERROR": "Ошибка отображения. Проблемы с расширением файла",
+      "VIRTUAL_OBJECT_ERROR": "Выбранный объект является виртуальным и не обладает версиями"
     }
   }
 }

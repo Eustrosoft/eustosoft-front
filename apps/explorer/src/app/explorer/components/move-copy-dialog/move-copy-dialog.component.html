@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright (c) 2023. IdrisovII & EustroSoft.org
+  ~ Copyright (c) 2023-2024. IdrisovII & EustroSoft.org
   ~
   ~ This file is part of eustrosoft-front project.
   ~ See the LICENSE file at the project root for licensing information.
@@ -11,13 +11,9 @@
 
   <div class="flex flex-column g-2 px-3 py-0" mat-dialog-content>
     <div class="flex g-2 align-items-center">
-      <eustrosoft-front-button
-        [buttonType]="'button'"
-        [buttonStyleType]="'icon'"
-        [iconName]="'navigate_before'"
-        (click)="navigateBack()"
-      >
-      </eustrosoft-front-button>
+      <button mat-icon-button type="button" (click)="navigateBack()">
+        <mat-icon>navigate_before</mat-icon>
+      </button>
       <eustrosoft-front-breadcrumbs
         [path$]="path$"
         (breadcrumbClicked)="openByPath($event)"
@@ -86,31 +82,36 @@
   </div>
 
   <div class="flex g-2 px-3 pb-3 pt-0" [align]="'end'" mat-dialog-actions>
-    <eustrosoft-front-button
+    <button
       *ngIf="false"
-      [buttonType]="'button'"
-      [buttonStyleType]="'icon'"
-      [iconName]="'create_new_folder'"
-      [title]="'Create new folder'"
+      mat-icon-button
+      type="button"
+      title="Create new folder"
       (click)="createNewFolder()"
     >
-    </eustrosoft-front-button>
-    <eustrosoft-front-button
-      [buttonType]="'button'"
-      [buttonStyleType]="'flat'"
-      [buttonText]="data.cancelButtonText | translate"
-      (click)="reject()"
+      <mat-icon>create_new_folder</mat-icon>
+    </button>
+    <button mat-flat-button type="button" (click)="reject()">
+      {{ data.cancelButtonText | translate }}
+    </button>
+    <ng-container
+      *ngIf="{ moveButtonDisabled: moveButtonDisabled$ | async } as vm"
     >
-    </eustrosoft-front-button>
-    <eustrosoft-front-button
-      [buttonStyleType]="'flat'"
-      [buttonText]="data.submitButtonText | translate"
-      [color]="'primary'"
-      [disabled]="!!(moveButtonDisabled$ | async)"
-      [matTooltip]="moveButtonErrorText | translate"
-      (clicked)="resolve()"
-    >
-    </eustrosoft-front-button>
+      <div
+        [matTooltip]="moveButtonErrorText | translate"
+        [matTooltipDisabled]="!vm.moveButtonDisabled"
+      >
+        <button
+          mat-flat-button
+          type="button"
+          color="primary"
+          [disabled]="vm.moveButtonDisabled"
+          (click)="resolve()"
+        >
+          {{ data.submitButtonText | translate }}
+        </button>
+      </div>
+    </ng-container>
   </div>
 
   <ng-template
@@ -123,14 +124,14 @@
         <mat-icon>folder</mat-icon>
         <span>{{ object.fileName }}</span>
       </div>
-      <eustrosoft-front-button
-        [buttonType]="'button'"
-        [buttonStyleType]="'icon'"
-        [iconName]="'navigate_next'"
+      <button
+        mat-icon-button
+        type="button"
         [disabled]="forwardLinkDisabled"
-        (clicked)="navigateForward($event, object)"
+        (click)="navigateForward($event, object)"
       >
-      </eustrosoft-front-button>
+        <mat-icon>navigate_next</mat-icon>
+      </button>
     </div>
   </ng-template>
   <ng-template #linkOrFileTemplate let-object>

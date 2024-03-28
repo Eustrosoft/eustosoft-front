@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ * Copyright (c) 2023-2024. IdrisovII & EustroSoft.org
  *
  * This file is part of eustrosoft-front project.
  * See the LICENSE file at the project root for licensing information.
@@ -19,20 +19,47 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
+import { trackByZridFunction } from '@eustrosoft-front/core';
+import { AuthenticationService } from '@eustrosoft-front/security';
+import { BreakpointsService } from '@eustrosoft-front/common-ui';
 import {
   Chat,
   ChatMessage,
   MsgChatStatus,
-  trackByZridFunction,
-} from '@eustrosoft-front/core';
-import { AuthenticationService } from '@eustrosoft-front/security';
-import { shareReplay } from 'rxjs';
+  NewLineToBrPipe,
+} from '@eustrosoft-front/msg-lib';
+import { TranslateModule } from '@ngx-translate/core';
+import { ChatMessageInputComponent } from '../chat-message-input/chat-message-input.component';
+import {
+  AsyncPipe,
+  DatePipe,
+  NgFor,
+  NgIf,
+  NgTemplateOutlet,
+} from '@angular/common';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'eustrosoft-front-chat-view',
   templateUrl: './chat-view.component.html',
   styleUrls: ['./chat-view.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatButtonModule,
+    MatIconModule,
+    MatMenuModule,
+    NgIf,
+    NgFor,
+    NgTemplateOutlet,
+    ChatMessageInputComponent,
+    AsyncPipe,
+    DatePipe,
+    TranslateModule,
+    NewLineToBrPipe,
+  ],
 })
 export class ChatViewComponent implements OnChanges, AfterViewInit {
   @Input() selectedChat: Chat | undefined = undefined;
@@ -54,16 +81,16 @@ export class ChatViewComponent implements OnChanges, AfterViewInit {
   @ViewChild('messagesScrollableBlock')
   messagesScrollableBlock!: ElementRef<HTMLDivElement>;
 
-  private authenticationService = inject(AuthenticationService);
-  private cdRef = inject(ChangeDetectorRef);
+  private readonly authenticationService = inject(AuthenticationService);
+  private readonly cdRef = inject(ChangeDetectorRef);
+  private readonly breakpointsService = inject(BreakpointsService);
 
-  messageInEdit: ChatMessage | undefined = undefined;
-  MSG_CHAT_STATUS = MsgChatStatus;
-  trackByFn = trackByZridFunction;
+  protected messageInEdit: ChatMessage | undefined = undefined;
+  protected readonly MSG_CHAT_STATUS = MsgChatStatus;
+  protected trackByFn = trackByZridFunction;
+  protected isSm = this.breakpointsService.isSm();
 
-  userInfo$ = this.authenticationService.userInfo$
-    .asObservable()
-    .pipe(shareReplay(1));
+  protected userInfo$ = this.authenticationService.userInfo$;
 
   ngOnChanges(changes: SimpleChanges): void {
     if ('selectedChat' in changes) {
@@ -93,23 +120,23 @@ export class ChatViewComponent implements OnChanges, AfterViewInit {
   }
 
   scrollAtBottom(): boolean {
-    if (!this.messagesScrollableBlock) {
+    if (this.messagesScrollableBlock === undefined) {
       return false;
     }
     return (
       Math.abs(
         this.messagesScrollableBlock.nativeElement.scrollHeight -
           this.messagesScrollableBlock.nativeElement.scrollTop -
-          this.messagesScrollableBlock.nativeElement.clientHeight
+          this.messagesScrollableBlock.nativeElement.clientHeight,
       ) < 1
     );
   }
 
-  editMessage(message: ChatMessage) {
+  editMessage(message: ChatMessage): void {
     this.messageInEdit = message;
   }
 
-  saveEditedMessage(message: string) {
+  saveEditedMessage(message: string): void {
     const editedMessage: ChatMessage = {
       ...(this.messageInEdit as ChatMessage),
       content: message,
@@ -132,11 +159,11 @@ export class ChatViewComponent implements OnChanges, AfterViewInit {
     this.closeChatClicked.emit(this.selectedChat);
   }
 
-  editCanceled() {
+  editCanceled(): void {
     this.messageInEdit = undefined;
   }
 
-  reopenChat() {
+  reopenChat(): void {
     this.reopenChatClicked.emit(this.selectedChat);
   }
 }

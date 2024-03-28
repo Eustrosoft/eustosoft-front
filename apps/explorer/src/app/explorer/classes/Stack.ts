@@ -1,12 +1,14 @@
 /*
- * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ * Copyright (c) 2023-2024. IdrisovII & EustroSoft.org
  *
  * This file is part of eustrosoft-front project.
  * See the LICENSE file at the project root for licensing information.
  */
 
 import { BehaviorSubject } from 'rxjs';
+import { Injectable } from '@angular/core';
 
+@Injectable({ providedIn: 'root' })
 export class Stack<T> {
   private stack$ = new BehaviorSubject<T[]>([]);
 
@@ -20,8 +22,7 @@ export class Stack<T> {
     this.stack$.next(stack);
     if (returnLastElementAfterPop) {
       return stack[stack.length - 1];
-    } else {
-      return value;
     }
+    return value;
   }
 }

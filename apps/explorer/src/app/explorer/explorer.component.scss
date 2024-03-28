@@ -1,5 +1,5 @@
 /*!
- * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ * Copyright (c) 2023-2024. IdrisovII & EustroSoft.org
  *
  * This file is part of eustrosoft-front project.
  * See the LICENSE file at the project root for licensing information.
@@ -27,9 +27,11 @@
   }
   &-path {
     display: flex;
+    align-items: center;
+    gap: 0.5rem;
     margin: 0 1rem;
   }
-  &-table{
+  &-table {
     display: flex;
     flex-direction: column;
     flex: 0 1 auto;

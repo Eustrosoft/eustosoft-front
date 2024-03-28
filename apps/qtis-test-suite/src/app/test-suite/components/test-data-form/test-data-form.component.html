@@ -1,0 +1,176 @@
+<!--
+  ~ Copyright (c) 2023-2024. IdrisovII & EustroSoft.org
+  ~
+  ~ This file is part of eustrosoft-front project.
+  ~ See the LICENSE file at the project root for licensing information.
+  -->
+<ng-container
+  *ngTemplateOutlet="blockHeader; context: { $implicit: 'Common' }"
+></ng-container>
+<mat-checkbox [formControl]="qtisTestFormService.form.controls.showResponses">
+  Print response
+</mat-checkbox>
+<div class="flex flex-flow-wrap g-3">
+  <mat-form-field
+    [appearance]="'outline'"
+    [subscriptSizing]="'dynamic'"
+    class="flex-auto"
+  >
+    <mat-label> Test User Login </mat-label>
+    <input [formControl]="qtisTestFormService.form.controls.login" matInput />
+  </mat-form-field>
+  <mat-form-field
+    [appearance]="'outline'"
+    [subscriptSizing]="'dynamic'"
+    class="flex-auto"
+  >
+    <mat-label> Test User Password </mat-label>
+    <input
+      [formControl]="qtisTestFormService.form.controls.password"
+      [type]="'password'"
+      matInput
+    />
+  </mat-form-field>
+</div>
+<ng-container
+  *ngTemplateOutlet="blockHeader; context: { $implicit: 'Explorer' }"
+></ng-container>
+<div class="flex flex-flow-wrap g-3">
+  <mat-form-field
+    [appearance]="'outline'"
+    [subscriptSizing]="'dynamic'"
+    class="flex-auto"
+  >
+    <mat-label>
+      Folder For Tests (folder with timestamp will be created here)
+    </mat-label>
+    <input
+      [formControl]="qtisTestFormService.form.controls.folderForTests"
+      matInput
+    />
+  </mat-form-field>
+  <mat-form-field
+    [appearance]="'outline'"
+    [subscriptSizing]="'dynamic'"
+    class="flex-auto"
+  >
+    <mat-label> Folder Description </mat-label>
+    <input
+      [formControl]="qtisTestFormService.form.controls.folderDescription"
+      matInput
+    />
+  </mat-form-field>
+  <mat-form-field
+    [appearance]="'outline'"
+    [subscriptSizing]="'dynamic'"
+    [matTooltip]="SecurityLevels | json"
+  >
+    <mat-label> Folder Security Level </mat-label>
+    <input
+      [formControl]="qtisTestFormService.form.controls.folderSecurityLevel"
+      [type]="'number'"
+      matInput
+    />
+  </mat-form-field>
+</div>
+<div class="flex flex-flow-wrap g-3">
+  <mat-form-field
+    [appearance]="'outline'"
+    [subscriptSizing]="'dynamic'"
+    class="flex-auto"
+  >
+    <mat-label> Filename (change filename on upload) </mat-label>
+    <input
+      [formControl]="qtisTestFormService.form.controls.fileName"
+      matInput
+    />
+  </mat-form-field>
+  <mat-form-field
+    [appearance]="'outline'"
+    [subscriptSizing]="'dynamic'"
+    class="flex-auto"
+  >
+    <mat-label> File Description </mat-label>
+    <input
+      [formControl]="qtisTestFormService.form.controls.fileDescription"
+      matInput
+    />
+  </mat-form-field>
+  <mat-form-field
+    [appearance]="'outline'"
+    [subscriptSizing]="'dynamic'"
+    [matTooltip]="SecurityLevels | json"
+  >
+    <mat-label> File Security Level </mat-label>
+    <input
+      [formControl]="qtisTestFormService.form.controls.fileSecurityLevel"
+      [type]="'number'"
+      matInput
+    />
+  </mat-form-field>
+</div>
+<div class="flex flex-flow-wrap g-3 align-items-center">
+  <eustrosoft-front-input-file
+    [control]="qtisTestFormService.form.controls.files"
+  ></eustrosoft-front-input-file>
+  <eustrosoft-front-file-list
+    [files]="qtisTestFormService.form.controls.files.value"
+    [stylesForVirtualViewport]="{ height: '50px' }"
+    (deleteFile)="deleteFile($event)"
+    class="flex-auto"
+  ></eustrosoft-front-file-list>
+</div>
+<ng-container
+  *ngTemplateOutlet="blockHeader; context: { $implicit: 'Msg' }"
+></ng-container>
+<div class="flex flex-flow-wrap g-3">
+  <mat-form-field
+    [appearance]="'outline'"
+    [subscriptSizing]="'dynamic'"
+    class="flex-auto"
+  >
+    <mat-label> Chat Name (will be used with timestamp) </mat-label>
+    <input
+      [formControl]="qtisTestFormService.form.controls.chatName"
+      matInput
+    />
+  </mat-form-field>
+  <mat-form-field
+    [appearance]="'outline'"
+    [subscriptSizing]="'dynamic'"
+    class="flex-auto"
+  >
+    <mat-label> Chat Initial Message </mat-label>
+    <input
+      [formControl]="qtisTestFormService.form.controls.chatInitialMessage"
+      matInput
+    />
+  </mat-form-field>
+  <mat-form-field [appearance]="'outline'" [subscriptSizing]="'dynamic'">
+    <mat-label> Chat Scope ID </mat-label>
+    <input
+      [formControl]="qtisTestFormService.form.controls.chatScopeId"
+      [type]="'number'"
+      matInput
+    />
+  </mat-form-field>
+  <mat-form-field
+    [appearance]="'outline'"
+    [subscriptSizing]="'dynamic'"
+    [matTooltip]="SecurityLevels | json"
+  >
+    <mat-label> Chat Security Level </mat-label>
+    <input
+      [formControl]="qtisTestFormService.form.controls.chatSecurityLevel"
+      [type]="'number'"
+      matInput
+    />
+  </mat-form-field>
+</div>
+
+<ng-template #blockHeader let-title>
+  <div>
+    <h1 class="m-0">{{ title }}</h1>
+    <mat-divider></mat-divider>
+  </div>
+</ng-template>

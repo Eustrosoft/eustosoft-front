@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ * Copyright (c) 2023-2024. IdrisovII & EustroSoft.org
  *
  * This file is part of eustrosoft-front project.
  * See the LICENSE file at the project root for licensing information.
@@ -16,6 +16,7 @@ import {
 
 @Directive({
   selector: '[eustrosoftFrontHoverShadow]',
+  standalone: true,
 })
 export class HoverShadowDirective {
   private readonly elementRef = inject(ElementRef);
@@ -26,11 +27,11 @@ export class HoverShadowDirective {
 
   @HostBinding('style.cursor') cursor = 'pointer';
 
-  @HostListener('mouseenter') onMouseEnter() {
+  @HostListener('mouseenter') onMouseEnter(): void {
     this.addShadow();
   }
 
-  @HostListener('mouseleave') onMouseLeave() {
+  @HostListener('mouseleave') onMouseLeave(): void {
     this.removeShadow();
   }
 

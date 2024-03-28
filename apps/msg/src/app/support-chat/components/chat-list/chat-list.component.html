@@ -1,132 +1,171 @@
 <!--
-  ~ Copyright (c) 2023. IdrisovII & EustroSoft.org
+  ~ Copyright (c) 2023-2024. IdrisovII & EustroSoft.org
   ~
   ~ This file is part of eustrosoft-front project.
   ~ See the LICENSE file at the project root for licensing information.
   -->
 
-<div class="d-flex flex-column h-100">
+<div class="flex flex-auto flex-column">
   <div
-    [ngClass]="{ 'rounded-top': !removeBorderRadius }"
-    class="flex-grow-0 flex-shrink-0 bg-secondary bg-opacity-25"
+    [ngClass]="{ 'brt-2': !removeBorderRadius }"
+    class="grey-background-header"
   >
-    <div class="d-flex align-items-center justify-content-between p-1">
-      <div class="d-flex align-items-center">
-        <eustrosoft-front-button
-          [buttonType]="'button'"
-          [buttonStyleType]="'icon'"
-          [iconName]="'menu'"
-          class="d-sm-none"
-          (clicked)="collapseClicked.emit()"
-        ></eustrosoft-front-button>
-        <h2 class="d-none d-sm-block d-md-block mb-0">
+    <div
+      class="flex align-items-center justify-content-space-between px-2 py-1"
+    >
+      <div class="flex align-items-center">
+        <button
+          mat-icon-button
+          type="button"
+          [class.display-none]="!isSm"
+          (click)="collapseClicked.emit()"
+        >
+          <mat-icon>menu</mat-icon>
+        </button>
+        <h2 class="m-0">
           {{ 'MSG.TICKET_LIST_HEADER_TEXT' | translate }}
         </h2>
       </div>
-      <div class="d-flex align-items-center">
-        <eustrosoft-front-button
-          [buttonType]="'button'"
-          [buttonStyleType]="'icon'"
-          [iconName]="'filter_alt'"
+      <div class="flex align-items-center">
+        <button
+          mat-icon-button
+          type="button"
+          [matMenuTriggerFor]="chatFiltersMenu"
           [matTooltip]="'MSG.CHAT_FILTERS_BUTTON_TEXT' | translate"
           [matTooltipShowDelay]="300"
-          [matMenuTriggerFor]="chatFiltersMenu"
-        ></eustrosoft-front-button>
+          #matMenuFiltersTrigger="matMenuTrigger"
+        >
+          <mat-icon>filter_alt</mat-icon>
+        </button>
         <mat-menu
           #chatFiltersMenu="matMenu"
           class="msg-chat-status-filter-menu"
         >
+          <div class="flex">
+            <button
+              (click)="toggleAllFilters($event, true)"
+              [matTooltip]="
+                'MSG.SELECT_ALL_STATUS_FILTER_BUTTON_TEXT' | translate
+              "
+              class="justify-content-center custom-item"
+              mat-menu-item
+            >
+              <mat-icon>select</mat-icon>
+            </button>
+            <button
+              (click)="toggleAllFilters($event, false)"
+              [matTooltip]="
+                'MSG.DESELECT_ALL_STATUS_FILTER_BUTTON_TEXT' | translate
+              "
+              class="justify-content-center custom-item"
+              mat-menu-item
+            >
+              <mat-icon>deselect</mat-icon>
+            </button>
+          </div>
+
           <ng-container
             *ngFor="let filter of chatStatusFilterOptions; let i = index"
           >
             <mat-checkbox
               class="mat-menu-item"
               [value]="filter.code"
+              [checked]="checkedStatuses()[filter.code]"
               (change)="filterChange($event, filter.code)"
               (click)="$event.stopPropagation()"
             >
               {{ filter.value }}
             </mat-checkbox>
           </ng-container>
+          <button
+            (click)="matMenuFiltersTrigger.closeMenu(); filterClosed()"
+            mat-menu-item
+            [role]="'menuitem'"
+          >
+            OK
+          </button>
         </mat-menu>
-        <eustrosoft-front-button
-          [buttonType]="'button'"
-          [buttonStyleType]="'icon'"
-          [iconName]="'add'"
+        <button
+          mat-icon-button
+          type="button"
           [matTooltip]="'MSG.CREATE_NEW_CHAT_BUTTON_TEXT' | translate"
           [matTooltipShowDelay]="300"
-          (clicked)="createNewChat()"
-        ></eustrosoft-front-button>
-        <eustrosoft-front-button
-          [buttonType]="'button'"
-          [buttonStyleType]="'icon'"
-          [iconName]="'refresh'"
+          (click)="createNewChat()"
+        >
+          <mat-icon>add</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          type="button"
           [matTooltip]="'MSG.REFRESH_TICKET_LIST_BUTTON_TOOLTIP' | translate"
           [matTooltipShowDelay]="300"
-          (clicked)="refreshChats()"
-        ></eustrosoft-front-button>
+          (click)="refreshChats()"
+        >
+          <mat-icon>refresh</mat-icon>
+        </button>
       </div>
     </div>
   </div>
-  <div class="flex-grow-1 h-100">
-    <mat-list *ngIf="chats.length > 0; else noChatsTemplate" class="h-100 p-0">
-      <virtual-scroller #scroll [items]="chats" class="h-100">
-        <ng-container
-          *ngFor="let chat of scroll.viewPortItems; trackBy: trackByFn"
+  <mat-list
+    *ngIf="chats.length > 0; else noChatsTemplate"
+    class="flex flex-auto p-0"
+  >
+    <cdk-virtual-scroll-viewport [itemSize]="80" class="flex-auto">
+      <ng-container *cdkVirtualFor="let chat of chats; trackBy: trackByFn">
+        <mat-list-item
+          eustrosoftFrontHoverCursor
+          eustrosoftFrontHoverShadow
+          [ngClass]="{
+            'list-item-hover brs-2':
+              selectedChat && selectedChat.zoid === chat.zoid
+          }"
+          class="p-2 my-2 flex-wrap"
+          (click)="selectChat(chat)"
         >
-          <mat-list-item
-            eustrosoftFrontHoverCursor
-            eustrosoftFrontHoverShadow
-            [ngClass]="{
-              'border-3 border-start border-secondary bg-secondary bg-opacity-25':
-                selectedChat && selectedChat.zoid === chat.zoid
-            }"
-            class="p-2 my-2 rounded-start"
-            (click)="selectChat(chat)"
+          <span
+            [class.chat-has-updates]="chat.hasUpdates"
+            [title]="chat.subject"
+            matListItemTitle
           >
-            <span [class.chat-has-updates]="chat.hasUpdates" matListItemTitle>
-              {{ chat.subject }}
-            </span>
-            <span class="fst-italic" matListItemLine>
-              {{ chat.status | msgChatStatus }}
-            </span>
-            <div class="d-none d-sm-block d-md-block" matListItemMeta>
-              <eustrosoft-front-button
-                [buttonType]="'button'"
-                [buttonStyleType]="'icon'"
-                [iconName]="'more_vert'"
-                [matMenuTriggerFor]="chatActionsMenu"
-                (click)="$event.stopPropagation()"
-              ></eustrosoft-front-button>
-              <mat-menu #chatActionsMenu="matMenu">
-                <button (click)="renameChat(chat)" mat-menu-item>
-                  <mat-icon>edit</mat-icon>
-                  {{ 'MSG.RENAME_CHAT_BUTTON_TEXT' | translate }}
-                </button>
-                <button (click)="deleteChat(chat)" mat-menu-item>
-                  <mat-icon>delete</mat-icon>
-                  {{ 'MSG.DELETE_CHAT_BUTTON_TEXT' | translate }}
-                </button>
-              </mat-menu>
-            </div>
-          </mat-list-item>
-          <mat-divider></mat-divider>
-        </ng-container>
-      </virtual-scroller>
-    </mat-list>
-  </div>
+            {{ chat.subject }}
+          </span>
+          <span class="fst-italic" matListItemLine>
+            {{ chat.status | msgChatStatus }}
+          </span>
+          <div matListItemMeta>
+            <button
+              mat-icon-button
+              type="button"
+              [matMenuTriggerFor]="chatActionsMenu"
+              (click)="$event.stopPropagation()"
+            >
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #chatActionsMenu="matMenu">
+              <button (click)="renameChat(chat)" mat-menu-item>
+                <mat-icon>edit</mat-icon>
+                {{ 'MSG.RENAME_CHAT_BUTTON_TEXT' | translate }}
+              </button>
+              <button (click)="deleteChat(chat)" mat-menu-item>
+                <mat-icon>delete</mat-icon>
+                {{ 'MSG.DELETE_CHAT_BUTTON_TEXT' | translate }}
+              </button>
+            </mat-menu>
+          </div>
+        </mat-list-item>
+        <!--        <mat-divider></mat-divider>-->
+      </ng-container>
+    </cdk-virtual-scroll-viewport>
+  </mat-list>
 </div>
 
 <ng-template #noChatsTemplate>
   <div
-    class="d-flex flex-column align-items-center justify-content-center text-center h-100"
+    class="flex flex-auto flex-column align-items-center justify-content-center"
   >
     <h2>{{ 'MSG.CREATE_NEW_CHAT_BUTTON_TEXT' | translate }}</h2>
-    <eustrosoft-front-button
-      [buttonType]="'button'"
-      [buttonStyleType]="'icon'"
-      [iconName]="'add'"
-      (clicked)="createNewChat()"
-    ></eustrosoft-front-button>
+    <button mat-icon-button type="button" (click)="createNewChat()">
+      <mat-icon>add</mat-icon>
+    </button>
   </div>
 </ng-template>

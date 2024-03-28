@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ * Copyright (c) 2023-2024. IdrisovII & EustroSoft.org
  *
  * This file is part of eustrosoft-front project.
  * See the LICENSE file at the project root for licensing information.
@@ -10,24 +10,26 @@ import { Observable, tap } from 'rxjs';
 import { AuthenticationService } from './authentication.service';
 import {
   DispatchService,
+  QtisRequestResponse,
+  Subsystems,
+  SupportedLanguages,
+} from '@eustrosoft-front/core';
+import {
   LoginActions,
   LoginLogoutResponse,
   LoginRequest,
   LogoutRequest,
-  QtisRequestResponseInterface,
-  Subsystems,
-  SupportedLanguages,
-} from '@eustrosoft-front/core';
+} from '@eustrosoft-front/login-lib';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class LoginService {
   private readonly authenticationService = inject(AuthenticationService);
   private readonly dispatchService = inject(DispatchService);
 
   login(
     login: string,
-    password: string
-  ): Observable<QtisRequestResponseInterface<LoginLogoutResponse>> {
+    password: string,
+  ): Observable<QtisRequestResponse<LoginLogoutResponse>> {
     return this.dispatchService
       .dispatch<LoginRequest, LoginLogoutResponse>({
         r: [
@@ -40,15 +42,15 @@ export class LoginService {
           },
         ],
         t: 0,
-      } as QtisRequestResponseInterface<LoginRequest>)
+      } as QtisRequestResponse<LoginRequest>)
       .pipe(
         tap((v) => {
           this.authenticationService.isAuthenticated$.next(v.r[0].e === 0);
-        })
+        }),
       );
   }
 
-  logout(): Observable<QtisRequestResponseInterface<LoginLogoutResponse>> {
+  logout(): Observable<QtisRequestResponse<LoginLogoutResponse>> {
     return this.dispatchService
       .dispatch<LogoutRequest, LoginLogoutResponse>({
         r: [
@@ -59,11 +61,11 @@ export class LoginService {
           },
         ],
         t: 0,
-      } as QtisRequestResponseInterface<LogoutRequest>)
+      } as QtisRequestResponse<LogoutRequest>)
       .pipe(
         tap(() => {
           this.authenticationService.isAuthenticated$.next(false);
-        })
+        }),
       );
   }
 }

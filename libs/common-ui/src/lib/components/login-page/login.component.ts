@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ * Copyright (c) 2023-2024. IdrisovII & EustroSoft.org
  *
  * This file is part of eustrosoft-front project.
  * See the LICENSE file at the project root for licensing information.
@@ -13,33 +13,54 @@ import {
   HostListener,
   inject,
   Input,
-  OnDestroy,
   OnInit,
   TemplateRef,
   ViewChild,
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
-import { catchError, EMPTY, of, Subject, take, tap } from 'rxjs';
+import { catchError, EMPTY, of, take, tap } from 'rxjs';
 import { LoginService } from '@eustrosoft-front/security';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpErrorResponse } from '@angular/common/http';
-import { InputError } from '../input/input-error.interface';
+import { InputError } from '../../interfaces/input-error.interface';
 import { InputErrors } from '../../constants/enums/input-errors.enum';
 import { LoginDialogComponent } from '../login-dialog/login-dialog.component';
-import { LoginDialogDataInterface } from '../login-dialog/login-dialog-data.interface';
+import { LoginDialogData } from '../login-dialog/login-dialog-data.interface';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { InputTypes, LoginForm } from '@eustrosoft-front/core';
 import { BreakpointsService } from '../../services/breakpoints.service';
 import { APP_CONFIG } from '@eustrosoft-front/config';
+import { MatButtonModule } from '@angular/material/button';
+import { AsyncPipe, NgFor, NgIf, NgStyle } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
   selector: 'eustrosoft-front-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
+    NgIf,
+    NgFor,
+    MatButtonModule,
+    NgStyle,
+    AsyncPipe,
+  ],
 })
-export class LoginComponent implements OnInit, OnDestroy, AfterViewInit {
+export class LoginComponent implements OnInit, AfterViewInit {
   @ViewChild('loginTemplate') loginTemplate!: TemplateRef<unknown>;
 
   @Input() pathAfterLogin!: string[];
@@ -58,7 +79,6 @@ export class LoginComponent implements OnInit, OnDestroy, AfterViewInit {
   private readonly snackBar = inject(MatSnackBar);
   private readonly dialog = inject(MatDialog);
   private readonly breakpointsService = inject(BreakpointsService);
-  private readonly destroyed$ = new Subject<void>();
   protected readonly config = inject(APP_CONFIG);
   private loginDialogRef!: MatDialogRef<LoginDialogComponent>;
   protected form: FormGroup<LoginForm> = this.fb.nonNullable.group<LoginForm>({
@@ -98,7 +118,7 @@ export class LoginComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit(): void {
     this.loginDialogRef = this.dialog.open<
       LoginDialogComponent,
-      LoginDialogDataInterface,
+      LoginDialogData,
       void
     >(LoginDialogComponent, {
       data: {
@@ -125,13 +145,8 @@ export class LoginComponent implements OnInit, OnDestroy, AfterViewInit {
           this.cdRef.markForCheck();
           return of(EMPTY);
         }),
-        take(1)
+        take(1),
       )
       .subscribe();
-  }
-
-  ngOnDestroy(): void {
-    this.destroyed$.next();
-    this.destroyed$.complete();
   }
 }

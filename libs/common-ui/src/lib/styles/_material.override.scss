@@ -1,5 +1,5 @@
 /*!
- * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ * Copyright (c) 2023-2024. IdrisovII & EustroSoft.org
  *
  * This file is part of eustrosoft-front project.
  * See the LICENSE file at the project root for licensing information.
@@ -8,20 +8,14 @@
 @use '@material/snackbar/snackbar-theme' as mdc-snackbar-theme;
 @use 'variables' as vars;
 
+// Changes string 'close' to material icon with name 'close' in snackbar component
 $snackbar-theme-styles: (
-  action-label-text-font: vars.$icons-font-family,
-  action-label-text-size: map-get(vars.$common-sizes, 4),
-  action-label-text-weight: 400
+  action-label-text-font: vars.$icons-font-family !important,
+  action-label-text-size: map-get(vars.$common-sizes, 4) !important,
+  action-label-text-weight: 400 !important,
 );
 
 @include mdc-snackbar-theme.theme-styles($snackbar-theme-styles);
-
-
-.hide-subscript-wrapper {
-  .mat-mdc-form-field-subscript-wrapper {
-    display: none;
-  }
-}
 
 .cdk-global-scrollblock {
   overflow-y: hidden;

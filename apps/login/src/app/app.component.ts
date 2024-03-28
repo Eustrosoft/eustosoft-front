@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ * Copyright (c) 2023-2024. IdrisovII & EustroSoft.org
  *
  * This file is part of eustrosoft-front project.
  * See the LICENSE file at the project root for licensing information.
@@ -7,24 +7,43 @@
 
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { APP_CONFIG } from '@eustrosoft-front/config';
-import { PRECONFIGURED_TRANSLATE_SERVICE } from '@eustrosoft-front/core';
 import { take, tap } from 'rxjs';
 import {
   AuthenticationService,
   LoginService,
 } from '@eustrosoft-front/security';
-import { Router } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { AsyncPipe, NgFor, NgIf } from '@angular/common';
+import { PRECONFIGURED_TRANSLATE_SERVICE } from '@eustrosoft-front/core';
+import { HeaderComponent, SidenavComponent } from '@eustrosoft-front/common-ui';
 
 @Component({
   selector: 'eustrosoft-front-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    NgIf,
+    MatSidenavModule,
+    RouterOutlet,
+    NgFor,
+    MatMenuModule,
+    AsyncPipe,
+    TranslateModule,
+    SidenavComponent,
+    HeaderComponent,
+  ],
+  providers: [TranslateService],
 })
 export class AppComponent {
   private readonly loginService = inject(LoginService);
   private readonly authenticationService = inject(AuthenticationService);
   private readonly router = inject(Router);
+  // PRECONFIGURED_TRANSLATE_SERVICE token must be injected. Otherwise, useFactory won't run
   private readonly translateService = inject(PRECONFIGURED_TRANSLATE_SERVICE);
   protected readonly config = inject(APP_CONFIG);
   protected isAuthenticated$ =
@@ -37,7 +56,7 @@ export class AppComponent {
         tap(() => {
           this.router.navigate(['']);
         }),
-        take(1)
+        take(1),
       )
       .subscribe();
   }

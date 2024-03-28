@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ * Copyright (c) 2023-2024. IdrisovII & EustroSoft.org
  *
  * This file is part of eustrosoft-front project.
  * See the LICENSE file at the project root for licensing information.
@@ -11,22 +11,26 @@ import { catchError, Observable, shareReplay, throwError } from 'rxjs';
 import { Config } from '../interfaces/config.interface';
 import { APP_BASE_HREF, DOCUMENT } from '@angular/common';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class ConfigService {
   private readonly http: HttpClient = inject(HttpClient);
   private readonly appBaseHref = inject(APP_BASE_HREF);
   private readonly document = inject(DOCUMENT);
 
-  private configUrl = `${this.document.location.origin}${
+  private readonly configUrl = `${this.document.location.origin}${
     this.appBaseHref
   }config.json?${Date.now()}`;
 
-  private backupConfigUrl = `${
+  private readonly backupConfigUrl = `${
     this.document.location.origin
   }/config.json?${Date.now()}`;
 
-  private mainConfig = this.http.get<Config>(this.configUrl);
-  private backupConfig = this.http.get<Config>(this.backupConfigUrl);
+  private mainConfig = this.http
+    .get<Config>(this.configUrl)
+    .pipe(shareReplay(1));
+  private backupConfig = this.http
+    .get<Config>(this.backupConfigUrl)
+    .pipe(shareReplay(1));
 
   getConfig(): Observable<Config> {
     return this.mainConfig.pipe(
@@ -36,7 +40,7 @@ export class ConfigService {
           catchError((err: HttpErrorResponse) => {
             console.error(
               'Failed to fetch configuration from the second URL:',
-              err
+              err,
             );
             return throwError(
               () =>
@@ -46,12 +50,11 @@ export class ConfigService {
                   headers: err.headers,
                   status: err.status,
                   statusText: err.statusText,
-                })
+                }),
             );
-          })
+          }),
         );
       }),
-      shareReplay(1)
     );
   }
 }

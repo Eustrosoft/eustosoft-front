@@ -24,10 +24,66 @@
     {
       "title": "HEADER.APPS.MSG",
       "active": true,
-      "url": "http://localhost:4203/login/",
+      "url": "http://localhost:4203/msg/",
       "icon": "chat"
     }
   ],
+  "// 4": "List of elements that will be shown in sidenav component. Dropdowns represents floating panels containing list of options. Rest represent button like links. Text fields must contain strings for translations from /assets/i18n/* json files. Replacement of {origin} with location.origin variable or hrefs also supported",
+  "sideNavMenuItems": {
+    "dropdowns": [
+      {
+        "title": "SIDENAV.ACCOUNT_TITLE",
+        "links": [
+          {
+            "text": "SIDENAV.ACCOUNT_LINK_TEXT",
+            "href": "{origin}/lk/"
+          },
+          { "text": "SIDENAV.QR_GEN_LINK_TEXT", "href": "{origin}/gen/" },
+          {
+            "text": "SIDENAV.EXPLORER_LINK_TEXT",
+            "href": "{origin}/explorer/"
+          },
+          {
+            "text": "SIDENAV.MSG_LINK_TEXT",
+            "href": "{origin}/msg/"
+          },
+          {
+            "text": "SIDENAV.QTIS_ADMIN_LINK_TEXT",
+            "href": "{origin}/lk/qtis.jsp"
+          }
+        ]
+      },
+      {
+        "title": "SIDENAV.QR_QXYZ_TITLE",
+        "links": [
+          {
+            "text": "SIDENAV.QR_LOCAL_SERVICE_LINK_TEXT",
+            "href": "{origin}/qr/"
+          },
+          {
+            "text": "SIDENAV.QR_EXTERNAL_SERVICE_LINK_TEXT",
+            "href": "http://qr.qxyz.ru/"
+          },
+          {
+            "text": "SIDENAV.PUBLIC_FILE_ARCHIVE_LINK_TEXT",
+            "href": "{origin}/ftpub/"
+          },
+          { "text": "SIDENAV.QR_GEN_LINK_TEXT", "href": "{origin}/qr/gen/" },
+          {
+            "text": "SIDENAV.QR_CARD_EXAMPLE_LINK_TEXT",
+            "href": "{origin}/examples/qr/"
+          }
+        ]
+      }
+    ],
+    "rest": [
+      {
+        "text": "SIDENAV.SITEMAP_LINK_TEXT",
+        "href": "https://dev37.qxyz.ru/sitemap/"
+      },
+      { "text": "SIDENAV.REF_LINK_TEXT", "href": "https://dev37.qxyz.ru/help/" }
+    ]
+  },
   "loginUrl": "http://localhost:4200/login/",
   "appsPageUrl": "http://localhost:4200/login/apps",
   "homePageUrl": "http://fudo.eustrosoft.org"

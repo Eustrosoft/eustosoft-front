@@ -1,0 +1,37 @@
+{
+  "name": "dao-ts",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/dao-ts/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "libs/dao-ts/dist",
+        "main": "libs/dao-ts/src/index.ts",
+        "tsConfig": "libs/dao-ts/tsconfig.lib.json",
+        "assets": ["libs/dao-ts/*.md"]
+      }
+    },
+    "publish": {
+      "command": "node tools/scripts/publish.mjs dao-ts {args.ver} {args.tag}",
+      "dependsOn": ["build"]
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "force": true
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/dao-ts/jest.config.ts"
+      }
+    }
+  },
+  "tags": []
+}

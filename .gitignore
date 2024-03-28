@@ -33,9 +33,14 @@ npm-debug.log
 yarn-error.log
 testem.log
 /typings
+.husky
 
 # System Files
 .DS_Store
 Thumbs.db
 
+# Cache
 .angular
+.nx/cache
+.env*
+!.env.test.example

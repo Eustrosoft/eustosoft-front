@@ -1,23 +1,40 @@
 /*!
- * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ * Copyright (c) 2023-2024. IdrisovII & EustroSoft.org
  *
  * This file is part of eustrosoft-front project.
  * See the LICENSE file at the project root for licensing information.
  */
+@use 'libs/common-ui/src/lib/styles/variables' as vars;
 @use '@angular/material' as mat;
 
 :host {
+  display: flex;
   ::ng-deep {
+    .cdk-virtual-scroll-content-wrapper {
+      max-width: 100%;
+    }
     .mat-mdc-list-item-title:before {
-      height: 1.3rem!important;
+      height: 1.3rem !important;
     }
     .mat-mdc-list-item-title:after {
-      height: 1.3rem!important;
+      height: 1.3rem !important;
     }
+  }
+}
+
+.custom-item {
+  mat-icon {
+    margin: 0;
   }
 }
 
 .chat-has-updates {
   font-weight: bold;
-  color: mat.get-color-from-palette(mat.$deep-purple-palette, 600);
+  color: mat.get-color-from-palette(vars.$deep-purple-palette, 600);
+}
+
+.list-item-hover {
+  background-color: mat.get-color-from-palette(vars.$grey-palette, 600, 0.25);
+  border-left: map-get(vars.$common-sizes, 1) solid
+    mat.get-color-from-palette(vars.$grey-palette, 600);
 }

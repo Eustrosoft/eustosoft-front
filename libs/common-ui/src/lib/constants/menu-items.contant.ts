@@ -1,13 +1,13 @@
 /*
- * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ * Copyright (c) 2023-2024. IdrisovII & EustroSoft.org
  *
  * This file is part of eustrosoft-front project.
  * See the LICENSE file at the project root for licensing information.
  */
 
-import { HeaderMenuItems } from '../interfaces/header-menu-items.interface';
+import { SideNavMenuItems } from '@eustrosoft-front/config';
 
-export const menuItems: HeaderMenuItems = {
+export const menuItems: SideNavMenuItems = {
   dropdowns: [
     {
       title: 'Личный кабинет',

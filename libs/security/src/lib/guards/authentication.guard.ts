@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. IdrisovII & EustroSoft.org
+ * Copyright (c) 2023-2024. IdrisovII & EustroSoft.org
  *
  * This file is part of eustrosoft-front project.
  * See the LICENSE file at the project root for licensing information.
@@ -10,22 +10,18 @@ import { Router, UrlTree } from '@angular/router';
 import { catchError, delay, Observable, of, switchMap } from 'rxjs';
 import { AuthenticationService } from '../services/authentication.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import {
-  PingResponse,
-  QtisRequestResponseInterface,
-} from '@eustrosoft-front/core';
+import { QtisRequestResponse } from '@eustrosoft-front/core';
 import { HttpErrorResponse } from '@angular/common/http';
+import { PingResponse } from '@eustrosoft-front/login-lib';
 
 export const authenticationGuard = (): Observable<UrlTree | boolean> => {
-  const authenticationService: AuthenticationService = inject(
-    AuthenticationService
-  );
-  const snackBar: MatSnackBar = inject(MatSnackBar);
-  const router: Router = inject(Router);
+  const authenticationService = inject(AuthenticationService);
+  const snackBar = inject(MatSnackBar);
+  const router = inject(Router);
 
   // TODO локализация ошибок
-  return authenticationService.getAuthenticationInfo().pipe(
-    switchMap((pingResponse: QtisRequestResponseInterface<PingResponse>) => {
+  return authenticationService.pingRes$.pipe(
+    switchMap((pingResponse: QtisRequestResponse<PingResponse>) => {
       if (pingResponse.r[0].e !== 0) {
         snackBar.open('Authenticate in order to access this page', 'Close');
         return of(router.createUrlTree(['login'])).pipe(delay(2000));
@@ -36,9 +32,9 @@ export const authenticationGuard = (): Observable<UrlTree | boolean> => {
     catchError((err: HttpErrorResponse) => {
       snackBar.open(
         `${err.status} ${err.statusText} | Error text: ${err.error}`,
-        'Close'
+        'Close',
       );
       return of(false);
-    })
+    }),
   );
 };
