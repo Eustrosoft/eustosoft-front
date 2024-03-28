@@ -1,6 +1,6 @@
 {
   "name": "eustrosoft-front",
-  "version": "0.0.0",
+  "version": "1.1.0",
   "license": "MIT",
   "scripts": {
     "start:login": "npx nx run login:serve",
