@@ -68,7 +68,7 @@ export class ExplorerService {
           () => !!config.shareUrl,
           of(`${config.shareUrl}${path}`),
           of(`${FallbackConfig.shareUrl}${path}`),
-        ).pipe(map(() => this.replaceOriginPipe.transform(config.shareUrl))),
+        ).pipe(map((url) => this.replaceOriginPipe.transform(url))),
       ),
     );
   }
