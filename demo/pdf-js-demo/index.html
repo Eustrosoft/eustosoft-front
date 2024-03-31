@@ -1,0 +1,30 @@
+<!--
+  ~ Copyright (c) 2024. IdrisovII & EustroSoft.org
+  ~
+  ~ This file is part of eustrosoft-front project.
+  ~ See the LICENSE file at the project root for licensing information.
+  -->
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body style="height: 100vh; margin: 0; display: flex">
+    <!-- https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf -->
+    <!-- After URL Encode -->
+    <!-- https%3A%2F%2Fwww.w3.org%2FWAI%2FER%2Ftests%2Fxhtml%2Ftestfiles%2Fresources%2Fpdf%2Fdummy.pdf -->
+    <!-- Paste URL encoded link to `file` query param ?file=https%3A%2F%2Fwww.w3.org%2FWAI%2FER%2Ftests%2Fxhtml%2Ftestfiles%2Fresources%2Fpdf%2Fdummy.pdf-->
+    <!-- If error `file origin does not match viewer's` appears - add your local or other origin to HOSTED_VIEWER_ORIGINS array in demo/pdf-js-demo/pdfjs-4.0.379/web/viewer.mjs:3470 -->
+    <iframe
+      style="flex: auto"
+      src="./pdfjs-4.0.379/web/viewer.html?file=compressed.tracemonkey-pldi-09.pdf"
+    ></iframe>
+  </body>
+</html>
