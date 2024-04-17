@@ -28,6 +28,7 @@ import {
   concat,
   EMPTY,
   filter,
+  first,
   map,
   merge,
   Observable,
@@ -260,8 +261,8 @@ export class ExplorerComponent implements OnInit {
     this.navigateBack$
       .asObservable()
       .pipe(
-        tap(() => {
-          const path = this.path$.getValue();
+        switchMap(() => this.explorerPathService.getLastPathState()),
+        tap((path) => {
           const isRoot = path === '/' || path === '';
           if (!isRoot) {
             this.path$.next(
@@ -294,15 +295,23 @@ export class ExplorerComponent implements OnInit {
   }
 
   copyPathLink(): void {
-    const httpParams = `?${new HttpParams({
-      fromObject: { path: this.path$.getValue() },
-    }).toString()}`;
-    this.clipboard.copy(`${this.document.location.href}${httpParams}`);
-    this.snackBar.open(
-      this.translateService.instant('EXPLORER.LINK_COPIED_TO_CLIPBOARD'),
-      'close',
-      { duration: 1000 },
-    );
+    this.explorerPathService
+      .getLastPathState()
+      .pipe(
+        first(),
+        tap((path) => {
+          const httpParams = `?${new HttpParams({
+            fromObject: { path },
+          }).toString()}`;
+          this.clipboard.copy(`${this.document.location.href}${httpParams}`);
+          this.snackBar.open(
+            this.translateService.instant('EXPLORER.LINK_COPIED_TO_CLIPBOARD'),
+            'close',
+            { duration: 1000 },
+          );
+        }),
+      )
+      .subscribe();
   }
 
   filesDroppedOnFolder(event: {
@@ -550,12 +559,12 @@ export class ExplorerComponent implements OnInit {
     this.explorerService
       .makeDownloadLink(row.fullPath, ExplorerDownloadParams.PATH)
       .pipe(
+        first(),
         tap((link) => {
           this.router.navigate([row.previewRoute], {
             state: { link, extension: row.fileName.split('.').pop() },
           });
         }),
-        take(1),
       )
       .subscribe();
   }
