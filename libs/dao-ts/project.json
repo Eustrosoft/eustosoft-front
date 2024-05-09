@@ -3,6 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/dao-ts/src",
   "projectType": "library",
+  "tags": [],
   "targets": {
     "build": {
       "executor": "@nx/js:tsc",
@@ -20,7 +21,6 @@
     },
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"],
       "options": {
         "force": true
       }
@@ -32,6 +32,5 @@
         "jestConfig": "libs/dao-ts/jest.config.ts"
       }
     }
-  },
-  "tags": []
+  }
 }

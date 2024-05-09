@@ -4,6 +4,7 @@
   "projectType": "application",
   "sourceRoot": "apps/qtis-test-suite/src",
   "prefix": "eustrosoft-front",
+  "tags": [],
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:browser",
@@ -114,8 +115,7 @@
       }
     },
     "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
@@ -131,6 +131,5 @@
         "staticFilePath": "dist/apps/qtis-test-suite/browser"
       }
     }
-  },
-  "tags": []
+  }
 }
