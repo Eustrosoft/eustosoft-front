@@ -10,7 +10,6 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  HostListener,
   inject,
   Input,
   OnInit,
@@ -34,13 +33,14 @@ import { LoginDialogComponent } from '../login-dialog/login-dialog.component';
 import { LoginDialogData } from '../login-dialog/login-dialog-data.interface';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { InputTypes, LoginForm } from '@eustrosoft-front/core';
-import { BreakpointsService } from '../../services/breakpoints.service';
 import { APP_CONFIG } from '@eustrosoft-front/config';
 import { MatButtonModule } from '@angular/material/button';
 import { AsyncPipe, NgFor, NgIf, NgStyle } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { BreakpointsService } from '../../services/breakpoints.service';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'eustrosoft-front-login',
@@ -100,12 +100,9 @@ export class LoginComponent implements OnInit, AfterViewInit {
     },
   ];
   protected readonly InputTypes = InputTypes;
-  protected isSm = this.breakpointsService.isSm();
-
-  @HostListener('window:resize', ['$event'])
-  onWindowResize(): void {
-    this.isSm = this.breakpointsService.isSm();
-  }
+  protected readonly isSm = toSignal(this.breakpointsService.isSm(), {
+    requireSync: true,
+  });
 
   ngOnInit(): void {
     this.form = this.fb.nonNullable.group<LoginForm>({
@@ -125,7 +122,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
         template: this.loginTemplate,
       },
       disableClose: true,
-      minWidth: this.isSm ? '90vw' : '40vw',
+      minWidth: this.isSm() ? '90vw' : '40vw',
     });
   }
 

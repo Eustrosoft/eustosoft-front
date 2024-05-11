@@ -18,7 +18,10 @@
   </mat-drawer>
   <mat-drawer-content class="flex flex-auto">
     <div class="flex flex-auto g-2 overflow-auto mt-3 mx-2">
-      <div class="flex flex-basis-30 flex-shrink-0" [class.display-none]="isSm">
+      <div
+        class="flex flex-basis-30 flex-shrink-0"
+        [class.display-none]="isSm()"
+      >
         <ng-container *ngTemplateOutlet="chatListTemplate"></ng-container>
       </div>
 
@@ -29,7 +32,7 @@
           <h2 class="m-0">
             {{ 'MSG.SELECT_TICKET_CAPTION_TEXT' | translate }}
           </h2>
-          <ng-container *ngIf="isSm">
+          <ng-container *ngIf="isSm()">
             <button
               mat-stroked-button
               type="button"
@@ -104,7 +107,7 @@
       <eustrosoft-front-chat-list
         [chats]="chats"
         [selectedChat]="selectedChat"
-        [removeBorderRadius]="isSm"
+        [removeBorderRadius]="isSm()"
         [chatStatusFilterOptions]="chatVm.chatsStatusFilterOptions || []"
         (chatSelected)="chatSelected($event)"
         (collapseClicked)="drawer.toggle()"

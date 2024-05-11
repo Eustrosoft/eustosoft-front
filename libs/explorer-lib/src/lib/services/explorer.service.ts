@@ -107,9 +107,10 @@ export class ExplorerService {
     content: FileSystemObject[] | undefined;
   }> {
     return of(path).pipe(
-      switchMap((path) =>
-        this.explorerRequestBuilderService.buildViewRequest(path),
-      ),
+      switchMap((path) => {
+        this.explorerPathService.setLastPathState(path);
+        return this.explorerRequestBuilderService.buildViewRequest(path);
+      }),
       switchMap((request: QtisRequestResponse<ViewRequest>) =>
         this.dispatchService
           .dispatch<ViewRequest, ViewResponse>(request)

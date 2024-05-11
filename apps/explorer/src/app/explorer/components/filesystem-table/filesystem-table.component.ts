@@ -9,16 +9,16 @@ import {
   AfterViewInit,
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
   inject,
-  Input,
+  input,
   OnChanges,
-  Output,
-  ViewChild,
+  output,
+  viewChild,
 } from '@angular/core';
 import { BytesToSizePipe } from '@eustrosoft-front/core';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import {
+  ExplorerFileSystemTableCols,
   ExplorerFsObjectTypes,
   FileSystemObject,
   FilesystemTableService,
@@ -31,6 +31,8 @@ import { NgIf, NgSwitch, NgSwitchCase } from '@angular/common';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTableModule } from '@angular/material/table';
 import { FilesDropZoneDirective } from '../../directives/files-drop-zone.directive';
+import { debounceTime, Subject } from 'rxjs';
+import { outputFromObservable } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'eustrosoft-front-filesystem-table',
@@ -54,37 +56,41 @@ import { FilesDropZoneDirective } from '../../directives/files-drop-zone.directi
   ],
 })
 export class FilesystemTableComponent implements OnChanges, AfterViewInit {
-  @Input() content!: FileSystemObject[];
-  @Output() openClicked = new EventEmitter<FileSystemObject>();
-  @Output() downloadClicked = new EventEmitter<FileSystemObject[]>();
-  @Output() previewClicked = new EventEmitter<FileSystemObject>();
-  @Output() shareClicked = new EventEmitter<FileSystemObject[]>();
-  @Output() versionsClicked = new EventEmitter<FileSystemObject[]>();
-  @Output() renameClicked = new EventEmitter<FileSystemObject>();
-  @Output() moveClicked = new EventEmitter<FileSystemObject[]>();
-  @Output() copyClicked = new EventEmitter<FileSystemObject[]>();
-  @Output() deleteClicked = new EventEmitter<FileSystemObject[]>();
-  @Output() selectionChanged = new EventEmitter<FileSystemObject[]>();
-  @Output() filesDroppedOnFolder = new EventEmitter<{
+  readonly content = input.required<FileSystemObject[]>();
+
+  protected readonly openClicked$ = new Subject<FileSystemObject>();
+
+  readonly openClicked = outputFromObservable(
+    this.openClicked$.asObservable().pipe(debounceTime(150)),
+  );
+  readonly downloadClicked = output<FileSystemObject[]>();
+  readonly previewClicked = output<FileSystemObject>();
+  readonly shareClicked = output<FileSystemObject[]>();
+  readonly versionsClicked = output<FileSystemObject[]>();
+  readonly renameClicked = output<FileSystemObject>();
+  readonly moveClicked = output<FileSystemObject[]>();
+  readonly copyClicked = output<FileSystemObject[]>();
+  readonly deleteClicked = output<FileSystemObject[]>();
+  readonly filesDroppedOnFolder = output<{
     files: File[];
     fsObj: FileSystemObject;
   }>();
 
-  @ViewChild(MatSort) sort!: MatSort;
+  readonly sort = viewChild.required<MatSort>(MatSort);
 
   protected readonly filesystemTableService = inject(FilesystemTableService);
-  protected readonly fsObjTypes = ExplorerFsObjectTypes;
+  protected readonly ExplorerFsObjectTypes = ExplorerFsObjectTypes;
   protected readonly displayedColumns: string[] = [
-    'select',
-    'fileName',
-    'space',
-    'description',
-    'securityLevel',
-    'actions',
+    ExplorerFileSystemTableCols.SELECT,
+    ExplorerFileSystemTableCols.FILENAME,
+    ExplorerFileSystemTableCols.SPACE,
+    ExplorerFileSystemTableCols.DESCRIPTION,
+    ExplorerFileSystemTableCols.SECURITY_LEVEL,
+    ExplorerFileSystemTableCols.ACTIONS,
   ];
 
   ngAfterViewInit(): void {
-    this.filesystemTableService.dataSource.sort = this.sort;
+    this.filesystemTableService.dataSource.sort = this.sort();
     this.filesystemTableService.dataSource.sortingDataAccessor = (
       item: FileSystemObject,
       property: string,
@@ -101,44 +107,6 @@ export class FilesystemTableComponent implements OnChanges, AfterViewInit {
   }
 
   ngOnChanges(): void {
-    this.filesystemTableService.dataSource.data = this.content;
-  }
-
-  isAllSelected(): boolean {
-    const numSelected = this.filesystemTableService.selection.selected.length;
-    const numRows = this.filesystemTableService.dataSource.data.length;
-    return numSelected === numRows;
-  }
-
-  toggleAllRows(): void {
-    if (this.isAllSelected()) {
-      this.filesystemTableService.selection.clear();
-      return;
-    }
-
-    this.filesystemTableService.selection.select(
-      ...this.filesystemTableService.dataSource.data,
-    );
-  }
-
-  selectRange(event: Event, row: FileSystemObject): void {
-    if (
-      event instanceof KeyboardEvent &&
-      event.shiftKey &&
-      this.filesystemTableService.selection.selected.length > 0
-    ) {
-      const lastIndex =
-        this.filesystemTableService.dataSource.data.indexOf(row);
-      const firstIndex = this.filesystemTableService.dataSource.data.indexOf(
-        this.filesystemTableService.selection.selected[0],
-      );
-      const start = Math.min(firstIndex, lastIndex);
-      const end = Math.max(firstIndex, lastIndex);
-      for (let i = start + 1; i < end; i++) {
-        this.filesystemTableService.selection.select(
-          this.filesystemTableService.dataSource.data[i],
-        );
-      }
-    }
+    this.filesystemTableService.dataSource.data = this.content();
   }
 }

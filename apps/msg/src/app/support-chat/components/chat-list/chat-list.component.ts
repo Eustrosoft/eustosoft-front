@@ -48,7 +48,7 @@ import {
   CdkVirtualScrollViewport,
 } from '@angular/cdk/scrolling';
 import { tap } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'eustrosoft-front-chat-list',
@@ -96,7 +96,9 @@ export class ChatListComponent implements OnInit {
 
   protected trackByFn = trackByZridFunction;
   protected checkedStatuses = signal<{ [key: string]: boolean }>({});
-  protected isSm = this.breakpointsService.isSm();
+  protected isSm = toSignal(this.breakpointsService.isSm(), {
+    requireSync: true,
+  });
 
   ngOnInit(): void {
     this.msgService

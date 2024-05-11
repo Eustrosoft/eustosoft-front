@@ -40,6 +40,7 @@ import {
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'eustrosoft-front-chat-view',
@@ -88,7 +89,9 @@ export class ChatViewComponent implements OnChanges, AfterViewInit {
   protected messageInEdit: ChatMessage | undefined = undefined;
   protected readonly MSG_CHAT_STATUS = MsgChatStatus;
   protected trackByFn = trackByZridFunction;
-  protected isSm = this.breakpointsService.isSm();
+  protected isSm = toSignal(this.breakpointsService.isSm(), {
+    requireSync: true,
+  });
 
   protected userInfo$ = this.authenticationService.userInfo$;
 

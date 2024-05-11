@@ -6,27 +6,23 @@
  */
 
 import {
-  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
-  HostListener,
   inject,
   Input,
   Output,
-  QueryList,
   TemplateRef,
-  ViewChildren,
 } from '@angular/core';
 import { AuthenticationService } from '@eustrosoft-front/security';
 import { APP_CONFIG } from '@eustrosoft-front/config';
-import { MatMenu, MatMenuModule, MatMenuPanel } from '@angular/material/menu';
-import { menuItems } from '../../constants/menu-items.contant';
+import { MatMenuModule } from '@angular/material/menu';
 import { BreakpointsService } from '../../services/breakpoints.service';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'eustrosoft-front-header',
@@ -44,9 +40,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     AsyncPipe,
   ],
 })
-export class HeaderComponent implements AfterViewInit {
-  @ViewChildren(MatMenu) menus!: QueryList<MatMenu>;
-
+export class HeaderComponent {
   @Input() appsListTemplate!: TemplateRef<unknown>;
   @Input() texts!: { title: string; appName: string; appsButtonText: string };
   @Output() sidenavToggleClicked = new EventEmitter<void>();
@@ -59,21 +53,9 @@ export class HeaderComponent implements AfterViewInit {
   protected isAuthenticated$ =
     this.authenticationService.isAuthenticated$.asObservable();
   protected userInfo$ = this.authenticationService.userInfo$;
-  protected isSm = this.breakpointsService.isSm();
-
-  menuItems = menuItems;
-  menuTriggers: MatMenuPanel[] = [];
-
-  @HostListener('window:resize', ['$event'])
-  onWindowResize(): void {
-    this.isSm = this.breakpointsService.isSm();
-  }
-
-  ngAfterViewInit(): void {
-    this.menuTriggers = this.menus
-      .map((menu) => menu)
-      .filter((menu) => menu.backdropClass !== 'ignore');
-  }
+  protected isSm = toSignal(this.breakpointsService.isSm(), {
+    requireSync: true,
+  });
 
   logout(): void {
     this.logoutClicked.emit();

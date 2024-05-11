@@ -14,7 +14,6 @@ import {
 import { CommonModule } from '@angular/common';
 import { MatAccordion } from '@angular/material/expansion';
 import { QtisSubsystemTestsService } from '@eustrosoft-front/qtis-test-suite-lib';
-import { BreakpointsService } from '@eustrosoft-front/common-ui';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabGroup, MatTabsModule } from '@angular/material/tabs';
 import { TestDataFormComponent } from './components/test-data-form/test-data-form.component';
@@ -38,8 +37,6 @@ import { TestResultsComponent } from './components/test-results/test-results.com
 })
 export class TestSuiteComponent {
   private readonly qtisTestSuiteService = inject(QtisSubsystemTestsService);
-  private readonly breakpointsService = inject(BreakpointsService);
-  protected readonly isSm = this.breakpointsService.isSm();
   protected readonly fsTests$ = this.qtisTestSuiteService.fsTests$;
   protected readonly msgTests$ = this.qtisTestSuiteService.msgTests$;
 

@@ -27,5 +27,7 @@ export * from './lib/functions/i18n-http-loader.function';
 export * from './lib/functions/is-empty.function';
 export * from './lib/di/preconfigured-translate-service.token';
 export * from './lib/di/small-screen-resolution.token';
+export * from './lib/di/window.token';
+export * from './lib/di/window-resize.token';
 export * from './lib/classes/custom-location-strategy.class';
 export * from './lib/core';

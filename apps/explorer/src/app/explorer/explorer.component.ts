@@ -46,8 +46,9 @@ import {
 import {
   DispatchService,
   PRECONFIGURED_TRANSLATE_SERVICE,
+  WINDOW,
 } from '@eustrosoft-front/core';
-import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import {
   CreateDialogData,
@@ -81,7 +82,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { UploadOverlayComponent } from './components/upload-overlay/upload-overlay.component';
 import { UploadDialogComponent } from './components/upload-dialog/upload-dialog.component';
 import { Clipboard } from '@angular/cdk/clipboard';
-import { AsyncPipe, DOCUMENT, NgIf } from '@angular/common';
+import { AsyncPipe, NgIf } from '@angular/common';
 import { ShareDialogComponent } from './components/share-dialog/share-dialog.component';
 import { RenameDialogComponent } from './components/rename-dialog/rename-dialog.component';
 import { FilesystemTableComponent } from './components/filesystem-table/filesystem-table.component';
@@ -90,7 +91,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { SecurityLevels } from '@eustrosoft-front/security';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'eustrosoft-front-explorer',
@@ -135,13 +136,16 @@ export class ExplorerComponent implements OnInit {
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly fb = inject(FormBuilder);
   private readonly clipboard = inject(Clipboard);
-  private readonly document = inject(DOCUMENT);
+  private readonly window = inject(WINDOW);
   private readonly explorerUploadItemFormFactoryService = inject(
     ExplorerUploadItemFormFactoryService,
   );
-  private readonly breakpointsService = inject(BreakpointsService);
+
   protected readonly filesystemTableService = inject(FilesystemTableService);
-  protected readonly isSm = this.breakpointsService.isSm();
+  protected readonly breakpointsService = inject(BreakpointsService);
+  protected isSm = toSignal(this.breakpointsService.isSm(), {
+    requireSync: true,
+  });
 
   private readonly startUpload$ = new Subject<void>();
   private readonly fileUploadCancelled$ = new Subject<void>();
@@ -170,9 +174,7 @@ export class ExplorerComponent implements OnInit {
     this.refresh$.asObservable().pipe(startWith(undefined)),
   ]).pipe(
     switchMap(([path]) => {
-      this.explorerPathService.setLastPathState(path);
       return this.explorerService.getContents(path).pipe(
-        // startWith({ isLoading: true, isError: false, content: undefined })
         catchError((err: HttpErrorResponse) => {
           this.path$.next('/');
           this.snackBar.open(err.error, 'close');
@@ -192,9 +194,8 @@ export class ExplorerComponent implements OnInit {
       ),
     );
 
-  protected fileControl = new FormControl<File[]>([], { nonNullable: true });
+  protected fileControl = this.fb.nonNullable.control<File[]>([]);
 
-  protected overlayHidden = true;
   ngOnInit(): void {
     this.initializePathObs();
     this.initializeUploadObs();
@@ -229,7 +230,6 @@ export class ExplorerComponent implements OnInit {
               .value as SecurityLevels) ?? SecurityLevels.PUBLIC_PLUS,
           );
         this.explorerUploadItemsService.uploadItems$.next(formArray);
-        // this.overlayHidden = false;
         return formArray;
       }),
     );
@@ -303,7 +303,7 @@ export class ExplorerComponent implements OnInit {
           const httpParams = `?${new HttpParams({
             fromObject: { path },
           }).toString()}`;
-          this.clipboard.copy(`${this.document.location.href}${httpParams}`);
+          this.clipboard.copy(`${this.window.location.href}${httpParams}`);
           this.snackBar.open(
             this.translateService.instant('EXPLORER.LINK_COPIED_TO_CLIPBOARD'),
             'close',
@@ -343,7 +343,6 @@ export class ExplorerComponent implements OnInit {
       this.fb.array<FormGroup<UploadItemForm>>([]),
     );
     this.teardownUpload$.next();
-    this.overlayHidden = true;
     this.inputFileComponent.clear();
   }
 
@@ -365,7 +364,7 @@ export class ExplorerComponent implements OnInit {
             .value as SecurityLevels) ?? SecurityLevels.PUBLIC_PLUS,
         descriptionInputDefaultValue: '',
       },
-      minWidth: this.isSm ? '90vw' : '50vw',
+      minWidth: this.isSm() ? '90vw' : '50vw',
     });
 
     dialogRef
@@ -401,7 +400,7 @@ export class ExplorerComponent implements OnInit {
         nameInputValue: row.fileName,
         descriptionInputValue: row.description,
       },
-      minWidth: this.isSm ? '90vw' : '50vw',
+      minWidth: this.isSm() ? '90vw' : '50vw',
     });
 
     dialogRef
@@ -432,7 +431,7 @@ export class ExplorerComponent implements OnInit {
         fsObjects: rows,
         defaultPath: this.path$.getValue(),
       },
-      width: this.isSm ? '90vw' : '50vw',
+      width: this.isSm() ? '90vw' : '50vw',
     });
 
     dialogRef
@@ -463,7 +462,7 @@ export class ExplorerComponent implements OnInit {
         fsObjects: rows,
         defaultPath: this.path$.getValue(),
       },
-      width: this.isSm ? '90vw' : '50vw',
+      width: this.isSm() ? '90vw' : '50vw',
     });
 
     dialogRef
@@ -540,7 +539,7 @@ export class ExplorerComponent implements OnInit {
       .makeDownloadLink(rows[0].fullPath, ExplorerDownloadParams.PATH)
       .pipe(
         tap((url: string) => {
-          this.document.location.href = url;
+          this.window.location.href = url;
         }),
         catchError((err) => this.explorerService.handleError(err)),
         takeUntilDestroyed(this.destroyRef),
@@ -585,7 +584,7 @@ export class ExplorerComponent implements OnInit {
         shareLinkObs$,
         shareOWikiLinkObs$,
       },
-      minWidth: this.isSm ? '90vw' : '50vw',
+      minWidth: this.isSm() ? '90vw' : '50vw',
     });
 
     const dialogClosed$ = dialogRef.afterClosed();
@@ -611,7 +610,7 @@ export class ExplorerComponent implements OnInit {
   goToVersions(rows: FileSystemObject[]): void {
     const urls = this.explorerPathService.makeVersionLinks(rows);
     for (const url of urls) {
-      this.document.defaultView!.open(url, '_blank');
+      this.window.open(url, '_blank');
     }
   }
 
@@ -619,7 +618,7 @@ export class ExplorerComponent implements OnInit {
     const dialogRef = this.dialog.open<UploadDialogComponent, undefined, void>(
       UploadDialogComponent,
       {
-        width: this.isSm ? '90vw' : '50vw',
+        width: this.isSm() ? '90vw' : '50vw',
       },
     );
 

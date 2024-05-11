@@ -17,7 +17,7 @@
         <button
           mat-icon-button
           type="button"
-          [class.display-none]="!isSm"
+          [class.display-none]="!isSm()"
           (click)="collapseClicked.emit()"
         >
           <mat-icon>menu</mat-icon>

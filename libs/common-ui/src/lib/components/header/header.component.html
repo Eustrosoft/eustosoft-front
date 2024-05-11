@@ -19,7 +19,7 @@
     <div class="flex align-items-center justify-content-end">
       <ng-container *ngIf="vm.isAuthenticated">
         <ng-container *ngIf="userInfo$ | async as info">
-          <ng-container *ngIf="!isSm">
+          <ng-container *ngIf="!isSm()">
             <span class="px-3 text-truncate" [title]="info.userFullName">
               {{ info.userFullName }}
             </span>

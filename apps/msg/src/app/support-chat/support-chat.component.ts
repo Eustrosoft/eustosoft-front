@@ -8,7 +8,6 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  HostListener,
   inject,
   OnDestroy,
   OnInit,
@@ -65,6 +64,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { AsyncPipe, NgIf, NgTemplateOutlet } from '@angular/common';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { CachedDictionaryService, DicValue } from '@eustrosoft-front/dic';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'eustrosoft-front-support-chat',
@@ -186,16 +186,12 @@ export class SupportChatComponent implements OnInit, OnDestroy {
 
   protected selectedChat: Chat | undefined = undefined;
   protected selectedStatuses = signal<MsgChatStatus[]>(InitialFiltersConstant);
-  protected isCollapsed = true;
-  protected isSm = this.breakpointsService.isSm();
-
-  @HostListener('window:resize', ['$event'])
-  onWindowResize(): void {
-    this.setUpSidebar();
-  }
+  protected isSm = toSignal(this.breakpointsService.isSm(), {
+    requireSync: true,
+  });
+  protected isCollapsed = signal(this.isSm());
 
   ngOnInit(): void {
-    this.setUpSidebar();
     this.msgSubjectsService.createSubject(
       MsgSubjects.MESSAGE_SUCCESSFULLY_SENT,
     );
@@ -205,25 +201,15 @@ export class SupportChatComponent implements OnInit, OnDestroy {
     this.msgSubjectsService.completeAll();
   }
 
-  setUpSidebar(): void {
-    if (this.breakpointsService.isSm()) {
-      this.isCollapsed = true;
-      this.isSm = true;
-    } else {
-      this.isCollapsed = false;
-      this.isSm = false;
-    }
-  }
-
   toggleSidebar(): void {
-    this.isCollapsed = !this.isCollapsed;
+    this.isCollapsed.set(!this.isCollapsed());
   }
 
   chatSelected(chat: Chat): void {
     this.selectedChat = chat;
     this.selectedChat.hasUpdates = false;
     this.msgService.fetchChatMessagesByChatId$.next(chat.zoid);
-    if (this.isSm) {
+    if (this.isSm()) {
       this.toggleSidebar();
     }
   }
@@ -242,7 +228,6 @@ export class SupportChatComponent implements OnInit, OnDestroy {
         securityLevelOptions$: this.securityLevelOptions$,
         scopeOptions$: this.scopeOptions$,
       },
-      width: this.isSm ? '100vw' : '50vw',
     });
 
     const dialogClosed$ = dialogRef.afterClosed();
@@ -376,7 +361,6 @@ export class SupportChatComponent implements OnInit, OnDestroy {
       data: {
         currentChatSubject: chat.subject,
       },
-      width: this.isSm ? '100vw' : '50vw',
     });
 
     dialogRef
