@@ -20,12 +20,10 @@ import {
   PromptDialogComponent,
   PromptDialogData,
 } from '@eustrosoft-front/common-ui';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import {
-  BehaviorSubject,
   catchError,
   combineLatest,
-  concat,
   EMPTY,
   filter,
   first,
@@ -34,12 +32,9 @@ import {
   Observable,
   of,
   repeat,
-  shareReplay,
-  skip,
   startWith,
   Subject,
   switchMap,
-  take,
   takeUntil,
   tap,
 } from 'rxjs';
@@ -133,7 +128,6 @@ export class ExplorerComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
   private readonly translateService = inject(PRECONFIGURED_TRANSLATE_SERVICE);
-  private readonly activatedRoute = inject(ActivatedRoute);
   private readonly fb = inject(FormBuilder);
   private readonly clipboard = inject(Clipboard);
   private readonly window = inject(WINDOW);
@@ -151,25 +145,11 @@ export class ExplorerComponent implements OnInit {
   private readonly fileUploadCancelled$ = new Subject<void>();
   private readonly teardownUpload$ = new Subject<void>();
 
-  protected readonly refresh$ = new Subject<void>();
-  protected readonly navigateBack$ = new Subject<void>();
-  protected readonly path$ = new BehaviorSubject<string>('/');
-  protected readonly path$$ = concat(
-    of(this.explorerPathService.getLastPathState()),
-    this.path$.asObservable().pipe(skip(1)),
-  ).pipe(shareReplay(1));
-  protected readonly currentFolder$ = new BehaviorSubject<
-    FileSystemObject | undefined
-  >(undefined);
   protected upload$!: Observable<unknown>;
   protected fileControlChanges$!: Observable<
     FormArray<FormGroup<UploadItemForm>>
   >;
-  protected content$: Observable<{
-    isLoading: boolean;
-    isError: boolean;
-    content: FileSystemObject[] | undefined;
-  }> = this.explorerPathService.getContents$();
+  protected content$ = this.explorerPathService.getContents$();
 
   protected selectedRows$ = this.filesystemTableService.selection.changed
     .asObservable()
@@ -185,24 +165,12 @@ export class ExplorerComponent implements OnInit {
   ngOnInit(): void {
     this.initializePathObs();
     this.initializeUploadObs();
-    this.initializeNavigateBackObs();
   }
 
   initializePathObs(): void {
-    // this.activatedRoute.queryParamMap
-    //   .pipe(
-    //     map((query) => query.get('path') ?? undefined),
-    //     filter(
-    //       (queryPath): queryPath is string => typeof queryPath !== 'undefined',
-    //     ),
-    //     tap((path) => {
-    //       this.explorerPathService.setLastPathState(path);
-    //       this.clearQueryParams();
-    //       this.explorerPathService.setPath(path);
-    //     }),
-    //     takeUntilDestroyed(this.destroyRef),
-    //   )
-    //   .subscribe();
+    this.explorerPathService.pathQueryParam$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe();
   }
 
   initializeUploadObs(): void {
@@ -211,8 +179,8 @@ export class ExplorerComponent implements OnInit {
         const formArray =
           this.explorerUploadItemFormFactoryService.makeUploadItemsForm(
             files,
-            this.path$.getValue(),
-            (this.currentFolder$.getValue()?.securityLevel
+            this.explorerPathService.getPath()(),
+            (this.explorerPathService.getCurrentFolder()()?.securityLevel
               .value as SecurityLevels) ?? SecurityLevels.PUBLIC_PLUS,
           );
         this.explorerUploadItemsService.uploadItems$.next(formArray);
@@ -226,12 +194,12 @@ export class ExplorerComponent implements OnInit {
     ]).pipe(
       switchMap(() =>
         this.explorerUploadService
-          .uploadHexString(this.path$.getValue())
+          .uploadHexString(this.explorerPathService.getPath()())
           .pipe(takeUntil(this.teardownUpload$)),
       ),
       tap(() => {
         this.closeOverlay();
-        this.refresh$.next();
+        this.explorerPathService.refreshCurrentPath();
       }),
       catchError((err: HttpErrorResponse) => {
         this.snackBar.open(err.error, 'close');
@@ -243,37 +211,17 @@ export class ExplorerComponent implements OnInit {
     );
   }
 
-  initializeNavigateBackObs(): void {
-    this.navigateBack$
-      .asObservable()
-      .pipe(
-        switchMap(() => of(this.explorerPathService.getLastPathState())),
-        tap((path) => {
-          const isRoot = path === '/' || path === '';
-          if (!isRoot) {
-            this.path$.next(
-              this.explorerPathService.getFullPathToLastFolder(path),
-            );
-          }
-        }),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe();
-  }
-
   open(fsElem: FileSystemObject): void {
     if (fsElem.type !== ExplorerFsObjectTypes.DIRECTORY) {
       return;
     }
     this.filesystemTableService.selection.clear();
-    this.path$.next(fsElem.fullPath);
     this.explorerPathService.setPath(fsElem.fullPath);
-    this.currentFolder$.next(fsElem);
+    this.explorerPathService.setCurrentFolder(fsElem);
   }
 
   openByPath(path: string): void {
     this.filesystemTableService.selection.clear();
-    this.path$.next(path);
     this.explorerPathService.setPath(path);
   }
 
@@ -289,22 +237,16 @@ export class ExplorerComponent implements OnInit {
   }
 
   copyPathLink(): void {
-    of(this.explorerPathService.getLastPathState())
-      .pipe(
-        first(),
-        tap((path) => {
-          const httpParams = `?${new HttpParams({
-            fromObject: { path },
-          }).toString()}`;
-          this.clipboard.copy(`${this.window.location.href}${httpParams}`);
-          this.snackBar.open(
-            this.translateService.instant('EXPLORER.LINK_COPIED_TO_CLIPBOARD'),
-            'close',
-            { duration: 1000 },
-          );
-        }),
-      )
-      .subscribe();
+    const path = this.explorerPathService.getPath();
+    const httpParams = `?${new HttpParams({
+      fromObject: { path: path() },
+    }).toString()}`;
+    this.clipboard.copy(`${this.window.location.href}${httpParams}`);
+    this.snackBar.open(
+      this.translateService.instant('EXPLORER.LINK_COPIED_TO_CLIPBOARD'),
+      'close',
+      { duration: 1000 },
+    );
   }
 
   filesDroppedOnFolder(event: {
@@ -353,7 +295,7 @@ export class ExplorerComponent implements OnInit {
         nameInputDefaultValue:
           'EXPLORER.CREATE_FOLDER_DIALOG.NAME_INPUT_DEFAULT_VALUE',
         securityLevelSelectDefaultValue:
-          (this.currentFolder$.getValue()?.securityLevel
+          (this.explorerPathService.getCurrentFolder()()?.securityLevel
             .value as SecurityLevels) ?? SecurityLevels.PUBLIC_PLUS,
         descriptionInputDefaultValue: '',
       },
@@ -368,7 +310,7 @@ export class ExplorerComponent implements OnInit {
         ),
         switchMap((data) =>
           this.explorerService.create(
-            this.path$.getValue(),
+            this.explorerPathService.getPath()(),
             data.name,
             ExplorerFsObjectTypes.DIRECTORY,
             data.description,
@@ -376,9 +318,9 @@ export class ExplorerComponent implements OnInit {
           ),
         ),
         tap(() => {
-          this.refresh$.next();
+          this.explorerPathService.refreshCurrentPath();
         }),
-        take(1),
+        first(),
       )
       .subscribe();
   }
@@ -404,9 +346,9 @@ export class ExplorerComponent implements OnInit {
         ),
         switchMap((data) => this.explorerService.rename(row, data)),
         tap(() => {
-          this.refresh$.next();
+          this.explorerPathService.refreshCurrentPath();
         }),
-        take(1),
+        first(),
       )
       .subscribe();
   }
@@ -422,7 +364,7 @@ export class ExplorerComponent implements OnInit {
         cancelButtonText: 'EXPLORER.MOVE_DIALOG.CANCEL_BUTTON_TEXT',
         submitButtonText: 'EXPLORER.MOVE_DIALOG.SUBMIT_BUTTON_TEXT',
         fsObjects: rows,
-        defaultPath: this.path$.getValue(),
+        defaultPath: this.explorerPathService.getPath()(),
       },
       width: this.isSm() ? '90vw' : '50vw',
     });
@@ -435,9 +377,9 @@ export class ExplorerComponent implements OnInit {
         tap(({ to }) => {
           const lastIndex = to[0].lastIndexOf('/');
           const path = to[0].substring(0, lastIndex) || '/';
-          this.path$.next(path);
+          this.explorerPathService.setPath(path);
         }),
-        take(1),
+        first(),
       )
       .subscribe();
   }
@@ -453,7 +395,7 @@ export class ExplorerComponent implements OnInit {
         cancelButtonText: 'EXPLORER.COPY_DIALOG.CANCEL_BUTTON_TEXT',
         submitButtonText: 'EXPLORER.COPY_DIALOG.SUBMIT_BUTTON_TEXT',
         fsObjects: rows,
-        defaultPath: this.path$.getValue(),
+        defaultPath: this.explorerPathService.getPath()(),
       },
       width: this.isSm() ? '90vw' : '50vw',
     });
@@ -484,10 +426,10 @@ export class ExplorerComponent implements OnInit {
         tap(([_copyResponse, to]) => {
           const lastIndex = to[0].lastIndexOf('/');
           const path = to[0].substring(0, lastIndex);
-          this.path$.next(path);
+          this.explorerPathService.setPath(path);
         }),
         catchError((err) => this.explorerService.handleError(err)),
-        take(1),
+        first(),
       )
       .subscribe();
   }
@@ -519,10 +461,10 @@ export class ExplorerComponent implements OnInit {
         filter((val) => Boolean(val)),
         switchMap(() => this.explorerService.delete(rows)),
         tap(() => {
-          this.refresh$.next();
+          this.explorerPathService.refreshCurrentPath();
           this.filesystemTableService.selection.clear();
         }),
-        take(1),
+        first(),
       )
       .subscribe();
   }
@@ -658,12 +600,5 @@ export class ExplorerComponent implements OnInit {
         takeUntil(dialogClosed$),
       )
       .subscribe();
-  }
-
-  clearQueryParams(): void {
-    this.router.navigate([], {
-      queryParams: null,
-      queryParamsHandling: null,
-    });
   }
 }

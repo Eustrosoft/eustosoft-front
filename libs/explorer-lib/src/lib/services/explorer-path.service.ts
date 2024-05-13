@@ -25,12 +25,10 @@ import {
   catchError,
   combineLatest,
   EMPTY,
-  finalize,
-  iif,
+  filter,
   map,
   Observable,
   of,
-  repeat,
   startWith,
   switchMap,
   tap,
@@ -59,13 +57,28 @@ export class ExplorerPathService {
   );
   private readonly lastPathStorageKey = 'qtis-explorer-last-path-';
 
-  private readonly userId = toSignal(
+  private readonly userIdSignal = toSignal(
     this.authenticationService.userInfo$.pipe(
       map((userInfo) => userInfo.userId),
     ),
     { requireSync: true },
   );
-  private readonly pathSignal = signal<string>(this.getLastPathState());
+
+  private readonly pathSignal = signal<string>(this.getLastPathState(), {
+    equal: () => false,
+  });
+
+  private readonly fetchSignal = signal<null>(null, {
+    equal: () => false,
+  });
+
+  private readonly currentFolderSignal = signal<FileSystemObject | null>(null, {
+    equal: () => false,
+  });
+
+  private readonly pathSignalObs$ = toObservable<string>(this.pathSignal);
+
+  private readonly fetchSignalObs$ = toObservable<null>(this.fetchSignal);
 
   setPath(path: string): void {
     this.pathSignal.set(path);
@@ -75,71 +88,65 @@ export class ExplorerPathService {
     return this.pathSignal.asReadonly();
   }
 
-  private readonly pathSignalObs$ = toObservable<string>(this.pathSignal);
-
-  private readonly fetchSignal = signal<null>(null);
-
   refreshCurrentPath(): void {
     this.fetchSignal.set(null);
   }
 
-  private readonly fetchSignalObs$ = toObservable<null>(this.fetchSignal);
+  setCurrentFolder(folder: FileSystemObject | null): void {
+    this.currentFolderSignal.set(folder);
+  }
+
+  getCurrentFolder(): Signal<FileSystemObject | null> {
+    return this.currentFolderSignal.asReadonly();
+  }
+
+  pathQueryParam$ = this.activatedRoute.queryParamMap.pipe(
+    map((query) => query.get('path') ?? null),
+    // TODO Lyasrt валидация path по регулярному выражению
+    filter((queryPath): queryPath is string => queryPath !== null),
+    tap((path) => {
+      this.clearQueryParams();
+      this.setPath(path);
+    }),
+  );
 
   getContents$(): Observable<{
     isLoading: boolean;
     isError: boolean;
-    content: FileSystemObject[] | undefined;
+    content: FileSystemObject[] | null;
   }> {
-    return combineLatest([
-      this.pathSignalObs$.pipe(
-        tap(() => {
-          console.log(123, 123);
-        }),
-        switchMap((pathFromSignal) =>
-          this.activatedRoute.queryParamMap.pipe(
-            switchMap((queryParamMap) =>
-              iif(
-                () => !!queryParamMap.get('path'),
-                of(queryParamMap.get('path') as string).pipe(
-                  // filter(
-                  //   // TODO Lyasrt проверять, что строка соответствует строке пути. То есть числа и символы с разделителем /
-                  //   (queryPath): queryPath is string =>
-                  //     typeof queryPath !== 'undefined',
-                  // ),
-                  map((queryPath) => {
-                    this.clearQueryParams();
-                    console.log(queryPath);
-                    return queryPath;
-                  }),
-                ),
-                of(pathFromSignal),
+    return combineLatest([this.pathSignalObs$, this.fetchSignalObs$]).pipe(
+      switchMap(([pathFromSignal]) =>
+        combineLatest([
+          this.explorerRequestBuilderService.buildViewRequest(pathFromSignal),
+          of(pathFromSignal),
+        ]),
+      ),
+      switchMap(([request, pathFromSignal]) =>
+        combineLatest([
+          this.dispatchService
+            .dispatch<ViewRequest, ViewResponse>(request)
+            .pipe(
+              map((response: QtisRequestResponse<ViewResponse>) =>
+                response.r.flatMap((r: ViewResponse) => r.content),
               ),
+              catchError((err: HttpErrorResponse) => {
+                this.clearQueryParams();
+                this.setPath('/');
+                this.snackBar.open(err.error, 'close');
+                return EMPTY;
+              }),
             ),
-          ),
-        ),
+          of(pathFromSignal),
+        ]),
       ),
-      this.fetchSignalObs$,
-    ]).pipe(
-      switchMap(([path]) => {
-        console.log('path', path);
-        this.setLastPathState(path);
-        return this.explorerRequestBuilderService.buildViewRequest(path);
-      }),
-      switchMap((request: QtisRequestResponse<ViewRequest>) =>
-        this.dispatchService
-          .dispatch<ViewRequest, ViewResponse>(request)
-          .pipe(
-            map((response: QtisRequestResponse<ViewResponse>) =>
-              response.r.flatMap((r: ViewResponse) => r.content),
-            ),
-          ),
-      ),
-      switchMap((contents) =>
+      switchMap(([contents, pathFromSignal]) =>
         combineLatest([
           of(contents),
           this.cachedDictionaryService.securityOptions$,
         ]).pipe(
           switchMap(([contents, securityLevelOptions]) => {
+            this.setLastPathState(pathFromSignal);
             const cont = contents.map<FileSystemObject>((obj) => {
               const matchingDict = securityLevelOptions.find(
                 (dict) => dict.value === obj.securityLevel?.toString(),
@@ -147,7 +154,7 @@ export class ExplorerPathService {
               const ext =
                 obj.fileName.split('.').pop()?.toLowerCase() ??
                 DocumentFileExtensions.Empty;
-              let previewRoute: string | undefined = undefined;
+              let previewRoute: string | null = null;
 
               const isDocExt = Object.values<string>(
                 DocumentFileExtensions,
@@ -173,7 +180,7 @@ export class ExplorerPathService {
                 ...obj,
                 securityLevel: matchingDict ?? {
                   displayText: '',
-                  value: undefined,
+                  value: null,
                 },
                 showPreviewButton: obj.type === ExplorerFsObjectTypes.FILE,
                 previewRoute,
@@ -184,27 +191,23 @@ export class ExplorerPathService {
           }),
         ),
       ),
-      startWith({ isLoading: true, isError: false, content: undefined }),
-      catchError((err: HttpErrorResponse) => {
-        this.setPath('/');
-        this.snackBar.open(err.error, 'close');
-        return EMPTY;
-      }),
-      finalize(() => {
-        console.log('finalized');
-      }),
-      repeat(),
+      startWith({ isLoading: true, isError: false, content: null }),
     );
   }
 
   getLastPathState(): string {
     return (
-      localStorage.getItem(`${this.lastPathStorageKey}${this.userId()}`) ?? '/'
+      localStorage.getItem(
+        `${this.lastPathStorageKey}${this.userIdSignal()}`,
+      ) ?? '/'
     );
   }
 
   setLastPathState(path: string): void {
-    localStorage.setItem(`${this.lastPathStorageKey}${this.userId()}`, path);
+    localStorage.setItem(
+      `${this.lastPathStorageKey}${this.userIdSignal()}`,
+      path,
+    );
   }
 
   getFullPathToLastFolder(path: string): string {

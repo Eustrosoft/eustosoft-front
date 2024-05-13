@@ -104,7 +104,7 @@ export class ExplorerService {
   getContents(path: string): Observable<{
     isLoading: boolean;
     isError: boolean;
-    content: FileSystemObject[] | undefined;
+    content: FileSystemObject[] | null;
   }> {
     return of(path).pipe(
       switchMap((path) => {
@@ -133,7 +133,7 @@ export class ExplorerService {
               const ext =
                 obj.fileName.split('.').pop()?.toLowerCase() ??
                 DocumentFileExtensions.Empty;
-              let previewRoute: string | undefined = undefined;
+              let previewRoute: string | null = null;
 
               const isDocExt = Object.values<string>(
                 DocumentFileExtensions,
@@ -159,7 +159,7 @@ export class ExplorerService {
                 ...obj,
                 securityLevel: matchingDict ?? {
                   displayText: '',
-                  value: undefined,
+                  value: null,
                 },
                 showPreviewButton: obj.type === ExplorerFsObjectTypes.FILE,
                 previewRoute,
