@@ -155,7 +155,7 @@ export class ExplorerComponent implements OnInit {
   protected readonly navigateBack$ = new Subject<void>();
   protected readonly path$ = new BehaviorSubject<string>('/');
   protected readonly path$$ = concat(
-    this.explorerPathService.getLastPathState(),
+    of(this.explorerPathService.getLastPathState()),
     this.path$.asObservable().pipe(skip(1)),
   ).pipe(shareReplay(1));
   protected readonly currentFolder$ = new BehaviorSubject<
@@ -169,21 +169,7 @@ export class ExplorerComponent implements OnInit {
     isLoading: boolean;
     isError: boolean;
     content: FileSystemObject[] | undefined;
-  }> = combineLatest([
-    this.path$$,
-    this.refresh$.asObservable().pipe(startWith(undefined)),
-  ]).pipe(
-    switchMap(([path]) => {
-      return this.explorerService.getContents(path).pipe(
-        catchError((err: HttpErrorResponse) => {
-          this.path$.next('/');
-          this.snackBar.open(err.error, 'close');
-          return EMPTY;
-        }),
-      );
-    }),
-    startWith({ isLoading: true, isError: false, content: undefined }),
-  );
+  }> = this.explorerPathService.getContents$();
 
   protected selectedRows$ = this.filesystemTableService.selection.changed
     .asObservable()
@@ -203,20 +189,20 @@ export class ExplorerComponent implements OnInit {
   }
 
   initializePathObs(): void {
-    this.activatedRoute.queryParamMap
-      .pipe(
-        map((query) => query.get('path') ?? undefined),
-        filter(
-          (queryPath): queryPath is string => typeof queryPath !== 'undefined',
-        ),
-        tap((path) => {
-          this.explorerPathService.setLastPathState(path);
-          this.clearQueryParams();
-          this.path$.next(path);
-        }),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe();
+    // this.activatedRoute.queryParamMap
+    //   .pipe(
+    //     map((query) => query.get('path') ?? undefined),
+    //     filter(
+    //       (queryPath): queryPath is string => typeof queryPath !== 'undefined',
+    //     ),
+    //     tap((path) => {
+    //       this.explorerPathService.setLastPathState(path);
+    //       this.clearQueryParams();
+    //       this.explorerPathService.setPath(path);
+    //     }),
+    //     takeUntilDestroyed(this.destroyRef),
+    //   )
+    //   .subscribe();
   }
 
   initializeUploadObs(): void {
@@ -261,7 +247,7 @@ export class ExplorerComponent implements OnInit {
     this.navigateBack$
       .asObservable()
       .pipe(
-        switchMap(() => this.explorerPathService.getLastPathState()),
+        switchMap(() => of(this.explorerPathService.getLastPathState())),
         tap((path) => {
           const isRoot = path === '/' || path === '';
           if (!isRoot) {
@@ -281,22 +267,29 @@ export class ExplorerComponent implements OnInit {
     }
     this.filesystemTableService.selection.clear();
     this.path$.next(fsElem.fullPath);
+    this.explorerPathService.setPath(fsElem.fullPath);
     this.currentFolder$.next(fsElem);
   }
 
   openByPath(path: string): void {
     this.filesystemTableService.selection.clear();
     this.path$.next(path);
+    this.explorerPathService.setPath(path);
   }
 
   navigateBack(): void {
     this.filesystemTableService.selection.clear();
-    this.navigateBack$.next();
+    const path = this.explorerPathService.getPath();
+    const isRoot = path() === '/' || path() === '';
+    if (!isRoot) {
+      const lastFolder =
+        this.explorerPathService.getFullPathToLastFolder(path());
+      this.explorerPathService.setPath(lastFolder);
+    }
   }
 
   copyPathLink(): void {
-    this.explorerPathService
-      .getLastPathState()
+    of(this.explorerPathService.getLastPathState())
       .pipe(
         first(),
         tap((path) => {

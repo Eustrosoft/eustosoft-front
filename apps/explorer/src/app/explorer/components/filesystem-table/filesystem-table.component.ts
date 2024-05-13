@@ -60,8 +60,9 @@ export class FilesystemTableComponent implements OnChanges, AfterViewInit {
 
   protected readonly openClicked$ = new Subject<FileSystemObject>();
 
+  // TODO Lyasrt Определится с debounceTime
   readonly openClicked = outputFromObservable(
-    this.openClicked$.asObservable().pipe(debounceTime(150)),
+    this.openClicked$.asObservable().pipe(debounceTime(0)),
   );
   readonly downloadClicked = output<FileSystemObject[]>();
   readonly previewClicked = output<FileSystemObject>();

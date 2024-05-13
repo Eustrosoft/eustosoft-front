@@ -20,7 +20,6 @@ import { appRoutes } from './app/app.routes';
 import {
   PreloadAllModules,
   provideRouter,
-  withEnabledBlockingInitialNavigation,
   withPreloading,
 } from '@angular/router';
 import { provideCommonUiLib } from '@eustrosoft-front/common-ui';
@@ -63,11 +62,7 @@ bootstrapApplication(AppComponent, {
         httpErrorsInterceptor,
       ]),
     ),
-    provideRouter(
-      appRoutes,
-      withEnabledBlockingInitialNavigation(),
-      withPreloading(PreloadAllModules),
-    ),
+    provideRouter(appRoutes, withPreloading(PreloadAllModules)),
     provideAnimations(),
     provideCoreLib(),
     provideCommonUiLib(),

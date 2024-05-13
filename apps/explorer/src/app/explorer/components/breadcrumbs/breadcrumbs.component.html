@@ -7,21 +7,19 @@
 
 <nav>
   <ol class="flex flex-wrap list-style-none lh-normal p-0 m-0">
-    <ng-container *ngIf="breadcrumbs$ | async as breadcrumbs">
-      <ng-container *ngFor="let breadcrumb of breadcrumbs; let i = index">
-        <li>
-          <a
-            (click)="breadcrumbClick(breadcrumb.href, $event)"
-            [href]="breadcrumb.href"
-            class="text-decoration-none fs-3 link"
-          >
-            {{ breadcrumb.text }}
-          </a>
-        </li>
-        <li>
-          <span *ngIf="i !== breadcrumbs.length - 1" class="px-2">/</span>
-        </li>
-      </ng-container>
+    <ng-container *ngFor="let breadcrumb of breadcrumbs(); let i = index">
+      <li>
+        <a
+          (click)="breadcrumbClick(breadcrumb.href, $event)"
+          [href]="breadcrumb.href"
+          class="text-decoration-none fs-3 link"
+        >
+          {{ breadcrumb.text }}
+        </a>
+      </li>
+      <li>
+        <span *ngIf="i !== breadcrumbs().length - 1" class="px-2">/</span>
+      </li>
     </ng-container>
   </ol>
 </nav>

@@ -10,7 +10,6 @@ import { AppComponent } from './app/app.component';
 import {
   PreloadAllModules,
   provideRouter,
-  withEnabledBlockingInitialNavigation,
   withPreloading,
 } from '@angular/router';
 import { appRoutes } from './app/app.routes';
@@ -55,11 +54,7 @@ bootstrapApplication(AppComponent, {
         httpErrorsInterceptor,
       ]),
     ),
-    provideRouter(
-      appRoutes,
-      withEnabledBlockingInitialNavigation(),
-      withPreloading(PreloadAllModules),
-    ),
+    provideRouter(appRoutes, withPreloading(PreloadAllModules)),
     provideAnimations(),
     provideCoreLib(),
     provideCommonUiLib(),
