@@ -7,19 +7,15 @@
 
 import { inject, Injectable, Signal, signal } from '@angular/core';
 import { AuthenticationService } from '@eustrosoft-front/security';
-import { HttpErrorResponse, HttpParams } from '@angular/common/http';
+import { HttpErrorResponse } from '@angular/common/http';
 import {
   DispatchService,
   DocumentFileExtensions,
   ImgFileExtensions,
-  PRECONFIGURED_TRANSLATE_SERVICE,
   QtisRequestResponse,
-  Subsystems,
   TextFileExtensions,
 } from '@eustrosoft-front/core';
-import { ExplorerRequestActions } from '../constants/enums/explorer-actions.enum';
 import { FileSystemObject } from '../interfaces/file-system-object.interface';
-import { DOCUMENT } from '@angular/common';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import {
   catchError,
@@ -40,19 +36,18 @@ import { ExplorerFsObjectTypes } from '../constants/enums/explorer-fs-object-typ
 import { ExplorerRequestBuilderService } from './explorer-request-builder.service';
 import { CachedDictionaryService } from '@eustrosoft-front/dic';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { LOCAL_STORAGE_PATH } from '../constants/local-storage-path.constant';
+import { ExplorerService } from './explorer.service';
 
 @Injectable({ providedIn: 'root' })
 export class ExplorerPathService {
   private readonly authenticationService = inject(AuthenticationService);
-  private readonly document = inject(DOCUMENT);
   private readonly snackBar = inject(MatSnackBar);
   private readonly dispatchService = inject(DispatchService);
-  private readonly router = inject(Router);
+  private readonly explorerService = inject(ExplorerService);
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly cachedDictionaryService = inject(CachedDictionaryService);
-  private readonly translateService = inject(PRECONFIGURED_TRANSLATE_SERVICE);
   private readonly explorerRequestBuilderService = inject(
     ExplorerRequestBuilderService,
   );
@@ -106,7 +101,7 @@ export class ExplorerPathService {
     // TODO Lyasrt валидация path по регулярному выражению
     filter((queryPath): queryPath is string => queryPath !== null),
     tap((path) => {
-      this.clearQueryParams();
+      this.explorerService.clearQueryParams();
       this.setPath(path);
     }),
   );
@@ -132,7 +127,7 @@ export class ExplorerPathService {
                 response.r.flatMap((r: ViewResponse) => r.content),
               ),
               catchError((err: HttpErrorResponse) => {
-                this.clearQueryParams();
+                this.explorerService.clearQueryParams();
                 this.setPath('/');
                 this.snackBar.open(err.error, 'close');
                 return EMPTY;
@@ -211,50 +206,13 @@ export class ExplorerPathService {
     );
   }
 
-  getFullPathToLastFolder(path: string): string {
-    path = path.replace(/\/$/, '');
-    const pathArr = path.split('/');
-    pathArr.pop();
-    return pathArr.join('/');
-  }
-
-  makeVersionLinks(rows: FileSystemObject[]): string[] {
-    const itemsWithoutFileId = rows.filter((row) => row.fileId === undefined);
-    const itemsWithFileId = rows.filter((row) => row.fileId !== undefined);
-    if (itemsWithoutFileId.length === rows.length) {
-      this.snackBar.open(
-        this.translateService.instant('EXPLORER.ERRORS.VIRTUAL_OBJECT_ERROR'),
-        'close',
-      );
-      return [];
-    }
-
-    return itemsWithFileId.map((row) => {
-      const httpParams = new HttpParams({
-        fromObject: {
-          subsys: Subsystems.TIS,
-          request: ExplorerRequestActions.VIEW,
-          ZID: row.fileId!,
-        },
-      });
-      return `${
-        this.document.location.origin
-      }/lk/qtis.jsp?${httpParams.toString()}`;
-    });
-  }
-
   navigateBack(): void {
     const isRoot = this.pathSignal() === '/' || this.pathSignal() === '';
     if (!isRoot) {
-      const lastFolder = this.getFullPathToLastFolder(this.pathSignal());
+      const lastFolder = this.explorerService.getFullPathToLastFolder(
+        this.pathSignal(),
+      );
       this.setPath(lastFolder);
     }
-  }
-
-  clearQueryParams(): void {
-    this.router.navigate([], {
-      queryParams: null,
-      queryParamsHandling: null,
-    });
   }
 }

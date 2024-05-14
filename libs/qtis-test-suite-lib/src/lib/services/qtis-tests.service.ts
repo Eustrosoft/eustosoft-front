@@ -2,7 +2,6 @@ import { inject, Injectable } from '@angular/core';
 import { TestResult } from '../interfaces/test-case.interface';
 import {
   ExplorerFsObjectTypes,
-  ExplorerPathService,
   ExplorerRequestActions,
   ExplorerService,
   ExplorerUploadItemFormFactoryService,
@@ -47,7 +46,6 @@ import {
 })
 export class QtisTestsService {
   private readonly explorerService = inject(ExplorerService);
-  private readonly explorerPathService = inject(ExplorerPathService);
   private readonly msgService = inject(MsgService);
   private readonly msgMapperService = inject(MsgMapperService);
   private readonly explorerUploadService = inject(ExplorerUploadService);
@@ -102,7 +100,7 @@ export class QtisTestsService {
       )
       .pipe(
         concatMap(() =>
-          this.explorerService.getContents(path).pipe(
+          this.explorerService.getContentsLegacy(path).pipe(
             concatMap((response) => {
               const createdFolder = response?.content?.find(
                 (item) => item.fileName === folderName,
@@ -179,7 +177,7 @@ export class QtisTestsService {
     securityLevel: string,
     description: string,
     uploadedFileName: string,
-  ): Observable<[TestCaseResult[], FileSystemObject[] | undefined]> {
+  ): Observable<[TestCaseResult[], FileSystemObject[] | null]> {
     const teardownUploadSubject = new Subject<void>();
     const formArray =
       this.explorerUploadItemFormFactoryService.makeUploadItemsForm(
@@ -221,7 +219,7 @@ export class QtisTestsService {
       ),
       concatMap(() => {
         teardownUploadSubject.next();
-        return this.explorerService.getContents(fileUploadPath);
+        return this.explorerService.getContentsLegacy(fileUploadPath);
       }),
       concatMap((response) => {
         const uploadedFile = response?.content?.find(
@@ -300,7 +298,9 @@ export class QtisTestsService {
           ),
         ),
       ),
-      concatMap(() => this.explorerService.getContents(folderToCheckPath)),
+      concatMap(() =>
+        this.explorerService.getContentsLegacy(folderToCheckPath),
+      ),
       concatMap((response) => {
         const file = response?.content?.find((item) => item.fileName === name);
         if (file === undefined) {
@@ -337,23 +337,30 @@ export class QtisTestsService {
   ): Observable<[TestCaseResult[], FileSystemObject]> {
     const fsObjName = this.getFsObjectTypeName(from);
     return of(true).pipe(
+      concatMap(() => {
+        const folder = this.explorerService.getFullPathToLastFolder(
+          from.fullPath,
+        );
+        return this.explorerService
+          .rename(from, { name, description }, folder)
+          .pipe(
+            catchError((err: HttpErrorResponse) =>
+              throwError(() => [
+                {
+                  title: `Rename ${fsObjName}`,
+                  description: `Rename ${fsObjName} to "Renamed-Copy-${name}"`,
+                  responseStatus: `${err.status} ${err.statusText}`,
+                  response: err.error ?? '',
+                  errorText: `Cant execute next tests without renamed ${fsObjName}`,
+                  result: TestResult.FAIL,
+                },
+              ]),
+            ),
+          );
+      }),
       concatMap(() =>
-        this.explorerService.rename(from, { name, description }).pipe(
-          catchError((err: HttpErrorResponse) =>
-            throwError(() => [
-              {
-                title: `Rename ${fsObjName}`,
-                description: `Rename ${fsObjName} to "Renamed-Copy-${name}"`,
-                responseStatus: `${err.status} ${err.statusText}`,
-                response: err.error ?? '',
-                errorText: `Cant execute next tests without renamed ${fsObjName}`,
-                result: TestResult.FAIL,
-              },
-            ]),
-          ),
-        ),
+        this.explorerService.getContentsLegacy(folderToCheckPath),
       ),
-      concatMap(() => this.explorerService.getContents(folderToCheckPath)),
       concatMap((response) => {
         const renamedFile = response?.content?.find(
           (item) => item.fileName === `${name}`,
@@ -409,7 +416,7 @@ export class QtisTestsService {
           ),
         ),
       ),
-      concatMap(() => this.explorerService.getContents(folderPath)),
+      concatMap(() => this.explorerService.getContentsLegacy(folderPath)),
       concatMap((response) => {
         const notDeleted = response?.content?.filter((cont) =>
           fsObjects.some((fsObj) => fsObj.fileName === cont.fileName),

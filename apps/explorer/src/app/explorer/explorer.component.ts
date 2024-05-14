@@ -331,9 +331,7 @@ export class ExplorerComponent implements OnInit {
       },
       minWidth: this.isSm() ? '90vw' : '50vw',
     });
-    const folder = this.explorerPathService.getFullPathToLastFolder(
-      row.fullPath,
-    );
+    const folder = this.explorerService.getFullPathToLastFolder(row.fullPath);
 
     dialogRef
       .afterClosed()
@@ -540,7 +538,7 @@ export class ExplorerComponent implements OnInit {
   }
 
   goToVersions(rows: FileSystemObject[]): void {
-    const urls = this.explorerPathService.makeVersionLinks(rows);
+    const urls = this.explorerService.makeVersionLinks(rows);
     for (const url of urls) {
       this.window.open(url, '_blank');
     }
