@@ -41,6 +41,7 @@ import { ExplorerRequestBuilderService } from './explorer-request-builder.servic
 import { CachedDictionaryService } from '@eustrosoft-front/dic';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
+import { LOCAL_STORAGE_PATH } from '../constants/local-storage-path.constant';
 
 @Injectable({ providedIn: 'root' })
 export class ExplorerPathService {
@@ -55,7 +56,7 @@ export class ExplorerPathService {
   private readonly explorerRequestBuilderService = inject(
     ExplorerRequestBuilderService,
   );
-  private readonly lastPathStorageKey = 'qtis-explorer-last-path-';
+  private readonly lastPathStorageKey = LOCAL_STORAGE_PATH;
 
   private readonly userIdSignal = toSignal(
     this.authenticationService.userInfo$.pipe(
@@ -240,6 +241,14 @@ export class ExplorerPathService {
         this.document.location.origin
       }/lk/qtis.jsp?${httpParams.toString()}`;
     });
+  }
+
+  navigateBack(): void {
+    const isRoot = this.pathSignal() === '/' || this.pathSignal() === '';
+    if (!isRoot) {
+      const lastFolder = this.getFullPathToLastFolder(this.pathSignal());
+      this.setPath(lastFolder);
+    }
   }
 
   clearQueryParams(): void {

@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { TestResult } from '../interfaces/test-case.interface';
 import {
   ExplorerFsObjectTypes,
+  ExplorerPathService,
   ExplorerRequestActions,
   ExplorerService,
   ExplorerUploadItemFormFactoryService,
@@ -46,6 +47,7 @@ import {
 })
 export class QtisTestsService {
   private readonly explorerService = inject(ExplorerService);
+  private readonly explorerPathService = inject(ExplorerPathService);
   private readonly msgService = inject(MsgService);
   private readonly msgMapperService = inject(MsgMapperService);
   private readonly explorerUploadService = inject(ExplorerUploadService);

@@ -11,7 +11,7 @@ import {
   DestroyRef,
   inject,
   OnInit,
-  ViewChild,
+  viewChild,
 } from '@angular/core';
 import {
   BreakpointsService,
@@ -107,11 +107,11 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
     AsyncPipe,
     TranslateModule,
   ],
+  providers: [ExplorerPathService],
 })
 export class ExplorerComponent implements OnInit {
-  @ViewChild(InputFileComponent) inputFileComponent!: InputFileComponent;
-  @ViewChild(UploadOverlayComponent)
-  uploadOverlayComponent!: UploadOverlayComponent;
+  readonly inputFileComponent =
+    viewChild.required<InputFileComponent>(InputFileComponent);
 
   private readonly dispatchService = inject(DispatchService);
   private readonly explorerRequestBuilderService = inject(
@@ -203,7 +203,7 @@ export class ExplorerComponent implements OnInit {
       }),
       catchError((err: HttpErrorResponse) => {
         this.snackBar.open(err.error, 'close');
-        this.inputFileComponent.clear();
+        this.inputFileComponent().clear();
         this.closeOverlay();
         return EMPTY;
       }),
@@ -227,13 +227,7 @@ export class ExplorerComponent implements OnInit {
 
   navigateBack(): void {
     this.filesystemTableService.selection.clear();
-    const path = this.explorerPathService.getPath();
-    const isRoot = path() === '/' || path() === '';
-    if (!isRoot) {
-      const lastFolder =
-        this.explorerPathService.getFullPathToLastFolder(path());
-      this.explorerPathService.setPath(lastFolder);
-    }
+    this.explorerPathService.navigateBack();
   }
 
   copyPathLink(): void {
@@ -278,7 +272,7 @@ export class ExplorerComponent implements OnInit {
       this.fb.array<FormGroup<UploadItemForm>>([]),
     );
     this.teardownUpload$.next();
-    this.inputFileComponent.clear();
+    this.inputFileComponent().clear();
   }
 
   startUpload(): void {
@@ -305,6 +299,7 @@ export class ExplorerComponent implements OnInit {
     dialogRef
       .afterClosed()
       .pipe(
+        first(),
         filter(
           (data): data is CreateDialogReturnData => typeof data !== 'undefined',
         ),
@@ -320,7 +315,6 @@ export class ExplorerComponent implements OnInit {
         tap(() => {
           this.explorerPathService.refreshCurrentPath();
         }),
-        first(),
       )
       .subscribe();
   }
@@ -337,18 +331,21 @@ export class ExplorerComponent implements OnInit {
       },
       minWidth: this.isSm() ? '90vw' : '50vw',
     });
+    const folder = this.explorerPathService.getFullPathToLastFolder(
+      row.fullPath,
+    );
 
     dialogRef
       .afterClosed()
       .pipe(
+        first(),
         filter(
           (str): str is RenameDialogReturnData => typeof str !== 'undefined',
         ),
-        switchMap((data) => this.explorerService.rename(row, data)),
+        switchMap((data) => this.explorerService.rename(row, data, folder)),
         tap(() => {
           this.explorerPathService.refreshCurrentPath();
         }),
-        first(),
       )
       .subscribe();
   }
@@ -372,6 +369,7 @@ export class ExplorerComponent implements OnInit {
     dialogRef
       .afterClosed()
       .pipe(
+        first(),
         filter((str): str is string[] => typeof str !== 'undefined'),
         switchMap((to) => this.explorerService.move(rows, to)),
         tap(({ to }) => {
@@ -379,7 +377,6 @@ export class ExplorerComponent implements OnInit {
           const path = to[0].substring(0, lastIndex) || '/';
           this.explorerPathService.setPath(path);
         }),
-        first(),
       )
       .subscribe();
   }
@@ -403,6 +400,7 @@ export class ExplorerComponent implements OnInit {
     dialogRef
       .afterClosed()
       .pipe(
+        first(),
         filter((str) => typeof str !== 'undefined'),
         map((str) => str as string[]),
         switchMap((to: string[]) =>
@@ -429,7 +427,6 @@ export class ExplorerComponent implements OnInit {
           this.explorerPathService.setPath(path);
         }),
         catchError((err) => this.explorerService.handleError(err)),
-        first(),
       )
       .subscribe();
   }
@@ -458,13 +455,13 @@ export class ExplorerComponent implements OnInit {
     dialogRef
       .afterClosed()
       .pipe(
+        first(),
         filter((val) => Boolean(val)),
         switchMap(() => this.explorerService.delete(rows)),
         tap(() => {
           this.explorerPathService.refreshCurrentPath();
           this.filesystemTableService.selection.clear();
         }),
-        first(),
       )
       .subscribe();
   }
@@ -562,7 +559,7 @@ export class ExplorerComponent implements OnInit {
     dialogRef.componentInstance.fileSelectClicked
       .pipe(
         tap(() => {
-          this.inputFileComponent.fileInput.nativeElement.click();
+          this.inputFileComponent().fileInput.nativeElement.click();
         }),
         takeUntil(dialogClosed$),
       )

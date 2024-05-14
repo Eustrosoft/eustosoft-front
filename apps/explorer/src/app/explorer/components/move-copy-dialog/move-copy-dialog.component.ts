@@ -12,8 +12,8 @@ import {
   Component,
   HostListener,
   inject,
-  OnDestroy,
-  ViewChild,
+  signal,
+  viewChild,
 } from '@angular/core';
 import {
   MAT_DIALOG_DATA,
@@ -22,18 +22,10 @@ import {
   MatDialogRef,
   MatDialogTitle,
 } from '@angular/material/dialog';
-import {
-  BehaviorSubject,
-  map,
-  merge,
-  Observable,
-  Subject,
-  switchMap,
-  tap,
-} from 'rxjs';
+import { map, merge, Observable, tap } from 'rxjs';
 import {
   ExplorerFsObjectTypes,
-  ExplorerService,
+  ExplorerPathService,
   FileSystemObject,
   MoveCopyDialogData,
 } from '@eustrosoft-front/explorer-lib';
@@ -42,7 +34,6 @@ import {
   MatListOption,
   MatSelectionList,
 } from '@angular/material/list';
-import { Stack } from '../../classes/Stack';
 import { TranslateModule } from '@ngx-translate/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { PreloaderComponent } from '@eustrosoft-front/common-ui';
@@ -88,42 +79,42 @@ import { MatButtonModule } from '@angular/material/button';
     AsyncPipe,
     TranslateModule,
   ],
+  providers: [ExplorerPathService],
 })
-export class MoveCopyDialogComponent implements AfterViewInit, OnDestroy {
-  @ViewChild(MatSelectionList) matSelectionList!: MatSelectionList;
+export class MoveCopyDialogComponent implements AfterViewInit {
+  readonly matSelectionList =
+    viewChild.required<MatSelectionList>(MatSelectionList);
+
   private readonly dialogRef: MatDialogRef<MoveCopyDialogComponent> = inject(
     MatDialogRef<MoveCopyDialogComponent>,
   );
-  private readonly explorerService = inject(ExplorerService);
   private readonly cdRef = inject(ChangeDetectorRef);
-  private readonly navigationHistoryStack: Stack<string> = inject(Stack);
+  private readonly explorerPathService = inject(ExplorerPathService);
+
   protected readonly data = inject<MoveCopyDialogData>(MAT_DIALOG_DATA);
   protected readonly fsObjTypes = ExplorerFsObjectTypes;
 
-  private currentSelectedOptionIndex: number | undefined = undefined;
-  private destroy$ = new Subject<void>();
+  private currentSelectedOptionIndex = signal<number | null>(null);
 
   protected moveButtonDisabled$!: Observable<boolean>;
-  protected moveButtonErrorText = '';
-  protected path$ = new BehaviorSubject<string>(this.data.defaultPath ?? '/');
-  protected fsObjects$ = this.path$
-    .asObservable()
-    .pipe(switchMap((path) => this.explorerService.getContents(path)));
+
+  protected moveButtonErrorText = signal<string>('');
+  protected fsObjects$ = this.explorerPathService.getContents$();
 
   @HostListener('keydown.enter', ['$event'])
-  onEnterKeydown(e: KeyboardEvent): void {
-    e.stopPropagation();
+  onEnterKeydown(event: KeyboardEvent): void {
+    event.stopPropagation();
     this.resolve();
   }
 
   ngAfterViewInit(): void {
     this.moveButtonDisabled$ = merge(
-      this.matSelectionList.options.changes,
-      this.matSelectionList.selectedOptions.changed,
+      this.matSelectionList().options.changes,
+      this.matSelectionList().selectedOptions.changed,
     ).pipe(
       map(() => {
-        const options = this.matSelectionList.options
-          .toArray()
+        const options = this.matSelectionList()
+          .options.toArray()
           .map((item: MatListOption) => item.value) as FileSystemObject[];
 
         const matchingObjects = options.filter((option) =>
@@ -145,7 +136,7 @@ export class MoveCopyDialogComponent implements AfterViewInit, OnDestroy {
           ).length > 0;
 
         matchingIndexes.forEach((index: number) => {
-          const item = this.matSelectionList.options.get(index);
+          const item = this.matSelectionList().options.get(index);
           if (item) {
             item.disabled = true;
           }
@@ -153,22 +144,23 @@ export class MoveCopyDialogComponent implements AfterViewInit, OnDestroy {
 
         if (
           objectsAlreadyExistsInFolder &&
-          !this.matSelectionList.selectedOptions.hasValue()
+          !this.matSelectionList().selectedOptions.hasValue()
         ) {
-          this.moveButtonErrorText =
-            'EXPLORER.ERRORS.MOVE_FILE_ALREADY_EXISTS_ERROR';
+          this.moveButtonErrorText.set(
+            'EXPLORER.ERRORS.MOVE_FILE_ALREADY_EXISTS_ERROR',
+          );
           return true;
         }
 
         if (
           matchingIndexes.length > 0 &&
-          !this.matSelectionList.selectedOptions.hasValue()
+          !this.matSelectionList().selectedOptions.hasValue()
         ) {
-          this.moveButtonErrorText = 'EXPLORER.ERRORS.MOVE_SAME_NAME_ERROR';
+          this.moveButtonErrorText.set('EXPLORER.ERRORS.MOVE_SAME_NAME_ERROR');
           return true;
         }
 
-        this.moveButtonErrorText = '';
+        this.moveButtonErrorText.set('');
         return false;
       }),
       tap(() => {
@@ -179,21 +171,15 @@ export class MoveCopyDialogComponent implements AfterViewInit, OnDestroy {
     );
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
-
-  navigateForward($event: MouseEvent, object: FileSystemObject): void {
-    $event.stopPropagation();
-    this.matSelectionList.deselectAll();
-    this.navigationHistoryStack.push(object.fullPath);
-    this.path$.next(object.fullPath);
+  navigateForward(event: MouseEvent, object: FileSystemObject): void {
+    event.stopPropagation();
+    this.matSelectionList().deselectAll();
+    this.explorerPathService.setPath(object.fullPath);
   }
 
   navigateBack(): void {
-    this.matSelectionList.deselectAll();
-    this.path$.next(this.navigationHistoryStack.pop(true) ?? '/');
+    this.matSelectionList().deselectAll();
+    this.explorerPathService.navigateBack();
   }
 
   createNewFolder(): void {
@@ -207,14 +193,17 @@ export class MoveCopyDialogComponent implements AfterViewInit, OnDestroy {
   }
 
   resolve(): void {
-    if (this.matSelectionList.selectedOptions.hasValue()) {
+    if (this.matSelectionList().selectedOptions.hasValue()) {
       const paths = this.buildPaths(
-        this.matSelectionList.selectedOptions.selected[0].value.fullPath,
+        this.matSelectionList().selectedOptions.selected[0].value.fullPath,
         this.data.fsObjects,
       );
       this.dialogRef.close(paths);
     } else {
-      const paths = this.buildPaths(this.path$.value, this.data.fsObjects);
+      const paths = this.buildPaths(
+        this.explorerPathService.getPath()(),
+        this.data.fsObjects,
+      );
       this.dialogRef.close(paths);
     }
   }
@@ -229,27 +218,26 @@ export class MoveCopyDialogComponent implements AfterViewInit, OnDestroy {
   }
 
   optionClicked(index: number): void {
-    const option = this.matSelectionList.options.get(index);
+    const option = this.matSelectionList().options.get(index);
     if (!option || option.disabled) {
       return;
     }
     // if we don't have selected option yet, set it
-    if (this.currentSelectedOptionIndex === undefined) {
-      this.currentSelectedOptionIndex = index;
+    if (this.currentSelectedOptionIndex() === null) {
+      this.currentSelectedOptionIndex.set(index);
       return;
     }
     // if different option is clicked
-    if (this.currentSelectedOptionIndex !== index) {
-      this.currentSelectedOptionIndex = index;
+    if (this.currentSelectedOptionIndex() !== index) {
+      this.currentSelectedOptionIndex.set(index);
     } else {
       // if click performed on currently selected option
       option.toggle();
-      this.currentSelectedOptionIndex = undefined;
+      this.currentSelectedOptionIndex.set(null);
     }
   }
 
   openByPath(path: string): void {
-    this.path$.next(path);
-    this.navigationHistoryStack.push(path);
+    this.explorerPathService.setPath(path);
   }
 }

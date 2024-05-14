@@ -11,6 +11,7 @@ export * from './lib/constants/enums/explorer-fs-object-types.enum';
 export * from './lib/constants/enums/uploading-state.enum';
 export * from './lib/constants/enums/explorer-routes.enum';
 export * from './lib/constants/enums/explorer-filesystem-table-cols.enum';
+export * from './lib/constants/local-storage-path.constant';
 export * from './lib/interfaces/explorer-object-response.interface';
 export * from './lib/interfaces/explorer-request.interface';
 export * from './lib/interfaces/explorer-response.interface';

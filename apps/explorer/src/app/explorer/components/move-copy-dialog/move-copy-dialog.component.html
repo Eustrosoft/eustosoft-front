@@ -14,11 +14,10 @@
       <button mat-icon-button type="button" (click)="navigateBack()">
         <mat-icon>navigate_before</mat-icon>
       </button>
-      <!--      TODO Lyasrt вернуть-->
-      <!--      <eustrosoft-front-breadcrumbs-->
-      <!--        [path$]="path$"-->
-      <!--        (breadcrumbClicked)="openByPath($event)"-->
-      <!--      ></eustrosoft-front-breadcrumbs>-->
+
+      <eustrosoft-front-breadcrumbs
+        (breadcrumbClicked)="openByPath($event)"
+      ></eustrosoft-front-breadcrumbs>
     </div>
     <mat-selection-list
       [multiple]="false"
@@ -58,7 +57,7 @@
                   [ngTemplateOutletContext]="{
                     object: object,
                     forwardLinkDisabled:
-                      matSelectionList.options.get(i)?.disabled
+                      matSelectionList().options.get(i)?.disabled
                   }"
                 >
                 </ng-container>
@@ -99,7 +98,7 @@
       *ngIf="{ moveButtonDisabled: moveButtonDisabled$ | async } as vm"
     >
       <div
-        [matTooltip]="moveButtonErrorText | translate"
+        [matTooltip]="moveButtonErrorText() | translate"
         [matTooltipDisabled]="!vm.moveButtonDisabled"
       >
         <button
@@ -121,7 +120,7 @@
     let-forwardLinkDisabled="forwardLinkDisabled"
   >
     <div class="flex justify-content-space-between">
-      <div class="flex align-items-center lh-1">
+      <div class="flex align-items-center g-1 lh-1">
         <mat-icon>folder</mat-icon>
         <span>{{ object.fileName }}</span>
       </div>
@@ -137,7 +136,7 @@
   </ng-template>
   <ng-template #linkOrFileTemplate let-object>
     <div class="flex justify-content-space-between">
-      <div class="flex align-items-center lh-1">
+      <div class="flex align-items-center g-1 lh-1">
         <mat-icon>draft</mat-icon>
         <span>{{ object.fileName }}</span>
       </div>

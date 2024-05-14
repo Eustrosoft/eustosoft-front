@@ -9,15 +9,11 @@ import { inject, Injectable } from '@angular/core';
 import { HttpErrorResponse, HttpParams } from '@angular/common/http';
 import {
   DispatchService,
-  DocumentFileExtensions,
-  ImgFileExtensions,
   QtisRequestResponse,
   ReplaceOriginPipe,
-  TextFileExtensions,
 } from '@eustrosoft-front/core';
 import {
   catchError,
-  combineLatest,
   iif,
   map,
   Observable,
@@ -31,22 +27,17 @@ import {
   CreateRequest,
   DeleteRequest,
   MoveRequest,
-  ViewRequest,
 } from '../interfaces/explorer-request.interface';
 import {
   CreateResponse,
   DeleteResponse,
   MoveResponse,
-  ViewResponse,
 } from '../interfaces/explorer-response.interface';
 import { ExplorerDownloadParams } from '../constants/enums/explorer-download-params.enum';
 import { ExplorerFsObjectTypes } from '../constants/enums/explorer-fs-object-types.enum';
 import { FileSystemObject } from '../interfaces/file-system-object.interface';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ExplorerPathService } from './explorer-path.service';
 import { RenameDialogReturnData } from '../interfaces/rename-dialog/rename-dialog-return-data.interface';
-import { CachedDictionaryService } from '@eustrosoft-front/dic';
-import { ExplorerRoutes } from '../constants/enums/explorer-routes.enum';
 import { ExplorerRequestActions } from '../constants/enums/explorer-actions.enum';
 
 @Injectable({ providedIn: 'root' })
@@ -56,9 +47,7 @@ export class ExplorerService {
     ExplorerRequestBuilderService,
   );
   private readonly dispatchService = inject(DispatchService);
-  private readonly cachedDictionaryService = inject(CachedDictionaryService);
   private readonly snackBar = inject(MatSnackBar);
-  private readonly explorerPathService = inject(ExplorerPathService);
   private readonly replaceOriginPipe = inject(ReplaceOriginPipe);
 
   makeShareLink(path: string): Observable<string> {
@@ -101,78 +90,6 @@ export class ExplorerService {
     );
   }
 
-  getContents(path: string): Observable<{
-    isLoading: boolean;
-    isError: boolean;
-    content: FileSystemObject[] | null;
-  }> {
-    return of(path).pipe(
-      switchMap((path) => {
-        this.explorerPathService.setLastPathState(path);
-        return this.explorerRequestBuilderService.buildViewRequest(path);
-      }),
-      switchMap((request: QtisRequestResponse<ViewRequest>) =>
-        this.dispatchService
-          .dispatch<ViewRequest, ViewResponse>(request)
-          .pipe(
-            map((response: QtisRequestResponse<ViewResponse>) =>
-              response.r.flatMap((r: ViewResponse) => r.content),
-            ),
-          ),
-      ),
-      switchMap((contents) =>
-        combineLatest([
-          of(contents),
-          this.cachedDictionaryService.securityOptions$,
-        ]).pipe(
-          switchMap(([contents, securityLevelOptions]) => {
-            const cont = contents.map<FileSystemObject>((obj) => {
-              const matchingDict = securityLevelOptions.find(
-                (dict) => dict.value === obj.securityLevel?.toString(),
-              );
-              const ext =
-                obj.fileName.split('.').pop()?.toLowerCase() ??
-                DocumentFileExtensions.Empty;
-              let previewRoute: string | null = null;
-
-              const isDocExt = Object.values<string>(
-                DocumentFileExtensions,
-              ).includes(ext);
-              const isImgExt =
-                Object.values<string>(ImgFileExtensions).includes(ext);
-              const isTxtExt =
-                Object.values<string>(TextFileExtensions).includes(ext);
-
-              if (isDocExt) {
-                previewRoute = ExplorerRoutes.PdfPreview;
-              }
-
-              if (isImgExt) {
-                previewRoute = ExplorerRoutes.ImgPreview;
-              }
-
-              if (isTxtExt) {
-                previewRoute = ExplorerRoutes.TxtPreview;
-              }
-
-              const value: FileSystemObject = {
-                ...obj,
-                securityLevel: matchingDict ?? {
-                  displayText: '',
-                  value: null,
-                },
-                showPreviewButton: obj.type === ExplorerFsObjectTypes.FILE,
-                previewRoute,
-              };
-              return value;
-            });
-            return of({ isLoading: false, isError: false, content: cont });
-          }),
-        ),
-      ),
-    );
-  }
-
   create(
     path: string,
     name: string,
@@ -200,23 +117,20 @@ export class ExplorerService {
   rename(
     row: FileSystemObject,
     data: RenameDialogReturnData,
+    folder: string,
   ): Observable<QtisRequestResponse<MoveResponse>> {
-    return of(row.fullPath).pipe(
-      switchMap((fullPath) =>
-        of(this.explorerPathService.getFullPathToLastFolder(fullPath)),
-      ),
-      switchMap((folder) =>
-        this.explorerRequestBuilderService.buildMoveRequest(
-          [row.fullPath],
-          [`${folder}/${data.name}`],
-          data.description ?? '',
+    return this.explorerRequestBuilderService
+      .buildMoveRequest(
+        [row.fullPath],
+        [`${folder}/${data.name}`],
+        data.description ?? '',
+      )
+      .pipe(
+        switchMap((body: QtisRequestResponse<MoveRequest>) =>
+          this.dispatchService.dispatch<MoveRequest, MoveResponse>(body),
         ),
-      ),
-      switchMap((body: QtisRequestResponse<MoveRequest>) =>
-        this.dispatchService.dispatch<MoveRequest, MoveResponse>(body),
-      ),
-      catchError((err) => this.handleError(err)),
-    );
+        catchError((err) => this.handleError(err)),
+      );
   }
 
   move(
